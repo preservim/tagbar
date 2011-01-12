@@ -49,6 +49,10 @@ if !exists('g:tagbar_types')
     let g:tagbar_types = {}
 endif
 
+if !exists('g:tagbar_autoclose')
+    let g:tagbar_autoclose = 0
+endif
+
 function! s:InitTypes()
     let s:known_files = {}
     let s:known_types = {}
@@ -190,12 +194,6 @@ function! s:RefreshContent()
         return
     endif
 
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-
-    if tagbarwinnr == -1
-        return
-    endif
-
     if has_key(s:known_files, fname)
         if s:known_files[fname].mtime != getftime(fname)
             call s:ProcessFile(fname, &filetype)
@@ -204,7 +202,11 @@ function! s:RefreshContent()
         call s:ProcessFile(fname, &filetype)
     endif
 
-    call s:RenderContent(fname, &filetype)
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+
+    if tagbarwinnr != -1
+        call s:RenderContent(fname, &filetype)
+    endif
 endfunction
 
 function! s:IsValidFile(fname, ftype)
