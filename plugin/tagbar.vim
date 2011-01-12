@@ -45,8 +45,36 @@ if !exists('g:tagbar_width')
     let g:tagbar_width = 30
 endif
 
-let s:known_files = {}
-let s:known_types = {}
+if !exists('g:tagbar_types')
+    let g:tagbar_types = {}
+endif
+
+function! s:InitTypes()
+    let s:known_files = {}
+    let s:known_types = {}
+
+    let type_cpp = {}
+    let type_cpp.ctagstype = 'c++'
+    let type_cpp.scopes    = ['namespace', 'class', 'struct']
+    let type_cpp.kinds     = [
+        \ 'd:macros',
+        \ 'n:namespaces',
+        \ 'p:prototypes',
+        \ 'v:variables',
+        \ 't:typedefs',
+        \ 'c:classes',
+        \ 'm:members',
+        \ 'g:enum',
+        \ 's:structs',
+        \ 'u:unions',
+        \ 'f:functions'
+        \ ]
+    let s:known_types.cpp = type_cpp
+
+    call extend(s:known_types, g:tagbar_types)
+endfunction
+
+call s:InitTypes()
 
 function! s:ToggleWindow()
     let tagbarwinnr = bufwinnr("__Tagbar__")
@@ -188,15 +216,7 @@ function! s:IsValidFile(fname, ftype)
         return 0
     endif
 
-"    let var = 's:tlist_def_' . a:ftype . '_settings'
-"    if !exists(var)
-"        let var = 'g:tlist_' . a:ftype . '_settings'
-"        if !exists(var)
-"            return 0
-"        endif
-"    endif
-
-    if a:ftype != 'cpp'
+    if !has_key(s:known_types, a:ftype)
         return 0
     endif
 
@@ -204,10 +224,19 @@ function! s:IsValidFile(fname, ftype)
 endfunction
 
 function! s:ProcessFile(fname, ftype)
-    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksaz --extra= --sort=yes '
+    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksaz --extra= '
 
-"    let s:tlist_{a:ftype}_ctags_args = '--language-force=' . ctags_ftype .
-"                            \ ' --' . ctags_ftype . '-types=' . ctags_flags
+    let ctags_args .= ' --sort=yes '
+
+    let ctags_type = s:known_types[a:ftype].ctagstype
+    let ctags_kinds = ""
+    for kind in s:known_types[a:ftype].kinds
+        let [short, full] = split(kind, ':')
+        let ctags_kinds .= short
+    endfor
+
+    let ctags_args .= ' --language-force=' . ctags_type .
+                    \ ' --' . ctags_type . '-kinds=' . ctags_kinds . ' '
 
     let ctags_cmd = g:tagbar_ctags_exe . ctags_args . shellescape(a:fname)
     let ctags_output = system(ctags_cmd)
@@ -241,19 +270,17 @@ function! s:ParseTagline(line)
 
     let taginfo = {}
 
-    let basic_info = split(parts[0], '\t')
-    let tagname    = basic_info[0]
-    let tagfile    = basic_info[1]
-    let tagproto   = basic_info[2]
-
-    let taginfo.name      = tagname
-    let taginfo.prototype = tagproto
+    let basic_info      = split(parts[0], '\t')
+    let taginfo.name    = basic_info[0]
+    let taginfo.file    = basic_info[1]
+    let taginfo.pattern = basic_info[2]
 
     let fields = split(parts[1], '\t')
     for field in fields
-        let delimit = stridx(field, ':')
-        let key = strpart(field, 0, delimit)
-        let val = strpart(field, delimit + 1)
+        " can't use split() since the value can contain ':'
+        let delimit      = stridx(field, ':')
+        let key          = strpart(field, 0, delimit)
+        let val          = strpart(field, delimit + 1)
         let taginfo[key] = val
     endfor
 
@@ -265,16 +292,35 @@ function! s:RenderContent(fname, ftype)
 
     execute tagbarwinnr . 'wincmd w'
 
+    let lazyredraw_save = &lazyredraw
+    set lazyredraw
+
     setlocal modifiable
 
     silent! %delete _
 
-    let tags = s:known_files[a:fname].tags
-    for tag in tags
-        silent! put =tag.name
+    let typeinfo = s:known_types[a:ftype]
+    let tags     = s:known_files[a:fname].tags
+
+    for kind in typeinfo.kinds
+        let curtags = filter(copy(tags), 'v:val.kind == kind[0]')
+
+        if empty(curtags)
+            continue
+        endif
+
+        silent! put =strpart(kind, 2)
+
+        for tag in curtags
+            silent! put =' ' . tag.name
+        endfor
+
+        silent! put _
     endfor
 
     setlocal nomodifiable
+
+    let &lazyredraw = lazyredraw_save
 
     execute 'wincmd p'
 endfunction
