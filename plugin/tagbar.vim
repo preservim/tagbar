@@ -42,7 +42,7 @@ if !exists('g:tagbar_left')
 endif
 
 if !exists('g:tagbar_width')
-    let g:tagbar_width = 30
+    let g:tagbar_width = 40
 endif
 
 if !exists('g:tagbar_types')
@@ -60,6 +60,7 @@ function! s:InitTypes()
     let type_cpp = {}
     let type_cpp.ctagstype = 'c++'
     let type_cpp.scopes    = ['namespace', 'class', 'struct']
+    let type_cpp.sro       = '::'
     let type_cpp.kinds     = [
         \ 'd:macros',
         \ 'n:namespaces',
@@ -72,8 +73,30 @@ function! s:InitTypes()
         \ 's:structs',
         \ 'u:unions',
         \ 'f:functions'
-        \ ]
+    \ ]
+    let type_cpp.scope2kind = {
+        \ 'namespace' : 'n',
+        \ 'class'     : 'c',
+        \ 'struct'    : 's'
+    \ }
     let s:known_types.cpp = type_cpp
+
+    let type_python = {}
+    let type_python.ctagstype = 'python'
+    let type_python.scopes    = ['class', 'function']
+    let type_python.sro       = '.'
+    let type_python.kinds     = [
+        \ 'i:imports',
+        \ 'c:classes',
+        \ 'f:functions',
+        \ 'm:members',
+        \ 'v:variables'
+    \ ]
+    let type_python.scope2kind = {
+        \ 'class'    : 'c',
+        \ 'function' : 'f'
+    \ }
+    let s:known_types.python = type_python
 
     call extend(s:known_types, g:tagbar_types)
 endfunction
@@ -267,6 +290,9 @@ function! s:ProcessFile(fname, ftype)
     let s:known_files[a:fname] = fileinfo
 endfunction
 
+" name<TAB>file<TAB>expattern;"fields
+" fields: <TAB>name:value
+" fields that are always present: kind, line
 function! s:ParseTagline(line)
     let parts = split(a:line, ';"')
 
@@ -277,13 +303,14 @@ function! s:ParseTagline(line)
     let taginfo.file    = basic_info[1]
     let taginfo.pattern = basic_info[2]
 
+    let taginfo.fields = {}
     let fields = split(parts[1], '\t')
     for field in fields
         " can't use split() since the value can contain ':'
-        let delimit      = stridx(field, ':')
-        let key          = strpart(field, 0, delimit)
-        let val          = strpart(field, delimit + 1)
-        let taginfo[key] = val
+        let delimit             = stridx(field, ':')
+        let key                 = strpart(field, 0, delimit)
+        let val                 = strpart(field, delimit + 1)
+        let taginfo.fields[key] = val
     endfor
 
     return taginfo
@@ -302,10 +329,58 @@ function! s:RenderContent(fname, ftype)
     silent! %delete _
 
     let typeinfo = s:known_types[a:ftype]
-    let tags     = s:known_files[a:fname].tags
+    let tags     = copy(s:known_files[a:fname].tags)
+
+    if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
+        for scope in typeinfo.scopes
+            let members = filter(copy(tags), 'has_key(v:val.fields, scope)')
+
+            " remove tags in this scope from the tag list so they
+            " don't get displayed twice
+            call filter(tags, '!has_key(v:val.fields, scope)')
+
+            if empty(members)
+                continue
+            endif
+
+            let entries = {}
+
+            " sort tags under their scope structure name
+            " TODO: preserve order of scopes
+            for member in members
+                let scopevalue = member.fields[scope]
+                if has_key(entries, scopevalue)
+                    let entries[scopevalue] += [member]
+                else
+                    let entries[scopevalue]  = [member]
+                endif
+            endfor
+
+            " print scope content
+            for key in sort(keys(entries))
+                silent! put =key . ' : ' . scope
+
+                for entry in entries[key]
+                    if has_key(entry.fields, 'signature')
+                        let sig = ' ' . entry.fields.signature
+                    else
+                        let sig = ''
+                    endif
+                    silent! put =' ' . entry.name . sig
+                endfor
+
+                silent! put _
+            endfor
+
+            " remove the scoping structure from the tag list since we
+            " don't need to display it separately again
+            let scopekind = typeinfo.scope2kind[scope]
+            call filter(tags, 'v:val.fields.kind != scopekind')
+        endfor
+    endif
 
     for kind in typeinfo.kinds
-        let curtags = filter(copy(tags), 'v:val.kind == kind[0]')
+        let curtags = filter(copy(tags), 'v:val.fields.kind == kind[0]')
 
         if empty(curtags)
             continue
