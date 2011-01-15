@@ -122,7 +122,7 @@ function! s:OpenWindow()
     endif
 
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
-    execute 'silent! ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
+    execute 'silent! keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
