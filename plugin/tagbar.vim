@@ -224,10 +224,6 @@ endfunction
 function! s:RefreshContent()
     let fname = fnamemodify(bufname('%'), ':p')
 
-    if !s:IsValidFile(fname, &filetype)
-        return
-    endif
-
     if has_key(s:known_files, fname)
         if s:known_files[fname].mtime != getftime(fname)
             call s:ProcessFile(fname, &filetype)
@@ -260,6 +256,10 @@ function! s:IsValidFile(fname, ftype)
 endfunction
 
 function! s:ProcessFile(fname, ftype)
+    if !s:IsValidFile(a:fname, a:ftype)
+        return
+    endif
+
     let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksSaz --extra= '
 
     let ctags_args .= ' --sort=yes '
@@ -338,6 +338,14 @@ function! s:RenderContent(fname, ftype)
     setlocal modifiable
 
     silent! %delete _
+
+    if !s:IsValidFile(a:fname, a:ftype)
+        silent! put ='- File type not supported -'
+        setlocal nomodifiable
+        let &lazyredraw = lazyredraw_save
+        execute 'wincmd p'
+        return
+    endif
 
     let typeinfo = s:known_types[a:ftype]
     let tags     = copy(s:known_files[a:fname].tags)
