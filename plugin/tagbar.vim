@@ -64,21 +64,16 @@ function! s:InitTypes()
     let type_cpp.kinds     = [
         \ 'd:macros',
         \ 'n:namespaces',
-        \ 'p:prototypes',
-        \ 'v:variables',
-        \ 't:typedefs',
         \ 'c:classes',
-        \ 'm:members',
-        \ 'g:enum',
         \ 's:structs',
+        \ 't:typedefs',
+        \ 'g:enum',
         \ 'u:unions',
-        \ 'f:functions'
+        \ 'p:prototypes',
+        \ 'f:functions',
+        \ 'm:members',
+        \ 'v:variables'
     \ ]
-    let type_cpp.scope2kind = {
-        \ 'namespace' : 'n',
-        \ 'class'     : 'c',
-        \ 'struct'    : 's'
-    \ }
     let type_cpp.kind2scope = {
         \ 'n' : 'namespace',
         \ 'c' : 'class',
@@ -97,11 +92,6 @@ function! s:InitTypes()
         \ 'm:members',
         \ 'v:variables'
     \ ]
-    let type_python.scope2kind = {
-        \ 'class'    : 'c',
-        \ 'function' : 'f',
-        \ 'member'   : 'm'
-    \ }
     let type_python.kind2scope = {
         \ 'c' : 'class',
         \ 'f' : 'function',
@@ -414,14 +404,7 @@ function! s:IsTopLevelScopeDef(typeinfo, tag)
     let is_scope_def = 0
 
     " Does the tag specify a scope?
-    for scope in a:typeinfo.scopes
-        if a:typeinfo.scope2kind[scope] == a:tag.fields.kind
-            let is_scope_def = 1
-            break
-        endif
-    endfor
-
-    if !is_scope_def
+    if !has_key(a:typeinfo.kind2scope, a:tag.fields.kind)
         return 0
     endif
 
