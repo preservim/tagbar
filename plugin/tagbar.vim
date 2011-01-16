@@ -224,6 +224,11 @@ endfunction
 function! s:RefreshContent()
     let fname = fnamemodify(bufname('%'), ':p')
 
+    " Don't do anything when entering the tagbar window
+    if &filetype == 'tagbar'
+        return
+    endif
+
     if has_key(s:known_files, fname)
         if s:known_files[fname].mtime != getftime(fname)
             call s:ProcessFile(fname, &filetype)
@@ -260,13 +265,15 @@ function! s:ProcessFile(fname, ftype)
         return
     endif
 
+    let typeinfo = s:known_types[a:ftype]
+
     let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksSaz --extra= '
 
     let ctags_args .= ' --sort=yes '
 
-    let ctags_type = s:known_types[a:ftype].ctagstype
+    let ctags_type = typeinfo.ctagstype
     let ctags_kinds = ""
-    for kind in s:known_types[a:ftype].kinds
+    for kind in typeinfo.kinds
         let [short, full] = split(kind, ':')
         let ctags_kinds .= short
     endfor
@@ -289,14 +296,30 @@ function! s:ProcessFile(fname, ftype)
     let fileinfo = {}
     let fileinfo.mtime = getftime(a:fname)
 
-    let taglist = split(ctags_output, '\n\+')
+    let rawtaglist = split(ctags_output, '\n\+')
 
     let fileinfo.tags = []
 
-    for line in taglist
+    for line in rawtaglist
         let taginfo = s:ParseTagline(line)
         call add(fileinfo.tags, taginfo)
     endfor
+
+    if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
+        " Extract top-level scopes, removing them from the tag list
+        let scopedtags = filter(copy(fileinfo.tags),
+                              \ 's:IsTopLevelScopeDef(typeinfo, v:val)')
+        call filter(fileinfo.tags, '!s:IsTopLevelScopeDef(typeinfo, v:val)')
+
+        " Add children
+        for tag in scopedtags
+            let scopetype = typeinfo.kind2scope[tag.fields.kind]
+            let tag.children = s:GetChildTags(fileinfo.tags, scopetype,
+                                            \ '', tag.name, typeinfo)
+        endfor
+
+        let fileinfo.scopedtags = scopedtags
+    endif
 
     let s:known_files[a:fname] = fileinfo
 endfunction
@@ -348,24 +371,11 @@ function! s:RenderContent(fname, ftype)
     endif
 
     let typeinfo = s:known_types[a:ftype]
-    let tags     = copy(s:known_files[a:fname].tags)
+    let fileinfo = s:known_files[a:fname]
 
-    " Process and print scoped tags if there are any
-    if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
-        " Extract top-level scopes, removing them from the tag list
-        let scopedtags = filter(copy(tags),
-                              \ 's:IsTopLevelScopeDef(typeinfo, v:val)')
-        call filter(tags, '!s:IsTopLevelScopeDef(typeinfo, v:val)')
-
-        " Add children
-        for tag in scopedtags
-            let scopetype = typeinfo.kind2scope[tag.fields.kind]
-            let tag.children = s:GetChildTags(tags, scopetype,
-                                            \ '', tag.name, typeinfo)
-        endfor
-
-        " Print the tags
-        for tag in scopedtags
+    " Print scoped tags if there are any
+    if has_key(fileinfo, 'scopedtags')
+        for tag in fileinfo.scopedtags
             silent! put =tag.name . ' : ' . typeinfo.kind2scope[tag.fields.kind]
 
             for childtag in tag.children
@@ -378,7 +388,7 @@ function! s:RenderContent(fname, ftype)
 
     " Print non-scoped tags
     for kind in typeinfo.kinds
-        let curtags = filter(copy(tags), 'v:val.fields.kind == kind[0]')
+        let curtags = filter(copy(fileinfo.tags), 'v:val.fields.kind == kind[0]')
 
         if empty(curtags)
             continue
