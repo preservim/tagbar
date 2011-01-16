@@ -18,17 +18,17 @@ if !exists('*system')
     finish
 endif
 
-if !exists('g:tagbar_ctags_exe')
-    if executable('exuberant-ctags')
-        let g:tagbar_ctags_exe = 'exuberant-ctags'
+if !exists('g:tagbar_ctags_bin')
+    if executable('ctags-exuberant')
+        let g:tagbar_ctags_bin = 'ctags-exuberant'
     elseif executable('exctags')
-        let g:tagbar_ctags_exe = 'exctags'
+        let g:tagbar_ctags_bin = 'exctags'
     elseif executable('ctags')
-        let g:tagbar_ctags_exe = 'ctags'
+        let g:tagbar_ctags_bin = 'ctags'
     elseif executable('ctags.exe')
-        let g:tagbar_ctags_exe = 'ctags.exe'
+        let g:tagbar_ctags_bin = 'ctags.exe'
     elseif executable('tags')
-        let g:tagbar_ctags_exe = 'tags'
+        let g:tagbar_ctags_bin = 'tags'
     else
         echomsg 'Tagbar: Exuberant ctags not found, skipping plugin'
         finish
@@ -281,7 +281,7 @@ function! s:ProcessFile(fname, ftype)
     let ctags_args .= ' --language-force=' . ctags_type .
                     \ ' --' . ctags_type . '-kinds=' . ctags_kinds . ' '
 
-    let ctags_cmd = g:tagbar_ctags_exe . ctags_args . shellescape(a:fname)
+    let ctags_cmd = g:tagbar_ctags_bin . ctags_args . shellescape(a:fname)
     let ctags_output = system(ctags_cmd)
 
     if v:shell_error
