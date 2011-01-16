@@ -79,6 +79,11 @@ function! s:InitTypes()
         \ 'class'     : 'c',
         \ 'struct'    : 's'
     \ }
+    let type_cpp.kind2scope = {
+        \ 'n' : 'namespace',
+        \ 'c' : 'class',
+        \ 's' : 'struct'
+    \ }
     let s:known_types.cpp = type_cpp
 
     let type_python = {}
@@ -94,7 +99,13 @@ function! s:InitTypes()
     \ ]
     let type_python.scope2kind = {
         \ 'class'    : 'c',
-        \ 'function' : 'f'
+        \ 'function' : 'f',
+        \ 'member'   : 'm'
+    \ }
+    let type_python.kind2scope = {
+        \ 'c' : 'class',
+        \ 'f' : 'function',
+        \ 'm' : 'function'
     \ }
     let s:known_types.python = type_python
 
@@ -249,7 +260,7 @@ function! s:IsValidFile(fname, ftype)
 endfunction
 
 function! s:ProcessFile(fname, ftype)
-    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksaz --extra= '
+    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksSaz --extra= '
 
     let ctags_args .= ' --sort=yes '
 
@@ -331,54 +342,33 @@ function! s:RenderContent(fname, ftype)
     let typeinfo = s:known_types[a:ftype]
     let tags     = copy(s:known_files[a:fname].tags)
 
+    " Process and print scoped tags if there are any
     if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
-        for scope in typeinfo.scopes
-            let members = filter(copy(tags), 'has_key(v:val.fields, scope)')
+        " Extract top-level scopes, removing them from the tag list
+        let scopedtags = filter(copy(tags),
+                              \ 's:IsTopLevelScopeDef(typeinfo, v:val)')
+        call filter(tags, '!s:IsTopLevelScopeDef(typeinfo, v:val)')
 
-            " remove tags in this scope from the tag list so they
-            " don't get displayed twice
-            call filter(tags, '!has_key(v:val.fields, scope)')
+        " Add children
+        for tag in scopedtags
+            let scopetype = typeinfo.kind2scope[tag.fields.kind]
+            let tag.children = s:GetChildTags(tags, scopetype,
+                                            \ '', tag.name, typeinfo)
+        endfor
 
-            if empty(members)
-                continue
-            endif
+        " Print the tags
+        for tag in scopedtags
+            silent! put =tag.name . ' : ' . typeinfo.kind2scope[tag.fields.kind]
 
-            let entries = {}
-
-            " sort tags under their scope structure name
-            " TODO: preserve order of scopes
-            for member in members
-                let scopevalue = member.fields[scope]
-                if has_key(entries, scopevalue)
-                    let entries[scopevalue] += [member]
-                else
-                    let entries[scopevalue]  = [member]
-                endif
+            for childtag in tag.children
+                call s:PrintTag(childtag, 1, typeinfo)
             endfor
 
-            " print scope content
-            for key in sort(keys(entries))
-                silent! put =key . ' : ' . scope
-
-                for entry in entries[key]
-                    if has_key(entry.fields, 'signature')
-                        let sig = ' ' . entry.fields.signature
-                    else
-                        let sig = ''
-                    endif
-                    silent! put =' ' . entry.name . sig
-                endfor
-
-                silent! put _
-            endfor
-
-            " remove the scoping structure from the tag list since we
-            " don't need to display it separately again
-            let scopekind = typeinfo.scope2kind[scope]
-            call filter(tags, 'v:val.fields.kind != scopekind')
+            silent! put _
         endfor
     endif
 
+    " Print non-scoped tags
     for kind in typeinfo.kinds
         let curtags = filter(copy(tags), 'v:val.fields.kind == kind[0]')
 
@@ -389,7 +379,7 @@ function! s:RenderContent(fname, ftype)
         silent! put =strpart(kind, 2)
 
         for tag in curtags
-            silent! put =' ' . tag.name
+            silent! put ='  ' . tag.name
         endfor
 
         silent! put _
@@ -400,6 +390,78 @@ function! s:RenderContent(fname, ftype)
     let &lazyredraw = lazyredraw_save
 
     execute 'wincmd p'
+endfunction
+
+function! s:IsTopLevelScopeDef(typeinfo, tag)
+    let is_scope_def = 0
+
+    " Does the tag specify a scope?
+    for scope in a:typeinfo.scopes
+        if a:typeinfo.scope2kind[scope] == a:tag.fields.kind
+            let is_scope_def = 1
+            break
+        endif
+    endfor
+
+    if !is_scope_def
+        return 0
+    endif
+
+    " Is the tag not inside of any scopes?
+    for scope in a:typeinfo.scopes
+        if has_key(a:tag.fields, scope)
+            return 0
+        endif
+    endfor
+
+    return 1
+endfunction
+
+function! s:GetChildTags(tags, pscopetype, pscope, pname, typeinfo)
+    if empty(a:pscope)
+        let curscope = a:pname
+    else
+        let curscope = a:pscope . a:typeinfo.sro . a:pname
+    endif
+
+    " Extract tags that are children of the given tag,
+    " removing them from the tag list
+    let is_child = 'has_key(v:val.fields, a:pscopetype) &&
+                  \ v:val.fields[a:pscopetype] == curscope'
+    let childtags = filter(copy(a:tags), is_child)
+    call filter(a:tags, '!(' . is_child . ')')
+
+    " Recursively add children
+    for tag in childtags
+        if has_key(a:typeinfo.kind2scope, tag.fields.kind)
+            let curscopetype = a:typeinfo.kind2scope[tag.fields.kind]
+            let tag.children = s:GetChildTags(a:tags, curscopetype,
+                                            \ curscope, tag.name, a:typeinfo)
+        endif
+    endfor
+
+    return childtags
+endfunction
+
+function! s:PrintTag(tag, depth, typeinfo)
+    let taginfo = ''
+
+    if has_key(a:tag.fields, 'signature')
+        let taginfo .= a:tag.fields.signature
+    endif
+    if has_key(a:typeinfo.kind2scope, a:tag.fields.kind)
+        let taginfo .= ' : ' . a:typeinfo.kind2scope[a:tag.fields.kind]
+    endif
+
+    " Print tag indented according to depth
+    silent! put =repeat(' ', a:depth * 2) . a:tag.name . taginfo
+
+    " Recursively print children
+    if has_key(a:tag, 'children')
+        for childtag in a:tag.children
+            call s:PrintTag(childtag, a:depth + 1, a:typeinfo)
+        endfor
+    endif
 endfunction
 
 function! s:PrintWarningMsg(msg)
