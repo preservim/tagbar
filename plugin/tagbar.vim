@@ -53,6 +53,10 @@ if !exists('g:tagbar_autoclose')
     let g:tagbar_autoclose = 0
 endif
 
+if !exists('g:tagbar_sort')
+    let g:tagbar_sort = 1
+endif
+
 function! s:InitTypes()
     let s:known_files = {}
     let s:known_types = {}
@@ -100,6 +104,17 @@ function! s:InitTypes()
     let s:known_types.python = type_python
 
     call extend(s:known_types, g:tagbar_types)
+
+    " Create a dictionary of the kind order for fast
+    " access in sorting functions
+    for type in values(s:known_types)
+        let i = 0
+        let type.kinddict = {}
+        for kind in type.kinds
+            let type.kinddict[kind[0]] = i
+            let i += 1
+        endfor
+    endfor
 endfunction
 
 call s:InitTypes()
@@ -311,6 +326,16 @@ function! s:ProcessFile(fname, ftype)
         call extend(fileinfo.tags, scopedtags)
     endif
 
+    " Script-local variable needed since compare functions can't
+    " take extra arguments
+    let s:compare_typeinfo = typeinfo
+
+    if g:tagbar_sort
+        call sort(fileinfo.tags, 's:CompareByKind')
+    else
+        call sort(fileinfo.tags, 's:CompareByLine')
+    endif
+
     let s:known_files[a:fname] = fileinfo
 endfunction
 
@@ -338,6 +363,28 @@ function! s:ParseTagline(line)
     endfor
 
     return taginfo
+endfunction
+
+function! s:CompareByKind(tag1, tag2)
+    let typeinfo = s:compare_typeinfo
+
+    if typeinfo.kinddict[a:tag1.fields.kind] <
+     \ typeinfo.kinddict[a:tag2.fields.kind]
+        return -1
+    elseif typeinfo.kinddict[a:tag1.fields.kind] >
+         \ typeinfo.kinddict[a:tag2.fields.kind]
+        return 1
+    else
+        if a:tag1.name <= a:tag2.name
+            return -1
+        else
+            return 1
+        endif
+    endif
+endfunction
+
+function! s:CompareByLine(tag1, tag2)
+    return a:tag1.fields.line - a:tag2.fields.line
 endfunction
 
 function! s:RenderContent(fname, ftype)
@@ -432,6 +479,16 @@ function! s:GetChildTags(tags, pscopetype, pscope, pname, typeinfo)
                   \ v:val.fields[a:pscopetype] == curscope'
     let childtags = filter(copy(a:tags), is_child)
     call filter(a:tags, '!(' . is_child . ')')
+
+    " Script-local variable needed since compare functions can't
+    " take extra arguments
+    let s:compare_typeinfo = typeinfo
+
+    if g:tagbar_sort
+        call sort(childtags, 's:CompareByKind')
+    else
+        call sort(childtags, 's:CompareByLine')
+    endif
 
     " Recursively add children
     for tag in childtags
