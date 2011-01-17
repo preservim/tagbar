@@ -281,11 +281,10 @@ function! s:ProcessFile(fname, ftype)
 
     let typeinfo = s:known_types[a:ftype]
 
-    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksSaz --extra= '
-
-    let ctags_args .= ' --sort=yes '
+    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksSaz --extra= --sort=yes '
 
     let ctags_type = typeinfo.ctagstype
+
     let ctags_kinds = ""
     for kind in typeinfo.kinds
         let [short, full] = split(kind, ':')
@@ -336,7 +335,7 @@ function! s:ProcessFile(fname, ftype)
                                             \ '', tag.name, typeinfo)
         endfor
 
-        call s:ProcessPseudoTags(fileinfo.tags, typeinfo)
+        call s:AddPseudoTags(fileinfo.tags, typeinfo)
 
         call extend(fileinfo.tags, scopedtags)
     endif
@@ -376,7 +375,7 @@ function! s:ParseTagline(line)
     return taginfo
 endfunction
 
-function! s:ProcessPseudoTags(tags, typeinfo)
+function! s:AddPseudoTags(tags, typeinfo)
     for scope in a:typeinfo.scopes
         let orphans = filter(copy(a:tags),
                            \ 'has_key(v:val.fields, scope)')
