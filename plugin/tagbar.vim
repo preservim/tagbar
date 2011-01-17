@@ -83,6 +83,11 @@ function! s:InitTypes()
         \ 'c' : 'class',
         \ 's' : 'struct'
     \ }
+    let type_cpp.scope2kind = {
+        \ 'namespace' : 'n',
+        \ 'class'     : 'c',
+        \ 'struct'    : 's'
+    \ }
     let s:known_types.cpp = type_cpp
 
     let type_python = {}
@@ -100,6 +105,10 @@ function! s:InitTypes()
         \ 'c' : 'class',
         \ 'f' : 'function',
         \ 'm' : 'function'
+    \ }
+    let type_python.scope2kind = {
+        \ 'class'    : 'c',
+        \ 'function' : 'f'
     \ }
     let s:known_types.python = type_python
 
@@ -310,6 +319,10 @@ function! s:ProcessFile(fname, ftype)
         call add(fileinfo.tags, taginfo)
     endfor
 
+    " Script-local variable needed since compare functions can't
+    " take extra arguments
+    let s:compare_typeinfo = typeinfo
+
     if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
         " Extract top-level scopes, removing them from the tag list
         let scopedtags = filter(copy(fileinfo.tags),
@@ -323,12 +336,10 @@ function! s:ProcessFile(fname, ftype)
                                             \ '', tag.name, typeinfo)
         endfor
 
+        call s:ProcessPseudoTags(fileinfo.tags, typeinfo)
+
         call extend(fileinfo.tags, scopedtags)
     endif
-
-    " Script-local variable needed since compare functions can't
-    " take extra arguments
-    let s:compare_typeinfo = typeinfo
 
     if g:tagbar_sort
         call sort(fileinfo.tags, 's:CompareByKind')
@@ -363,6 +374,45 @@ function! s:ParseTagline(line)
     endfor
 
     return taginfo
+endfunction
+
+function! s:ProcessPseudoTags(tags, typeinfo)
+    for scope in a:typeinfo.scopes
+        let orphans = filter(copy(a:tags),
+                           \ 'has_key(v:val.fields, scope)')
+        if empty(orphans)
+            continue
+        endif
+        call filter(a:tags, '!has_key(v:val.fields, scope)')
+
+        let pseudotags = {}
+
+        for tag in orphans
+            let pseudoname = tag.fields[scope]
+
+            if has_key(pseudotags, pseudoname)
+                call add(pseudotags[pseudoname].children, tag)
+            else
+                let pseudotag              = {}
+                let pseudotag.name         = pseudoname . '*'
+                let pseudotag.fields       = {}
+                let pseudotag.fields.kind  = a:typeinfo.scope2kind[scope]
+                let pseudotag.fields.line  = 0
+                let pseudotag.children     = [tag]
+                let pseudotags[pseudoname] = pseudotag
+            endif
+        endfor
+
+        for tag in values(pseudotags)
+            if g:tagbar_sort
+                call sort(tag.children, 's:CompareByKind')
+            else
+                call sort(tag.children, 's:CompareByLine')
+            endif
+        endfor
+
+        call extend(a:tags, values(pseudotags))
+    endfor
 endfunction
 
 function! s:CompareByKind(tag1, tag2)
