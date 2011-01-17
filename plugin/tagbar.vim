@@ -308,7 +308,7 @@ function! s:ProcessFile(fname, ftype)
                                             \ '', tag.name, typeinfo)
         endfor
 
-        let fileinfo.scopedtags = scopedtags
+        call extend(fileinfo.tags, scopedtags)
     endif
 
     let s:known_files[a:fname] = fileinfo
@@ -363,20 +363,7 @@ function! s:RenderContent(fname, ftype)
     let typeinfo = s:known_types[a:ftype]
     let fileinfo = s:known_files[a:fname]
 
-    " Print scoped tags if there are any
-    if has_key(fileinfo, 'scopedtags')
-        for tag in fileinfo.scopedtags
-            silent! put =tag.name . ' : ' . typeinfo.kind2scope[tag.fields.kind]
-
-            for childtag in tag.children
-                call s:PrintTag(childtag, 1, typeinfo)
-            endfor
-
-            silent! put _
-        endfor
-    endif
-
-    " Print non-scoped tags
+    " Print tags
     for kind in typeinfo.kinds
         let curtags = filter(copy(fileinfo.tags), 'v:val.fields.kind == kind[0]')
 
@@ -384,13 +371,27 @@ function! s:RenderContent(fname, ftype)
             continue
         endif
 
-        silent! put =strpart(kind, 2)
+        if has_key(typeinfo.kind2scope, kind[0])
+            " Scoped tags
+            for tag in curtags
+                silent! put =tag.name . ' : ' . typeinfo.kind2scope[kind[0]]
 
-        for tag in curtags
-            silent! put ='  ' . tag.name
-        endfor
+                for childtag in tag.children
+                    call s:PrintTag(childtag, 1, typeinfo)
+                endfor
 
-        silent! put _
+                silent! put _
+            endfor
+        else
+            " Non-scoped tags
+            silent! put =strpart(kind, 2)
+
+            for tag in curtags
+                silent! put ='  ' . tag.name
+            endfor
+
+            silent! put _
+        endif
     endfor
 
     setlocal nomodifiable
