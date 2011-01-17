@@ -482,7 +482,7 @@ function! s:GetChildTags(tags, pscopetype, pscope, pname, typeinfo)
 
     " Script-local variable needed since compare functions can't
     " take extra arguments
-    let s:compare_typeinfo = typeinfo
+    let s:compare_typeinfo = a:typeinfo
 
     if g:tagbar_sort
         call sort(childtags, 's:CompareByKind')
