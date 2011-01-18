@@ -158,9 +158,12 @@ function! s:OpenWindow()
     setlocal filetype=tagbar
     setlocal nolist
     setlocal nonumber
-    setlocal norelativenumber
     setlocal nowrap
     setlocal winfixwidth
+
+    if exists('+relativenumber')
+        setlocal norelativenumber
+    endif
 
     setlocal foldenable
     setlocal foldminlines=0
@@ -314,8 +317,11 @@ function! s:ProcessFile(fname, ftype)
     let fileinfo.tags = []
 
     for line in rawtaglist
-        let taginfo = s:ParseTagline(line)
-        call add(fileinfo.tags, taginfo)
+        let parts = split(line, ';"')
+        if len(parts) == 2 " Is a valid tag line
+            let taginfo = s:ParseTagline(parts[0], parts[1])
+            call add(fileinfo.tags, taginfo)
+        endif
     endfor
 
     " Script-local variable needed since compare functions can't
@@ -352,18 +358,16 @@ endfunction
 " name<TAB>file<TAB>expattern;"fields
 " fields: <TAB>name:value
 " fields that are always present: kind, line
-function! s:ParseTagline(line)
-    let parts = split(a:line, ';"')
-
+function! s:ParseTagline(part1, part2)
     let taginfo = {}
 
-    let basic_info      = split(parts[0], '\t')
+    let basic_info      = split(a:part1, '\t')
     let taginfo.name    = basic_info[0]
     let taginfo.file    = basic_info[1]
     let taginfo.pattern = basic_info[2]
 
     let taginfo.fields = {}
-    let fields = split(parts[1], '\t')
+    let fields = split(a:part2, '\t')
     for field in fields
         " can't use split() since the value can contain ':'
         let delimit             = stridx(field, ':')
