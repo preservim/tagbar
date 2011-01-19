@@ -380,42 +380,105 @@ function! s:ParseTagline(part1, part2)
 endfunction
 
 function! s:AddPseudoTags(tags, typeinfo)
+    let pseudotags = []
+
     for scope in a:typeinfo.scopes
-        let orphans = filter(copy(a:tags),
-                           \ 'has_key(v:val.fields, scope)')
-        if empty(orphans)
-            continue
-        endif
-        call filter(a:tags, '!has_key(v:val.fields, scope)')
+        call s:AddPseudoChildren(a:tags, pseudotags, '', scope, 1, a:typeinfo)
 
-        let pseudotags = {}
-
-        for tag in orphans
-            let pseudoname = tag.fields[scope]
-
-            if has_key(pseudotags, pseudoname)
-                call add(pseudotags[pseudoname].children, tag)
-            else
-                let pseudotag              = {}
-                let pseudotag.name         = pseudoname . '*'
-                let pseudotag.fields       = {}
-                let pseudotag.fields.kind  = a:typeinfo.scope2kind[scope]
-                let pseudotag.fields.line  = 0
-                let pseudotag.children     = [tag]
-                let pseudotags[pseudoname] = pseudotag
-            endif
-        endfor
-
-        for tag in values(pseudotags)
+        for tag in pseudotags
             if g:tagbar_sort
                 call sort(tag.children, 's:CompareByKind')
             else
                 call sort(tag.children, 's:CompareByLine')
             endif
         endfor
-
-        call extend(a:tags, values(pseudotags))
     endfor
+
+    call extend(a:tags, pseudotags)
+endfunction
+
+" This is probably the most cryptic method since it has to deal with things
+" that aren't actually there and several corner cases. Try not to think about
+" it too much.
+function! s:AddPseudoChildren(tags, pseudotags, pcomplpath,
+                            \ scope, depth, typeinfo)
+    let is_orphan = 'has_key(v:val.fields, a:scope)'
+    if !empty(a:pcomplpath)
+        let is_orphan .= ' && s:PseudoPathMatches(v:val.fields[a:scope],
+                                                \ a:pcomplpath, a:typeinfo.sro)'
+    endif
+    let is_cur_orphan = is_orphan . ' && len(split(v:val.fields[a:scope],
+                                                 \ a:typeinfo.sro)) == a:depth'
+    let curorphans    = filter(copy(a:tags), is_cur_orphan)
+    if !empty(curorphans)
+        call filter(a:tags, '!(' . is_cur_orphan . ')')
+    endif
+
+    let is_min_orphan = is_orphan . ' && len(split(v:val.fields[a:scope],
+                                                 \ a:typeinfo.sro)) >= a:depth'
+    let minorphans    = filter(copy(a:tags), is_min_orphan)
+
+    if empty(curorphans) && empty(minorphans)
+        return
+    endif
+
+    if !empty(curorphans)
+        for orphan in curorphans
+            let pcompllength = len(split(a:pcomplpath, a:typeinfo.sro))
+            let pseudoname   = substitute(orphan.fields[a:scope],
+                                        \ a:pcomplpath, '', '')
+            let pseudoname   = substitute(pseudoname,
+                                        \ '^' . a:typeinfo.sro, '', '')
+            let pseudopath   = split(pseudoname, a:typeinfo.sro)
+
+            let maxplength = a:depth - 1 - pcompllength
+            let existing = filter(copy(a:pseudotags),
+                                \ 'v:val.name == join(pseudopath[:maxplength],
+                                                    \ a:typeinfo.sro)')
+            if empty(existing)
+                let pseudotag             = {}
+                let pseudotag.name        = pseudoname
+                let pseudotag.fields      = {}
+                let pseudotag.fields.kind = a:typeinfo.scope2kind[a:scope]
+                let pseudotag.fields.line = 0
+                let pseudotag.children    = [orphan]
+                call add(a:pseudotags, pseudotag)
+            else
+                call add(existing[0].children, orphan)
+            endif
+        endfor
+
+        for tag in a:pseudotags
+            if !has_key(tag, 'children')
+                continue
+            endif
+
+            if g:tagbar_sort
+                call sort(tag.children, 's:CompareByKind')
+            else
+                call sort(tag.children, 's:CompareByLine')
+            endif
+
+            if empty(a:pcomplpath)
+                let complpath = tag.name
+            else
+                let complpath = a:pcomplpath . a:typeinfo.sro . tag.name
+            endif
+            call s:AddPseudoChildren(a:tags, tag.children, complpath,
+                                   \ a:scope, a:depth + 1, a:typeinfo)
+        endfor
+    endif
+
+    if !empty(minorphans)
+        call s:AddPseudoChildren(a:tags, a:pseudotags, a:pcomplpath,
+                               \ a:scope, a:depth + 1, a:typeinfo)
+    endif
+endfunction
+
+function! s:PseudoPathMatches(scopename, pcomplpath, sro)
+    let index      = strridx(a:scopename, a:sro)
+    let parentpath = strpart(a:scopename, 0, index)
+    return parentpath == a:pcomplpath
 endfunction
 
 function! s:CompareByKind(tag1, tag2)
@@ -474,7 +537,17 @@ function! s:RenderContent(fname, ftype)
         if has_key(typeinfo.kind2scope, kind[0])
             " Scoped tags
             for tag in curtags
-                silent! put =tag.name . ' : ' . typeinfo.kind2scope[kind[0]]
+                let taginfo = ''
+
+                if tag.fields.line == 0 " Tag is a pseudo-tag
+                    let taginfo .= '*'
+                endif
+                if has_key(tag.fields, 'signature')
+                    let taginfo .= tag.fields.signature
+                endif
+                let taginfo .= ' : ' . typeinfo.kind2scope[kind[0]]
+
+                silent! put =tag.name . taginfo
 
                 for childtag in tag.children
                     call s:PrintTag(childtag, 1, typeinfo)
@@ -558,6 +631,9 @@ endfunction
 function! s:PrintTag(tag, depth, typeinfo)
     let taginfo = ''
 
+    if a:tag.fields.line == 0 " Tag is a pseudo-tag
+        let taginfo .= '*'
+    endif
     if has_key(a:tag.fields, 'signature')
         let taginfo .= a:tag.fields.signature
     endif
