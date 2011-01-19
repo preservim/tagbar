@@ -284,7 +284,12 @@ function! s:ProcessFile(fname, ftype)
 
     let typeinfo = s:known_types[a:ftype]
 
-    let ctags_args = ' -f - --format=2 --excmd=pattern --fields=nksSaz --extra= --sort=yes '
+    let ctags_args  = ' -f - '
+    let ctags_args .= ' --format=2 '
+    let ctags_args .= ' --excmd=pattern '
+    let ctags_args .= ' --fields=nksSaz '
+    let ctags_args .= ' --extra= '
+    let ctags_args .= ' --sort=yes '
 
     let ctags_type = typeinfo.ctagstype
 
