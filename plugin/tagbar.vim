@@ -324,10 +324,6 @@ function! s:ProcessFile(fname, ftype)
         endif
     endfor
 
-    " Script-local variable needed since compare functions can't
-    " take extra arguments
-    let s:compare_typeinfo = typeinfo
-
     if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
         " Extract top-level scopes, removing them from the tag list
         let scopedtags = filter(copy(fileinfo.tags),
@@ -346,13 +342,29 @@ function! s:ProcessFile(fname, ftype)
         call extend(fileinfo.tags, scopedtags)
     endif
 
-    if g:tagbar_sort
-        call sort(fileinfo.tags, 's:CompareByKind')
-    else
-        call sort(fileinfo.tags, 's:CompareByLine')
-    endif
+    " Script-local variable needed since compare functions can't
+    " take extra arguments
+    let s:compare_typeinfo = typeinfo
+
+    for tag in fileinfo.tags
+        if g:tagbar_sort
+            call s:SortTags(fileinfo.tags, 's:CompareByKind')
+        else
+            call s:SortTags(fileinfo.tags, 's:CompareByLine')
+        endif
+    endfor
 
     let s:known_files[a:fname] = fileinfo
+endfunction
+
+function! s:SortTags(tags, comparemethod)
+    call sort(a:tags, a:comparemethod)
+
+    for tag in a:tags
+        if has_key(tag, 'children')
+            call s:SortTags(tag.children, a:comparemethod)
+        endif
+    endfor
 endfunction
 
 " name<TAB>file<TAB>expattern;"fields
@@ -384,14 +396,6 @@ function! s:AddPseudoTags(tags, typeinfo)
 
     for scope in a:typeinfo.scopes
         call s:AddPseudoChildren(a:tags, pseudotags, '', scope, 1, a:typeinfo)
-
-        for tag in pseudotags
-            if g:tagbar_sort
-                call sort(tag.children, 's:CompareByKind')
-            else
-                call sort(tag.children, 's:CompareByLine')
-            endif
-        endfor
     endfor
 
     call extend(a:tags, pseudotags)
@@ -451,12 +455,6 @@ function! s:AddPseudoChildren(tags, pseudotags, pcomplpath,
         for tag in a:pseudotags
             if !has_key(tag, 'children')
                 continue
-            endif
-
-            if g:tagbar_sort
-                call sort(tag.children, 's:CompareByKind')
-            else
-                call sort(tag.children, 's:CompareByLine')
             endif
 
             if empty(a:pcomplpath)
@@ -605,16 +603,6 @@ function! s:GetChildTags(tags, pscopetype, pscope, pname, typeinfo)
                   \ v:val.fields[a:pscopetype] == curscope'
     let childtags = filter(copy(a:tags), is_child)
     call filter(a:tags, '!(' . is_child . ')')
-
-    " Script-local variable needed since compare functions can't
-    " take extra arguments
-    let s:compare_typeinfo = a:typeinfo
-
-    if g:tagbar_sort
-        call sort(childtags, 's:CompareByKind')
-    else
-        call sort(childtags, 's:CompareByLine')
-    endif
 
     " Recursively add children
     for tag in childtags
