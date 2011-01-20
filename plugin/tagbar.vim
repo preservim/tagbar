@@ -73,7 +73,13 @@ function! s:InitTypes()
 
     let type_cpp = {}
     let type_cpp.ctagstype = 'c++'
-    let type_cpp.scopes    = ['namespace', 'class', 'struct']
+    let type_cpp.scopes    = [
+        \ 'namespace',
+        \ 'class',
+        \ 'struct',
+        \ 'enum',
+        \ 'union'
+    \ ]
     let type_cpp.sro       = '::'
     let type_cpp.kinds     = [
         \ 'd:macros',
@@ -82,6 +88,7 @@ function! s:InitTypes()
         \ 's:structs',
         \ 't:typedefs',
         \ 'g:enum',
+        \ 'e:enumerators',
         \ 'u:unions',
         \ 'p:prototypes',
         \ 'f:functions',
@@ -91,12 +98,16 @@ function! s:InitTypes()
     let type_cpp.kind2scope = {
         \ 'n' : 'namespace',
         \ 'c' : 'class',
-        \ 's' : 'struct'
+        \ 's' : 'struct',
+        \ 'g' : 'enum',
+        \ 'u' : 'union'
     \ }
     let type_cpp.scope2kind = {
         \ 'namespace' : 'n',
         \ 'class'     : 'c',
-        \ 'struct'    : 's'
+        \ 'struct'    : 's',
+        \ 'enum'      : 'g',
+        \ 'union'     : 'u'
     \ }
     let s:known_types.cpp = type_cpp
 
