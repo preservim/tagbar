@@ -58,7 +58,16 @@ if !exists('g:tagbar_sort')
 endif
 
 function! s:InitTypes()
+    " Dictionary of the already processed files, index by file name with
+    " complete path.
+    " The entries are again dictionaries with the following fields:
+    " - mtime: File modification time
+    " - tags:  List of the tags that are present in the file, sorted according
+    "          to the value of 'g:tagbar_sort'
+    " - fline: Dictionary of the tags, indexed by line number in the file
+    " - tline: Dictionary of the tags, indexed by line number in the tagbar
     let s:known_files = {}
+
     let s:known_types = {}
 
     let type_cpp = {}
@@ -209,7 +218,7 @@ function! s:CloseWindow()
         " Go to the tagbar window, close it and then come back to the
         " original window
         let curbufnr = bufnr('%')
-        exe tagbarwinnr . 'wincmd w'
+        execute tagbarwinnr . 'wincmd w'
         close
         " Need to jump back to the original window only if we are not
         " already in that window
@@ -396,6 +405,10 @@ function! s:ParseTagline(part1, part2)
     return taginfo
 endfunction
 
+" Pseudo-tags are tags that have children in the current file but but don't
+" appear themselves in it as a tag. This can happen for example with C++
+" classes that are defined in header files but implemented in .cpp files or
+" with anonymous namespaces.
 function! s:AddPseudoTags(tags, typeinfo)
     let pseudotags = []
 
@@ -406,7 +419,7 @@ function! s:AddPseudoTags(tags, typeinfo)
     call extend(a:tags, pseudotags)
 endfunction
 
-" This is probably the most cryptic method since it has to deal with things
+" This is probably the most cryptic function since it has to deal with things
 " that aren't actually there and several corner cases. Try not to think about
 " it too much.
 function! s:AddPseudoChildren(tags, pseudotags, pcomplpath,
@@ -416,6 +429,8 @@ function! s:AddPseudoChildren(tags, pseudotags, pcomplpath,
         let is_orphan .= ' && s:PseudoPathMatches(v:val.fields[a:scope],
                                                 \ a:pcomplpath, a:typeinfo.sro)'
     endif
+
+    " Orphans with the current 'pcomplpath' prefix at the current depth
     let is_cur_orphan = is_orphan . ' && len(split(v:val.fields[a:scope],
                                                  \ a:typeinfo.sro)) == a:depth'
     let curorphans    = filter(copy(a:tags), is_cur_orphan)
@@ -425,12 +440,16 @@ function! s:AddPseudoChildren(tags, pseudotags, pcomplpath,
 
     let is_min_orphan = is_orphan . ' && len(split(v:val.fields[a:scope],
                                                  \ a:typeinfo.sro)) >= a:depth'
+    " Orphans with the current 'pcomplpath' prefix and at least the current
+    " depth. Since the tags that are at the current depth have already been
+    " removed these must be at a lower depth.
     let minorphans    = filter(copy(a:tags), is_min_orphan)
 
     if empty(curorphans) && empty(minorphans)
         return
     endif
 
+    " Process orphans that are at the current depth
     if !empty(curorphans)
         for orphan in curorphans
             let pcompllength = len(split(a:pcomplpath, a:typeinfo.sro))
@@ -472,6 +491,7 @@ function! s:AddPseudoChildren(tags, pseudotags, pcomplpath,
         endfor
     endif
 
+    " Process orphans that are at a lower depth
     if !empty(minorphans)
         call s:AddPseudoChildren(a:tags, a:pseudotags, a:pcomplpath,
                                \ a:scope, a:depth + 1, a:typeinfo)
