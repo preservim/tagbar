@@ -157,7 +157,7 @@ function! s:OpenWindow()
     endif
 
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
-    execute 'silent! keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
+    exe 'silent! keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
@@ -627,7 +627,8 @@ function! s:RenderContent(fname, ftype)
 
     " Print tags
     for kind in typeinfo.kinds
-        let curtags = filter(copy(fileinfo.tags), 'v:val.fields.kind == kind[0]')
+        let curtags = filter(copy(fileinfo.tags),
+                           \ 'v:val.fields.kind == kind[0]')
 
         if empty(curtags)
             continue
