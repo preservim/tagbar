@@ -62,8 +62,9 @@ function! s:InitTypes()
     " complete path.
     " The entries are again dictionaries with the following fields:
     " - mtime: File modification time
-    " - tags:  List of the tags that are present in the file, sorted according
-    "          to the value of 'g:tagbar_sort'
+    " - ftype: The vim file type
+    " - tags:  List of the tags that are present in the file, sorted
+    "          according to the value of 'g:tagbar_sort'
     " - fline: Dictionary of the tags, indexed by line number in the file
     " - tline: Dictionary of the tags, indexed by line number in the tagbar
     let s:known_files = {}
@@ -181,6 +182,10 @@ function! s:OpenWindow()
     setlocal foldcolumn=1
     setlocal foldtext=v:folddashes.getline(v:foldstart)
 
+    " Variable for saving the current file for functions that are called from
+    " the tagbar window
+    let s:current_file = ''
+
     syntax match Comment    '^" .*'              " Comments
     syntax match Identifier '^[^: ]\+$'          " Non-scoped kinds
     syntax match Title      '[^:(* ]\+\ze\*\? :' " Scope names
@@ -191,7 +196,7 @@ function! s:OpenWindow()
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-"    nnoremap <script> <silent> <buffer> k :call <sid>GundoMove(-1)<CR>
+    nnoremap <script> <silent> <buffer> s :call <sid>ToggleSort()<CR>
 
     augroup TagbarAutoCmds
         autocmd!
@@ -264,6 +269,8 @@ function! s:AutoUpdate(fname, line)
     if !has_key(s:known_files, a:fname)
         return
     endif
+
+    let s:current_file = a:fname
 
     call s:HighlightTag(a:fname, a:line)
 endfunction
@@ -347,6 +354,7 @@ function! s:ProcessFile(fname, ftype)
 
     let rawtaglist = split(ctags_output, '\n\+')
 
+    let fileinfo.ftype = a:ftype
     let fileinfo.tags  = []
     let fileinfo.fline = {}
     let fileinfo.tline = {}
@@ -389,16 +397,6 @@ function! s:ProcessFile(fname, ftype)
     endif
 
     let s:known_files[a:fname] = fileinfo
-endfunction
-
-function! s:SortTags(tags, comparemethod)
-    call sort(a:tags, a:comparemethod)
-
-    for tag in a:tags
-        if has_key(tag, 'children')
-            call s:SortTags(tag.children, a:comparemethod)
-        endif
-    endfor
 endfunction
 
 " name<TAB>file<TAB>expattern;"fields
@@ -524,6 +522,16 @@ function! s:PseudoPathMatches(scopename, pcomplpath, sro)
     return parentpath == a:pcomplpath
 endfunction
 
+function! s:SortTags(tags, comparemethod)
+    call sort(a:tags, a:comparemethod)
+
+    for tag in a:tags
+        if has_key(tag, 'children')
+            call s:SortTags(tag.children, a:comparemethod)
+        endif
+    endfor
+endfunction
+
 function! s:CompareByKind(tag1, tag2)
     let typeinfo = s:compare_typeinfo
 
@@ -549,7 +557,12 @@ endfunction
 function! s:RenderContent(fname, ftype)
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
-    execute tagbarwinnr . 'wincmd w'
+    if &filetype == 'tagbar'
+        let in_tagbar = 1
+    else
+        let in_tagbar = 0
+        execute tagbarwinnr . 'wincmd w'
+    endif
 
     let lazyredraw_save = &lazyredraw
     set lazyredraw
@@ -560,9 +573,16 @@ function! s:RenderContent(fname, ftype)
 
     if !s:IsValidFile(a:fname, a:ftype)
         silent! put ='- File type not supported -'
+
+        let s:current_file = ''
+
         setlocal nomodifiable
         let &lazyredraw = lazyredraw_save
-        execute 'wincmd p'
+
+        if !in_tagbar
+            execute 'wincmd p'
+        endif
+
         return
     endif
 
@@ -629,7 +649,9 @@ function! s:RenderContent(fname, ftype)
 
     let &lazyredraw = lazyredraw_save
 
-    execute 'wincmd p'
+    if !in_tagbar
+        execute 'wincmd p'
+    endif
 endfunction
 
 function! s:IsTopLevelScopeDef(typeinfo, tag)
@@ -750,6 +772,32 @@ function! s:HighlightTag(fname, line)
     execute 'wincmd p'
 
     let &eventignore = eventignore_save
+endfunction
+
+function! s:ToggleSort()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    let curline = line('.')
+
+    let fileinfo = s:known_files[s:current_file]
+
+    match none
+
+    let g:tagbar_sort = !g:tagbar_sort
+
+    let s:compare_typeinfo = s:known_types[fileinfo.ftype]
+
+    if g:tagbar_sort
+        call s:SortTags(fileinfo.tags, 's:CompareByKind')
+    else
+        call s:SortTags(fileinfo.tags, 's:CompareByLine')
+    endif
+
+    call s:RenderContent(s:current_file, fileinfo.ftype)
+
+    execute curline
 endfunction
 
 function! s:PrintWarningMsg(msg)
