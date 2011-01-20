@@ -192,10 +192,9 @@ function! s:OpenWindow()
         autocmd BufUnload __Tagbar__ call s:CleanUp()
 "        autocmd CursorHold __Tag_List__ call s:Tlist_Window_Show_Info()
 
-        autocmd BufEnter * call s:RefreshContent()
 "        autocmd TabEnter * silent call s:Tlist_Refresh_Folds()
-"        autocmd CursorHold * silent call s:Tlist_Window_Highlight_Tag(
-"                            \ fnamemodify(bufname('%'), ':p'), line('.'), 1, 0)
+        autocmd BufEnter,CursorHold * silent call s:AutoUpdate(
+                    \ fnamemodify(bufname('%'), ':p'), line('.'))
     augroup END
 
     let &cpoptions = cpoptions_save
@@ -247,26 +246,39 @@ function! s:QuitIfOnlyWindow()
     endif
 endfunction
 
-function! s:RefreshContent()
-    let fname = fnamemodify(bufname('%'), ':p')
+function! s:AutoUpdate(fname, line)
+    call s:RefreshContent(a:fname)
 
-    " Don't do anything when entering the tagbar window
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1 || &filetype == 'tagbar'
+        return
+    endif
+
+    if !has_key(s:known_files, a:fname)
+        return
+    endif
+
+    call s:HighlightTag(a:fname, a:line)
+endfunction
+
+function! s:RefreshContent(fname)
+    " Don't do anything if we're in the tagbar window
     if &filetype == 'tagbar'
         return
     endif
 
-    if has_key(s:known_files, fname)
-        if s:known_files[fname].mtime != getftime(fname)
-            call s:ProcessFile(fname, &filetype)
+    if has_key(s:known_files, a:fname)
+        if s:known_files[a:fname].mtime != getftime(a:fname)
+            call s:ProcessFile(a:fname, &filetype)
         endif
     else
-        call s:ProcessFile(fname, &filetype)
+        call s:ProcessFile(a:fname, &filetype)
     endif
 
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
     if tagbarwinnr != -1
-        call s:RenderContent(fname, &filetype)
+        call s:RenderContent(a:fname, &filetype)
     endif
 endfunction
 
@@ -328,12 +340,15 @@ function! s:ProcessFile(fname, ftype)
 
     let rawtaglist = split(ctags_output, '\n\+')
 
-    let fileinfo.tags = []
+    let fileinfo.tags  = []
+    let fileinfo.fline = {}
+    let fileinfo.tline = {}
 
     for line in rawtaglist
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
             let taginfo = s:ParseTagline(parts[0], parts[1])
+            let fileinfo.fline[taginfo.fields.line] = taginfo
             call add(fileinfo.tags, taginfo)
         endif
     endfor
@@ -572,6 +587,10 @@ function! s:RenderContent(fname, ftype)
 
                 silent! put =tag.name . taginfo
 
+                " Save the current tagbar line in the tag for easy
+                " highlighting access
+                let tag.tline = line('.')
+
                 for childtag in tag.children
                     call s:PrintTag(childtag, 1, typeinfo)
                 endfor
@@ -583,8 +602,19 @@ function! s:RenderContent(fname, ftype)
             silent! put =strpart(kind, 2)
 
             for tag in curtags
-                silent! put ='  ' . tag.name
+                let taginfo = ''
+
+                if has_key(tag.fields, 'signature')
+                    let taginfo .= tag.fields.signature
+                endif
+
+                silent! put ='  ' . tag.name . taginfo
+
+                " Save the current tagbar line in the tag for easy
+                " highlighting access
+                let tag.tline = line('.')
             endfor
+
 
             silent! put _
         endif
@@ -657,12 +687,64 @@ function! s:PrintTag(tag, depth, typeinfo)
     " Print tag indented according to depth
     silent! put =repeat(' ', a:depth * 2) . a:tag.name . taginfo
 
+    " Save the current tagbar line in the tag for easy
+    " highlighting access
+    let a:tag.tline = line('.')
+
     " Recursively print children
     if has_key(a:tag, 'children')
         for childtag in a:tag.children
             call s:PrintTag(childtag, a:depth + 1, a:typeinfo)
         endfor
     endif
+endfunction
+
+function! s:HighlightTag(fname, line)
+    let fileinfo = s:known_files[a:fname]
+
+    let curline = line('.')
+
+    let tagline = 0
+
+    for line in range(curline, 1, -1)
+        if has_key(fileinfo.fline, line)
+            let tagline = fileinfo.fline[line].tline
+            break
+        endif
+    endfor
+
+    let eventignore_save = &eventignore
+    set eventignore=all
+
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    execute tagbarwinnr . 'wincmd w'
+
+    match none
+
+    if tagline == 0
+        execute 1
+        call winline()
+        execute 'wincmd p'
+        let &eventignore = eventignore_save
+        return
+    endif
+
+    " Go to the line containing the tag
+    execute tagline
+
+    if foldclosed('.') != -1
+        .foldopen!
+    endif
+
+    " Make sure the tag is visible in the window
+    call winline()
+
+    let pattern = '/^\%' . tagline . 'l\s*\zs[^( ]\+\ze/'
+    execute 'match Search ' . pattern
+
+    execute 'wincmd p'
+
+    let &eventignore = eventignore_save
 endfunction
 
 function! s:PrintWarningMsg(msg)
