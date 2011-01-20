@@ -193,19 +193,25 @@ function! s:OpenWindow()
     syntax match SpecialKey '(.*)'               " Signatures
     syntax match NonText    '\*\ze :'            " Pseudo-tag identifiers
 
+    if has('balloon_eval')
+        setlocal balloonexpr=TagbarBalloonExpr()
+        set ballooneval
+    endif
+
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-    nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
-    nnoremap <script> <silent> <buffer> <CR> :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> s       :call <SID>ToggleSort()<CR>
+    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
-                                           \ :call <SID>JumpToTag()<CR>
+                                              \ :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
 
     augroup TagbarAutoCmds
         autocmd!
-        autocmd BufEnter  __Tagbar__ nested call s:QuitIfOnlyWindow()
-        autocmd BufUnload __Tagbar__ call s:CleanUp()
-"        autocmd CursorHold __Tag_List__ call s:Tlist_Window_Show_Info()
+        autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
+        autocmd BufUnload  __Tagbar__ call s:CleanUp()
+        autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
 "        autocmd TabEnter * silent call s:Tlist_Refresh_Folds()
         autocmd BufEnter,CursorHold * silent call s:AutoUpdate(
@@ -798,29 +804,9 @@ function! s:HighlightTag(fname)
 endfunction
 
 function! s:JumpToTag()
-    if !has_key(s:known_files, s:current_file)
-        return
-    endif
+    let taginfo = s:GetTagInfo(line('.'))
 
-    " Don't do anything in empty and comment lines
-    let curline = getline('.')
-    if curline =~ '^\s*$' || curline[0] == '"'
-        return
-    endif
-
-    let fileinfo = s:known_files[s:current_file]
-
-    let curlinenr = line('.')
-
-    " Check if there is a tag on the current line
-    if !has_key(fileinfo.tline, curlinenr)
-        return
-    endif
-
-    let taginfo = fileinfo.tline[curlinenr]
-
-    " Check if the current tag is not a pseudo-tag
-    if taginfo.fields.line == 0
+    if empty(taginfo)
         return
     endif
 
@@ -843,6 +829,57 @@ function! s:JumpToTag()
     else
         call s:HighlightTag(s:current_file)
     endif
+endfunction
+
+function! s:ShowPrototype()
+    let taginfo = s:GetTagInfo(line('.'))
+
+    if empty(taginfo)
+        return
+    endif
+
+    echo taginfo.prototype
+endfunction
+
+function! TagbarBalloonExpr()
+    let taginfo = s:GetTagInfo(v:beval_lnum)
+
+    if empty(taginfo)
+        return
+    endif
+
+    return taginfo.prototype
+endfunction
+
+" Return the info dictionary of the tag on the specified line. If the line
+" does not contain a valid tag (for example because it is empty or only
+" contains a pseudo-tag) return an empty dictionary.
+function! s:GetTagInfo(linenr)
+    if !has_key(s:known_files, s:current_file)
+        return {}
+    endif
+
+    " Don't do anything in empty and comment lines
+    let curline = getline(a:linenr)
+    if curline =~ '^\s*$' || curline[0] == '"'
+        return {}
+    endif
+
+    let fileinfo = s:known_files[s:current_file]
+
+    " Check if there is a tag on the current line
+    if !has_key(fileinfo.tline, a:linenr)
+        return {}
+    endif
+
+    let taginfo = fileinfo.tline[a:linenr]
+
+    " Check if the current tag is not a pseudo-tag
+    if taginfo.fields.line == 0
+        return {}
+    endif
+
+    return taginfo
 endfunction
 
 function! s:ToggleSort()
