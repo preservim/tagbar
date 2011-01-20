@@ -196,7 +196,10 @@ function! s:OpenWindow()
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-    nnoremap <script> <silent> <buffer> s :call <sid>ToggleSort()<CR>
+    nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
+    nnoremap <script> <silent> <buffer> <CR> :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> <2-LeftMouse>
+                                           \ :call <SID>JumpToTag()<CR>
 
     augroup TagbarAutoCmds
         autocmd!
@@ -206,7 +209,7 @@ function! s:OpenWindow()
 
 "        autocmd TabEnter * silent call s:Tlist_Refresh_Folds()
         autocmd BufEnter,CursorHold * silent call s:AutoUpdate(
-                    \ fnamemodify(bufname('%'), ':p'), line('.'))
+                    \ fnamemodify(bufname('%'), ':p'))
     augroup END
 
     let &cpoptions = cpoptions_save
@@ -258,7 +261,7 @@ function! s:QuitIfOnlyWindow()
     endif
 endfunction
 
-function! s:AutoUpdate(fname, line)
+function! s:AutoUpdate(fname)
     call s:RefreshContent(a:fname)
 
     let tagbarwinnr = bufwinnr('__Tagbar__')
@@ -272,7 +275,7 @@ function! s:AutoUpdate(fname, line)
 
     let s:current_file = a:fname
 
-    call s:HighlightTag(a:fname, a:line)
+    call s:HighlightTag(a:fname)
 endfunction
 
 function! s:RefreshContent(fname)
@@ -408,7 +411,21 @@ function! s:ParseTagline(part1, part2)
     let basic_info      = split(a:part1, '\t')
     let taginfo.name    = basic_info[0]
     let taginfo.file    = basic_info[1]
-    let taginfo.pattern = basic_info[2]
+
+    let pattern = basic_info[2]
+    let start   = 2 " skip the slash and the ^
+    let end     = strlen(pattern) - 1
+    if pattern[end - 1] == '$'
+        let end -= 1
+        let dollar = '\$'
+    else
+        let dollar = ''
+    endif
+    let pattern           = strpart(pattern, start, end - start)
+    let taginfo.pattern   = '\V\^' . pattern . dollar
+    let prototype         = substitute(pattern,   '^[[:space:]]\+', '', '')
+    let prototype         = substitute(prototype, '[[:space:]]\+$', '', '')
+    let taginfo.prototype = prototype
 
     let taginfo.fields = {}
     let fields = split(a:part2, '\t')
@@ -614,10 +631,12 @@ function! s:RenderContent(fname, ftype)
 
                 " Save the current tagbar line in the tag for easy
                 " highlighting access
-                let tag.tline = line('.')
+                let curline                 = line('.')
+                let tag.tline               = curline
+                let fileinfo.tline[curline] = tag
 
                 for childtag in tag.children
-                    call s:PrintTag(childtag, 1, typeinfo)
+                    call s:PrintTag(childtag, 1, fileinfo, typeinfo)
                 endfor
 
                 silent! put _
@@ -637,7 +656,9 @@ function! s:RenderContent(fname, ftype)
 
                 " Save the current tagbar line in the tag for easy
                 " highlighting access
-                let tag.tline = line('.')
+                let curline                 = line('.')
+                let tag.tline               = curline
+                let fileinfo.tline[curline] = tag
             endfor
 
 
@@ -698,7 +719,7 @@ function! s:GetChildTags(tags, pscopetype, pscope, pname, typeinfo)
     return childtags
 endfunction
 
-function! s:PrintTag(tag, depth, typeinfo)
+function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     let taginfo = ''
 
     if a:tag.fields.line == 0 " Tag is a pseudo-tag
@@ -716,17 +737,19 @@ function! s:PrintTag(tag, depth, typeinfo)
 
     " Save the current tagbar line in the tag for easy
     " highlighting access
-    let a:tag.tline = line('.')
+    let curline                   = line('.')
+    let a:tag.tline               = curline
+    let a:fileinfo.tline[curline] = a:tag
 
     " Recursively print children
     if has_key(a:tag, 'children')
         for childtag in a:tag.children
-            call s:PrintTag(childtag, a:depth + 1, a:typeinfo)
+            call s:PrintTag(childtag, a:depth + 1, a:fileinfo, a:typeinfo)
         endfor
     endif
 endfunction
 
-function! s:HighlightTag(fname, line)
+function! s:HighlightTag(fname)
     let fileinfo = s:known_files[a:fname]
 
     let curline = line('.')
@@ -772,6 +795,54 @@ function! s:HighlightTag(fname, line)
     execute 'wincmd p'
 
     let &eventignore = eventignore_save
+endfunction
+
+function! s:JumpToTag()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    " Don't do anything in empty and comment lines
+    let curline = getline('.')
+    if curline =~ '^\s*$' || curline[0] == '"'
+        return
+    endif
+
+    let fileinfo = s:known_files[s:current_file]
+
+    let curlinenr = line('.')
+
+    " Check if there is a tag on the current line
+    if !has_key(fileinfo.tline, curlinenr)
+        return
+    endif
+
+    let taginfo = fileinfo.tline[curlinenr]
+
+    " Check if the current tag is not a pseudo-tag
+    if taginfo.fields.line == 0
+        return
+    endif
+
+    execute 'wincmd p'
+
+    " Jump to the line where the tag is defined. Don't use the search pattern
+    " since it doesn't take the scope into account and thus can fail if tags
+    " with the same name are defined in different scopes (e.g. classes)
+    execute taginfo.fields.line
+
+    " Center the tag in the window
+    normal! z.
+
+    if foldclosed('.') != -1
+        .foldopen!
+    endif
+
+    if g:tagbar_autoclose
+        call s:CloseWindow()
+    else
+        call s:HighlightTag(s:current_file)
+    endif
 endfunction
 
 function! s:ToggleSort()
