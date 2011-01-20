@@ -206,6 +206,7 @@ function! s:OpenWindow()
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
                                               \ :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
+    nnoremap <script> <silent> <buffer> q       :close<CR>
 
     augroup TagbarAutoCmds
         autocmd!
