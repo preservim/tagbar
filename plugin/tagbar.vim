@@ -185,6 +185,7 @@ function! s:OpenWindow()
     " Variable for saving the current file for functions that are called from
     " the tagbar window
     let s:current_file = ''
+    let s:is_maximized = 0
 
     syntax match Comment    '^" .*'              " Comments
     syntax match Identifier '^[^: ]\+$'          " Non-scoped kinds
@@ -206,6 +207,7 @@ function! s:OpenWindow()
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
                                               \ :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
+    nnoremap <script> <silent> <buffer> x       :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q       :close<CR>
 
     augroup TagbarAutoCmds
@@ -247,6 +249,16 @@ function! s:CloseWindow()
         if winnr() != winnum
             exe winnum . 'wincmd w'
         endif
+    endif
+endfunction
+
+function! s:ZoomWindow()
+    if s:is_maximized
+        execute 'vert resize ' . g:tagbar_width
+        let s:is_maximized = 0
+    else
+        vert resize
+        let s:is_maximized = 1
     endif
 endfunction
 
