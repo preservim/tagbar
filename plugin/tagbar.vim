@@ -382,13 +382,11 @@ function! s:ProcessFile(fname, ftype)
     " take extra arguments
     let s:compare_typeinfo = typeinfo
 
-    for tag in fileinfo.tags
-        if g:tagbar_sort
-            call s:SortTags(fileinfo.tags, 's:CompareByKind')
-        else
-            call s:SortTags(fileinfo.tags, 's:CompareByLine')
-        endif
-    endfor
+    if g:tagbar_sort
+        call s:SortTags(fileinfo.tags, 's:CompareByKind')
+    else
+        call s:SortTags(fileinfo.tags, 's:CompareByLine')
+    endif
 
     let s:known_files[a:fname] = fileinfo
 endfunction
