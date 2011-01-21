@@ -405,7 +405,8 @@ function! s:ProcessFile(fname, ftype)
         let processedtags = []
 
         for scope in typeinfo.scopes
-            call s:AddChildren(fileinfo.tags, processedtags, '', '', scope, 1, typeinfo)
+            call s:AddChildren(fileinfo.tags, processedtags, '',
+                             \ '', scope, 1, typeinfo)
         endfor
 
         call extend(fileinfo.tags, processedtags)
@@ -768,6 +769,11 @@ function! s:HighlightTag(fname)
 
     let tagline = 0
 
+    " If a tag appears in a file more than once (for example namespaces in
+    " C++) only one of them has a 'tline' entry and can thus be highlighted.
+    " The only way to solve this would be to go over the whole tag list again,
+    " making everything slower. Since this should be a rare occurence and
+    " highlighting isn't /that/ important ignore it for now.
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line) &&
          \ has_key(fileinfo.fline[line], 'tline')
