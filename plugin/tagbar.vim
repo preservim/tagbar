@@ -163,7 +163,7 @@ function! s:OpenWindow()
     " If the tagbar window is already open jump to it
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr != -1 && winnr() != tagbarwinnr
-"        execute tagbarwinnr . 'wincmd w'
+        execute tagbarwinnr . 'wincmd w'
         return
     endif
 
@@ -196,7 +196,13 @@ function! s:OpenWindow()
     " Variable for saving the current file for functions that are called from
     " the tagbar window
     let s:current_file = ''
+
+    " Script-local variable needed since compare functions can't
+    " take extra arguments
+    let s:compare_typeinfo = {}
+
     let s:is_maximized = 0
+    let s:short_help   = 1
 
     syntax match Comment    '^" .*'              " Comments
     syntax match Identifier '^[^: ]\+$'          " Non-scoped kinds
@@ -220,6 +226,7 @@ function! s:OpenWindow()
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
     nnoremap <script> <silent> <buffer> x       :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q       :close<CR>
+    nnoremap <script> <silent> <buffer> <F1>    :call <SID>ToggleHelp()<CR>
 
     augroup TagbarAutoCmds
         autocmd!
@@ -275,6 +282,10 @@ endfunction
 
 function! s:CleanUp()
     silent! autocmd! TagbarAutoCmds
+    unlet s:current_file
+    unlet s:is_maximized
+    unlet s:compare_typeinfo
+    unlet s:short_help
 endfunction
 
 function! s:QuitIfOnlyWindow()
@@ -412,8 +423,6 @@ function! s:ProcessFile(fname, ftype)
         call extend(fileinfo.tags, processedtags)
     endif
 
-    " Script-local variable needed since compare functions can't
-    " take extra arguments
     let s:compare_typeinfo = typeinfo
 
     if g:tagbar_sort
@@ -642,6 +651,8 @@ function! s:RenderContent(fname, ftype)
 
     silent! %delete _
 
+    call s:PrintHelp()
+
     if !s:IsValidFile(a:fname, a:ftype)
         silent! put ='- File type not supported -'
 
@@ -729,6 +740,19 @@ function! s:RenderContent(fname, ftype)
 
     if !in_tagbar
         execute 'wincmd p'
+    endif
+endfunction
+
+function! s:PrintHelp()
+    if s:short_help
+        call append(0, '" Press F1 for help')
+    else
+        call append(0, '" <Enter> : Jump to tag definition')
+        call append(1, '" <Space> : Display tag prototype')
+        call append(2, '" s       : Toggle sort')
+        call append(3, '" x       : Zoom window in/out')
+        call append(4, '" q       : Close window')
+        call append(5, '" <F1>    : Remove help')
     endif
 endfunction
 
@@ -919,6 +943,19 @@ function! s:ToggleSort()
     call s:RenderContent(s:current_file, fileinfo.ftype)
 
     execute curline
+endfunction
+
+function! s:ToggleHelp()
+    let s:short_help = !s:short_help
+
+    if s:current_file == ''
+        call s:RenderContent(s:current_file, '')
+    else
+        let fileinfo = s:known_files[s:current_file]
+        call s:RenderContent(s:current_file, fileinfo.ftype)
+    endif
+
+    execute 1
 endfunction
 
 function! s:PrintWarningMsg(msg)
