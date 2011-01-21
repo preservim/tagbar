@@ -769,7 +769,8 @@ function! s:HighlightTag(fname)
     let tagline = 0
 
     for line in range(curline, 1, -1)
-        if has_key(fileinfo.fline, line)
+        if has_key(fileinfo.fline, line) &&
+         \ has_key(fileinfo.fline[line], 'tline')
             let tagline = fileinfo.fline[line].tline
             break
         endif
