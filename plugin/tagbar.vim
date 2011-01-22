@@ -406,7 +406,7 @@ function! s:ProcessFile(fname, ftype)
     for line in rawtaglist
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
-            let taginfo = s:ParseTagline(parts[0], parts[1])
+            let taginfo = s:ParseTagline(parts[0], parts[1], typeinfo)
             let fileinfo.fline[taginfo.fields.line] = taginfo
             call add(fileinfo.tags, taginfo)
         endif
@@ -438,7 +438,7 @@ endfunction
 " tagname<TAB>filename<TAB>expattern;"fields
 " fields: <TAB>name:value
 " fields that are always present: kind, line
-function! s:ParseTagline(part1, part2)
+function! s:ParseTagline(part1, part2, typeinfo)
     let taginfo = {}
 
     let basic_info      = split(a:part1, '\t')
@@ -470,6 +470,15 @@ function! s:ParseTagline(part1, part2)
         let taginfo.fields[key] = val
     endfor
 
+    " Cache the parent path for fast access in filter() calls
+    for scope in a:typeinfo.scopes
+        if has_key(taginfo.fields, scope)
+            let index = strridx(taginfo.fields[scope], a:typeinfo.sro)
+            let taginfo.parentpath = strpart(taginfo.fields[scope], 0, index)
+            break
+        endif
+    endfor
+
     return taginfo
 endfunction
 
@@ -487,19 +496,17 @@ function! s:AddChildren(tags, processedtags, curpath,
                       \ pscope, scope, depth, typeinfo)
     let is_child = 'has_key(v:val.fields, a:scope)'
     if !empty(a:curpath)
-        let is_child .= ' && s:PathMatches(v:val.fields[a:scope],
-                                         \ a:curpath, a:typeinfo.sro)'
+        let is_child .= ' && v:val.parentpath == a:curpath'
     endif
 
     let is_cur_child = is_child . ' && len(split(v:val.fields[a:scope],
                                                \ a:typeinfo.sro)) == a:depth'
     let curchildren = filter(copy(a:tags), is_cur_child)
-    if !empty(curchildren)
-        call filter(a:tags, '!(' . is_cur_child . ')')
-    endif
 
     " 'curchildren' are children at the current depth
     if !empty(curchildren)
+        call filter(a:tags, '!(' . is_cur_child . ')')
+
         for child in curchildren
             let parentname = substitute(child.fields[a:scope],a:curpath, '', '')
             let parentname = substitute(parentname,'^' . a:typeinfo.sro, '', '')
@@ -645,19 +652,17 @@ function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
     let pseudotag.fields.kind = a:typeinfo.scope2kind[a:scope]
     let pseudotag.fields.line = 0
 
+    let parentscope = substitute(a:curpath, a:name . '$', '', '')
+    let parentscope = substitute(parentscope, a:typeinfo.sro . '$', '', '')
+
     if a:pscope != ''
-        let parentscope = substitute(a:curpath, a:name, '', '')
-        let parentscope = substitute(parentscope, a:typeinfo.sro . '$', '', '')
         let pseudotag.fields[a:pscope] = parentscope
     endif
 
-    return pseudotag
-endfunction
+    let index                = strridx(parentscope, a:typeinfo.sro)
+    let pseudotag.parentpath = strpart(parentscope, 0, index)
 
-function! s:PathMatches(scopename, curpath, sro)
-    let index      = strridx(a:scopename, a:sro)
-    let parentpath = strpart(a:scopename, 0, index)
-    return parentpath == a:curpath
+    return pseudotag
 endfunction
 
 function! s:SortTags(tags, comparemethod)
