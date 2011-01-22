@@ -480,9 +480,9 @@ endfunction
 " genereate a tag). Another example are anonymous
 " namespaces/structs/enums/unions that also don't get a tag themselves. These
 " tags are thus called 'pseudo-tags' in Tagbar.
-" This is probably the most cryptic function since it has to deal with things
-" that aren't actually there and several corner cases. Try not to think about
-" it too much.
+" This (in conjunction with ProcessPseudoTag) is probably the most cryptic
+" function since it has to deal with things that aren't actually there and
+" several corner cases. Try not to think about it too much.
 function! s:AddChildren(tags, processedtags, curpath,
                       \ pscope, scope, depth, typeinfo)
     let is_child = 'has_key(v:val.fields, a:scope)'
@@ -501,39 +501,21 @@ function! s:AddChildren(tags, processedtags, curpath,
     " 'curchildren' are children at the current depth
     if !empty(curchildren)
         for child in curchildren
-            let is_parent = 'has_key(a:typeinfo.kind2scope,
-                                   \ v:val.fields.kind) &&
-                 \ a:typeinfo.kind2scope[v:val.fields.kind] == a:scope &&
-                 \ s:GetFullTagPath(v:val, a:typeinfo) == child.fields[a:scope]'
-            let parentlist = filter(copy(a:processedtags), is_parent)
-            if !empty(parentlist)
-                call filter(a:processedtags, '!(' . is_parent . ')')
-            else
-                let parentlist = filter(copy(a:tags), is_parent)
-                if !empty(parentlist)
-                    call filter(a:tags, '!(' . is_parent . ')')
-                endif
-            endif
+            let parentname = substitute(child.fields[a:scope],a:curpath, '', '')
+            let parentname = substitute(parentname,'^' . a:typeinfo.sro, '', '')
+            let parentpath = split(parentname, a:typeinfo.sro)
+            let maxpathlen = a:depth - 1 - len(split(a:curpath, a:typeinfo.sro))
 
-            " If we don't have a parent at this point it must be a pseudo-tag
+            let parentlist = s:ExtractParentList(a:tags, a:processedtags,
+                        \ join(parentpath[:maxpathlen], a:typeinfo.sro),
+                        \ a:scope, a:typeinfo)
+
             if empty(parentlist)
-                let parentname = substitute(child.fields[a:scope],
-                                          \ a:curpath, '', '')
-                let parentname = substitute(parentname,
-                                          \ '^' . a:typeinfo.sro, '', '')
-                let parent             = {}
-                let parent.name        = parentname
-                let parent.fields      = {}
-                let parent.fields.kind = a:typeinfo.scope2kind[a:scope]
-                let parent.fields.line = 0
-                if a:pscope != ''
-                    let parentscope = substitute(a:curpath,
-                                               \ parentname, '', '')
-                    let parentscope = substitute(parentscope,
-                                               \ a:typeinfo.sro . '$', '', '')
-                    let parent.fields[a:pscope] = parentscope
-                endif
-                let parent.children    = [child]
+                " If we don't have a parent at this point it must be a
+                " pseudo-tag, so create an entry for it
+                call s:ProcessPseudoTag(a:tags, a:processedtags, child,
+                                      \ a:curpath, parentpath, parentname,
+                                      \ a:pscope, a:scope, a:typeinfo)
             else
                 let parent = parentlist[0]
                 if has_key(parent, 'children')
@@ -541,9 +523,8 @@ function! s:AddChildren(tags, processedtags, curpath,
                 else
                     let parent.children = [child]
                 endif
+                call add(a:processedtags, parent)
             endif
-
-            call add(a:processedtags, parent)
         endfor
 
         " Recursively add children
@@ -579,21 +560,98 @@ function! s:AddChildren(tags, processedtags, curpath,
     endif
 endfunction
 
-function! s:GetFullTagPath(tag, typeinfo)
-    let cur_scope = ''
-
-    for scope in a:typeinfo.scopes
-        if has_key(a:tag.fields, scope)
-            let cur_scope = scope
+function! s:ProcessPseudoTag(tags, processedtags, child, curpath, parentpath,
+                           \ parentname, pscope, scope, typeinfo)
+    " First check if the pseudo-tag is child of an existing tag.
+    let parentpathlen    = len(a:parentpath)
+    let pseudoparentlist = []
+    for i in range(parentpathlen - 2, 0, -1)
+        let pseudoparentpath = a:parentpath[:i]
+        for scope in a:typeinfo.scopes
+            let pseudoparentlist = s:ExtractParentList(a:tags, a:processedtags,
+                        \ join(pseudoparentpath, a:typeinfo.sro),
+                        \ scope, a:typeinfo)
+            if !empty(pseudoparentlist)
+                break
+            endif
+        endfor
+        if !empty(pseudoparentlist)
             break
         endif
     endfor
 
-    if cur_scope != ''
-        return a:tag.fields[cur_scope] . a:typeinfo.sro . a:tag.name
+    if !empty(pseudoparentlist)
+        " The pseudo-tag is child of an existing (real) tag -- so we have to
+        " add the real tag to the list of processed tags, create a pseudo-tag,
+        " add the pseudo-tag to the children of the real tag and add the
+        " /current/ tag ('child') to the children of the pseudo-tag. Yuck.
+        let pseudoparent = pseudoparentlist[0]
+        let parentname   = substitute(a:parentname, pseudoparent.name, '', '')
+        let parentname   = substitute(parentname, '^' . a:typeinfo.sro, '', '')
+
+        if has_key(pseudoparent, 'children')
+            let is_existingparent = 'v:val.name == parentname &&
+                        \ v:val.fields.kind == a:typeinfo.scope2kind[a:scope]'
+            let existingparent = filter(copy(pseudoparent.children),
+                                      \ is_existingparent)
+            if !empty(existingparent)
+                call filter(pseudoparent.children,
+                          \ '!(' . is_existingparent . ')')
+                let parent = existingparent[0]
+                call add(parent.children, a:child)
+            else
+                let parent = s:CreatePseudoTag(parentname, a:curpath, a:pscope,
+                                             \ a:scope, a:typeinfo)
+                let parent.children = [a:child]
+            endif
+            call add(pseudoparent.children, parent)
+        else
+            let parent = s:CreatePseudoTag(parentname, a:curpath, a:pscope,
+                                         \ a:scope, a:typeinfo)
+            let parent.children = [a:child]
+            let pseudoparent.children = [parent]
+        endif
+        call add(a:processedtags, pseudoparent)
     else
-        return a:tag.name
+        let parent = s:CreatePseudoTag(a:parentname, a:curpath, a:pscope,
+                                     \ a:scope, a:typeinfo)
+        let parent.children = [a:child]
+        call add(a:processedtags, parent)
     endif
+endfunction
+
+function! s:ExtractParentList(tags, processedtags, path, scope, typeinfo)
+    let is_parent = 'has_key(a:typeinfo.kind2scope, v:val.fields.kind) &&
+                   \ a:typeinfo.kind2scope[v:val.fields.kind] == a:scope &&
+                   \ v:val.name == a:path'
+
+    let parentlist = filter(copy(a:processedtags), is_parent)
+    if !empty(parentlist)
+        call filter(a:processedtags, '!(' . is_parent . ')')
+    else
+        let parentlist = filter(copy(a:tags), is_parent)
+        if !empty(parentlist)
+            call filter(a:tags, '!(' . is_parent . ')')
+        endif
+    endif
+
+    return parentlist
+endfunction
+
+function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
+    let pseudotag             = {}
+    let pseudotag.name        = a:name
+    let pseudotag.fields      = {}
+    let pseudotag.fields.kind = a:typeinfo.scope2kind[a:scope]
+    let pseudotag.fields.line = 0
+
+    if a:pscope != ''
+        let parentscope = substitute(a:curpath, a:name, '', '')
+        let parentscope = substitute(parentscope, a:typeinfo.sro . '$', '', '')
+        let pseudotag.fields[a:pscope] = parentscope
+    endif
+
+    return pseudotag
 endfunction
 
 function! s:PathMatches(scopename, curpath, sro)
@@ -947,6 +1005,9 @@ endfunction
 
 function! s:ToggleHelp()
     let s:short_help = !s:short_help
+
+    " Prevent highlighting from being off after adding/removing the help text
+    match none
 
     if s:current_file == ''
         call s:RenderContent(s:current_file, '')
