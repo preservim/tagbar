@@ -58,7 +58,7 @@ if !exists('g:tagbar_sort')
 endif
 
 function! s:InitTypes()
-    " Dictionary of the already processed files, index by file name with
+    " Dictionary of the already processed files, indexed by file name with
     " complete path.
     " The entries are again dictionaries with the following fields:
     " - mtime: File modification time
@@ -172,7 +172,7 @@ function! s:OpenWindow()
 
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
-    setlocal bufhidden=delete
+    setlocal bufhidden=hide
     setlocal noswapfile
     setlocal nobuflisted
     setlocal nomodifiable
@@ -242,6 +242,13 @@ function! s:OpenWindow()
     let &cpoptions = cpoptions_save
 
     execute 'wincmd p'
+
+    " Jump back to the tagbar window if autoclose is set. Can't just stay in
+    " it since it wouldn't trigger the update event
+    if g:tagbar_autoclose
+        let tagbarwinnr = bufwinnr('__Tagbar__')
+        execute tagbarwinnr . 'wincmd w'
+    endif
 endfunction
 
 function! s:CloseWindow()
