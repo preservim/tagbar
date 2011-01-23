@@ -413,13 +413,23 @@ function! s:ProcessFile(fname, ftype)
     endfor
 
     if has_key(typeinfo, 'scopes') && !empty(typeinfo.scopes)
-        let processedtags = []
-
+        let scopedtags = []
         for scope in typeinfo.scopes
-            call s:AddChildren(fileinfo.tags, processedtags, '',
+            let is_scoped = 'has_key(typeinfo.kind2scope, v:val.fields.kind) ||
+                           \ has_key(v:val.fields, scope)'
+            let scopedtags += filter(copy(fileinfo.tags), is_scoped)
+            call filter(fileinfo.tags, '!(' . is_scoped . ')')
+        endfor
+
+        let processedtags = []
+        for scope in typeinfo.scopes
+            call s:AddChildren(scopedtags, processedtags, '',
                              \ '', scope, 1, typeinfo)
         endfor
 
+        " 'scopedtags' can still contain some tags that don't have any
+        " children
+        call extend(fileinfo.tags, scopedtags)
         call extend(fileinfo.tags, processedtags)
     endif
 
