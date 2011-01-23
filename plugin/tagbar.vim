@@ -148,6 +148,12 @@ function! s:InitTypes()
         endfor
     endfor
 
+    let s:access_symbols = {}
+
+    let s:access_symbols.public    = '+'
+    let s:access_symbols.protected = '#'
+    let s:access_symbols.private   = '-'
+
     let s:type_init_done = 1
 endfunction
 
@@ -211,11 +217,19 @@ function! s:OpenWindow()
     let s:short_help   = 1
 
     syntax match Comment    '^" .*'              " Comments
-    syntax match Identifier '^[^: ]\+$'          " Non-scoped kinds
+    syntax match Identifier '^ [^: ]\+$'         " Non-scoped kinds
     syntax match Title      '[^:(* ]\+\ze\*\? :' " Scope names
     syntax match Type       ': \zs.*'            " Scope types
     syntax match SpecialKey '(.*)'               " Signatures
     syntax match NonText    '\*\ze :'            " Pseudo-tag identifiers
+
+    highlight default TagbarAccessPublic    guifg=Green ctermfg=Green
+    highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
+    highlight default TagbarAccessPrivate   guifg=Red   ctermfg=Red
+
+    syntax match TagbarAccessPublic    '^\s*+'
+    syntax match TagbarAccessProtected '^\s*#'
+    syntax match TagbarAccessPrivate   '^\s*-'
 
     if has('balloon_eval')
         setlocal balloonexpr=TagbarBalloonExpr()
@@ -779,7 +793,9 @@ function! s:RenderContent(fname, ftype)
                 endif
                 let taginfo .= ' : ' . typeinfo.kind2scope[kind[0]]
 
-                silent! put =tag.name . taginfo
+                let prefix = s:GetPrefix(tag)
+
+                silent! put =prefix . tag.name . taginfo
 
                 " Save the current tagbar line in the tag for easy
                 " highlighting access
@@ -797,7 +813,7 @@ function! s:RenderContent(fname, ftype)
             endfor
         else
             " Non-scoped tags
-            silent! put =strpart(kind, 2)
+            silent! put =' ' . strpart(kind, 2)
 
             for tag in curtags
                 let taginfo = ''
@@ -806,7 +822,9 @@ function! s:RenderContent(fname, ftype)
                     let taginfo .= tag.fields.signature
                 endif
 
-                silent! put ='  ' . tag.name . taginfo
+                let prefix = s:GetPrefix(tag)
+
+                silent! put ='  ' . prefix . tag.name . taginfo
 
                 " Save the current tagbar line in the tag for easy
                 " highlighting access
@@ -855,8 +873,10 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
         let taginfo .= ' : ' . a:typeinfo.kind2scope[a:tag.fields.kind]
     endif
 
+    let prefix = s:GetPrefix(a:tag)
+
     " Print tag indented according to depth
-    silent! put =repeat(' ', a:depth * 2) . a:tag.name . taginfo
+    silent! put =repeat(' ', a:depth * 2) . prefix . a:tag.name . taginfo
 
     " Save the current tagbar line in the tag for easy
     " highlighting access
@@ -870,6 +890,17 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
             call s:PrintTag(childtag, a:depth + 1, a:fileinfo, a:typeinfo)
         endfor
     endif
+endfunction
+
+function! s:GetPrefix(tag)
+    if has_key(a:tag.fields, 'access') &&
+     \ has_key(s:access_symbols, a:tag.fields.access)
+        let prefix = s:access_symbols[a:tag.fields.access]
+    else
+        let prefix = ' '
+    endif
+
+    return prefix
 endfunction
 
 function! s:HighlightTag(fname)
