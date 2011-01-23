@@ -57,6 +57,8 @@ if !exists('g:tagbar_sort')
     let g:tagbar_sort = 1
 endif
 
+let s:type_init_done = 0
+
 function! s:InitTypes()
     " Dictionary of the already processed files, indexed by file name with
     " complete path.
@@ -145,9 +147,9 @@ function! s:InitTypes()
             let i += 1
         endfor
     endfor
-endfunction
 
-call s:InitTypes()
+    let s:type_init_done = 1
+endfunction
 
 function! s:ToggleWindow()
     let tagbarwinnr = bufwinnr("__Tagbar__")
@@ -160,6 +162,10 @@ function! s:ToggleWindow()
 endfunction
 
 function! s:OpenWindow()
+    if !s:type_init_done
+        call s:InitTypes()
+    endif
+
     " If the tagbar window is already open jump to it
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr != -1 && winnr() != tagbarwinnr
