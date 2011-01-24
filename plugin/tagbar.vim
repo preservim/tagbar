@@ -506,7 +506,9 @@ function! s:ParseTagline(part1, part2, typeinfo)
     let taginfo.name    = basic_info[0]
     let taginfo.file    = basic_info[1]
 
-    let pattern = basic_info[2]
+    " the pattern can contain tabs and thus may have been split up, so join
+    " the rest of the items together again
+    let pattern = join(basic_info[2:], "\t")
     let start   = 2 " skip the slash and the ^
     let end     = strlen(pattern) - 1
     if pattern[end - 1] == '$'
