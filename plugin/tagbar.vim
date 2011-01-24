@@ -75,6 +75,35 @@ function! s:InitTypes()
 
     let s:known_types = {}
 
+    " C {{{2
+    let type_c = {}
+    let type_c.ctagstype = 'c'
+    let type_c.scopes    = ['enum', 'struct', 'union']
+    let type_c.sro       = '::'
+    let type_c.kinds     = [
+        \ 'd:macros',
+        \ 'p:prototypes',
+        \ 'g:enums',
+        \ 'e:enumerators',
+        \ 't:typedefs',
+        \ 's:structs',
+        \ 'u:unions',
+        \ 'm:members',
+        \ 'v:variables',
+        \ 'f:functions'
+    \ ]
+    let type_c.kind2scope = {
+        \ 'g' : 'enum',
+        \ 's' : 'struct',
+        \ 'u' : 'union'
+    \ }
+    let type_c.scope2kind = {
+        \ 'enum'   : 'g',
+        \ 'struct' : 's',
+        \ 'union'  : 'u'
+    \ }
+    let s:known_types.c = type_c
+    " C++ {{{2
     let type_cpp = {}
     let type_cpp.ctagstype = 'c++'
     let type_cpp.scopes    = [
@@ -87,34 +116,60 @@ function! s:InitTypes()
     let type_cpp.sro       = '::'
     let type_cpp.kinds     = [
         \ 'd:macros',
+        \ 'p:prototypes',
+        \ 'g:enum',
+        \ 'e:enumerators',
+        \ 't:typedefs',
         \ 'n:namespaces',
         \ 'c:classes',
         \ 's:structs',
-        \ 'g:enum',
-        \ 'e:enumerators',
         \ 'u:unions',
-        \ 't:typedefs',
-        \ 'p:prototypes',
         \ 'f:functions',
         \ 'm:members',
         \ 'v:variables'
     \ ]
     let type_cpp.kind2scope = {
+        \ 'g' : 'enum',
         \ 'n' : 'namespace',
         \ 'c' : 'class',
         \ 's' : 'struct',
-        \ 'g' : 'enum',
         \ 'u' : 'union'
     \ }
     let type_cpp.scope2kind = {
+        \ 'enum'      : 'g',
         \ 'namespace' : 'n',
         \ 'class'     : 'c',
         \ 'struct'    : 's',
-        \ 'enum'      : 'g',
         \ 'union'     : 'u'
     \ }
     let s:known_types.cpp = type_cpp
 
+    " Java {{{2
+    let type_java = {}
+    let type_java.ctagstype = 'java'
+    let type_java.scopes    = ['enum', 'interface', 'class']
+    let type_java.sro       = '.'
+    let type_java.kinds     = [
+        \ 'p:packages',
+        \ 'f:fields',
+        \ 'g:enum types',
+        \ 'e:enum constants',
+        \ 'i:interfaces',
+        \ 'c:classes',
+        \ 'm:methods'
+    \ ]
+    let type_java.kind2scope = {
+        \ 'g' : 'enum',
+        \ 'i' : 'interface',
+        \ 'c' : 'class'
+    \ }
+    let type_java.scope2kind = {
+        \ 'enum'      : 'g',
+        \ 'interface' : 'i',
+        \ 'class'     : 'c'
+    \ }
+    let s:known_types.java = type_java
+    " Python {{{2
     let type_python = {}
     let type_python.ctagstype = 'python'
     let type_python.scopes    = ['class', 'function']
@@ -136,31 +191,8 @@ function! s:InitTypes()
         \ 'function' : 'f'
     \ }
     let s:known_types.python = type_python
+    " }}}2
 
-    let type_java = {}
-    let type_java.ctagstype = 'java'
-    let type_java.scopes    = ['interface', 'class', 'enum']
-    let type_java.sro       = '.'
-    let type_java.kinds     = [
-        \ 'p:packages',
-        \ 'f:fields',
-        \ 'i:interfaces',
-        \ 'c:classes',
-        \ 'g:enum types',
-        \ 'e:enum constants',
-        \ 'm:methods'
-    \ ]
-    let type_java.kind2scope = {
-        \ 'i' : 'interface',
-        \ 'c' : 'class',
-        \ 'g' : 'enum'
-    \ }
-    let type_java.scope2kind = {
-        \ 'interface' : 'i',
-        \ 'class'     : 'c',
-        \ 'enum'      : 'g'
-    \ }
-    let s:known_types.java = type_java
 
     call extend(s:known_types, g:tagbar_types)
 
