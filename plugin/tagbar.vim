@@ -254,9 +254,9 @@ function! s:OpenWindow()
     highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
     highlight default TagbarAccessPrivate   guifg=Red   ctermfg=Red
 
-    syntax match TagbarAccessPublic    '^\s*+'
-    syntax match TagbarAccessProtected '^\s*#'
-    syntax match TagbarAccessPrivate   '^\s*-'
+    syntax match TagbarAccessPublic    '^\s*+\ze[^ ]'
+    syntax match TagbarAccessProtected '^\s*#\ze[^ ]'
+    syntax match TagbarAccessPrivate   '^\s*-\ze[^ ]'
 
     if has('balloon_eval')
         setlocal balloonexpr=TagbarBalloonExpr()
