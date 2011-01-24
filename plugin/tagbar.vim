@@ -13,6 +13,7 @@ if &cp || exists('g:loaded_tagbar')
     finish
 endif
 
+" Initialization {{{1
 if !exists('*system')
     echomsg 'Tagbar: No system() function available, skipping plugin'
     finish
@@ -59,6 +60,7 @@ endif
 
 let s:type_init_done = 0
 
+" s:InitTypes() {{{1
 function! s:InitTypes()
     " Dictionary of the already processed files, indexed by file name with
     " complete path.
@@ -171,8 +173,6 @@ function! s:InitTypes()
             let type.kinddict[kind[0]] = i
             let i += 1
         endfor
-
-"        let type.sro = '\V' . type.sro
     endfor
 
     let s:access_symbols = {}
@@ -184,6 +184,7 @@ function! s:InitTypes()
     let s:type_init_done = 1
 endfunction
 
+" s:ToggleWindow() {{{1
 function! s:ToggleWindow()
     let tagbarwinnr = bufwinnr("__Tagbar__")
     if tagbarwinnr != -1
@@ -194,6 +195,7 @@ function! s:ToggleWindow()
     call s:OpenWindow()
 endfunction
 
+" s:OpenWindow() {{{1
 function! s:OpenWindow()
     if !s:type_init_done
         call s:InitTypes()
@@ -298,6 +300,7 @@ function! s:OpenWindow()
     endif
 endfunction
 
+" s:CloseWindow() {{{1
 function! s:CloseWindow()
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr == -1
@@ -324,6 +327,7 @@ function! s:CloseWindow()
     endif
 endfunction
 
+" s:ZoomWindow() {{{1
 function! s:ZoomWindow()
     if s:is_maximized
         execute 'vert resize ' . g:tagbar_width
@@ -334,6 +338,7 @@ function! s:ZoomWindow()
     endif
 endfunction
 
+" s:CleanUp() {{{1
 function! s:CleanUp()
     silent! autocmd! TagbarAutoCmds
     unlet s:current_file
@@ -342,6 +347,7 @@ function! s:CleanUp()
     unlet s:short_help
 endfunction
 
+" s:QuitIfOnlyWindow() {{{1
 function! s:QuitIfOnlyWindow()
     " Before quitting Vim, delete the tagbar buffer so that
     " the '0 mark is correctly set to the previous buffer.
@@ -356,6 +362,7 @@ function! s:QuitIfOnlyWindow()
     endif
 endfunction
 
+" s:AutoUpdate() {{{1
 function! s:AutoUpdate(fname)
     call s:RefreshContent(a:fname)
 
@@ -373,6 +380,7 @@ function! s:AutoUpdate(fname)
     call s:HighlightTag(a:fname)
 endfunction
 
+" s:RefreshContent() {{{1
 function! s:RefreshContent(fname)
     " Don't do anything if we're in the tagbar window
     if &filetype == 'tagbar'
@@ -394,6 +402,7 @@ function! s:RefreshContent(fname)
     endif
 endfunction
 
+" s:IsValidFile() {{{1
 function! s:IsValidFile(fname, ftype)
     if a:fname == '' || a:ftype == ''
         return 0
@@ -410,6 +419,7 @@ function! s:IsValidFile(fname, ftype)
     return 1
 endfunction
 
+" s:ProcessFile() {{{1
 function! s:ProcessFile(fname, ftype)
     if !s:IsValidFile(a:fname, a:ftype)
         return
@@ -495,6 +505,7 @@ function! s:ProcessFile(fname, ftype)
     let s:known_files[a:fname] = fileinfo
 endfunction
 
+" s:ParseTagline() {{{1
 " Structure of a tag line:
 " tagname<TAB>filename<TAB>expattern;"fields
 " fields: <TAB>name:value
@@ -552,6 +563,7 @@ function! s:ParseTagline(part1, part2, typeinfo)
     return taginfo
 endfunction
 
+" s:AddChildren() {{{1
 " Extract children from the tag list and correctly add it to their parents.
 " Unfortunately the parents aren't necessarily actually there -- for example,
 " in C++ a class can be defined in a header file and implemented in a .cpp
@@ -625,6 +637,7 @@ function! s:AddChildren(tags, processedtags, curpath, pscope, depth, typeinfo)
     endif
 endfunction
 
+" s:ProcessPseudoTag() {{{1
 function! s:ProcessPseudoTag(tags, processedtags, child, curpath,
                            \ pscope, typeinfo)
     " First check if the pseudo-tag is child of an existing tag.
@@ -690,6 +703,7 @@ function! s:ProcessPseudoTag(tags, processedtags, child, curpath,
     endif
 endfunction
 
+" s:ExtractParentList() {{{1
 function! s:ExtractParentList(tags, processedtags, path, scope, typeinfo)
     let is_parent = 'has_key(a:typeinfo.kind2scope, v:val.fields.kind) &&
                    \ a:typeinfo.kind2scope[v:val.fields.kind] == a:scope &&
@@ -708,6 +722,7 @@ function! s:ExtractParentList(tags, processedtags, path, scope, typeinfo)
     return parentlist
 endfunction
 
+" s:CreatePseudoTag() {{{1
 function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
     let pseudotag             = {}
     let pseudotag.name        = a:name
@@ -735,6 +750,7 @@ function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
     return pseudotag
 endfunction
 
+" s:SortTags() {{{1
 function! s:SortTags(tags, comparemethod)
     call sort(a:tags, a:comparemethod)
 
@@ -745,6 +761,7 @@ function! s:SortTags(tags, comparemethod)
     endfor
 endfunction
 
+" s:CompareByKind() {{{1
 function! s:CompareByKind(tag1, tag2)
     let typeinfo = s:compare_typeinfo
 
@@ -763,10 +780,12 @@ function! s:CompareByKind(tag1, tag2)
     endif
 endfunction
 
+" s:CompareByLine() {{{1
 function! s:CompareByLine(tag1, tag2)
     return a:tag1.fields.line - a:tag2.fields.line
 endfunction
 
+" s:RenderContent() {{{1
 function! s:RenderContent(fname, ftype)
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
@@ -880,6 +899,7 @@ function! s:RenderContent(fname, ftype)
     endif
 endfunction
 
+" s:PrintHelp() {{{1
 function! s:PrintHelp()
     if s:short_help
         call append(0, '" Press F1 for help')
@@ -893,6 +913,7 @@ function! s:PrintHelp()
     endif
 endfunction
 
+" s:PrintTag() {{{1
 function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     let taginfo = ''
 
@@ -925,6 +946,7 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     endif
 endfunction
 
+" s:GetPrefix() {{{1
 function! s:GetPrefix(tag)
     if has_key(a:tag.fields, 'access') &&
      \ has_key(s:access_symbols, a:tag.fields.access)
@@ -936,6 +958,7 @@ function! s:GetPrefix(tag)
     return prefix
 endfunction
 
+" s:HighlightTag() {{{1
 function! s:HighlightTag(fname)
     let fileinfo = s:known_files[a:fname]
 
@@ -990,6 +1013,7 @@ function! s:HighlightTag(fname)
     let &eventignore = eventignore_save
 endfunction
 
+" s:JumpToTag() {{{1
 function! s:JumpToTag()
     let taginfo = s:GetTagInfo(line('.'))
 
@@ -1018,6 +1042,7 @@ function! s:JumpToTag()
     endif
 endfunction
 
+" s:ShowPrototype() {{{1
 function! s:ShowPrototype()
     let taginfo = s:GetTagInfo(line('.'))
 
@@ -1028,6 +1053,7 @@ function! s:ShowPrototype()
     echo taginfo.prototype
 endfunction
 
+" TagbarBalloonExpr() {{{1
 function! TagbarBalloonExpr()
     let taginfo = s:GetTagInfo(v:beval_lnum)
 
@@ -1038,6 +1064,7 @@ function! TagbarBalloonExpr()
     return taginfo.prototype
 endfunction
 
+" s:GetTagInfo() {{{1
 " Return the info dictionary of the tag on the specified line. If the line
 " does not contain a valid tag (for example because it is empty or only
 " contains a pseudo-tag) return an empty dictionary.
@@ -1069,6 +1096,7 @@ function! s:GetTagInfo(linenr)
     return taginfo
 endfunction
 
+" s:ToggleSort() {{{1
 function! s:ToggleSort()
     if !has_key(s:known_files, s:current_file)
         return
@@ -1095,6 +1123,7 @@ function! s:ToggleSort()
     execute curline
 endfunction
 
+" s:ToggleHelp() {{{1
 function! s:ToggleHelp()
     let s:short_help = !s:short_help
 
@@ -1111,14 +1140,17 @@ function! s:ToggleHelp()
     execute 1
 endfunction
 
+" s:PrintWarningMsg() {{{1
 function! s:PrintWarningMsg(msg)
     echohl WarningMsg
     echomsg a:msg
     echohl None
 endfunction
 
+" Commands {{{1
 command! -nargs=0 TagbarToggle call s:ToggleWindow()
 command! -nargs=0 TagbarOpen   call s:OpenWindow()
 command! -nargs=0 TagbarClose  call s:CloseWindow()
 
-" vim: ts=8 sw=4 sts=4 et foldenable foldmethod=syntax foldcolumn=1
+" Modeline {{{1
+" vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
