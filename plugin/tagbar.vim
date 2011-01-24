@@ -982,7 +982,7 @@ function! s:HighlightTag(fname)
     " Make sure the tag is visible in the window
     call winline()
 
-    let pattern = '/^\%' . tagline . 'l\s*\zs[^( ]\+\ze/'
+    let pattern = '/^\%' . tagline . 'l\s*[-+#]\?\zs[^( ]\+\ze/'
     execute 'match Search ' . pattern
 
     execute 'wincmd p'
