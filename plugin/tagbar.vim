@@ -5,7 +5,7 @@
 " Licence:     Vim licence
 " Website:     http://github.com/majutsushi/tagbar
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by
-"              Yegappan Lakshamanan and uses some small portions of code from
+"              Yegappan Lakshmanan and uses some small portions of code from
 "              it.
 " ============================================================================
 
@@ -83,6 +83,16 @@ function! s:InitTypes()
         \ 't:targets'
     \ ]
     let s:known_types.ant = type_ant
+    " Asm {{{2
+    let type_asm = {}
+    let type_asm.ctagstype = 'asm'
+    let type_asm.kinds     = [
+        \ 'm:macros',
+        \ 't:types',
+        \ 'd:defines',
+        \ 'l:labels'
+    \ ]
+    let s:known_types.asm = type_asm
     " C {{{2
     let type_c = {}
     let type_c.ctagstype = 'c'
