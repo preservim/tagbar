@@ -75,6 +75,14 @@ function! s:InitTypes()
 
     let s:known_types = {}
 
+    " Ant {{{2
+    let type_ant = {}
+    let type_ant.ctagstype = 'ant'
+    let type_ant.kinds     = [
+        \ 'p:projects',
+        \ 't:targets'
+    \ ]
+    let s:known_types.ant = type_ant
     " C {{{2
     let type_c = {}
     let type_c.ctagstype = 'c'
@@ -579,18 +587,22 @@ function! s:ParseTagline(part1, part2, typeinfo)
     " Make some information easier accessible
     let taginfo.path = ''
     let taginfo.fullpath = taginfo.name
-    for scope in a:typeinfo.scopes
-        if has_key(taginfo.fields, scope)
-            let taginfo.scope = scope
-            let taginfo.path  = taginfo.fields[scope]
+    if has_key(a:typeinfo, 'scopes')
+        for scope in a:typeinfo.scopes
+            if has_key(taginfo.fields, scope)
+                let taginfo.scope = scope
+                let taginfo.path  = taginfo.fields[scope]
 
-            let taginfo.fullpath = taginfo.path . a:typeinfo.sro . taginfo.name
+                let taginfo.fullpath = taginfo.path . a:typeinfo.sro .
+                                     \ taginfo.name
 
-            let index = strridx(taginfo.fields[scope], a:typeinfo.sro)
-            let taginfo.parentpath = strpart(taginfo.fields[scope], 0, index)
-            break
-        endif
-    endfor
+                let index = strridx(taginfo.fields[scope], a:typeinfo.sro)
+                let taginfo.parentpath = strpart(taginfo.fields[scope],
+                                               \ 0, index)
+                break
+            endif
+        endfor
+    endif
 
     return taginfo
 endfunction
@@ -864,7 +876,8 @@ function! s:RenderContent(fname, ftype)
             continue
         endif
 
-        if has_key(typeinfo.kind2scope, kind[0])
+        if has_key(typeinfo, 'kind2scope') &&
+         \ has_key(typeinfo.kind2scope, kind[0])
             " Scoped tags
             for tag in curtags
                 let taginfo = ''
