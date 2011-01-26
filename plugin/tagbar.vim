@@ -93,6 +93,45 @@ function! s:InitTypes()
         \ 'l:labels'
     \ ]
     let s:known_types.asm = type_asm
+    " ASP {{{2
+    let type_aspvbs = {}
+    let type_aspvbs.ctagstype = 'asp'
+    let type_aspvbs.kinds     = [
+        \ 'd:constants',
+        \ 'c:classes',
+        \ 'f:functions',
+        \ 's:subroutines',
+        \ 'v:variables'
+    \ ]
+    let s:known_types.aspvbs = type_aspvbs
+    " Awk {{{2
+    let type_awk = {}
+    let type_awk.ctagstype = 'awk'
+    let type_awk.kinds     = [
+        \ 'f:functions'
+    \ ]
+    let s:known_types.awk = type_awk
+    " Basic {{{2
+    let type_basic = {}
+    let type_basic.ctagstype = 'basic'
+    let type_basic.kinds     = [
+        \ 'c:constants',
+        \ 'g:enumerations',
+        \ 'f:functions',
+        \ 'l:labels',
+        \ 't:types',
+        \ 'v:variables'
+    \ ]
+    let s:known_types.basic = type_basic
+    " BETA {{{2
+    let type_beta = {}
+    let type_beta.ctagstype = 'beta'
+    let type_beta.kinds     = [
+        \ 'f:fragments',
+        \ 's:slots',
+        \ 'v:patterns'
+    \ ]
+    let s:known_types.beta = type_beta
     " C {{{2
     let type_c = {}
     let type_c.ctagstype = 'c'
@@ -135,7 +174,7 @@ function! s:InitTypes()
     let type_cpp.kinds     = [
         \ 'd:macros',
         \ 'p:prototypes',
-        \ 'g:enum',
+        \ 'g:enums',
         \ 'e:enumerators',
         \ 't:typedefs',
         \ 'n:namespaces',
@@ -161,7 +200,84 @@ function! s:InitTypes()
         \ 'union'     : 'u'
     \ }
     let s:known_types.cpp = type_cpp
-
+    " C# {{{2
+    let type_cs = {}
+    let type_cs.ctagstype = 'c#'
+    let type_cs.scopes    = [
+        \ 'namespace',
+        \ 'interface',
+        \ 'class',
+        \ 'struct',
+        \ 'enum'
+    \ ]
+    let type_cs.sro       = '.'
+    let type_cs.kinds     = [
+        \ 'd:macros',
+        \ 'f:fields',
+        \ 'g:enums',
+        \ 'e:enumerators',
+        \ 't:typedefs',
+        \ 'n:namespaces',
+        \ 'i:interfaces',
+        \ 'c:classes',
+        \ 's:structs',
+        \ 'E:events',
+        \ 'm:methods',
+        \ 'p:properties'
+    \ ]
+    let type_cs.kind2scope = {
+        \ 'n' : 'namespace',
+        \ 'i' : 'interface',
+        \ 'c' : 'class',
+        \ 's' : 'struct',
+        \ 'g' : 'enum'
+    \ }
+    let type_cs.scope2kind = {
+        \ 'namespace' : 'n',
+        \ 'interface' : 'i',
+        \ 'class'     : 'c',
+        \ 'struct'    : 's',
+        \ 'enum'      : 'g'
+    \ }
+    let s:known_types.cs = type_cs
+    " COBOL {{{2
+    let type_cobol = {}
+    let type_cobol.ctagstype = 'cobol'
+    let type_cobol.kinds     = [
+        \ 'd:data items',
+        \ 'f:file descriptions',
+        \ 'g:group items',
+        \ 'p:paragraphs',
+        \ 'P:program ids',
+        \ 's:sections'
+    \ ]
+    let s:known_types.cobol = type_cobol
+    " DOS Batch {{{2
+    let type_dosbatch = {}
+    let type_dosbatch.ctagstype = 'dosbatch'
+    let type_dosbatch.kinds     = [
+        \ 'l:labels',
+        \ 'v:variables'
+    \ ]
+    let s:known_types.dosbatch = type_dosbatch
+    " Eiffel {{{2
+    let type_eiffel = {}
+    let type_eiffel.ctagstype = 'eiffel'
+    let type_eiffel.scopes    = ['class', 'feature']
+    let type_eiffel.sro       = '.' " Not sure, is nesting even possible?
+    let type_eiffel.kinds     = [
+        \ 'c:classes',
+        \ 'f:features'
+    \ ]
+    let type_eiffel.kind2scope = {
+        \ 'c' : 'class',
+        \ 'f' : 'feature'
+    \ }
+    let type_eiffel.scope2kind = {
+        \ 'class'   : 'c',
+        \ 'feature' : 'f'
+    \ }
+    let s:known_types.eiffel = type_eiffel
     " Java {{{2
     let type_java = {}
     let type_java.ctagstype = 'java'
