@@ -400,6 +400,8 @@ function! s:OpenWindow()
     setlocal foldcolumn=1
     setlocal foldtext=v:folddashes.getline(v:foldstart)
 
+    setlocal statusline=%!TagbarGenerateStatusline()
+
     " Variable for saving the current file for functions that are called from
     " the tagbar window
     let s:current_file = ''
@@ -1073,7 +1075,7 @@ endfunction
 " s:PrintHelp() {{{1
 function! s:PrintHelp()
     if s:short_help
-        call append(0, '" Press F1 for help')
+        call append(0, '" Press <F1> for help')
     else
         call append(0, '" <Enter> : Jump to tag definition')
         call append(1, '" <Space> : Display tag prototype')
@@ -1309,6 +1311,20 @@ function! s:ToggleHelp()
     endif
 
     execute 1
+endfunction
+
+" TagbarGenerateStatusline() {{{1
+function! TagbarGenerateStatusline()
+    if g:tagbar_sort
+        let text = '[Name]'
+    else
+        let text = '[Order]'
+    endif
+
+    let filename = fnamemodify(s:current_file, ':t')
+    let text .= ' ' . filename
+
+    return text
 endfunction
 
 " s:PrintWarningMsg() {{{1
