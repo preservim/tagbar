@@ -1196,6 +1196,9 @@ function! s:JumpToTag()
 
     execute 'wincmd p'
 
+    " Mark current position so it can be jumped back to
+    mark '
+
     " Jump to the line where the tag is defined. Don't use the search pattern
     " since it doesn't take the scope into account and thus can fail if tags
     " with the same name are defined in different scopes (e.g. classes)
