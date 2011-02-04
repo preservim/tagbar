@@ -278,6 +278,24 @@ function! s:InitTypes()
         \ 'feature' : 'f'
     \ }
     let s:known_types.eiffel = type_eiffel
+    " Erlang {{{2
+    let type_erlang = {}
+    let type_erlang.ctagstype = 'erlang'
+    let type_erlang.scopes    = ['module']
+    let type_erlang.sro       = '.' " Nor sure, is nesting even possible?
+    let type_erlang.kinds     = [
+        \ 'm:modules',
+        \ 'd:macro definitions',
+        \ 'f:functions',
+        \ 'r:record definitions'
+    \ ]
+    let type_erlang.kind2scope = {
+        \ 'm' : 'module'
+    \ }
+    let type_erlang.scope2kind = {
+        \ 'module' : 'm'
+    \ }
+    let s:known_types.erlang = type_erlang
     " Java {{{2
     let type_java = {}
     let type_java.ctagstype = 'java'
