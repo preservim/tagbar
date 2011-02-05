@@ -5,8 +5,7 @@
 " Licence:     Vim licence
 " Website:     http://github.com/majutsushi/tagbar
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by
-"              Yegappan Lakshmanan and uses some small portions of code from
-"              it.
+"              Yegappan Lakshmanan and uses some small amounts of code from it.
 " ============================================================================
 
 if &cp || exists('g:loaded_tagbar')
@@ -282,7 +281,7 @@ function! s:InitTypes()
     let type_erlang = {}
     let type_erlang.ctagstype = 'erlang'
     let type_erlang.scopes    = ['module']
-    let type_erlang.sro       = '.' " Nor sure, is nesting even possible?
+    let type_erlang.sro       = '.' " Not sure, is nesting even possible?
     let type_erlang.kinds     = [
         \ 'm:modules',
         \ 'd:macro definitions',
@@ -296,6 +295,70 @@ function! s:InitTypes()
         \ 'module' : 'm'
     \ }
     let s:known_types.erlang = type_erlang
+    " Flex {{{2
+    " Vim doesn't support Flex out of the box, this is based on rough
+    " guesses and probably requires
+    " http://www.vim.org/scripts/script.php?script_id=2909
+    " Improvements welcome!
+    let type_mxml = {}
+    let type_mxml.ctagstype = 'flex'
+    let type_mxml.scopes    = ['class']
+    let type_mxml.sro       = '.'
+    let type_mxml.kinds     = [
+        \ 'v:global variables',
+        \ 'c:classes',
+        \ 'm:methods',
+        \ 'p:properties',
+        \ 'f:functions',
+        \ 'x:mxtags'
+    \ ]
+    let type_mxml.kind2scope = {
+        \ 'c' : 'class'
+    \ }
+    let type_mxml.scope2kind = {
+        \ 'class' : 'c'
+    \ }
+    let s:known_types.mxml = type_mxml
+    " Fortran {{{2
+    let type_fortran = {}
+    let type_fortran.ctagstype = 'fortran'
+    let type_fortran.scopes    = ['module', 'program', 'function', 'subroutine']
+    let type_fortran.sro       = '.' " Not sure, is nesting even possible?
+    let type_fortran.kinds     = [
+        \ 'm:modules',
+        \ 'p:programs',
+        \ 'k:components',
+        \ 't:derived types and structures',
+        \ 'c:common blocks',
+        \ 'b:block data',
+        \ 'e:entry points',
+        \ 'f:functions',
+        \ 's:subroutines',
+        \ 'l:labels',
+        \ 'n:namelists',
+        \ 'v:variables'
+    \ ]
+    let type_fortran.kind2scope = {
+        \ 'm' : 'module',
+        \ 'p' : 'program',
+        \ 'f' : 'function',
+        \ 's' : 'subroutine'
+    \ }
+    let type_fortran.scope2kind = {
+        \ 'module'     : 'm',
+        \ 'program'    : 'p',
+        \ 'function'   : 'f',
+        \ 'subroutine' : 's'
+    \ }
+    let s:known_types.fortran = type_fortran
+    " HTML {{{2
+    let type_html = {}
+    let type_html.ctagstype = 'html'
+    let type_html.kinds     = [
+        \ 'f:JavaScript funtions',
+        \ 'a:named anchors'
+    \ ]
+    let s:known_types.html = type_html
     " Java {{{2
     let type_java = {}
     let type_java.ctagstype = 'java'
@@ -321,6 +384,75 @@ function! s:InitTypes()
         \ 'class'     : 'c'
     \ }
     let s:known_types.java = type_java
+    " JavaScript {{{2
+    " JavaScript is weird -- it does have scopes, but ctags doesn't seem to
+    " properly generate the information for them, instead it simply uses the
+    " complete name. So ctags has to be fixed before I can do anything here.
+    let type_javascript = {}
+    let type_javascript.ctagstype = 'javascript'
+    let type_javascript.kinds     = [
+        \ 'v:global variables',
+        \ 'c:classes',
+        \ 'p:properties',
+        \ 'm:methods',
+        \ 'f:functions'
+    \ ]
+    let s:known_types.javascript = type_javascript
+    " Lisp {{{2
+    let type_lisp = {}
+    let type_lisp.ctagstype = 'lisp'
+    let type_lisp.kinds     = [
+        \ 'f:functions'
+    \ ]
+    let s:known_types.lisp = type_lisp
+    " Lua {{{2
+    let type_lua = {}
+    let type_lua.ctagstype = 'lua'
+    let type_lua.kinds     = [
+        \ 'f:functions'
+    \ ]
+    let s:known_types.lua = type_lua
+    " Make {{{2
+    let type_make = {}
+    let type_make.ctagstype = 'make'
+    let type_make.kinds     = [
+        \ 'm:macros'
+    \ ]
+    let s:known_types.make = type_make
+    " Matlab {{{2
+    let type_matlab = {}
+    let type_matlab.ctagstype = 'matlab'
+    let type_matlab.kinds     = [
+        \ 'f:functions'
+    \ ]
+    let s:known_types.matlab = type_matlab
+    " Ocaml {{{2
+    let type_ocaml = {}
+    let type_ocaml.ctagstype = 'ocaml'
+    let type_ocaml.scopes    = ['Module', 'class', 'type']
+    let type_ocaml.sro       = '.' " Not sure, is nesting even possible?
+    let type_ocaml.kinds     = [
+        \ 'M:modules or functors',
+        \ 'v:global variables',
+        \ 'c:classes',
+        \ 'C:constructors',
+        \ 'm:methods',
+        \ 'e:exceptions',
+        \ 't:type names',
+        \ 'f:functions',
+        \ 'r:structure fields'
+    \ ]
+    let type_ocaml.kind2scope = {
+        \ 'M' : 'Module',
+        \ 'c' : 'class',
+        \ 't' : 'type'
+    \ }
+    let type_ocaml.scope2kind = {
+        \ 'Module' : 'M',
+        \ 'class'  : 'c',
+        \ 'type'   : 't'
+    \ }
+    let s:known_types.ocaml = type_ocaml
     " Python {{{2
     let type_python = {}
     let type_python.ctagstype = 'python'
