@@ -768,7 +768,7 @@ function! s:AddChildren(tags, processedtags, curpath, pscope, depth, typeinfo)
     if empty(a:curpath)
         let is_child = ''
     else
-        let is_child = ' && v:val.parentpath == a:curpath'
+        let is_child = ' && v:val.parentpath ==# a:curpath'
     endif
 
     let v_sro = '\V' . a:typeinfo.sro
@@ -863,8 +863,8 @@ function! s:ProcessPseudoTag(tags, processedtags, child, curpath,
                                     \ '', '')
 
         if has_key(pseudoparent, 'children')
-            let is_existingparent = 'v:val.name == parentname &&
-                    \ v:val.fields.kind == a:typeinfo.scope2kind[a:child.scope]'
+            let is_existingparent = 'v:val.name ==# parentname &&
+                    \ v:val.fields.kind ==# a:typeinfo.scope2kind[a:child.scope]'
             let existingparent = filter(copy(pseudoparent.children),
                                       \ is_existingparent)
             if !empty(existingparent)
@@ -896,8 +896,8 @@ endfunction
 " s:ExtractParentList() {{{1
 function! s:ExtractParentList(tags, processedtags, path, scope, typeinfo)
     let is_parent = 'has_key(a:typeinfo.kind2scope, v:val.fields.kind) &&
-                   \ a:typeinfo.kind2scope[v:val.fields.kind] == a:scope &&
-                   \ v:val.fullpath == a:path'
+                   \ a:typeinfo.kind2scope[v:val.fields.kind] ==# a:scope &&
+                   \ v:val.fullpath ==# a:path'
 
     let parentlist = filter(copy(a:processedtags), is_parent)
     if !empty(parentlist)
@@ -1016,7 +1016,7 @@ function! s:RenderContent(fname, ftype)
     " Print tags
     for kind in typeinfo.kinds
         let curtags = filter(copy(fileinfo.tags),
-                           \ 'v:val.fields.kind == kind[0]')
+                           \ 'v:val.fields.kind ==# kind[0]')
 
         if empty(curtags)
             continue
