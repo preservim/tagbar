@@ -406,6 +406,7 @@ function! s:OpenWindow()
     setlocal nonumber
     setlocal nowrap
     setlocal winfixwidth
+    setlocal textwidth=0
 
     if exists('+relativenumber')
         setlocal norelativenumber
@@ -1010,8 +1011,25 @@ function! s:RenderContent(fname, ftype)
         return
     endif
 
-    let typeinfo = s:known_types[a:ftype]
+    if !has_key(s:known_files, a:fname)
+        silent! put ='There was an error processing the file. Please run ' .
+                   \ 'ctags manually to determine what the problem is.'
+        normal! gqq
+
+        let s:current_file = ''
+
+        setlocal nomodifiable
+        let &lazyredraw = lazyredraw_save
+
+        if !in_tagbar
+            execute 'wincmd p'
+        endif
+
+        return
+    endif
     let fileinfo = s:known_files[a:fname]
+
+    let typeinfo = s:known_types[a:ftype]
 
     " Print tags
     for kind in typeinfo.kinds
