@@ -882,6 +882,7 @@ function! s:ParseTagline(part1, part2, typeinfo)
             endif
         endfor
     endif
+    let taginfo.depth = len(split(taginfo.path, '\V' . a:typeinfo.sro))
 
     return taginfo
 endfunction
@@ -904,8 +905,7 @@ function! s:AddChildren(tags, processedtags, curpath, pscope, depth, typeinfo)
         let is_child = ' && v:val.parentpath ==# a:curpath'
     endif
 
-    let v_sro = '\V' . a:typeinfo.sro
-    let is_cur_child = 'len(split(v:val.path, v_sro)) == a:depth' . is_child
+    let is_cur_child = 'v:val.depth == a:depth' . is_child
     let curchildren = filter(copy(a:tags), is_cur_child)
 
     " 'curchildren' are children at the current depth
@@ -951,7 +951,7 @@ function! s:AddChildren(tags, processedtags, curpath, pscope, depth, typeinfo)
 
     " Grandchildren are children that are not direct ancestors of a tag. This
     " can happen when pseudo-tags are in between.
-    let is_grandchild = 'len(split(v:val.path, v_sro)) > a:depth' . is_child
+    let is_grandchild = 'v:val.depth > a:depth' . is_child
     let grandchildren = filter(copy(a:tags), is_grandchild)
 
     if !empty(grandchildren)
@@ -1066,6 +1066,7 @@ function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
         let pseudotag.fullpath =
                     \ pseudotag.path . a:typeinfo.sro . pseudotag.name
     endif
+    let pseudotag.depth = len(split(pseudotag.path, '\V' . a:typeinfo.sro))
 
     let index                = strridx(parentscope, a:typeinfo.sro)
     let pseudotag.parentpath = strpart(parentscope, 0, index)
