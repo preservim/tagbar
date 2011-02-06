@@ -902,7 +902,7 @@ function! s:AddChildren(tags, processedtags, curpath, pscope, depth, typeinfo)
     if empty(a:curpath)
         let is_child = ''
     else
-        let is_child = ' && v:val.parentpath ==# a:curpath'
+        let is_child = ' && match(v:val.path, ''^\C'' . a:curpath) == 0'
     endif
 
     let is_cur_child = 'v:val.depth == a:depth' . is_child
