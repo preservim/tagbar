@@ -786,7 +786,7 @@ function! s:OpenWindow()
     syntax match Comment    '^" .*'              " Comments
     syntax match Identifier '^ [^: ]\+[^:]\+$'   " Non-scoped kinds
     syntax match Title      '[^:(* ]\+\ze\*\? :' " Scope names
-    syntax match Type       ': \zs.*'            " Scope types
+    syntax match Type       ' : \zs.*'           " Scope types
     syntax match SpecialKey '(.*)'               " Signatures
     syntax match NonText    '\*\ze :'            " Pseudo-tag identifiers
 
