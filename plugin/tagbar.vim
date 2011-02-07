@@ -453,6 +453,37 @@ function! s:InitTypes()
         \ 'type'   : 't'
     \ }
     let s:known_types.ocaml = type_ocaml
+    " Pascal {{{2
+    let type_pascal = {}
+    let type_pascal.ctagstype = 'pascal'
+    let type_pascal.kinds     = [
+        \ 'f:functions',
+        \ 'p:procedures'
+    \ ]
+    let s:known_types.pascal = type_pascal
+    " Perl {{{2
+    let type_perl = {}
+    let type_perl.ctagstype = 'perl'
+    let type_perl.kinds     = [
+        \ 'p:packages',
+        \ 'c:constants',
+        \ 'f:formats',
+        \ 'l:labels',
+        \ 's:subroutines'
+    \ ]
+    let s:known_types.perl = type_perl
+    " PHP {{{2
+    let type_php = {}
+    let type_php.ctagstype = 'php'
+    let type_php.kinds     = [
+        \ 'i:interfaces',
+        \ 'c:classes',
+        \ 'd:constant definitions',
+        \ 'f:functions',
+        \ 'v:variables',
+        \ 'j:javascript functions'
+    \ ]
+    let s:known_types.php = type_php
     " Python {{{2
     let type_python = {}
     let type_python.ctagstype = 'python'
@@ -475,8 +506,196 @@ function! s:InitTypes()
         \ 'function' : 'f'
     \ }
     let s:known_types.python = type_python
+    " REXX {{{2
+    let type_rexx = {}
+    let type_rexx.ctagstype = 'rexx'
+    let type_rexx.kinds     = [
+        \ 's:subroutines'
+    \ ]
+    let s:known_types.rexx = type_rexx
+    " Ruby {{{2
+    let type_ruby = {}
+    let type_ruby.ctagstype = 'ruby'
+    let type_ruby.scopes    = ['class']
+    let type_ruby.sro       = '.'
+    let type_ruby.kinds     = [
+        \ 'm:modules',
+        \ 'c:classes',
+        \ 'f:methods',
+        \ 'F:singleton methods'
+    \ ]
+    let type_ruby.kinds2scope = {
+        \ 'c' : 'class'
+    \ }
+    let type_ruby.scope2kind = {
+        \ 'class' : 'c'
+    \ }
+    let s:known_types.ruby = type_ruby
+    " Scheme {{{2
+    let type_scheme = {}
+    let type_scheme.ctagstype = 'scheme'
+    let type_scheme.kinds     = [
+        \ 'f:functions',
+        \ 's:sets'
+    \ ]
+    let s:known_types.scheme = type_scheme
+    " Shell script {{{2
+    let type_sh = {}
+    let type_sh.ctagstype = 'sh'
+    let type_sh.kinds     = [
+        \ 'f:functions'
+    \ ]
+    let s:known_types.sh = type_sh
+    let s:known_types.csh = type_sh
+    let s:known_types.zsh = type_sh
+    " SLang {{{2
+    let type_slang = {}
+    let type_slang.ctagstype = 'slang'
+    let type_slang.kinds     = [
+        \ 'n:namespaces',
+        \ 'f:functions'
+    \ ]
+    let s:known_types.slang = type_slang
+    " SML {{{2
+    let type_sml = {}
+    let type_sml.ctagstype = 'sml'
+    let type_sml.kinds     = [
+        \ 'e:exception declarations',
+        \ 'f:function definitions',
+        \ 'c:functor definitions',
+        \ 's:signature declarations',
+        \ 'r:structure declarations',
+        \ 't:type definitions',
+        \ 'v:value bindings'
+    \ ]
+    let s:known_types.sml = type_sml
+    " SQL {{{2
+    " The SQL ctags parser seems to be buggy for me, so this just uses the
+    " normal kinds even though scopes should be available. Improvements
+    " welcome!
+    let type_sql = {}
+    let type_sql.ctagstype = 'sql'
+    let type_sql.kinds     = [
+        \ 'c:cursors',
+        \ 'f:functions',
+        \ 'F:record fields',
+        \ 'L:block label',
+        \ 'P:packages',
+        \ 'p:procedures',
+        \ 's:subtypes',
+        \ 't:tables',
+        \ 'T:triggers',
+        \ 'v:variables',
+        \ 'i:indexes',
+        \ 'e:events',
+        \ 'U:publications',
+        \ 'R:services',
+        \ 'D:domains',
+        \ 'V:views',
+        \ 'n:synonyms',
+        \ 'x:MobiLink Table Scripts',
+        \ 'y:MobiLink Conn Scripts'
+    \ ]
+    let s:known_types.sql = type_sql
+    " Tcl {{{2
+    let type_tcl = {}
+    let type_tcl.ctagstype = 'tcl'
+    let type_tcl.kinds     = [
+        \ 'c:classes',
+        \ 'm:methods',
+        \ 'p:procedures'
+    \ ]
+    let s:known_types.tcl = type_tcl
+    " LaTeX {{{2
+    let type_tex = {}
+    let type_tex.ctagstype = 'tex'
+    let type_tex.kinds     = [
+        \ 'p:parts',
+        \ 'c:chapters',
+        \ 's:sections',
+        \ 'u:subsections',
+        \ 'b:subsubsections',
+        \ 'P:paragraphs',
+        \ 'G:subparagraphs',
+    \ ]
+    let s:known_types.tex = type_tex
+    " Vera {{{2
+    " Why are variables 'virtual'?
+    let type_vera = {}
+    let type_vera.ctagstype = 'vera'
+    let type_vera.scopes    = ['enum', 'class', 'virtual']
+    let type_vera.sro       = '.' " Nesting doesn't seem to be possible
+    let type_vera.kinds     = [
+        \ 'd:macros',
+        \ 'g:enums',
+        \ 'T:typedefs',
+        \ 'c:classes',
+        \ 'e:enumerators',
+        \ 'm:members',
+        \ 'f:functions',
+        \ 't:tasks',
+        \ 'v:variables',
+        \ 'p:programs'
+    \ ]
+    let type_vera.kind2scope = {
+        \ 'g' : 'enum',
+        \ 'c' : 'class',
+        \ 'v' : 'virtual'
+    \ }
+    let type_vera.scope2kind = {
+        \ 'enum'      : 'g',
+        \ 'class'     : 'c',
+        \ 'virtual'   : 'v'
+    \ }
+    let s:known_types.vera = type_vera
+    " Verilog {{{2
+    let type_verilog = {}
+    let type_verilog.ctagstype = 'verilog'
+    let type_verilog.kinds     = [
+        \ 'c:constants',
+        \ 'e:events',
+        \ 'f:functions',
+        \ 'm:modules',
+        \ 'n:net data types',
+        \ 'p:ports',
+        \ 'r:register data types',
+        \ 't:tasks'
+    \ ]
+    let s:known_types.verilog = type_verilog
+    " VHDL {{{2
+    " The VHDL ctags parser unfortunately doesn't generate proper scopes
+    let type_vhdl = {}
+    let type_vhdl.ctagstype = 'vhdl'
+    let type_vhdl.kinds     = [
+        \ 'c:constants',
+        \ 't:types',
+        \ 'T:subtypes',
+        \ 'r:records',
+        \ 'e:entities',
+        \ 'f:functions',
+        \ 'p:procedures',
+        \ 'P:packages'
+    \ ]
+    let s:known_types.vhdl = type_vhdl
+    " Vim {{{2
+    let type_vim = {}
+    let type_vim.ctagstype = 'vim'
+    let type_vim.kinds     = [
+        \ 'v:variables',
+        \ 'f:functions',
+        \ 'a:autocommand groups',
+        \ 'c:commands',
+        \ 'm:maps'
+    \ ]
+    let s:known_types.vim = type_vim
+    " YACC {{{2
+    let type_yacc = {}
+    let type_yacc.ctagstype = 'yacc'
+    let type_yacc.kinds     = [
+        \ 'l:labels'
+    \ ]
+    let s:known_types.yacc = type_yacc
     " }}}2
-
 
     call extend(s:known_types, g:tagbar_types)
 
