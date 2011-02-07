@@ -45,10 +45,6 @@ if !exists('g:tagbar_width')
     let g:tagbar_width = 40
 endif
 
-if !exists('g:tagbar_types')
-    let g:tagbar_types = {}
-endif
-
 if !exists('g:tagbar_autoclose')
     let g:tagbar_autoclose = 0
 endif
@@ -697,7 +693,14 @@ function! s:InitTypes()
     let s:known_types.yacc = type_yacc
     " }}}2
 
-    call extend(s:known_types, g:tagbar_types)
+    let user_defs = s:GetUserTypeDefs()
+    for [key, value] in items(user_defs)
+        if !has_key(s:known_types, key) || has_key(value, 'replace')
+            let s:known_types[key] = value
+        else
+            call extend(s:known_types[key], value)
+        endif
+    endfor
 
     " Create a dictionary of the kind order for fast
     " access in sorting functions
@@ -717,6 +720,25 @@ function! s:InitTypes()
     let s:access_symbols.private   = '-'
 
     let s:type_init_done = 1
+endfunction
+
+" s:GetUserTypeDefs() {{{1
+function! s:GetUserTypeDefs()
+    redir => defs
+    silent! execute 'let g:'
+    redir END
+
+    let deflist = split(defs, '\n')
+    call map(deflist, 'substitute(v:val, ''^\S\+\zs.*'', "", "")')
+    call filter(deflist, 'v:val =~ "^tagbar_type_"')
+
+    let defdict = {}
+    for def in deflist
+        let type = substitute(def, '^tagbar_type_', '', '')
+        execute 'let defdict["' . type . '"] = g:' . def
+    endfor
+
+    return defdict
 endfunction
 
 " s:ToggleWindow() {{{1
