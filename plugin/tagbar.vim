@@ -881,8 +881,8 @@ function! s:ParseTagline(part1, part2, typeinfo)
                 break
             endif
         endfor
+        let taginfo.depth = len(split(taginfo.path, '\V' . a:typeinfo.sro))
     endif
-    let taginfo.depth = len(split(taginfo.path, '\V' . a:typeinfo.sro))
 
     return taginfo
 endfunction
