@@ -844,8 +844,8 @@ function! s:OpenWindow()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
 "        autocmd TabEnter * silent call s:Tlist_Refresh_Folds()
-        autocmd BufEnter,CursorHold * silent call s:AutoUpdate(
-                    \ fnamemodify(bufname('%'), ':p'))
+        autocmd BufEnter,CursorHold * silent call
+                    \ s:AutoUpdate(fnamemodify(bufname('%'), ':p'))
     augroup END
 
     let &cpoptions = cpoptions_save
