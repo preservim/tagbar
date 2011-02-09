@@ -1010,9 +1010,9 @@ function! s:ProcessFile(fname, ftype)
 
     if v:shell_error
         let msg = 'Tagbar: Could not generate tags for ' . a:fname
-        call s:PrintWarningMsg(msg)
+        echohl WarningMsg | echomsg msg | echohl None
         if !empty(ctags_output)
-            call s:PrintWarningMsg(ctags_output)
+            echohl WarningMsg | echomsg ctags_output | echohl None
         endif
         return
     endif
@@ -1738,13 +1738,6 @@ function! TagbarGenerateStatusline()
     let text .= ' ' . filename
 
     return text
-endfunction
-
-" s:PrintWarningMsg() {{{1
-function! s:PrintWarningMsg(msg)
-    echohl WarningMsg
-    echomsg a:msg
-    echohl None
 endfunction
 
 " Commands {{{1
