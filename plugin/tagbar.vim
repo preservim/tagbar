@@ -805,12 +805,12 @@ function! s:OpenWindow()
     let s:is_maximized = 0
     let s:short_help   = 1
 
-    syntax match Comment    '^" .*'              " Comments
-    syntax match Identifier '^ [^: ]\+[^:]\+$'   " Non-scoped kinds
-    syntax match Title      '[^:(* ]\+\ze\*\? :' " Scope names
-    syntax match Type       ' : \zs.*'           " Scope types
-    syntax match SpecialKey '(.*)'               " Signatures
-    syntax match NonText    '\*\ze :'            " Pseudo-tag identifiers
+    syntax match Comment    '^" .*'             " Comments
+    syntax match Identifier '^ [^: ]\+[^:]\+$'  " Non-scoped kinds
+    syntax match Title      '[^(* ]\+\ze\*\? :' " Scope names
+    syntax match Type       ' : \zs.*'          " Scope types
+    syntax match SpecialKey '(.*)'              " Signatures
+    syntax match NonText    '\*\ze :'           " Pseudo-tag identifiers
 
     highlight default TagbarAccessPublic    guifg=Green ctermfg=Green
     highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
