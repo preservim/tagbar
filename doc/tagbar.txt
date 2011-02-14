@@ -12,7 +12,7 @@ Contents~
 	 3. Installation........................*tagbar-installation*
 	 4. Usage...............................*tagbar-usage*
 	 5. Commands............................*tagbar-commands*
-	 6. Options.............................*tagbar-options*
+	 6. Configuration.......................*tagbar-configuration*
 	 7. Adding your own file types..........*tagbar-add-types*
 	 8. Bugs and limitations................*tagbar-bugs*
 	 9. History.............................*tagbar-history*
@@ -42,7 +42,6 @@ Let's say we have the following code inside of a C++ file:
         };
     };
 <
-
 Then Tagbar would display the tag information like so:
 >
     __anon1* : namespace
@@ -52,7 +51,6 @@ Then Tagbar would display the tag information like so:
        -var
       a
 <
-
 This example shows several important points. First, the tags are listed
 indented below the scope they are defined in. Second, the type of a scope is
 listed after its name and a colon. Third, tags for which the access/visibility
@@ -61,7 +59,7 @@ introduces 'pseudo-tags'. Pseudo-tags are tags that are not explicitly defined
 in the file but have children in it. In this example the namespace doesn't
 have a name and thus ctags doesn't generate a tag for it, but since it has
 children in the file it still needs to be displayed using an auto-generated
-name. Pseudo-tags are denoted with an asterisk ('*') at the end of the name.
+name. Pseudo-tags are denoted with an asterisk ('*') at the end of their name.
 
 							*tagbar-features*
 Supported features~
@@ -82,6 +80,8 @@ The following features are supported by Tagbar:
       Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL,
       Tcl, Tex, Vera, Verilog, VHDL, Vim and YACC.
     * Can be extended to support arbitrary new types.
+
+
 
 caveats:
 C++:
