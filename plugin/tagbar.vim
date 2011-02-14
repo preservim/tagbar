@@ -791,10 +791,11 @@ function! s:OpenWindow()
 
     setlocal foldenable
     setlocal foldminlines=0
-    setlocal foldmethod=manual
+    setlocal foldmethod=expr
+    setlocal foldexpr=s:GetFoldLevel(v:lnum)
     setlocal foldlevel=9999
     setlocal foldcolumn=1
-    setlocal foldtext=v:folddashes.getline(v:foldstart)
+    setlocal foldtext=getline(v:foldstart)
 
     setlocal statusline=%!TagbarGenerateStatusline()
 
@@ -832,14 +833,23 @@ function! s:OpenWindow()
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-    nnoremap <script> <silent> <buffer> s       :call <SID>ToggleSort()<CR>
     nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
                                               \ :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
-    nnoremap <script> <silent> <buffer> x       :call <SID>ZoomWindow()<CR>
-    nnoremap <script> <silent> <buffer> q       :close<CR>
-    nnoremap <script> <silent> <buffer> <F1>    :call <SID>ToggleHelp()<CR>
+
+    nnoremap <script> <silent> <buffer> +           :silent! foldopen<CR>
+    nnoremap <script> <silent> <buffer> <kPlus>     :silent! foldopen<CR>
+    nnoremap <script> <silent> <buffer> -           :silent! foldclose<CR>
+    nnoremap <script> <silent> <buffer> <kMinus>    :silent! foldclose<CR>
+    nnoremap <script> <silent> <buffer> *           :silent! %foldopen!<CR>
+    nnoremap <script> <silent> <buffer> <kMultiply> :silent! %foldopen!<CR>
+    nnoremap <script> <silent> <buffer> =           :silent! %foldclose!<CR>
+
+    nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
+    nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
+    nnoremap <script> <silent> <buffer> q    :close<CR>
+    nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
 
     augroup TagbarAutoCmds
         autocmd!
@@ -847,7 +857,6 @@ function! s:OpenWindow()
         autocmd BufUnload  __Tagbar__ call s:CleanUp()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
-"        autocmd TabEnter * silent call s:Tlist_Refresh_Folds()
         autocmd BufEnter,CursorHold * silent call
                     \ s:AutoUpdate(fnamemodify(bufname('%'), ':p'))
     augroup END
@@ -1490,10 +1499,14 @@ function! s:PrintHelp()
     elseif !s:short_help
         call append(0, '" <Enter> : Jump to tag definition')
         call append(1, '" <Space> : Display tag prototype')
-        call append(2, '" s       : Toggle sort')
-        call append(3, '" x       : Zoom window in/out')
-        call append(4, '" q       : Close window')
-        call append(5, '" <F1>    : Remove help')
+        call append(2, '" +       : Open fold')
+        call append(3, '" -       : Close fold')
+        call append(4, '" *       : Open all folds')
+        call append(5, '" =       : Close all folds')
+        call append(6, '" s       : Toggle sort')
+        call append(7, '" x       : Zoom window in/out')
+        call append(8, '" q       : Close window')
+        call append(9, '" <F1>    : Remove help')
     endif
 endfunction
 
@@ -1638,6 +1651,18 @@ function! s:ShowPrototype()
     endif
 
     echo taginfo.prototype
+endfunction
+
+" s:GetFoldLevel() {{{1
+function! s:GetFoldLevel(lnum)
+    let curindent = len(matchstr(getline(a:lnum)[1:], '^[ ]*[-+#]\?')) / 2
+    let nextindent = len(matchstr(getline(a:lnum + 1)[1:], '^[ ]*[-+#]\?')) / 2
+
+    if curindent < nextindent
+        return '>' . (curindent + 1)
+    else
+        return curindent
+    endif
 endfunction
 
 " TagbarBalloonExpr() {{{1
