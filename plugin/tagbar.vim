@@ -1061,7 +1061,13 @@ function! s:ProcessFile(fname, ftype)
 
     let s:compare_typeinfo = typeinfo
 
-    if g:tagbar_sort
+    if has_key(typeinfo, 'sort')
+        if typeinfo.sort
+            call s:SortTags(fileinfo.tags, 's:CompareByKind')
+        else
+            call s:SortTags(fileinfo.tags, 's:CompareByLine')
+        endif
+    elseif g:tagbar_sort
         call s:SortTags(fileinfo.tags, 's:CompareByKind')
     else
         call s:SortTags(fileinfo.tags, 's:CompareByLine')
@@ -1689,11 +1695,21 @@ function! s:ToggleSort()
 
     match none
 
-    let g:tagbar_sort = !g:tagbar_sort
-
     let s:compare_typeinfo = s:known_types[fileinfo.ftype]
 
-    if g:tagbar_sort
+    if has_key(s:compare_typeinfo, 'sort')
+        let s:compare_typeinfo.sort = !s:compare_typeinfo.sort
+    else
+        let g:tagbar_sort = !g:tagbar_sort
+    endif
+
+    if has_key(s:compare_typeinfo, 'sort')
+        if s:compare_typeinfo.sort
+            call s:SortTags(fileinfo.tags, 's:CompareByKind')
+        else
+            call s:SortTags(fileinfo.tags, 's:CompareByLine')
+        endif
+    elseif g:tagbar_sort
         call s:SortTags(fileinfo.tags, 's:CompareByKind')
     else
         call s:SortTags(fileinfo.tags, 's:CompareByLine')
