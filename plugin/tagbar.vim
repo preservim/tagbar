@@ -68,7 +68,7 @@ endif
 
 let s:type_init_done = 0
 
-" s:InitTypes() {{{1
+" s:InitTypes() {{{2
 function! s:InitTypes()
     " Dictionary of the already processed files, indexed by file name with
     " complete path.
@@ -83,7 +83,7 @@ function! s:InitTypes()
 
     let s:known_types = {}
 
-    " Ant {{{2
+    " Ant {{{3
     let type_ant = {}
     let type_ant.ctagstype = 'ant'
     let type_ant.kinds     = [
@@ -91,7 +91,7 @@ function! s:InitTypes()
         \ 't:targets'
     \ ]
     let s:known_types.ant = type_ant
-    " Asm {{{2
+    " Asm {{{3
     let type_asm = {}
     let type_asm.ctagstype = 'asm'
     let type_asm.kinds     = [
@@ -101,7 +101,7 @@ function! s:InitTypes()
         \ 'l:labels'
     \ ]
     let s:known_types.asm = type_asm
-    " ASP {{{2
+    " ASP {{{3
     let type_aspvbs = {}
     let type_aspvbs.ctagstype = 'asp'
     let type_aspvbs.kinds     = [
@@ -112,14 +112,14 @@ function! s:InitTypes()
         \ 'v:variables'
     \ ]
     let s:known_types.aspvbs = type_aspvbs
-    " Awk {{{2
+    " Awk {{{3
     let type_awk = {}
     let type_awk.ctagstype = 'awk'
     let type_awk.kinds     = [
         \ 'f:functions'
     \ ]
     let s:known_types.awk = type_awk
-    " Basic {{{2
+    " Basic {{{3
     let type_basic = {}
     let type_basic.ctagstype = 'basic'
     let type_basic.kinds     = [
@@ -131,7 +131,7 @@ function! s:InitTypes()
         \ 'v:variables'
     \ ]
     let s:known_types.basic = type_basic
-    " BETA {{{2
+    " BETA {{{3
     let type_beta = {}
     let type_beta.ctagstype = 'beta'
     let type_beta.kinds     = [
@@ -140,7 +140,7 @@ function! s:InitTypes()
         \ 'v:patterns'
     \ ]
     let s:known_types.beta = type_beta
-    " C {{{2
+    " C {{{3
     let type_c = {}
     let type_c.ctagstype = 'c'
     let type_c.scopes    = ['enum', 'struct', 'union']
@@ -168,7 +168,7 @@ function! s:InitTypes()
         \ 'union'  : 'u'
     \ }
     let s:known_types.c = type_c
-    " C++ {{{2
+    " C++ {{{3
     let type_cpp = {}
     let type_cpp.ctagstype = 'c++'
     let type_cpp.scopes    = [
@@ -208,7 +208,7 @@ function! s:InitTypes()
         \ 'union'     : 'u'
     \ }
     let s:known_types.cpp = type_cpp
-    " C# {{{2
+    " C# {{{3
     let type_cs = {}
     let type_cs.ctagstype = 'c#'
     let type_cs.scopes    = [
@@ -248,7 +248,7 @@ function! s:InitTypes()
         \ 'enum'      : 'g'
     \ }
     let s:known_types.cs = type_cs
-    " COBOL {{{2
+    " COBOL {{{3
     let type_cobol = {}
     let type_cobol.ctagstype = 'cobol'
     let type_cobol.kinds     = [
@@ -260,7 +260,7 @@ function! s:InitTypes()
         \ 's:sections'
     \ ]
     let s:known_types.cobol = type_cobol
-    " DOS Batch {{{2
+    " DOS Batch {{{3
     let type_dosbatch = {}
     let type_dosbatch.ctagstype = 'dosbatch'
     let type_dosbatch.kinds     = [
@@ -268,7 +268,7 @@ function! s:InitTypes()
         \ 'v:variables'
     \ ]
     let s:known_types.dosbatch = type_dosbatch
-    " Eiffel {{{2
+    " Eiffel {{{3
     let type_eiffel = {}
     let type_eiffel.ctagstype = 'eiffel'
     let type_eiffel.scopes    = ['class', 'feature']
@@ -286,7 +286,7 @@ function! s:InitTypes()
         \ 'feature' : 'f'
     \ }
     let s:known_types.eiffel = type_eiffel
-    " Erlang {{{2
+    " Erlang {{{3
     let type_erlang = {}
     let type_erlang.ctagstype = 'erlang'
     let type_erlang.scopes    = ['module']
@@ -304,7 +304,7 @@ function! s:InitTypes()
         \ 'module' : 'm'
     \ }
     let s:known_types.erlang = type_erlang
-    " Flex {{{2
+    " Flex {{{3
     " Vim doesn't support Flex out of the box, this is based on rough
     " guesses and probably requires
     " http://www.vim.org/scripts/script.php?script_id=2909
@@ -328,7 +328,7 @@ function! s:InitTypes()
         \ 'class' : 'c'
     \ }
     let s:known_types.mxml = type_mxml
-    " Fortran {{{2
+    " Fortran {{{3
     let type_fortran = {}
     let type_fortran.ctagstype = 'fortran'
     let type_fortran.scopes    = ['module', 'program', 'function', 'subroutine']
@@ -360,7 +360,7 @@ function! s:InitTypes()
         \ 'subroutine' : 's'
     \ }
     let s:known_types.fortran = type_fortran
-    " HTML {{{2
+    " HTML {{{3
     let type_html = {}
     let type_html.ctagstype = 'html'
     let type_html.kinds     = [
@@ -368,7 +368,7 @@ function! s:InitTypes()
         \ 'a:named anchors'
     \ ]
     let s:known_types.html = type_html
-    " Java {{{2
+    " Java {{{3
     let type_java = {}
     let type_java.ctagstype = 'java'
     let type_java.scopes    = ['enum', 'interface', 'class']
@@ -393,7 +393,7 @@ function! s:InitTypes()
         \ 'class'     : 'c'
     \ }
     let s:known_types.java = type_java
-    " JavaScript {{{2
+    " JavaScript {{{3
     " JavaScript is weird -- it does have scopes, but ctags doesn't seem to
     " properly generate the information for them, instead it simply uses the
     " complete name. So ctags has to be fixed before I can do anything here.
@@ -407,35 +407,35 @@ function! s:InitTypes()
         \ 'f:functions'
     \ ]
     let s:known_types.javascript = type_javascript
-    " Lisp {{{2
+    " Lisp {{{3
     let type_lisp = {}
     let type_lisp.ctagstype = 'lisp'
     let type_lisp.kinds     = [
         \ 'f:functions'
     \ ]
     let s:known_types.lisp = type_lisp
-    " Lua {{{2
+    " Lua {{{3
     let type_lua = {}
     let type_lua.ctagstype = 'lua'
     let type_lua.kinds     = [
         \ 'f:functions'
     \ ]
     let s:known_types.lua = type_lua
-    " Make {{{2
+    " Make {{{3
     let type_make = {}
     let type_make.ctagstype = 'make'
     let type_make.kinds     = [
         \ 'm:macros'
     \ ]
     let s:known_types.make = type_make
-    " Matlab {{{2
+    " Matlab {{{3
     let type_matlab = {}
     let type_matlab.ctagstype = 'matlab'
     let type_matlab.kinds     = [
         \ 'f:functions'
     \ ]
     let s:known_types.matlab = type_matlab
-    " Ocaml {{{2
+    " Ocaml {{{3
     let type_ocaml = {}
     let type_ocaml.ctagstype = 'ocaml'
     let type_ocaml.scopes    = ['Module', 'class', 'type']
@@ -462,7 +462,7 @@ function! s:InitTypes()
         \ 'type'   : 't'
     \ }
     let s:known_types.ocaml = type_ocaml
-    " Pascal {{{2
+    " Pascal {{{3
     let type_pascal = {}
     let type_pascal.ctagstype = 'pascal'
     let type_pascal.kinds     = [
@@ -470,7 +470,7 @@ function! s:InitTypes()
         \ 'p:procedures'
     \ ]
     let s:known_types.pascal = type_pascal
-    " Perl {{{2
+    " Perl {{{3
     let type_perl = {}
     let type_perl.ctagstype = 'perl'
     let type_perl.kinds     = [
@@ -481,7 +481,7 @@ function! s:InitTypes()
         \ 's:subroutines'
     \ ]
     let s:known_types.perl = type_perl
-    " PHP {{{2
+    " PHP {{{3
     let type_php = {}
     let type_php.ctagstype = 'php'
     let type_php.kinds     = [
@@ -493,7 +493,7 @@ function! s:InitTypes()
         \ 'j:javascript functions'
     \ ]
     let s:known_types.php = type_php
-    " Python {{{2
+    " Python {{{3
     let type_python = {}
     let type_python.ctagstype = 'python'
     let type_python.scopes    = ['class', 'function']
@@ -515,14 +515,14 @@ function! s:InitTypes()
         \ 'function' : 'f'
     \ }
     let s:known_types.python = type_python
-    " REXX {{{2
+    " REXX {{{3
     let type_rexx = {}
     let type_rexx.ctagstype = 'rexx'
     let type_rexx.kinds     = [
         \ 's:subroutines'
     \ ]
     let s:known_types.rexx = type_rexx
-    " Ruby {{{2
+    " Ruby {{{3
     let type_ruby = {}
     let type_ruby.ctagstype = 'ruby'
     let type_ruby.scopes    = ['class']
@@ -540,7 +540,7 @@ function! s:InitTypes()
         \ 'class' : 'c'
     \ }
     let s:known_types.ruby = type_ruby
-    " Scheme {{{2
+    " Scheme {{{3
     let type_scheme = {}
     let type_scheme.ctagstype = 'scheme'
     let type_scheme.kinds     = [
@@ -548,7 +548,7 @@ function! s:InitTypes()
         \ 's:sets'
     \ ]
     let s:known_types.scheme = type_scheme
-    " Shell script {{{2
+    " Shell script {{{3
     let type_sh = {}
     let type_sh.ctagstype = 'sh'
     let type_sh.kinds     = [
@@ -557,7 +557,7 @@ function! s:InitTypes()
     let s:known_types.sh = type_sh
     let s:known_types.csh = type_sh
     let s:known_types.zsh = type_sh
-    " SLang {{{2
+    " SLang {{{3
     let type_slang = {}
     let type_slang.ctagstype = 'slang'
     let type_slang.kinds     = [
@@ -565,7 +565,7 @@ function! s:InitTypes()
         \ 'f:functions'
     \ ]
     let s:known_types.slang = type_slang
-    " SML {{{2
+    " SML {{{3
     let type_sml = {}
     let type_sml.ctagstype = 'sml'
     let type_sml.kinds     = [
@@ -578,7 +578,7 @@ function! s:InitTypes()
         \ 'v:value bindings'
     \ ]
     let s:known_types.sml = type_sml
-    " SQL {{{2
+    " SQL {{{3
     " The SQL ctags parser seems to be buggy for me, so this just uses the
     " normal kinds even though scopes should be available. Improvements
     " welcome!
@@ -606,7 +606,7 @@ function! s:InitTypes()
         \ 'y:MobiLink Conn Scripts'
     \ ]
     let s:known_types.sql = type_sql
-    " Tcl {{{2
+    " Tcl {{{3
     let type_tcl = {}
     let type_tcl.ctagstype = 'tcl'
     let type_tcl.kinds     = [
@@ -615,7 +615,7 @@ function! s:InitTypes()
         \ 'p:procedures'
     \ ]
     let s:known_types.tcl = type_tcl
-    " LaTeX {{{2
+    " LaTeX {{{3
     let type_tex = {}
     let type_tex.ctagstype = 'tex'
     let type_tex.kinds     = [
@@ -628,7 +628,7 @@ function! s:InitTypes()
         \ 'G:subparagraphs',
     \ ]
     let s:known_types.tex = type_tex
-    " Vera {{{2
+    " Vera {{{3
     " Why are variables 'virtual'?
     let type_vera = {}
     let type_vera.ctagstype = 'vera'
@@ -657,7 +657,7 @@ function! s:InitTypes()
         \ 'virtual'   : 'v'
     \ }
     let s:known_types.vera = type_vera
-    " Verilog {{{2
+    " Verilog {{{3
     let type_verilog = {}
     let type_verilog.ctagstype = 'verilog'
     let type_verilog.kinds     = [
@@ -671,7 +671,7 @@ function! s:InitTypes()
         \ 't:tasks'
     \ ]
     let s:known_types.verilog = type_verilog
-    " VHDL {{{2
+    " VHDL {{{3
     " The VHDL ctags parser unfortunately doesn't generate proper scopes
     let type_vhdl = {}
     let type_vhdl.ctagstype = 'vhdl'
@@ -686,7 +686,7 @@ function! s:InitTypes()
         \ 'P:packages'
     \ ]
     let s:known_types.vhdl = type_vhdl
-    " Vim {{{2
+    " Vim {{{3
     let type_vim = {}
     let type_vim.ctagstype = 'vim'
     let type_vim.kinds     = [
@@ -697,14 +697,14 @@ function! s:InitTypes()
         \ 'm:maps'
     \ ]
     let s:known_types.vim = type_vim
-    " YACC {{{2
+    " YACC {{{3
     let type_yacc = {}
     let type_yacc.ctagstype = 'yacc'
     let type_yacc.kinds     = [
         \ 'l:labels'
     \ ]
     let s:known_types.yacc = type_yacc
-    " }}}2
+    " }}}3
 
     let user_defs = s:GetUserTypeDefs()
     for [key, value] in items(user_defs)
@@ -736,7 +736,7 @@ function! s:InitTypes()
     let s:type_init_done = 1
 endfunction
 
-" s:GetUserTypeDefs() {{{1
+" s:GetUserTypeDefs() {{{2
 function! s:GetUserTypeDefs()
     redir => defs
     silent! execute 'let g:'
@@ -755,7 +755,8 @@ function! s:GetUserTypeDefs()
     return defdict
 endfunction
 
-" s:ToggleWindow() {{{1
+" Window management {{{1
+" s:ToggleWindow() {{{2
 function! s:ToggleWindow()
     let tagbarwinnr = bufwinnr("__Tagbar__")
     if tagbarwinnr != -1
@@ -766,7 +767,7 @@ function! s:ToggleWindow()
     call s:OpenWindow(0)
 endfunction
 
-" s:OpenWindow() {{{1
+" s:OpenWindow() {{{2
 function! s:OpenWindow(autoclose)
     if !s:type_init_done
         call s:InitTypes()
@@ -885,7 +886,7 @@ function! s:OpenWindow(autoclose)
     endif
 endfunction
 
-" s:CloseWindow() {{{1
+" s:CloseWindow() {{{2
 function! s:CloseWindow()
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr == -1
@@ -912,7 +913,7 @@ function! s:CloseWindow()
     endif
 endfunction
 
-" s:ZoomWindow() {{{1
+" s:ZoomWindow() {{{2
 function! s:ZoomWindow()
     if s:is_maximized
         execute 'vert resize ' . g:tagbar_width
@@ -923,88 +924,8 @@ function! s:ZoomWindow()
     endif
 endfunction
 
-" s:CleanUp() {{{1
-function! s:CleanUp()
-    silent! autocmd! TagbarAutoCmds
-    unlet s:current_file
-    unlet s:is_maximized
-    unlet s:compare_typeinfo
-    unlet s:short_help
-endfunction
-
-" s:QuitIfOnlyWindow() {{{1
-function! s:QuitIfOnlyWindow()
-    " Before quitting Vim, delete the tagbar buffer so that
-    " the '0 mark is correctly set to the previous buffer.
-    if winbufnr(2) == -1
-        " Check if there is more than one tab page
-        if tabpagenr('$') == 1
-            bdelete
-            quit
-        else
-            close
-        endif
-    endif
-endfunction
-
-" s:AutoUpdate() {{{1
-function! s:AutoUpdate(fname)
-    call s:RefreshContent(a:fname)
-
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr == -1 || &filetype == 'tagbar'
-        return
-    endif
-
-    if !has_key(s:known_files, a:fname)
-        return
-    endif
-
-    let s:current_file = a:fname
-
-    call s:HighlightTag(a:fname)
-endfunction
-
-" s:RefreshContent() {{{1
-function! s:RefreshContent(fname)
-    " Don't do anything if we're in the tagbar window
-    if &filetype == 'tagbar'
-        return
-    endif
-
-    if has_key(s:known_files, a:fname)
-        if s:known_files[a:fname].mtime != getftime(a:fname)
-            call s:ProcessFile(a:fname, &filetype)
-        endif
-    else
-        call s:ProcessFile(a:fname, &filetype)
-    endif
-
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-
-    if tagbarwinnr != -1
-        call s:RenderContent(a:fname, &filetype)
-    endif
-endfunction
-
-" s:IsValidFile() {{{1
-function! s:IsValidFile(fname, ftype)
-    if a:fname == '' || a:ftype == ''
-        return 0
-    endif
-
-    if !filereadable(a:fname)
-        return 0
-    endif
-
-    if !has_key(s:known_types, a:ftype)
-        return 0
-    endif
-
-    return 1
-endfunction
-
-" s:ProcessFile() {{{1
+" Tag processing {{{1
+" s:ProcessFile() {{{2
 function! s:ProcessFile(fname, ftype)
     if !s:IsValidFile(a:fname, a:ftype)
         return
@@ -1098,7 +1019,7 @@ function! s:ProcessFile(fname, ftype)
     let s:known_files[a:fname] = fileinfo
 endfunction
 
-" s:ParseTagline() {{{1
+" s:ParseTagline() {{{2
 " Structure of a tag line:
 " tagname<TAB>filename<TAB>expattern;"fields
 " fields: <TAB>name:value
@@ -1157,7 +1078,7 @@ function! s:ParseTagline(part1, part2, typeinfo)
     return taginfo
 endfunction
 
-" s:AddScopedTags() {{{1
+" s:AddScopedTags() {{{2
 " Recursively process tags. Unfortunately there is a problem: not all tags in
 " a hierarchy are actually there. For example, in C++ a class can be defined
 " in a header file and implemented in a .cpp file (so the class itself doesn't
@@ -1243,7 +1164,7 @@ function! s:AddScopedTags(tags, processedtags, curpath, pscope, depth, typeinfo)
     endif
 endfunction
 
-" s:ProcessPseudoTag() {{{1
+" s:ProcessPseudoTag() {{{2
 function! s:ProcessPseudoTag(curtags, tag, curpath, pscope, typeinfo)
     let pseudoname = substitute(a:tag.path, a:curpath, '', '')
     let pseudoname = substitute(pseudoname, '\V\^' . a:typeinfo.sro, '', '')
@@ -1262,7 +1183,7 @@ function! s:ProcessPseudoTag(curtags, tag, curpath, pscope, typeinfo)
     return pseudotag
 endfunction
 
-" s:ProcessPseudoChildren() {{{1
+" s:ProcessPseudoChildren() {{{2
 function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo)
     for childtag in a:tag.children
         if !has_key(a:typeinfo.kind2scope, childtag.fields.kind)
@@ -1288,7 +1209,7 @@ function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo)
     endif
 endfunction
 
-" s:CreatePseudoTag() {{{1
+" s:CreatePseudoTag() {{{2
 function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
     let pseudotag             = {}
     let pseudotag.name        = a:name
@@ -1314,7 +1235,8 @@ function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
     return pseudotag
 endfunction
 
-" s:SortTags() {{{1
+" Sorting {{{1
+" s:SortTags() {{{2
 function! s:SortTags(tags, comparemethod)
     call sort(a:tags, a:comparemethod)
 
@@ -1325,7 +1247,7 @@ function! s:SortTags(tags, comparemethod)
     endfor
 endfunction
 
-" s:CompareByKind() {{{1
+" s:CompareByKind() {{{2
 function! s:CompareByKind(tag1, tag2)
     let typeinfo = s:compare_typeinfo
 
@@ -1357,12 +1279,50 @@ function! s:CompareByKind(tag1, tag2)
     endif
 endfunction
 
-" s:CompareByLine() {{{1
+" s:CompareByLine() {{{2
 function! s:CompareByLine(tag1, tag2)
     return a:tag1.fields.line - a:tag2.fields.line
 endfunction
 
-" s:RenderContent() {{{1
+" s:ToggleSort() {{{2
+function! s:ToggleSort()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    let curline = line('.')
+
+    let fileinfo = s:known_files[s:current_file]
+
+    match none
+
+    let s:compare_typeinfo = s:known_types[fileinfo.ftype]
+
+    if has_key(s:compare_typeinfo, 'sort')
+        let s:compare_typeinfo.sort = !s:compare_typeinfo.sort
+    else
+        let g:tagbar_sort = !g:tagbar_sort
+    endif
+
+    if has_key(s:compare_typeinfo, 'sort')
+        if s:compare_typeinfo.sort
+            call s:SortTags(fileinfo.tags, 's:CompareByKind')
+        else
+            call s:SortTags(fileinfo.tags, 's:CompareByLine')
+        endif
+    elseif g:tagbar_sort
+        call s:SortTags(fileinfo.tags, 's:CompareByKind')
+    else
+        call s:SortTags(fileinfo.tags, 's:CompareByLine')
+    endif
+
+    call s:RenderContent(s:current_file, fileinfo.ftype)
+
+    execute curline
+endfunction
+
+" Display {{{1
+" s:RenderContent() {{{2
 function! s:RenderContent(fname, ftype)
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
@@ -1505,25 +1465,7 @@ function! s:RenderContent(fname, ftype)
     endif
 endfunction
 
-" s:PrintHelp() {{{1
-function! s:PrintHelp()
-    if !g:tagbar_compact && s:short_help
-        call append(0, '" Press <F1> for help')
-    elseif !s:short_help
-        call append(0, '" <Enter> : Jump to tag definition')
-        call append(1, '" <Space> : Display tag prototype')
-        call append(2, '" +       : Open fold')
-        call append(3, '" -       : Close fold')
-        call append(4, '" *       : Open all folds')
-        call append(5, '" =       : Close all folds')
-        call append(6, '" s       : Toggle sort')
-        call append(7, '" x       : Zoom window in/out')
-        call append(8, '" q       : Close window')
-        call append(9, '" <F1>    : Remove help')
-    endif
-endfunction
-
-" s:PrintTag() {{{1
+" s:PrintTag() {{{2
 function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     let taginfo = ''
 
@@ -1556,7 +1498,7 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     endif
 endfunction
 
-" s:GetPrefix() {{{1
+" s:GetPrefix() {{{2
 function! s:GetPrefix(tag)
     if has_key(a:tag.fields, 'access') &&
      \ has_key(s:access_symbols, a:tag.fields.access)
@@ -1568,7 +1510,43 @@ function! s:GetPrefix(tag)
     return prefix
 endfunction
 
-" s:HighlightTag() {{{1
+" s:PrintHelp() {{{2
+function! s:PrintHelp()
+    if !g:tagbar_compact && s:short_help
+        call append(0, '" Press <F1> for help')
+    elseif !s:short_help
+        call append(0, '" <Enter> : Jump to tag definition')
+        call append(1, '" <Space> : Display tag prototype')
+        call append(2, '" +       : Open fold')
+        call append(3, '" -       : Close fold')
+        call append(4, '" *       : Open all folds')
+        call append(5, '" =       : Close all folds')
+        call append(6, '" s       : Toggle sort')
+        call append(7, '" x       : Zoom window in/out')
+        call append(8, '" q       : Close window')
+        call append(9, '" <F1>    : Remove help')
+    endif
+endfunction
+
+" s:ToggleHelp() {{{2
+function! s:ToggleHelp()
+    let s:short_help = !s:short_help
+
+    " Prevent highlighting from being off after adding/removing the help text
+    match none
+
+    if s:current_file == ''
+        call s:RenderContent(s:current_file, '')
+    else
+        let fileinfo = s:known_files[s:current_file]
+        call s:RenderContent(s:current_file, fileinfo.ftype)
+    endif
+
+    execute 1
+endfunction
+
+" User actions {{{1
+" s:HighlightTag() {{{2
 function! s:HighlightTag(fname)
     let fileinfo = s:known_files[a:fname]
 
@@ -1623,7 +1601,7 @@ function! s:HighlightTag(fname)
     let &eventignore = eventignore_save
 endfunction
 
-" s:JumpToTag() {{{1
+" s:JumpToTag() {{{2
 function! s:JumpToTag()
     let taginfo = s:GetTagInfo(line('.'))
 
@@ -1657,7 +1635,7 @@ function! s:JumpToTag()
     endif
 endfunction
 
-" s:ShowPrototype() {{{1
+" s:ShowPrototype() {{{2
 function! s:ShowPrototype()
     let taginfo = s:GetTagInfo(line('.'))
 
@@ -1668,11 +1646,94 @@ function! s:ShowPrototype()
     echo taginfo.prototype
 endfunction
 
-" s:GetFoldLevel() {{{1
+" Helper functions {{{1
+" s:CleanUp() {{{2
+function! s:CleanUp()
+    silent! autocmd! TagbarAutoCmds
+    unlet s:current_file
+    unlet s:is_maximized
+    unlet s:compare_typeinfo
+    unlet s:short_help
+endfunction
+
+" s:QuitIfOnlyWindow() {{{2
+function! s:QuitIfOnlyWindow()
+    " Before quitting Vim, delete the tagbar buffer so that
+    " the '0 mark is correctly set to the previous buffer.
+    if winbufnr(2) == -1
+        " Check if there is more than one tab page
+        if tabpagenr('$') == 1
+            bdelete
+            quit
+        else
+            close
+        endif
+    endif
+endfunction
+
+" s:AutoUpdate() {{{2
+function! s:AutoUpdate(fname)
+    call s:RefreshContent(a:fname)
+
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1 || &filetype == 'tagbar'
+        return
+    endif
+
+    if !has_key(s:known_files, a:fname)
+        return
+    endif
+
+    let s:current_file = a:fname
+
+    call s:HighlightTag(a:fname)
+endfunction
+
+" s:RefreshContent() {{{2
+function! s:RefreshContent(fname)
+    " Don't do anything if we're in the tagbar window
+    if &filetype == 'tagbar'
+        return
+    endif
+
+    if has_key(s:known_files, a:fname)
+        if s:known_files[a:fname].mtime != getftime(a:fname)
+            call s:ProcessFile(a:fname, &filetype)
+        endif
+    else
+        call s:ProcessFile(a:fname, &filetype)
+    endif
+
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+
+    if tagbarwinnr != -1
+        call s:RenderContent(a:fname, &filetype)
+    endif
+endfunction
+
+" s:IsValidFile() {{{2
+function! s:IsValidFile(fname, ftype)
+    if a:fname == '' || a:ftype == ''
+        return 0
+    endif
+
+    if !filereadable(a:fname)
+        return 0
+    endif
+
+    if !has_key(s:known_types, a:ftype)
+        return 0
+    endif
+
+    return 1
+endfunction
+
+" s:GetFoldLevel() {{{2
 function! s:GetFoldLevel(lnum)
     let curline = getline(a:lnum)
 
-    if curline[0] == '"' " Don't fold comments
+    " Don't fold comments
+    if curline[0] == '"'
         return 0
     endif
 
@@ -1688,18 +1749,7 @@ function! s:GetFoldLevel(lnum)
     endif
 endfunction
 
-" TagbarBalloonExpr() {{{1
-function! TagbarBalloonExpr()
-    let taginfo = s:GetTagInfo(v:beval_lnum)
-
-    if empty(taginfo)
-        return
-    endif
-
-    return taginfo.prototype
-endfunction
-
-" s:GetTagInfo() {{{1
+" s:GetTagInfo() {{{2
 " Return the info dictionary of the tag on the specified line. If the line
 " does not contain a valid tag (for example because it is empty or only
 " contains a pseudo-tag) return an empty dictionary.
@@ -1731,61 +1781,18 @@ function! s:GetTagInfo(linenr)
     return taginfo
 endfunction
 
-" s:ToggleSort() {{{1
-function! s:ToggleSort()
-    if !has_key(s:known_files, s:current_file)
+" TagbarBalloonExpr() {{{2
+function! TagbarBalloonExpr()
+    let taginfo = s:GetTagInfo(v:beval_lnum)
+
+    if empty(taginfo)
         return
     endif
 
-    let curline = line('.')
-
-    let fileinfo = s:known_files[s:current_file]
-
-    match none
-
-    let s:compare_typeinfo = s:known_types[fileinfo.ftype]
-
-    if has_key(s:compare_typeinfo, 'sort')
-        let s:compare_typeinfo.sort = !s:compare_typeinfo.sort
-    else
-        let g:tagbar_sort = !g:tagbar_sort
-    endif
-
-    if has_key(s:compare_typeinfo, 'sort')
-        if s:compare_typeinfo.sort
-            call s:SortTags(fileinfo.tags, 's:CompareByKind')
-        else
-            call s:SortTags(fileinfo.tags, 's:CompareByLine')
-        endif
-    elseif g:tagbar_sort
-        call s:SortTags(fileinfo.tags, 's:CompareByKind')
-    else
-        call s:SortTags(fileinfo.tags, 's:CompareByLine')
-    endif
-
-    call s:RenderContent(s:current_file, fileinfo.ftype)
-
-    execute curline
+    return taginfo.prototype
 endfunction
 
-" s:ToggleHelp() {{{1
-function! s:ToggleHelp()
-    let s:short_help = !s:short_help
-
-    " Prevent highlighting from being off after adding/removing the help text
-    match none
-
-    if s:current_file == ''
-        call s:RenderContent(s:current_file, '')
-    else
-        let fileinfo = s:known_files[s:current_file]
-        call s:RenderContent(s:current_file, fileinfo.ftype)
-    endif
-
-    execute 1
-endfunction
-
-" TagbarGenerateStatusline() {{{1
+" TagbarGenerateStatusline() {{{2
 function! TagbarGenerateStatusline()
     if g:tagbar_sort
         let text = '[Name]'
