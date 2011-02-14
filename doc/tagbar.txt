@@ -1,0 +1,101 @@
+*tagbar.txt*	Display tags of a file in their correct scope
+
+Author:		Jan Larres <jan@majutsushi.net>
+Licence:	Vim licence, see |license|
+
+==============================================================================
+						*tagbar* *tagbar-contents*
+Contents~
+
+	 1. Intro...............................*tagbar-intro*
+	 2. Requirements........................*tagbar-requirements*
+	 3. Installation........................*tagbar-installation*
+	 4. Usage...............................*tagbar-usage*
+	 5. Commands............................*tagbar-commands*
+	 6. Options.............................*tagbar-options*
+	 7. Adding your own file types..........*tagbar-add-types*
+	 8. Bugs and limitations................*tagbar-bugs*
+	 9. History.............................*tagbar-history*
+	10. Todo................................*tagbar-todo*
+
+==============================================================================
+								*tagbar-intro*
+1. Intro~
+
+Tagbar is a plugin for browsing the tags of source code files. It provides a
+sidebar that displays the ctags-generated tags of the current file, ordered by
+their correct scope. This means that for example methods in C++ are displayed
+under the class they are defined in.
+
+Let's say we have the following code inside of a C++ file:
+>
+    namespace {
+        char a;
+
+        class Foo
+        {
+        public:
+            Foo();
+            ~Foo();
+        private:
+            int var;
+        };
+    };
+<
+
+Then Tagbar would display the tag information like so:
+>
+    __anon1* : namespace
+      Foo : class
+       +Foo()
+       +~Foo()
+       -var
+      a
+<
+
+This example shows several important points. First, the tags are listed
+indented below the scope they are defined in. Second, the type of a scope is
+listed after its name and a colon. Third, tags for which the access/visibility
+information is known are prefixed with a symbol indicating that. Fourth, it
+introduces 'pseudo-tags'. Pseudo-tags are tags that are not explicitly defined
+in the file but have children in it. In this example the namespace doesn't
+have a name and thus ctags doesn't generate a tag for it, but since it has
+children in the file it still needs to be displayed using an auto-generated
+name. Pseudo-tags are denoted with an asterisk ('*') at the end of the name.
+
+							*tagbar-features*
+Supported features~
+The following features are supported by Tagbar:
+
+    * Display tags under their correct scope.
+    * Automatically update the tags when switching between buffers and
+      editing files.
+    * Display visibility information of tags if available.
+    * Highlight the tag near the cursor while editing files.
+    * Jump to a tag from the Tagbar window.
+    * Display the complete prototype of a tag.
+    * Tags can be sorted either by name or order of appearance in the file.
+    * Scopes can be folded to hide uninteresting information.
+    * Supports all of the languages that ctags does, i.e. Ant, Assembler, ASP,
+      Awk, Basic, BETA, C, C++, C#, COBOL, DosBatch, Eiffel, Erlang, Flex,
+      Fortran, HTML, Java, JavaScript, Lisp, Lua, Make, MatLab, OCaml, Pascal,
+      Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL,
+      Tcl, Tex, Vera, Verilog, VHDL, Vim and YACC.
+    * Can be extended to support arbitrary new types.
+
+caveats:
+C++:
+foo::Bar::init()
+foo::Baz::method()
+type of 'foo' is unknown (sorting problems), foo::Bar and foo::Baz listed
+separately
+
+class test:
+    class Inner:
+        def __init__(self):
+            print "Inner"
+
+def test():
+    class Inner2:
+        def __init__(self):
+            print "Inner2"
