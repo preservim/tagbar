@@ -1308,7 +1308,20 @@ function! s:CompareByKind(tag1, tag2)
          \ typeinfo.kinddict[a:tag2.fields.kind]
         return 1
     else
-        if a:tag1.name <= a:tag2.name
+        " Ignore '~' prefix for C++ destructors to sort them directly under
+        " the constructors
+        if a:tag1.name[0] == '~'
+            let name1 = a:tag1.name[1:]
+        else
+            let name1 = a:tag1.name
+        endif
+        if a:tag2.name[0] == '~'
+            let name2 = a:tag2.name[1:]
+        else
+            let name2 = a:tag2.name
+        endif
+
+        if name1 <= name2
             return -1
         else
             return 1
