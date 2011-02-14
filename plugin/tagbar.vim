@@ -53,6 +53,10 @@ if !exists('g:tagbar_sort')
     let g:tagbar_sort = 1
 endif
 
+if !exists('g:tagbar_compact')
+    let g:tagbar_compact = 0
+endif
+
 let s:type_init_done = 0
 
 " s:InitTypes() {{{1
@@ -1397,7 +1401,11 @@ function! s:RenderContent(fname, ftype)
 
                 let prefix = s:GetPrefix(tag)
 
-                silent! put =prefix . tag.name . taginfo
+                if g:tagbar_compact && line('.') == 1
+                    silent! 0put =prefix . tag.name . taginfo
+                else
+                    silent! put =prefix . tag.name . taginfo
+                endif
 
                 " Save the current tagbar line in the tag for easy
                 " highlighting access
@@ -1411,11 +1419,17 @@ function! s:RenderContent(fname, ftype)
                     endfor
                 endif
 
-                silent! put _
+                if !g:tagbar_compact
+                    silent! put _
+                endif
             endfor
         else
             " Non-scoped tags
-            silent! put =' ' . strpart(kind, 2)
+            if g:tagbar_compact && line('.') == 1
+                silent! 0put =' ' . strpart(kind, 2)
+            else
+                silent! put =' ' . strpart(kind, 2)
+            endif
 
             for tag in curtags
                 let taginfo = ''
@@ -1435,8 +1449,9 @@ function! s:RenderContent(fname, ftype)
                 let fileinfo.tline[curline] = tag
             endfor
 
-
-            silent! put _
+            if !g:tagbar_compact
+                silent! put _
+            endif
         endif
     endfor
 
@@ -1451,9 +1466,9 @@ endfunction
 
 " s:PrintHelp() {{{1
 function! s:PrintHelp()
-    if s:short_help
+    if !g:tagbar_compact && s:short_help
         call append(0, '" Press <F1> for help')
-    else
+    elseif !s:short_help
         call append(0, '" <Enter> : Jump to tag definition')
         call append(1, '" <Space> : Display tag prototype')
         call append(2, '" s       : Toggle sort')
