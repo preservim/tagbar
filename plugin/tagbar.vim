@@ -763,11 +763,11 @@ function! s:ToggleWindow()
         return
     endif
 
-    call s:OpenWindow()
+    call s:OpenWindow(0)
 endfunction
 
 " s:OpenWindow() {{{1
-function! s:OpenWindow()
+function! s:OpenWindow(autoclose)
     if !s:type_init_done
         call s:InitTypes()
     endif
@@ -819,6 +819,8 @@ function! s:OpenWindow()
 
     let s:is_maximized = 0
     let s:short_help   = 1
+
+    let w:autoclose = a:autoclose
 
     syntax match Comment    '^" .*'             " Comments
     syntax match Identifier '^ [^: ]\+[^:]\+$'  " Non-scoped kinds
@@ -877,7 +879,7 @@ function! s:OpenWindow()
 
     " Jump back to the tagbar window if autoclose is set. Can't just stay in
     " it since it wouldn't trigger the update event
-    if g:tagbar_autoclose
+    if g:tagbar_autoclose || a:autoclose
         let tagbarwinnr = bufwinnr('__Tagbar__')
         execute tagbarwinnr . 'wincmd w'
     endif
@@ -1625,6 +1627,8 @@ endfunction
 function! s:JumpToTag()
     let taginfo = s:GetTagInfo(line('.'))
 
+    let autoclose = w:autoclose
+
     if empty(taginfo)
         return
     endif
@@ -1646,7 +1650,7 @@ function! s:JumpToTag()
         .foldopen!
     endif
 
-    if g:tagbar_autoclose
+    if g:tagbar_autoclose || autoclose
         call s:CloseWindow()
     else
         call s:HighlightTag(s:current_file)
@@ -1796,9 +1800,10 @@ function! TagbarGenerateStatusline()
 endfunction
 
 " Commands {{{1
-command! -nargs=0 TagbarToggle call s:ToggleWindow()
-command! -nargs=0 TagbarOpen   call s:OpenWindow()
-command! -nargs=0 TagbarClose  call s:CloseWindow()
+command! -nargs=0 TagbarToggle        call s:ToggleWindow()
+command! -nargs=0 TagbarOpen          call s:OpenWindow(0)
+command! -nargs=0 TagbarOpenAutoClose call s:OpenWindow(1)
+command! -nargs=0 TagbarClose         call s:CloseWindow()
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
