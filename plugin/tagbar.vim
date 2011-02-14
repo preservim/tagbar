@@ -6,6 +6,15 @@
 " Website:     http://github.com/majutsushi/tagbar
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by
 "              Yegappan Lakshmanan and uses a small amount of code from it.
+"
+" Original taglist copyright notice:
+"              Permission is hereby granted to use and distribute this code,
+"              with or without modifications, provided that this copyright
+"              notice is copied with it. Like anything else that's free,
+"              taglist.vim is provided *as is* and comes with no warranty of
+"              any kind, either expressed or implied. In no event will the
+"              copyright holder be liable for any damamges resulting from the
+"              use of this software.
 " ============================================================================
 
 if &cp || exists('g:loaded_tagbar')
@@ -699,7 +708,8 @@ function! s:InitTypes()
 
     let user_defs = s:GetUserTypeDefs()
     for [key, value] in items(user_defs)
-        if !has_key(s:known_types, key) || has_key(value, 'replace')
+        if !has_key(s:known_types, key) ||
+         \ (has_key(value, 'replace') && value.replace)
             let s:known_types[key] = value
         else
             call extend(s:known_types[key], value)
@@ -1062,8 +1072,9 @@ function! s:ProcessFile(fname, ftype)
         call s:AddScopedTags(scopedtags, processedtags, '', '', 0, typeinfo)
 
         if !empty(scopedtags)
-            echoerr '''scopedtags'' not empty, this should never happen!'
-                  \ 'Please notify the script maintainer with an example.'
+            echoerr 'Tagbar: ''scopedtags'' not empty after processing,'
+                  \ 'this should never happen!'
+                  \ 'Please contact the script maintainer with an example.'
         endif
         call extend(fileinfo.tags, processedtags)
     endif
