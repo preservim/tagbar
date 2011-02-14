@@ -1666,8 +1666,16 @@ endfunction
 
 " s:GetFoldLevel() {{{1
 function! s:GetFoldLevel(lnum)
-    let curindent = len(matchstr(getline(a:lnum)[1:], '^[ ]*[-+#]\?')) / 2
-    let nextindent = len(matchstr(getline(a:lnum + 1)[1:], '^[ ]*[-+#]\?')) / 2
+    let curline = getline(a:lnum)
+
+    if curline[0] == '"' " Don't fold comments
+        return 0
+    endif
+
+    let nextline = getline(a:lnum + 1)
+
+    let curindent  = len(matchstr(curline[1:],  '^[ ]*[-+#]\?')) / 2
+    let nextindent = len(matchstr(nextline[1:], '^[ ]*[-+#]\?')) / 2
 
     if curindent < nextindent
         return '>' . (curindent + 1)
