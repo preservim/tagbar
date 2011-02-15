@@ -22,11 +22,6 @@ if &cp || exists('g:loaded_tagbar')
 endif
 
 " Initialization {{{1
-if !exists('*system')
-    echomsg 'Tagbar: No system() function available, skipping plugin'
-    finish
-endif
-
 if !exists('g:tagbar_ctags_bin')
     if executable('ctags-exuberant')
         let g:tagbar_ctags_bin = 'ctags-exuberant'
