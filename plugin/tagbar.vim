@@ -1,7 +1,7 @@
 " ============================================================================
 " File:        tagbar.vim
 " Description: List the current file's tags in a sidebar, ordered by class etc
-" Maintainer:  Jan Larres <jan@majutsushi.net>
+" Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
 " Website:     http://github.com/majutsushi/tagbar
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by

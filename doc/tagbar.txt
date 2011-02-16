@@ -2,6 +2,8 @@
 
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
+Homepage:	http://github.com/majutsushi/tagbar
+Version:	TODO
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -18,6 +20,7 @@ Contents					*tagbar* *tagbar-contents*
 	 8. Bugs and limitations ............ |tagbar-bugs|
 	 9. History ......................... |tagbar-history|
 	10. Todo ............................ |tagbar-todo|
+	11. Credits ......................... |tagbar-credits|
 
 ==============================================================================
 1. Intro							*tagbar-intro*
@@ -120,6 +123,8 @@ The following requirements have to be met in order to be able to use tagbar:
       See |filetype| for more information.
     - Tagbar will not work in |restricted-mode|.
 
+==============================================================================
+3. Installation						*tagbar-installation*
 
 caveats:
 C++:
@@ -137,3 +142,6 @@ def test():
     class Inner2:
         def __init__(self):
             print "Inner2"
+
+keep folds
+window numbers
