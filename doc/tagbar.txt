@@ -4,8 +4,7 @@ Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 
 ==============================================================================
-						*tagbar* *tagbar-contents*
-Contents~
+Contents					*tagbar* *tagbar-contents*
 
 	 1. Intro ........................... |tagbar-intro|
 	    Pseudo-tags ..................... |tagbar-pseudotags|
@@ -21,8 +20,7 @@ Contents~
 	10. Todo ............................ |tagbar-todo|
 
 ==============================================================================
-								*tagbar-intro*
-1. Intro~
+1. Intro							*tagbar-intro*
 
 Tagbar is a plugin for browsing the tags of source code files. It provides a
 sidebar that displays the ctags-generated tags of the current file, ordered by
@@ -58,13 +56,14 @@ indented below the scope they are defined in. Second, the type of a scope is
 listed after its name and a colon. Third, tags for which the access/visibility
 information is known are prefixed with a symbol indicating that.
 
-							*tagbar-pseudotags*
-Pseudo-tags~
-Another important thing the example introduces are "pseudo-tags". Pseudo-tags
-are tags that are not explicitly defined in the file but have children in it.
-In this example the namespace doesn't have a name and thus ctags doesn't
-generate a tag for it, but since it has children it still needs to be
-displayed using an auto-generated name.
+
+PSEUDO-TAGS						*tagbar-pseudotags*
+
+The example also introduces the concept of "pseudo-tags". Pseudo-tags are tags
+that are not explicitly defined in the file but have children in it. In this
+example the namespace doesn't have a name and thus ctags doesn't generate a
+tag for it, but since it has children it still needs to be displayed using an
+auto-generated name.
 
 Another case where pseudo-tags appear is in C++ implementation files. Since
 classes are usually defined in a header file but the member methods and
@@ -73,8 +72,9 @@ in that file.
 
 Pseudo-tags are denoted with an asterisk ('*') at the end of their name.
 
-							*tagbar-features*
-Supported features~
+
+SUPPORTED FEATURES					*tagbar-features*
+
 The following features are supported by Tagbar:
 
     - Display tags under their correct scope.
@@ -94,8 +94,7 @@ The following features are supported by Tagbar:
     - Can be extended to support arbitrary new types.
 
 ==============================================================================
-							*tagbar-requirements*
-2. Requirements~
+2. Requirements						*tagbar-requirements*
 
 The following requirements have to be met in order to be able to use tagbar:
 
@@ -105,9 +104,9 @@ The following requirements have to be met in order to be able to use tagbar:
       tag information that Tagbar uses. It is shipped with most Linux
       distributions, otherwise it can be downloaded from the following
       website:
->
+
           http://ctags.sourceforge.net/
-<
+
       Tagbar will work on any platform that ctags runs on -- this includes
       UNIX derivatives, Mac OS X and Windows. Note that other versions like
       GNU ctags will not work.
