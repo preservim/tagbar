@@ -103,7 +103,7 @@ The following requirements have to be met in order to be able to use tagbar:
 
     - Vim 7.0 or higher. Older versions will not work since Tagbar uses data
       structures that were only introduced in Vim 7.
-    - Exuberant ctags 5.0 or higher. Ctags is the program that generates the
+    - Exuberant ctags 5.5 or higher. Ctags is the program that generates the
       tag information that Tagbar uses. It is shipped with most Linux
       distributions, otherwise it can be downloaded from the following
       website:
