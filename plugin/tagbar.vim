@@ -1337,21 +1337,8 @@ function! s:RenderContent(fname, ftype)
 
     call s:PrintHelp()
 
-    if !s:IsValidFile(a:fname, a:ftype)
-        silent! put ='- File type not supported -'
-
-        let s:current_file = ''
-
-        setlocal nomodifiable
-        let &lazyredraw = lazyredraw_save
-
-        if !in_tagbar
-            execute 'wincmd p'
-        endif
-
-        return
-    endif
-
+    " If we don't have an entry for the file by now something must have gone
+    " wrong
     if !has_key(s:known_files, a:fname)
         silent! put ='There was an error processing the file. Please run ' .
                    \ 'ctags manually to determine what the problem is.'
@@ -1668,29 +1655,18 @@ endfunction
 
 " s:AutoUpdate() {{{2
 function! s:AutoUpdate(fname)
-    call s:RefreshContent(a:fname)
-
+    " Don't do anything if tagbar is not open or if we're in the tagbar window
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr == -1 || &filetype == 'tagbar'
         return
     endif
 
-    if !has_key(s:known_files, a:fname)
+    " Don't do anything if the file isn't supported
+    if !s:IsValidFile(a:fname, &filetype)
         return
     endif
 
-    let s:current_file = a:fname
-
-    call s:HighlightTag(a:fname)
-endfunction
-
-" s:RefreshContent() {{{2
-function! s:RefreshContent(fname)
-    " Don't do anything if we're in the tagbar window
-    if &filetype == 'tagbar'
-        return
-    endif
-
+    " Process the file if it's unknown or the information is outdated
     if has_key(s:known_files, a:fname)
         if s:known_files[a:fname].mtime != getftime(a:fname)
             call s:ProcessFile(a:fname, &filetype)
@@ -1699,11 +1675,18 @@ function! s:RefreshContent(fname)
         call s:ProcessFile(a:fname, &filetype)
     endif
 
-    let tagbarwinnr = bufwinnr('__Tagbar__')
+    " Display the tagbar content
+    call s:RenderContent(a:fname, &filetype)
 
-    if tagbarwinnr != -1
-        call s:RenderContent(a:fname, &filetype)
+    " If we don't have an entry for the file by now something must have gone
+    " wrong
+    if !has_key(s:known_files, a:fname)
+        return
     endif
+
+    let s:current_file = a:fname
+
+    call s:HighlightTag(a:fname)
 endfunction
 
 " s:IsValidFile() {{{2
