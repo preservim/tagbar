@@ -9,21 +9,22 @@ Version:	TODO
 Contents					*tagbar* *tagbar-contents*
 
 	 1. Intro ........................... |tagbar-intro|
-	    Pseudo-tags ..................... |tagbar-pseudotags|
-	    Supported features .............. |tagbar-features|
+	      Pseudo-tags ................... |tagbar-pseudotags|
+	      Supported features ............ |tagbar-features|
 	 2. Requirements .................... |tagbar-requirements|
 	 3. Installation .................... |tagbar-installation|
 	 4. Usage ........................... |tagbar-usage|
-	 5. Commands ........................ |tagbar-commands|
-	 6. Configuration ................... |tagbar-configuration|
-	 7. Adding your own file types ...... |tagbar-add-types|
-	 8. Bugs and limitations ............ |tagbar-bugs|
-	 9. History ......................... |tagbar-history|
-	10. Todo ............................ |tagbar-todo|
-	11. Credits ......................... |tagbar-credits|
+	      Commands ...................... |tagbar-commands|
+	      Key mappings .................. |tagbar-keys|
+	 5. Configuration ................... |tagbar-configuration|
+	 6. Adding your own file types ...... |tagbar-add-types|
+	 7. Bugs and limitations ............ |tagbar-bugs|
+	 8. History ......................... |tagbar-history|
+	 9. Todo ............................ |tagbar-todo|
+	10. Credits ......................... |tagbar-credits|
 
 ==============================================================================
-1. Intro							*tagbar-intro*
+1. Intro						*tagbar-intro*
 
 Tagbar is a plugin for browsing the tags of source code files. It provides a
 sidebar that displays the ctags-generated tags of the current file, ordered by
@@ -59,7 +60,7 @@ indented below the scope they are defined in. Second, the type of a scope is
 listed after its name and a colon. Third, tags for which the access/visibility
 information is known are prefixed with a symbol indicating that.
 
-
+------------------------------------------------------------------------------
 PSEUDO-TAGS						*tagbar-pseudotags*
 
 The example also introduces the concept of "pseudo-tags". Pseudo-tags are tags
@@ -73,9 +74,12 @@ classes are usually defined in a header file but the member methods and
 variables in the implementation file the class itself won't generate a tag
 in that file.
 
+Since pseudo-tags don't really exist they cannot be jumped to from the Tagbar
+window.
+
 Pseudo-tags are denoted with an asterisk ('*') at the end of their name.
 
-
+------------------------------------------------------------------------------
 SUPPORTED FEATURES					*tagbar-features*
 
 The following features are supported by Tagbar:
@@ -125,6 +129,192 @@ The following requirements have to be met in order to be able to use tagbar:
 
 ==============================================================================
 3. Installation						*tagbar-installation*
+
+Use the normal Vimball install method for installing tagbar.vba:
+>
+	vim tagbar.vba
+	:so %
+	:q
+<
+Alternatively you can clone the git repository and then add the path to
+'runtimepath' or use the pathogen plugin. Don't forget to run |:helptags| if
+you're not using pathogen.
+
+If the ctags executable is not installed in one of the directories in your
+$PATH environment variable you have to set the g:tagbar_ctags_bin variable,
+see |g:tagbar_ctags_bin|.
+
+==============================================================================
+4. Usage						*tagbar-usage*
+
+There are essentially two ways to use Tagbar:
+
+    1. Have it running all the time in a window on the side of the screen. In
+       this case Tagbar will update its contents whenever the source file is
+       changed and highlight the tag the cursor is currently on in the file.
+       If a tag is selected in Tagbar the file window will jump to the tag and
+       the Tagbar window will stay open. |g:tagbar_autoclose| has to be unset
+       for this mode.
+    2. Only open Tagbar when you want to jump to a specific tag and have it
+       close automatically once you have selected one. This can be useful for
+       example for small screens where a permanent window would take up too
+       much space. You have to set the option |g:tagbar_autoclose| in this
+       case. The cursor will also automatically jump to the Tagbar window when
+       opening it.
+
+Opening and closing the Tagbar window~
+Use |:TagbarOpen| or |:TagbarToggle| to open the Tagbar window if it is
+closed. By default the window is opened on the right side, set the option
+|g:tagbar_left| to open it on the left instead. If the window is already open,
+|:TagbarOpen| will jump to it and |:TagbarToggle| will close it again.
+|:TagbarClose| will simply close the window if it is open.
+
+It is probably a good idea to assign a key to these commands. For example, put
+this in your |vimrc|:
+>
+	nnoremap <silent> <F9> :TagbarToggle<CR>
+<
+You can then open and close Tagbar by simply pressing the <F9> key.
+
+You can also use |:TagbarOpenAutoClose| to open the Tagbar window, jump to it
+and have it close automatically on tag selection regardless of the
+|g:tagbar_autoclose| setting.
+
+Jumping to tags~
+When you're inside the Tagbar window you can jump to the definition of a tag
+by moving the cursor to a tag and pressing <Enter> or double-clicking on it
+with the mouse. The source file will then move to the definition and put the
+cursor in the corresponding line. This won't work for pseudo-tags.
+
+Sorting~
+You can sort the tags in the Tagbar window in two ways: by name or by file
+order. Sorting them by name simply displays the tags in their alphabetical
+order under their corresponding scope. Sorting by file order means that the
+tags keep the order they have in the source file, but are still associated
+with the correct scope. You can change the sort order by pressing the "s" key
+in the Tagbar window. The current sort order is displayed in the statusbar of
+the Tagbar window.
+
+Folding~
+The displayed scopes (and unscoped types) can be folded to hide untinteresting
+information. Unfortunately the folding state is lost once you leave the Tagbar
+window, see |tagbar-bugs|.
+
+Displaying the prototype of a tag~
+Tagbar can display the prototype of a tag. More precisely it can display the
+line in which the tag is defined. This can be done by either pressing <Space>
+when on a tag or hovering over a tag with the mouse. In the former case the
+prototype will be displayed in the command line |Command-line|, in the latter
+case it will be displayed in a pop-up window. The prototype will also be
+displayed when the cursor stays on a tag for 'updatetime' milliseconds.
+
+------------------------------------------------------------------------------
+COMMANDS						*tagbar-commands*
+
+:TagbarOpen
+    Open the Tagbar if it is closed. In case it is already open jump to it.
+
+:TagbarClose
+    Close the Tagbar window if it is open.
+
+:TagbarToggle
+    Open the Tagbar window if it is closed or close it if it is open.
+
+:TagbarOpenAutoClose
+    Open the Tagbar window and close it on tag selection, regardless of the
+    setting of |g:tagbar_autoclose|. If it was already open jump to it.
+
+------------------------------------------------------------------------------
+KEY MAPPINGS						*tagbar-keys*
+
+These mappings are valid in the Tagbar window:
+
+<F1>          Display key mapping help.
+<CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags.
+<2-LeftMouse> Same as <CR>.
+<Space>       Display the prototype of the current tag (i.e. the line defining
+              it) in the command line.
++             Open the fold under the cursor.
+-             Close the fold under the cursor.
+*             Open all folds.
+=             Close all folds.
+s             Toggle sort order between name and file order.
+x             Toggle zooming the window.
+q             Close the Tagbar window.
+
+==============================================================================
+5. Configuration					*tagbar-configuration*
+
+							*g:tagbar_ctags_bin*
+g:tagbar_ctags_bin~
+Use this option to specify the location of your ctags executable. Only needed
+if it is not in one of the directories in your $PATH environment variable.
+
+Example:
+>
+	let g:tagbar_ctags_bin = 'C:\Ctags5.8\ctags.exe'
+<
+
+							*g:tagbar_left*
+g:tagbar_left~
+By default the Tagbar window will be opened on the right-hand side of vim. Set
+this option to open it on the left instead.
+
+Example:
+>
+	let g:tagbar_left = 1
+<
+
+							*g:tagbar_width*
+g:tagbar_width~
+Width of the Tagbar window in characters. The default is 40.
+
+Example:
+>
+	let g:tagbar_width = 30
+<
+
+							*g:tagbar_autoclose*
+g:tagbar_autoclose~
+If you set this option the Tagbar window will automatically close when you
+jump to a tag. The default is to not automatically close the window.
+
+Example:
+>
+	let g:tagbar_autoclose = 1
+<
+
+							*g:tagbar_sort*
+g:tagbar_sort~
+If this option is set the tags are sorted according to their name. If it is
+unset they are sorted according to their order in the source file. The default
+is to sort them by name.
+
+Example:
+>
+	let g:tagbar_sort = 0
+<
+
+							*g:tagbar_compact*
+g:tagbar_compact~
+Setting this option will result in Tagbar omitting the short help at the
+top of the window and the blank lines in between top-level scopes in order to
+save screen real estate. The default is to not use compact mode.
+
+Example:
+>
+	let g:tagbar_compact = 1
+<
+==============================================================================
+6. Adding your own file types				*tagbar-add-types*
+==============================================================================
+7. Bugs and limitations					*tagbar-bugs*
+==============================================================================
+8. History						*tagbar-history*
+==============================================================================
+9. Todo							*tagbar-todo*
+==============================================================================
+10. Credits						*tagbar-credits*
 
 caveats:
 C++:
