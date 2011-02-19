@@ -307,16 +307,229 @@ Example:
 <
 ==============================================================================
 6. Adding your own file types				*tagbar-add-types*
+
+Tagbar has a flexible mechanism for extending the existing file type (i.e.
+language) definitions. This can be used both to change the settings of the
+existing types and to add completely new types.
+
+Every type definition in Tagbar is a dictionary with the following keys:
+
+ctagstype:  The name of the language as recognized by ctags. Use the command >
+                ctags --list-languages
+<           to get a list of languages ctags supports. The case doesn't
+            matter.
+kinds:      A list of the "language kinds" that should be listed in Tagbar,
+            ordered by the order they should appear in in the Tagbar window.
+            Use the command >
+                ctags --list-kinds={language name}
+<           to get a list of the kinds ctags supports for a given language. An
+            entry in this list is a string with two parts separated by a
+            colon: the first part is the one-character abbreviation that ctags
+            uses, and the second part is an arbitrary string that will be used
+            in Tagbar as the header for the tags of this kind that are not
+            listed under a specific scope. For example, the string >
+                "f:functions"
+<           would list all the function definitions in a file under the header
+            "functions".
+scopes:     A list of the scopes that ctags supports for a given language, for
+            example classes, structs etc. Unfortunately there is no ctags
+            option to list the scopes, you have to look at the tags ctags
+            generates manually. For example, let's say we have a C++ file
+            "test.cpp" with the following contents: >
+                class Foo
+                {
+                public:
+                    Foo();
+                    ~Foo();
+                private:
+                    int var;
+                };
+<           We then run ctags in the followin way: >
+                ctags -f - --format=2 --excmd=pattern --fields=nksazSmt --extra= test.cpp
+<           Then the output for the variable "var" would look like this: >
+                var	tmp.cpp /^    int var;$/;"	kind:m	line:11	class:Foo	access:private
+<           This shows that the scope name for an entry in a C++ class is
+            simply "class". So you would need to put this exact word into the
+            "scopes" list. The order again determines the order in which the
+            tags will be shown in Tagbar.
+sro:        The scope resolution operator. For example, in C++ it is "::" and
+            in Java it is ".". When in doubt run ctags as shown above and look
+            at the output.
+kind2scope: A dictionary describing the mapping of tag kinds (in their
+            one-character representation) to the scopes their children will
+            appear in.
+scope2kind: The opposite of the above, mapping scopes to the kinds of their
+            parents. Most of the time it is the exact inverse of the above,
+            but in some cases it can be different, for example when more than
+            one kind maps to the same scope. If it is the exact inverse for
+            your language you only need to specify one of the two keys.
+replace:    If you set this entry to 1 your definition will completely replace
+{optional}  an existing default definition. This is useful if you want to
+            disable scopes for a file type for some reason. Note that in this
+            case you have to provide all the needed entries yourself!
+sort:       This entry can be used to overwrite the global sort setting for
+{optional}  this specific file type. The meaning of the value is the same as
+            with the global setting, that is if you want to sort tags by name
+            set it to 1 and if you want to sort them according to their order
+            in the file set it to 0.
+
+You then have to assign this dictionary to a variable with the name
+>
+	g:tagbar_type_{vim filetype}
+<
+For example, for C++ the name would be "g:tagbar_type_cpp". If you don't know
+the vim file type run the following command:
+>
+	:set filetype?
+<
+and vim will display the file type of the current buffer.
+
+Example: C++~
+Here is a complete example that shows the default configuration for C++ as
+used in Tagbar.
+>
+	let g:tagbar_type_cpp = {
+	    \ 'ctagstype' : 'c++',
+	    \ 'kinds'     : [
+	        \ 'd:macros',
+	        \ 'p:prototypes',
+	        \ 'g:enums',
+	        \ 'e:enumerators',
+	        \ 't:typedefs',
+	        \ 'n:namespaces',
+	        \ 'c:classes',
+	        \ 's:structs',
+	        \ 'u:unions',
+	        \ 'f:functions',
+	        \ 'm:members',
+	        \ 'v:variables'
+	    \ ],
+	    \ 'scopes' : [
+	        \ 'namespace',
+	        \ 'class',
+	        \ 'struct',
+	        \ 'enum',
+	        \ 'union'
+	    \ ],
+	    \ 'sro'        : '::',
+	    \ 'kind2scope' : {
+	        \ 'g' : 'enum',
+	        \ 'n' : 'namespace',
+	        \ 'c' : 'class',
+	        \ 's' : 'struct',
+	        \ 'u' : 'union'
+	    \ },
+	    \ 'scope2kind' : {
+	        \ 'enum'      : 'g',
+	        \ 'namespace' : 'n',
+	        \ 'class'     : 'c',
+	        \ 'struct'    : 's',
+	        \ 'union'     : 'u'
+	    \ }
+	\ }
+<
+
+Which of the keys you have to specify depends on what you want to do.
+
+Changing an existing definition~
+If you want to change an existing definition you only need to specify the
+parts that you want to change. It probably only makes sense to change "kinds"
+and/or "scopes", which would be the case if you wanted to exclude certain
+kinds from appearing in Tagbar or if you want to change their order. As an
+example, if you didn't want Tagbar to show prototypes for C++ files and switch
+the order of enums and typedefs, you would do it like this:
+>
+	let g:tagbar_type_cpp = {
+	    \ 'kinds' : [
+	        \ 'd:macros',
+	        \ 'g:enums',
+	        \ 't:typedefs',
+	        \ 'e:enumerators',
+	        \ 'n:namespaces',
+	        \ 'c:classes',
+	        \ 's:structs',
+	        \ 'u:unions',
+	        \ 'f:functions',
+	        \ 'm:members',
+	        \ 'v:variables'
+	    \ ]
+	\ }
+<
+Compare with the complete example above to see the exact change.
+
+Adding a definition for a new language/file type~
+In order to be able to add a new language to Tagbar you first have to create a
+configuration for ctags that it can use to parse the files. This can be done
+in two ways:
+
+    1. Use the --regex argument for specifying regular expressions that are
+       used to parse the files. An example of this is given below. A
+       disadvantage of this approach is that you can't specify scopes.
+    2. Write a parser plugin in C for ctags. This approach is much more
+       powerful than the regex approach since you can make use of all of
+       ctags' functionality but it also requires much more work. Read the
+       ctags documentation for more information about how to do this.
+
+For the first approach the only keys that are needed in the Tagbar definition
+are "ctagstype" and "kinds". A definition that supports scopes has to define
+those two and in addition "scopes", "sro" and at least one of "kind2scope" and
+"scope2kind".
+
+Let's assume we want to add support for LaTeX to Tagbar using the regex
+approach. First we put the following text into ~/.ctags:
+>
+	--langdef=latex
+	--langmap=latex:.tex
+	--regex-latex=/^\\tableofcontents/TABLE OF CONTENTS/s,toc/
+	--regex-latex=/^\\frontmatter/FRONTMATTER/s,frontmatter/
+	--regex-latex=/^\\mainmatter/MAINMATTER/s,mainmatter/
+	--regex-latex=/^\\backmatter/BACKMATTER/s,backmatter/
+	--regex-latex=/^\\bibliography\{/BIBLIOGRAPHY/s,bibliography/
+	--regex-latex=/^\\part[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/PART \2/s,part/
+	--regex-latex=/^\\part[[:space:]]*\*[[:space:]]*\{([^}]+)\}/PART \1/s,part/
+	--regex-latex=/^\\chapter[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/CHAP \2/s,chapter/
+	--regex-latex=/^\\chapter[[:space:]]*\*[[:space:]]*\{([^}]+)\}/CHAP \1/s,chapter/
+	--regex-latex=/^\\section[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\. \2/s,section/
+	--regex-latex=/^\\section[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\. \1/s,section/
+	--regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/s,subsection/
+	--regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/s,subsection/
+	--regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/s,subsubsection/
+	--regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/s,subsubsection/
+	--regex-latex=/^\\includegraphics[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
+	--regex-latex=/^\\lstinputlisting[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
+	--regex-latex=/\\label[[:space:]]*\{([^}]+)\}/\1/l,label/
+	--regex-latex=/\\ref[[:space:]]*\{([^}]+)\}/\1/r,ref/
+	--regex-latex=/\\pageref[[:space:]]*\{([^}]+)\}/\1/p,pageref/
+<
+This will create a new language definition with the name "latex" and associate
+it with files with the extension ".tex". See the ctags documentation for more
+information about the exact syntax.
+
+Now we have to create the Tagbar language definition in our vimrc:
+>
+	let g:tagbar_type_tex = {
+	    \ 'ctagstype' : 'latex',
+	    \ 'kinds'     : [
+	        \ 's:sections',
+	        \ 'g:graphics',
+	        \ 'l:labels',
+	        \ 'r:refs',
+	        \ 'p:pagerefs'
+	    \ ],
+	    \ 'sort' : 0
+	\ }
+<
+Sort has been disabled for LaTeX so that the sections appear in their correct
+order. They unfortunately can't be shown nested with their correct scopes
+since as already mentioned the regular expression approach doesn't support
+that.
+
+Tagbar should now be able to show the sections and other tags from LaTeX
+files.
+
 ==============================================================================
 7. Bugs and limitations					*tagbar-bugs*
-==============================================================================
-8. History						*tagbar-history*
-==============================================================================
-9. Todo							*tagbar-todo*
-==============================================================================
-10. Credits						*tagbar-credits*
 
-caveats:
 C++:
 foo::Bar::init()
 foo::Baz::method()
@@ -335,3 +548,10 @@ def test():
 
 keep folds
 window numbers
+
+==============================================================================
+8. History						*tagbar-history*
+==============================================================================
+9. Todo							*tagbar-todo*
+==============================================================================
+10. Credits						*tagbar-credits*
