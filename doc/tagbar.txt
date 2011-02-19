@@ -28,8 +28,8 @@ Contents					*tagbar* *tagbar-contents*
 
 Tagbar is a plugin for browsing the tags of source code files. It provides a
 sidebar that displays the ctags-generated tags of the current file, ordered by
-their correct scope. This means that for example methods in C++ are displayed
-under the class they are defined in.
+their scope. This means that for example methods in C++ are displayed under
+the class they are defined in.
 
 Let's say we have the following code inside of a C++ file:
 >
@@ -84,48 +84,48 @@ SUPPORTED FEATURES					*tagbar-features*
 
 The following features are supported by Tagbar:
 
-    - Display tags under their correct scope.
-    - Automatically update the tags when switching between buffers and
-      editing files.
-    - Display visibility information of tags if available.
-    - Highlight the tag near the cursor while editing files.
-    - Jump to a tag from the Tagbar window.
-    - Display the complete prototype of a tag.
-    - Tags can be sorted either by name or order of appearance in the file.
-    - Scopes can be folded to hide uninteresting information.
-    - Supports all of the languages that ctags does, i.e. Ant, Assembler, ASP,
-      Awk, Basic, BETA, C, C++, C#, COBOL, DosBatch, Eiffel, Erlang, Flex,
-      Fortran, HTML, Java, JavaScript, Lisp, Lua, Make, MatLab, OCaml, Pascal,
-      Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL,
-      Tcl, Tex, Vera, Verilog, VHDL, Vim and YACC.
-    - Can be extended to support arbitrary new types.
+  - Display tags under their correct scope.
+  - Automatically update the tags when switching between buffers and editing
+    files.
+  - Display visibility information of tags if available.
+  - Highlight the tag near the cursor while editing files.
+  - Jump to a tag from the Tagbar window.
+  - Display the complete prototype of a tag.
+  - Tags can be sorted either by name or order of appearance in the file.
+  - Scopes can be folded to hide uninteresting information.
+  - Supports all of the languages that ctags does, i.e. Ant, Assembler, ASP,
+    Awk, Basic, BETA, C, C++, C#, COBOL, DosBatch, Eiffel, Erlang, Flex,
+    Fortran, HTML, Java, JavaScript, Lisp, Lua, Make, MatLab, OCaml, Pascal,
+    Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL, Tcl,
+    Tex, Vera, Verilog, VHDL, Vim and YACC.
+  - Can be extended to support arbitrary new types.
 
 ==============================================================================
 2. Requirements						*tagbar-requirements*
 
 The following requirements have to be met in order to be able to use tagbar:
 
-    - Vim 7.0 or higher. Older versions will not work since Tagbar uses data
-      structures that were only introduced in Vim 7.
-    - Exuberant ctags 5.5 or higher. Ctags is the program that generates the
-      tag information that Tagbar uses. It is shipped with most Linux
-      distributions, otherwise it can be downloaded from the following
-      website:
+  - Vim 7.0 or higher. Older versions will not work since Tagbar uses data
+    structures that were only introduced in Vim 7.
+  - Exuberant ctags 5.5 or higher. Ctags is the program that generates the
+    tag information that Tagbar uses. It is shipped with most Linux
+    distributions, otherwise it can be downloaded from the following
+    website:
 
-          http://ctags.sourceforge.net/
+        http://ctags.sourceforge.net/
 
-      Tagbar will work on any platform that ctags runs on -- this includes
-      UNIX derivatives, Mac OS X and Windows. Note that other versions like
-      GNU ctags will not work.
-      Tagbar generates the tag information by itself and doesn't need already
-      existing tag files.
-    - File type detection must be turned on in vim. This can be done with the
-      following command in your vimrc:
+    Tagbar will work on any platform that ctags runs on -- this includes
+    UNIX derivatives, Mac OS X and Windows. Note that other versions like
+    GNU ctags will not work.
+    Tagbar generates the tag information by itself and doesn't need already
+    existing tag files.
+  - File type detection must be turned on in vim. This can be done with the
+    following command in your vimrc:
 >
-          filetype on
+        filetype on
 <
-      See |filetype| for more information.
-    - Tagbar will not work in |restricted-mode|.
+    See |filetype| for more information.
+  - Tagbar will not work in |restricted-mode|.
 
 ==============================================================================
 3. Installation						*tagbar-installation*
@@ -149,18 +149,17 @@ see |g:tagbar_ctags_bin|.
 
 There are essentially two ways to use Tagbar:
 
-    1. Have it running all the time in a window on the side of the screen. In
-       this case Tagbar will update its contents whenever the source file is
-       changed and highlight the tag the cursor is currently on in the file.
-       If a tag is selected in Tagbar the file window will jump to the tag and
-       the Tagbar window will stay open. |g:tagbar_autoclose| has to be unset
-       for this mode.
-    2. Only open Tagbar when you want to jump to a specific tag and have it
-       close automatically once you have selected one. This can be useful for
-       example for small screens where a permanent window would take up too
-       much space. You have to set the option |g:tagbar_autoclose| in this
-       case. The cursor will also automatically jump to the Tagbar window when
-       opening it.
+  1. Have it running all the time in a window on the side of the screen. In
+     this case Tagbar will update its contents whenever the source file is
+     changed and highlight the tag the cursor is currently on in the file. If
+     a tag is selected in Tagbar the file window will jump to the tag and the
+     Tagbar window will stay open. |g:tagbar_autoclose| has to be unset for
+     this mode.
+  2. Only open Tagbar when you want to jump to a specific tag and have it
+     close automatically once you have selected one. This can be useful for
+     example for small screens where a permanent window would take up too much
+     space. You have to set the option |g:tagbar_autoclose| in this case. The
+     cursor will also automatically jump to the Tagbar window when opening it.
 
 Opening and closing the Tagbar window~
 Use |:TagbarOpen| or |:TagbarToggle| to open the Tagbar window if it is
@@ -462,13 +461,13 @@ In order to be able to add a new language to Tagbar you first have to create a
 configuration for ctags that it can use to parse the files. This can be done
 in two ways:
 
-    1. Use the --regex argument for specifying regular expressions that are
-       used to parse the files. An example of this is given below. A
-       disadvantage of this approach is that you can't specify scopes.
-    2. Write a parser plugin in C for ctags. This approach is much more
-       powerful than the regex approach since you can make use of all of
-       ctags' functionality but it also requires much more work. Read the
-       ctags documentation for more information about how to do this.
+  1. Use the --regex argument for specifying regular expressions that are used
+     to parse the files. An example of this is given below. A disadvantage of
+     this approach is that you can't specify scopes.
+  2. Write a parser plugin in C for ctags. This approach is much more powerful
+     than the regex approach since you can make use of all of ctags'
+     functionality but it also requires much more work. Read the ctags
+     documentation for more information about how to do this.
 
 For the first approach the only keys that are needed in the Tagbar definition
 are "ctagstype" and "kinds". A definition that supports scopes has to define
@@ -532,28 +531,79 @@ files.
 ==============================================================================
 7. Bugs and limitations					*tagbar-bugs*
 
-C++:
-foo::Bar::init()
-foo::Baz::method()
-type of 'foo' is unknown (sorting problems), foo::Bar and foo::Baz listed
-separately
+  - Nested pseudo-tags cannot be properly parsed since only the direct parent
+    scope of a tag gets assigned a type, the type of the grandparents is not
+    reported by ctags (assuming the grandparents don't have direct, real
+    children).
 
-class test:
-    class Inner:
-        def __init__(self):
-            print "Inner"
+    For example, if we have a C++ with the following content:
+>
+        foo::Bar::init()
+        {
+            // ...
+        }
+        foo::Baz::method()
+        {
+            // ...
+        }
+<
+    In this case the type of "foo" is not known. Is it a namespace? A class?
+    (Nested classes are not supported in C++, but making wild guesses is a bad
+    idea.) So the methods are displayed in Tagbar like this:
+>
+        foo::Bar* : class
+          init()
+        foo::Baz* : class
+          method()
+<
+  - Scope-defining tags at the top level that have the same name but a
+    different kind/scope type can lead to an incorrect display. For example,
+    the following Python code will incorrectly insert a pseudo-tag "Inner2"
+    into the "test" class:
+>
+        class test:
+            class Inner:
+                def foo(self):
+                    pass
 
-def test():
-    class Inner2:
-        def __init__(self):
-            print "Inner2"
+        def test():
+            class Inner2:
+                def bar(self):
+                    pass
+<
+    I haven't found a clean way around this yet, but it shouldn't be much of a
+    problem in practice anyway. Tags with the same name at any other level are
+    no problem, though.
 
-keep folds
-window numbers
+  - The fold state of the Tagbar window is lost when the window is left.
+    Again, I don't know of any proper way around this that still allows
+    auto-updating -- |winsaveview()| doesn't really help here.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+TODO
+
 ==============================================================================
 9. Todo							*tagbar-todo*
+
+  - Allow filtering the Tagbar content by some criteria like tag name,
+    visibility, kind ...
+  - Integrate Tagbar with the FSwitch plugin to provide header file
+    information in C/C++.
+  - Allow jumping to a tag in the preview window, a split window or a new tab.
+
 ==============================================================================
 10. Credits						*tagbar-credits*
+
+Tagbar was written by Jan Larres and is released under the Vim licence, see
+|license|. It was heavily inspired by the Taglist plugin by Yegappan
+Lakshmanan and uses a small amount of code from it.
+
+Original taglist copyright notice:
+Permission is hereby granted to use and distribute this code, with or without
+modifications, provided that this copyright notice is copied with it. Like
+anything else that's free, taglist.vim is provided *as is* and comes with no
+warranty of any kind, either expressed or implied. In no event will the
+copyright holder be liable for any damamges resulting from the use of this
+software.
