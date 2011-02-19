@@ -1366,6 +1366,7 @@ function! s:RenderContent(fname, ftype)
         let in_tagbar = 1
     else
         let in_tagbar = 0
+        let prevwinnr = winnr()
         execute tagbarwinnr . 'wincmd w'
     endif
 
@@ -1391,7 +1392,7 @@ function! s:RenderContent(fname, ftype)
         let &lazyredraw = lazyredraw_save
 
         if !in_tagbar
-            execute 'wincmd p'
+            execute prevwinnr . 'wincmd w'
         endif
 
         return
@@ -1484,7 +1485,7 @@ function! s:RenderContent(fname, ftype)
     let &lazyredraw = lazyredraw_save
 
     if !in_tagbar
-        execute 'wincmd p'
+        execute prevwinnr . 'wincmd w'
     endif
 endfunction
 
@@ -1594,6 +1595,7 @@ function! s:HighlightTag(fname)
     set eventignore=all
 
     let tagbarwinnr = bufwinnr('__Tagbar__')
+    let prevwinnr   = winnr()
     execute tagbarwinnr . 'wincmd w'
 
     match none
@@ -1601,7 +1603,7 @@ function! s:HighlightTag(fname)
     if tagline == 0
         execute 1
         call winline()
-        execute 'wincmd p'
+        execute prevwinnr . 'wincmd w'
         let &eventignore = eventignore_save
         return
     endif
@@ -1619,7 +1621,7 @@ function! s:HighlightTag(fname)
     let pattern = '/^\%' . tagline . 'l\s*[-+#]\?\zs[^( ]\+\ze/'
     execute 'match Search ' . pattern
 
-    execute 'wincmd p'
+    execute prevwinnr . 'wincmd w'
 
     let &eventignore = eventignore_save
 endfunction
