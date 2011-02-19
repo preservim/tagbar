@@ -61,7 +61,9 @@ if !exists('g:tagbar_compact')
     let g:tagbar_compact = 0
 endif
 
-let s:type_init_done = 0
+let s:type_init_done    = 0
+let s:key_mapping_done  = 0
+let s:autocommands_done = 0
 
 " s:InitTypes() {{{2
 function! s:InitTypes()
@@ -766,6 +768,44 @@ function! s:GetUserTypeDefs()
     return defdict
 endfunction
 
+" s:MapKeys() {{{2
+function! s:MapKeys()
+    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> <2-LeftMouse>
+                                              \ :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
+
+    nnoremap <script> <silent> <buffer> +           :silent! foldopen<CR>
+    nnoremap <script> <silent> <buffer> <kPlus>     :silent! foldopen<CR>
+    nnoremap <script> <silent> <buffer> -           :silent! foldclose<CR>
+    nnoremap <script> <silent> <buffer> <kMinus>    :silent! foldclose<CR>
+    nnoremap <script> <silent> <buffer> *           :silent! %foldopen!<CR>
+    nnoremap <script> <silent> <buffer> <kMultiply> :silent! %foldopen!<CR>
+    nnoremap <script> <silent> <buffer> =           :silent! %foldclose!<CR>
+
+    nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
+    nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
+    nnoremap <script> <silent> <buffer> q    :close<CR>
+    nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
+
+    let s:key_mapping_done = 1
+endfunction
+
+" s:CreateAutocommands() {{{2
+function! s:CreateAutocommands()
+    augroup TagbarAutoCmds
+        autocmd!
+        autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
+        autocmd BufUnload  __Tagbar__ call s:CleanUp()
+        autocmd CursorHold __Tagbar__ call s:ShowPrototype()
+
+        autocmd BufEnter,CursorHold * silent call
+                    \ s:AutoUpdate(fnamemodify(bufname('%'), ':p'))
+    augroup END
+
+    let s:autocommands_done = 1
+endfunction
+
 " Window management {{{1
 " s:ToggleWindow() {{{2
 function! s:ToggleWindow()
@@ -857,33 +897,13 @@ function! s:OpenWindow(autoclose)
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag()<CR>
-    nnoremap <script> <silent> <buffer> <2-LeftMouse>
-                                              \ :call <SID>JumpToTag()<CR>
-    nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
+    if !s:key_mapping_done
+        call s:MapKeys()
+    endif
 
-    nnoremap <script> <silent> <buffer> +           :silent! foldopen<CR>
-    nnoremap <script> <silent> <buffer> <kPlus>     :silent! foldopen<CR>
-    nnoremap <script> <silent> <buffer> -           :silent! foldclose<CR>
-    nnoremap <script> <silent> <buffer> <kMinus>    :silent! foldclose<CR>
-    nnoremap <script> <silent> <buffer> *           :silent! %foldopen!<CR>
-    nnoremap <script> <silent> <buffer> <kMultiply> :silent! %foldopen!<CR>
-    nnoremap <script> <silent> <buffer> =           :silent! %foldclose!<CR>
-
-    nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
-    nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
-    nnoremap <script> <silent> <buffer> q    :close<CR>
-    nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
-
-    augroup TagbarAutoCmds
-        autocmd!
-        autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
-        autocmd BufUnload  __Tagbar__ call s:CleanUp()
-        autocmd CursorHold __Tagbar__ call s:ShowPrototype()
-
-        autocmd BufEnter,CursorHold * silent call
-                    \ s:AutoUpdate(fnamemodify(bufname('%'), ':p'))
-    augroup END
+    if !s:autocommands_done
+        call s:CreateAutocommands()
+    endif
 
     let &cpoptions = cpoptions_save
 
