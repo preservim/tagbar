@@ -17,7 +17,7 @@ Contents					*tagbar* *tagbar-contents*
 	      Commands ...................... |tagbar-commands|
 	      Key mappings .................. |tagbar-keys|
 	 5. Configuration ................... |tagbar-configuration|
-	 6. Adding your own file types ...... |tagbar-add-types|
+	 6. Extending Tagbar ................ |tagbar-extend|
 	 7. Bugs and limitations ............ |tagbar-bugs|
 	 8. History ......................... |tagbar-history|
 	 9. Todo ............................ |tagbar-todo|
@@ -306,7 +306,7 @@ Example:
 	let g:tagbar_compact = 1
 <
 ==============================================================================
-6. Adding your own file types				*tagbar-add-types*
+6. Extending Tagbar					*tagbar-extend*
 
 Tagbar has a flexible mechanism for extending the existing file type (i.e.
 language) definitions. This can be used both to change the settings of the
@@ -316,7 +316,7 @@ Every type definition in Tagbar is a dictionary with the following keys:
 
 ctagstype:  The name of the language as recognized by ctags. Use the command >
                 ctags --list-languages
-<           to get a list of languages ctags supports. The case doesn't
+<           to get a list of the languages ctags supports. The case doesn't
             matter.
 kinds:      A list of the "language kinds" that should be listed in Tagbar,
             ordered by the order they should appear in in the Tagbar window.
@@ -351,7 +351,7 @@ scopes:     A list of the scopes that ctags supports for a given language, for
 <           This shows that the scope name for an entry in a C++ class is
             simply "class". So you would need to put this exact word into the
             "scopes" list. The order again determines the order in which the
-            tags will be shown in Tagbar.
+            tags will be displayed in Tagbar.
 sro:        The scope resolution operator. For example, in C++ it is "::" and
             in Java it is ".". When in doubt run ctags as shown above and look
             at the output.
@@ -367,7 +367,7 @@ replace:    If you set this entry to 1 your definition will completely replace
 {optional}  an existing default definition. This is useful if you want to
             disable scopes for a file type for some reason. Note that in this
             case you have to provide all the needed entries yourself!
-sort:       This entry can be used to overwrite the global sort setting for
+sort:       This entry can be used to override the global sort setting for
 {optional}  this specific file type. The meaning of the value is the same as
             with the global setting, that is if you want to sort tags by name
             set it to 1 and if you want to sort them according to their order
@@ -502,8 +502,10 @@ approach. First we put the following text into ~/.ctags:
 	--regex-latex=/\\pageref[[:space:]]*\{([^}]+)\}/\1/p,pageref/
 <
 This will create a new language definition with the name "latex" and associate
-it with files with the extension ".tex". See the ctags documentation for more
-information about the exact syntax.
+it with files with the extension ".tex". It will also define the kinds "s" for
+sections, chapters and the like, "g" for included graphics, "l" for labels,
+"r" for references and "p" for page references. See the ctags documentation
+for more information about the exact syntax.
 
 Now we have to create the Tagbar language definition in our vimrc:
 >
