@@ -548,8 +548,7 @@ files.
         }
 <
     In this case the type of "foo" is not known. Is it a namespace? A class?
-    (Nested classes are not supported in C++, but making wild guesses is a bad
-    idea.) So the methods are displayed in Tagbar like this:
+    For this reason the methods are displayed in Tagbar like this:
 >
         foo::Bar* : class
           init()
