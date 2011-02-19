@@ -831,6 +831,11 @@ function! s:OpenWindow(autoclose)
         return
     endif
 
+    " If we're in the tagbar window don't do anything
+    if winnr() == tagbarwinnr
+        return
+    endif
+
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent! keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
