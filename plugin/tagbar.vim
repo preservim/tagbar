@@ -742,9 +742,25 @@ function! s:GetUserTypeDefs()
     call filter(deflist, 'v:val =~ "^tagbar_type_"')
 
     let defdict = {}
-    for def in deflist
-        let type = substitute(def, '^tagbar_type_', '', '')
-        execute 'let defdict["' . type . '"] = g:' . def
+    for defstr in deflist
+        let type = substitute(defstr, '^tagbar_type_', '', '')
+        execute 'let defdict["' . type . '"] = g:' . defstr
+    endfor
+
+    " If the user only specified one of kind2scope and scope2kind use it to
+    " generate the other one
+    for def in values(defdict)
+        if has_key(def, 'kind2scope') && !has_key(def, 'scope2kind')
+            let def.scope2kind = {}
+            for [key, value] in items(def.kind2scope)
+                let def.scope2kind[value] = key
+            endfor
+        elseif has_key(def, 'scope2kind') && !has_key(def, 'kind2scope')
+            let def.kind2scope = {}
+            for [key, value] in items(def.scope2kind)
+                let def.kind2scope[value] = key
+            endfor
+        endif
     endfor
 
     return defdict
