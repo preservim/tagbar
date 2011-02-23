@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	TODO
+Version:	1.0
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -581,7 +581,8 @@ files.
 ==============================================================================
 8. History						*tagbar-history*
 
-TODO
+1.0 (2011-02-23)
+    - Initial release
 
 ==============================================================================
 9. Todo							*tagbar-todo*
