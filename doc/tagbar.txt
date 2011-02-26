@@ -593,6 +593,10 @@ files.
 ==============================================================================
 8. History						*tagbar-history*
 
+1.1 (2011-02-26)
+    - Don't lose syntax highlighting when ':syntax enable' is called
+    - Allow expanding the Vim window when Tagbar is opened
+
 1.0 (2011-02-23)
     - Initial release
 
