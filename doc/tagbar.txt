@@ -304,6 +304,18 @@ Example:
 >
 	let g:tagbar_compact = 1
 <
+
+							*g:tagbar_expand*
+g:tagbar_expand~
+If this option is set the Vim window will be expanded by the width of the
+Tagbar window if using a GUI version of Vim. The default is not to expand the
+window.
+
+Example:
+>
+	let g:tagbar_expand = 1
+<
+
 ==============================================================================
 6. Extending Tagbar					*tagbar-extend*
 
@@ -607,3 +619,6 @@ anything else that's free, taglist.vim is provided *as is* and comes with no
 warranty of any kind, either expressed or implied. In no event will the
 copyright holder be liable for any damamges resulting from the use of this
 software.
+
+==============================================================================
+ vim: tw=78 ts=8 sw=8 sts=8 noet ft=help

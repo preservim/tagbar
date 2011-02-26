@@ -62,9 +62,14 @@ if !exists('g:tagbar_compact')
     let g:tagbar_compact = 0
 endif
 
+if !exists('g:tagbar_expand')
+    let g:tagbar_expand = 0
+endif
+
 let s:type_init_done    = 0
 let s:key_mapping_done  = 0
 let s:autocommands_done = 0
+let s:window_expanded   = 0
 
 " s:InitTypes() {{{2
 function! s:InitTypes()
@@ -837,6 +842,12 @@ function! s:OpenWindow(autoclose)
         return
     endif
 
+    " Expand the Vim window to accomodate for the Tagbar window if requested
+    if g:tagbar_expand && !s:window_expanded && has('gui_running')
+        let &columns += g:tagbar_width + 1
+        let s:window_expanded = 1
+    endif
+
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent! keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
@@ -915,6 +926,8 @@ function! s:CloseWindow()
         return
     endif
 
+    let tagbarbufnr = winbufnr(tagbarwinnr)
+
     if winnr() == tagbarwinnr
         if winbufnr(2) != -1
             " Other windows are open, only close the tagbar one
@@ -931,6 +944,20 @@ function! s:CloseWindow()
         let winnum = bufwinnr(curbufnr)
         if winnr() != winnum
             exe winnum . 'wincmd w'
+        endif
+    endif
+
+    " If the Vim window has been expanded, and Tagbar is not open in any other
+    " tabpages, shrink the window again
+    if s:window_expanded
+        let tablist = []
+        for i in range(tabpagenr('$'))
+            call extend(tablist, tabpagebuflist(i + 1))
+        endfor
+
+        if index(tablist, tagbarbufnr) == -1
+            let &columns -= g:tagbar_width + 1
+            let s:window_expanded = 0
         endif
     endif
 endfunction
@@ -1661,6 +1688,7 @@ endfunction
 " s:CleanUp() {{{2
 function! s:CleanUp()
     silent! autocmd! TagbarAutoCmds
+
     unlet s:current_file
     unlet s:is_maximized
     unlet s:compare_typeinfo
