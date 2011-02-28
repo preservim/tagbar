@@ -536,8 +536,9 @@ function! s:InitTypes()
         \ 'f:methods',
         \ 'F:singleton methods'
     \ ]
-    let type_ruby.kinds2scope = {
-        \ 'c' : 'class'
+    let type_ruby.kind2scope = {
+        \ 'c' : 'class',
+        \ 'm' : 'class'
     \ }
     let type_ruby.scope2kind = {
         \ 'class' : 'c'
