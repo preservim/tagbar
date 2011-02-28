@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	1.1
+Version:	1.2
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -592,6 +592,9 @@ files.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+1.2 (2011-02-28)
+    - Fix typo in Ruby definition
 
 1.1 (2011-02-26)
     - Don't lose syntax highlighting when ':syntax enable' is called
