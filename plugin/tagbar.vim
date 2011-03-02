@@ -1613,9 +1613,8 @@ function! s:HighlightTag(fname)
 
     match none
 
+    " No tag above cursor position so don't do anything
     if tagline == 0
-        execute 1
-        call winline()
         execute prevwinnr . 'wincmd w'
         let &eventignore = eventignore_save
         redraw
