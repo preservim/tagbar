@@ -1579,6 +1579,7 @@ function! s:ToggleHelp()
     endif
 
     execute 1
+    redraw
 endfunction
 
 " User actions {{{1
@@ -1617,6 +1618,7 @@ function! s:HighlightTag(fname)
         call winline()
         execute prevwinnr . 'wincmd w'
         let &eventignore = eventignore_save
+        redraw
         return
     endif
 
@@ -1636,6 +1638,8 @@ function! s:HighlightTag(fname)
     execute prevwinnr . 'wincmd w'
 
     let &eventignore = eventignore_save
+
+    redraw
 endfunction
 
 " s:JumpToTag() {{{2
@@ -1664,6 +1668,8 @@ function! s:JumpToTag()
     if foldclosed('.') != -1
         .foldopen!
     endif
+
+    redraw
 
     if g:tagbar_autoclose || autoclose
         call s:CloseWindow()
