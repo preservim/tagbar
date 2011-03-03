@@ -54,6 +54,10 @@ if !exists('g:tagbar_autoclose')
     let g:tagbar_autoclose = 0
 endif
 
+if !exists('g:tagbar_autofocus')
+    let g:tagbar_autofocus = 0
+endif
+
 if !exists('g:tagbar_sort')
     let g:tagbar_sort = 1
 endif
@@ -909,9 +913,9 @@ function! s:OpenWindow(autoclose)
 
     execute 'wincmd p'
 
-    " Jump back to the tagbar window if autoclose is set. Can't just stay in
-    " it since it wouldn't trigger the update event
-    if g:tagbar_autoclose || a:autoclose
+    " Jump back to the tagbar window if autoclose or autofocus is set. Can't
+    " just stay in it since it wouldn't trigger the update event
+    if g:tagbar_autoclose || a:autoclose || g:tagbar_autofocus
         let tagbarwinnr = bufwinnr('__Tagbar__')
         execute tagbarwinnr . 'wincmd w'
     endif
