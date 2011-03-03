@@ -833,13 +833,10 @@ function! s:OpenWindow(autoclose)
 
     " If the tagbar window is already open jump to it
     let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr != -1 && winnr() != tagbarwinnr
-        execute tagbarwinnr . 'wincmd w'
-        return
-    endif
-
-    " If we're in the tagbar window don't do anything
-    if winnr() == tagbarwinnr
+    if tagbarwinnr != -1
+        if winnr() != tagbarwinnr
+            execute tagbarwinnr . 'wincmd w'
+        endif
         return
     endif
 
