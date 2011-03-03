@@ -66,6 +66,10 @@ if !exists('g:tagbar_expand')
     let g:tagbar_expand = 0
 endif
 
+if !exists('g:tagbar_autofocus')
+    let g:tagbar_autofocus = 0
+endif
+
 let s:type_init_done    = 0
 let s:key_mapping_done  = 0
 let s:autocommands_done = 0
@@ -823,6 +827,13 @@ function! s:ToggleWindow()
     endif
 
     call s:OpenWindow(0)
+
+    if g:tagbar_autofocus == 1
+        let tagbarwinnr = bufwinnr('__Tagbar__')
+        if tagbarwinnr != -1 && winnr() != tagbarwinnr
+            execute tagbarwinnr . 'wincmd w'
+        endif
+    endif
 endfunction
 
 " s:OpenWindow() {{{2
