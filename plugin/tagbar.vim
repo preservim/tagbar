@@ -1494,6 +1494,10 @@ function! s:RenderContent(fname, ftype)
 
     setlocal nomodifiable
 
+    " Go to top of window so jumps to the Tagbar window before any
+    " highlighting is done won't end up at the bottom
+    execute 1
+
     let &lazyredraw = lazyredraw_save
 
     if !in_tagbar
