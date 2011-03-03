@@ -283,6 +283,16 @@ Example:
 	let g:tagbar_autoclose = 1
 <
 
+							*g:tagbar_autofocus*
+g:tagbar_autofocus~
+If you set this option the cursor will move to the Tagbar window when it is
+opened. The default is to not move the cursor to the window.
+
+Example:
+>
+	let g:tagbar_autofocus = 1
+<
+
 							*g:tagbar_sort*
 g:tagbar_sort~
 If this option is set the tags are sorted according to their name. If it is
