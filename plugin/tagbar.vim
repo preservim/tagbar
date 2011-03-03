@@ -1619,10 +1619,21 @@ function! s:HighlightTag(fname)
 
     " No tag above cursor position so don't do anything
     if tagline == 0
+        if line('$') < winheight(0) - 1
+            execute 1
+            call winline()
+        endif
         execute prevwinnr . 'wincmd w'
         let &eventignore = eventignore_save
         redraw
         return
+    endif
+
+    " If the Tagbar contents are shorter than the window height make sure
+    " that the whole content is shown by jumping to the top of the window
+    if line('$') < winheight(0) - 1
+        execute 1
+        call winline()
     endif
 
     " Go to the line containing the tag
