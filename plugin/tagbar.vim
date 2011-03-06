@@ -991,6 +991,11 @@ function! s:ProcessFile(fname, ftype)
     let ctags_args .= ' --extra= '
     let ctags_args .= ' --sort=yes '
 
+    " Include extra type definitions
+    if has_key(typeinfo, 'deffile')
+        let ctags_args .= ' --options=' . typeinfo.deffile . ' '
+    endif
+
     let ctags_type = typeinfo.ctagstype
 
     let ctags_kinds = ""

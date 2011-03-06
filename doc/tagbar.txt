@@ -393,6 +393,20 @@ sort:       This entry can be used to override the global sort setting for
             with the global setting, that is if you want to sort tags by name
             set it to 1 and if you want to sort them according to their order
             in the file set it to 0.
+deffile:    The path to a file with additional ctags definitions (see the
+{optional}  section below on adding a new definition for what exactly that
+            means). This is especially useful for ftplugins since they can
+            provide a complete type definition with ctags and Tagbar
+            configurations without requiring user intervention.
+            Let's say you have an ftplugin that adds support for the language
+            "mylang", and your directory structure looks like this: >
+                ctags/mylang.cnf
+                ftplugin/mylang.vim
+<           Then the "deffile" entry would look like this to allow for the
+            plugin to be installed in an arbitray location (for example
+            with pathogen): >
+                'deffile' : expand('<sfile>:p:h:h') . '/ctags/mylang.cnf'
+<
 
 You then have to assign this dictionary to a variable with the name
 >
@@ -497,7 +511,8 @@ those two and in addition "scopes", "sro" and at least one of "kind2scope" and
 "scope2kind".
 
 Let's assume we want to add support for LaTeX to Tagbar using the regex
-approach. First we put the following text into ~/.ctags:
+approach. First we put the following text into ~/.ctags or a file pointed to
+by the "deffile" definition entry:
 >
 	--langdef=latex
 	--langmap=latex:.tex
@@ -539,9 +554,13 @@ Now we have to create the Tagbar language definition in our vimrc:
 	        \ 'r:refs',
 	        \ 'p:pagerefs'
 	    \ ],
-	    \ 'sort' : 0
+	    \ 'sort'    : 0,
+	    \ 'deffile' : expand('<sfile>:p:h:h') . '/ctags/latex.cnf'
 	\ }
 <
+The "deffile" field is of course only needed if the ctags definition actually
+is in that file and not in ~/.ctags.
+
 Sort has been disabled for LaTeX so that the sections appear in their correct
 order. They unfortunately can't be shown nested with their correct scopes
 since as already mentioned the regular expression approach doesn't support
