@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	1.2
+Version:	1.5
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -612,6 +612,18 @@ files.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+1.5 (2011-03-06)
+    - Type definitions can now include a path to a file with the ctags
+      definition. This is especially useful for ftplugins that can now ship
+      with a complete ctags and Tagbar configuration without requiring user
+      intervention. Thanks to Jan Christoph Ebersbach for the suggestion.
+    - Added autofocus setting by Taybin Rutkin. This will put the cursor in
+      the Tagbar window when it is opened.
+    - The "scopes" field is no longer needed in type definitions, the
+      information is already there in "scope2kind". Existing definitions will
+      be ignored.
+    - Some fixes and improvements related to redrawing and window switching.
 
 1.2 (2011-02-28)
     - Fix typo in Ruby definition
