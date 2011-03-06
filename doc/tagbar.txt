@@ -352,11 +352,16 @@ kinds:      A list of the "language kinds" that should be listed in Tagbar,
                 "f:functions"
 <           would list all the function definitions in a file under the header
             "functions".
-scopes:     A list of the scopes that ctags supports for a given language, for
-            example classes, structs etc. Unfortunately there is no ctags
-            option to list the scopes, you have to look at the tags ctags
-            generates manually. For example, let's say we have a C++ file
-            "test.cpp" with the following contents: >
+sro:        The scope resolution operator. For example, in C++ it is "::" and
+            in Java it is ".". When in doubt run ctags as shown above and look
+            at the output.
+kind2scope: A dictionary describing the mapping of tag kinds (in their
+            one-character representation) to the scopes their children will
+            appear in, for example classes, structs etc.
+            Unfortunately there is no ctags option to list the scopes, you
+            have to look at the tags ctags generates manually. For example,
+            let's say we have a C++ file "test.cpp" with the following
+            contents: >
                 class Foo
                 {
                 public:
@@ -370,15 +375,8 @@ scopes:     A list of the scopes that ctags supports for a given language, for
 <           Then the output for the variable "var" would look like this: >
                 var	tmp.cpp /^    int var;$/;"	kind:m	line:11	class:Foo	access:private
 <           This shows that the scope name for an entry in a C++ class is
-            simply "class". So you would need to put this exact word into the
-            "scopes" list. The order again determines the order in which the
-            tags will be displayed in Tagbar.
-sro:        The scope resolution operator. For example, in C++ it is "::" and
-            in Java it is ".". When in doubt run ctags as shown above and look
-            at the output.
-kind2scope: A dictionary describing the mapping of tag kinds (in their
-            one-character representation) to the scopes their children will
-            appear in.
+            simply "class". So this would be the word that the "kind"
+            character of a class has to be mapped to.
 scope2kind: The opposite of the above, mapping scopes to the kinds of their
             parents. Most of the time it is the exact inverse of the above,
             but in some cases it can be different, for example when more than
@@ -438,13 +436,6 @@ used in Tagbar.
 	        \ 'f:functions',
 	        \ 'm:members',
 	        \ 'v:variables'
-	    \ ],
-	    \ 'scopes' : [
-	        \ 'namespace',
-	        \ 'class',
-	        \ 'struct',
-	        \ 'enum',
-	        \ 'union'
 	    \ ],
 	    \ 'sro'        : '::',
 	    \ 'kind2scope' : {
