@@ -1476,9 +1476,10 @@ function! s:RenderContent(fname, ftype)
 
     setlocal nomodifiable
 
-    " Go to top of window so jumps to the Tagbar window before any
-    " highlighting is done won't end up at the bottom
+    " Make sure as much of the Tagbar content as possible is shown in the
+    " window by jumping to the top after drawing
     execute 1
+    call winline()
 
     let &lazyredraw = lazyredraw_save
 
@@ -1601,21 +1602,10 @@ function! s:HighlightTag(fname)
 
     " No tag above cursor position so don't do anything
     if tagline == 0
-        if line('$') < winheight(0) - 1
-            execute 1
-            call winline()
-        endif
         execute prevwinnr . 'wincmd w'
         let &eventignore = eventignore_save
         redraw
         return
-    endif
-
-    " If the Tagbar contents are shorter than the window height make sure
-    " that the whole content is shown by jumping to the top of the window
-    if line('$') < winheight(0) - 1
-        execute 1
-        call winline()
     endif
 
     " Go to the line containing the tag
