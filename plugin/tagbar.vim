@@ -71,7 +71,6 @@ if !exists('g:tagbar_expand')
 endif
 
 let s:type_init_done    = 0
-let s:key_mapping_done  = 0
 let s:autocommands_done = 0
 let s:window_expanded   = 0
 
@@ -774,8 +773,6 @@ function! s:MapKeys()
     nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q    :close<CR>
     nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
-
-    let s:key_mapping_done = 1
 endfunction
 
 " s:CreateAutocommands() {{{2
@@ -877,7 +874,7 @@ function! s:OpenWindow(autoclose)
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-    if !s:key_mapping_done
+    if !hasmapto('JumpToTag', 'n')
         call s:MapKeys()
     endif
 
