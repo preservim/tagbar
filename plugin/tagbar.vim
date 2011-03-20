@@ -1019,7 +1019,7 @@ function! s:ProcessFile(fname, ftype)
         call filter(fileinfo.tags, '!(' . is_scoped . ')')
 
         let processedtags = []
-        call s:AddScopedTags(scopedtags, processedtags, '', '', 0, typeinfo)
+        call s:AddScopedTags(scopedtags, processedtags, {}, 0, typeinfo)
 
         if !empty(scopedtags)
             echoerr 'Tagbar: ''scopedtags'' not empty after processing,'
@@ -1114,17 +1114,25 @@ endfunction
 " also don't get a tag themselves. These tags are thus called 'pseudo-tags' in
 " Tagbar. Properly parsing them is quite tricky, so try not to think about it
 " too much.
-function! s:AddScopedTags(tags, processedtags, curpath, pscope, depth, typeinfo)
+function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
+    if !empty(a:parent)
+        let curpath = a:parent.fullpath
+        let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
+    else
+        let curpath = ''
+        let pscope  = ''
+    endif
+
     let is_cur_tag = 'v:val.depth == a:depth'
 
-    if !empty(a:curpath)
+    if !empty(curpath)
         " Check whether the tag is either a direct child at the current depth
         " or at least a proper grandchild with pseudo-tags in between. If it
         " is a direct child also check for matching scope.
         let is_cur_tag .= ' &&
-        \ (v:val.path == a:curpath ||
-         \ match(v:val.path, ''\V\^\C'' . a:curpath . a:typeinfo.sro) == 0) &&
-        \ (v:val.path == a:curpath ? (v:val.scope == a:pscope) : 1)'
+        \ (v:val.path == curpath ||
+         \ match(v:val.path, ''\V\^\C'' . curpath . a:typeinfo.sro) == 0) &&
+        \ (v:val.path == curpath ? (v:val.scope == pscope) : 1)'
     endif
 
     let curtags = filter(copy(a:tags), is_cur_tag)
@@ -1138,11 +1146,11 @@ function! s:AddScopedTags(tags, processedtags, curpath, pscope, depth, typeinfo)
         while !empty(curtags)
             let tag = remove(curtags, 0)
 
-            if tag.path != a:curpath
+            if tag.path != curpath
                 " tag is child of a pseudo-tag, so create a new pseudo-tag and
                 " add all its children to it
-                let pseudotag = s:ProcessPseudoTag(curtags, tag, a:curpath,
-                                                 \ a:pscope, a:typeinfo)
+                let pseudotag = s:ProcessPseudoTag(curtags, tag, a:parent,
+                                                 \ a:typeinfo)
 
                 call add(pseudotags, pseudotag)
             else
@@ -1160,9 +1168,8 @@ function! s:AddScopedTags(tags, processedtags, curpath, pscope, depth, typeinfo)
                 let tag.children = []
             endif
 
-            let parentscope = a:typeinfo.kind2scope[tag.fields.kind]
-            call s:AddScopedTags(a:tags, tag.children, tag.fullpath,
-                               \ parentscope, a:depth + 1, a:typeinfo)
+            call s:AddScopedTags(a:tags, tag.children, tag, a:depth + 1,
+                               \ a:typeinfo)
         endfor
         call extend(a:processedtags, realtags)
 
@@ -1178,25 +1185,27 @@ function! s:AddScopedTags(tags, processedtags, curpath, pscope, depth, typeinfo)
     " so we have to check for real tags at a lower level, i.e. grandchildren
     let is_grandchild = 'v:val.depth > a:depth'
 
-    if !empty(a:curpath)
+    if !empty(curpath)
         let is_grandchild .=
-        \ ' && match(v:val.path, ''\V\^\C'' . a:curpath . a:typeinfo.sro) == 0'
+        \ ' && match(v:val.path, ''\V\^\C'' . curpath . a:typeinfo.sro) == 0'
     endif
 
     let grandchildren = filter(copy(a:tags), is_grandchild)
 
     if !empty(grandchildren)
-        call s:AddScopedTags(a:tags, a:processedtags, a:curpath,
-                           \ a:pscope, a:depth + 1, a:typeinfo)
+        call s:AddScopedTags(a:tags, a:processedtags, a:parent, a:depth + 1,
+                           \ a:typeinfo)
     endif
 endfunction
 
 " s:ProcessPseudoTag() {{{2
-function! s:ProcessPseudoTag(curtags, tag, curpath, pscope, typeinfo)
-    let pseudoname = substitute(a:tag.path, a:curpath, '', '')
+function! s:ProcessPseudoTag(curtags, tag, parent, typeinfo)
+    let curpath = !empty(a:parent) ? a:parent.fullpath : ''
+
+    let pseudoname = substitute(a:tag.path, curpath, '', '')
     let pseudoname = substitute(pseudoname, '\V\^' . a:typeinfo.sro, '', '')
-    let pseudotag = s:CreatePseudoTag(pseudoname, a:curpath, a:pscope,
-                                    \ a:tag.scope, a:typeinfo)
+    let pseudotag = s:CreatePseudoTag(pseudoname, a:parent, a:tag.scope,
+                                    \ a:typeinfo)
     let pseudotag.children = [a:tag]
 
     " get all the other (direct) children of the current pseudo-tag
@@ -1221,38 +1230,44 @@ function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo)
             let childtag.children = []
         endif
 
-        let parentscope = a:typeinfo.kind2scope[childtag.fields.kind]
-        call s:AddScopedTags(a:tags, childtag.children, childtag.fullpath,
-                           \ parentscope, a:depth + 1, a:typeinfo)
+        call s:AddScopedTags(a:tags, childtag.children, childtag, a:depth + 1,
+                           \ a:typeinfo)
     endfor
 
     let is_grandchild = 'v:val.depth > a:depth &&
                        \ match(v:val.path, ''^\C'' . a:tag.fullpath) == 0'
     let grandchildren = filter(copy(a:tags), is_grandchild)
     if !empty(grandchildren)
-        let parentscope = a:typeinfo.kind2scope[a:tag.fields.kind]
-        call s:AddScopedTags(a:tags, a:tag.children, a:tag.fullpath,
-                           \ parentscope, a:depth + 1, a:typeinfo)
+        call s:AddScopedTags(a:tags, a:tag.children, a:tag, a:depth + 1,
+                           \ a:typeinfo)
     endif
 endfunction
 
 " s:CreatePseudoTag() {{{2
-function! s:CreatePseudoTag(name, curpath, pscope, scope, typeinfo)
+function! s:CreatePseudoTag(name, parent, scope, typeinfo)
+    if !empty(a:parent)
+        let curpath = a:parent.fullpath
+        let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
+    else
+        let curpath = ''
+        let pscope  = ''
+    endif
+
     let pseudotag             = {}
     let pseudotag.name        = a:name
     let pseudotag.fields      = {}
     let pseudotag.fields.kind = a:typeinfo.scope2kind[a:scope]
     let pseudotag.fields.line = 0
 
-    let parentscope = substitute(a:curpath, a:name . '$', '', '')
+    let parentscope = substitute(curpath, a:name . '$', '', '')
     let parentscope = substitute(parentscope,
                                \ '\V\^' . a:typeinfo.sro . '\$', '', '')
 
     let pseudotag.path     = ''
     let pseudotag.fullpath = pseudotag.name
-    if a:pscope != ''
-        let pseudotag.fields[a:pscope] = parentscope
-        let pseudotag.scope    = a:pscope
+    if pscope != ''
+        let pseudotag.fields[pscope] = parentscope
+        let pseudotag.scope    = pscope
         let pseudotag.path     = parentscope
         let pseudotag.fullpath =
                     \ pseudotag.path . a:typeinfo.sro . pseudotag.name
