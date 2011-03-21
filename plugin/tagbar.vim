@@ -1379,6 +1379,13 @@ function! s:RenderContent(fname, ftype)
     let lazyredraw_save = &lazyredraw
     set lazyredraw
 
+    if a:fname == s:current_file
+        " We're redisplaying the same file, so save the view
+        let saveline = line('.')
+        let savecol  = col('.')
+        let topline  = line('w0')
+    endif
+
     setlocal modifiable
 
     silent! %delete _
@@ -1488,10 +1495,21 @@ function! s:RenderContent(fname, ftype)
 
     setlocal nomodifiable
 
-    " Make sure as much of the Tagbar content as possible is shown in the
-    " window by jumping to the top after drawing
-    execute 1
-    call winline()
+    if a:fname == s:current_file
+        let scrolloff_save = &scrolloff
+        set scrolloff=0
+
+        call cursor(topline, 1)
+        normal! zt
+        call cursor(saveline, savecol)
+
+        let &scrolloff = scrolloff_save
+    else
+        " Make sure as much of the Tagbar content as possible is shown in the
+        " window by jumping to the top after drawing
+        execute 1
+        call winline()
+    endif
 
     let &lazyredraw = lazyredraw_save
 
