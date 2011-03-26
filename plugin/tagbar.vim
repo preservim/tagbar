@@ -70,6 +70,10 @@ if !exists('g:tagbar_expand')
     let g:tagbar_expand = 0
 endif
 
+if !exists('g:tagbar_foldlevel')
+    let g:tagbar_foldlevel = 99
+endif
+
 let s:type_init_done    = 0
 let s:autocommands_done = 0
 let s:window_expanded   = 0
@@ -79,12 +83,16 @@ function! s:InitTypes()
     " Dictionary of the already processed files, indexed by file name with
     " complete path.
     " The entries are again dictionaries with the following fields:
-    " - mtime: File modification time
-    " - ftype: The vim file type
-    " - tags:  List of the tags that are present in the file, sorted
-    "          according to the value of 'g:tagbar_sort'
-    " - fline: Dictionary of the tags, indexed by line number in the file
-    " - tline: Dictionary of the tags, indexed by line number in the tagbar
+    " - mtime:     File modification time
+    " - ftype:     The vim file type
+    " - tags:      List of the tags that are present in the file, sorted
+    "              according to the value of 'g:tagbar_sort'
+    " - fline:     Dictionary of the tags, indexed by line number in the file
+    " - tline:     Dictionary of the tags, indexed by line number in the tagbar
+    " - kindfolds: Dictionary of the folding state of 'kind's, indexed by short
+    "              name
+    " - tagfolds:  Dictionary of dictionaries of the folding state of
+    "              individual tags, indexed by kind and full path
     let s:known_files = {}
 
     let s:known_types = {}
@@ -93,73 +101,73 @@ function! s:InitTypes()
     let type_ant = {}
     let type_ant.ctagstype = 'ant'
     let type_ant.kinds     = [
-        \ 'p:projects',
-        \ 't:targets'
+        \ {'short' : 'p', 'long' : 'projects', 'fold' : 0},
+        \ {'short' : 't', 'long' : 'targets',  'fold' : 0}
     \ ]
     let s:known_types.ant = type_ant
     " Asm {{{3
     let type_asm = {}
     let type_asm.ctagstype = 'asm'
     let type_asm.kinds     = [
-        \ 'm:macros',
-        \ 't:types',
-        \ 'd:defines',
-        \ 'l:labels'
+        \ {'short' : 'm', 'long' : 'macros',  'fold' : 0},
+        \ {'short' : 't', 'long' : 'types',   'fold' : 0},
+        \ {'short' : 'd', 'long' : 'defines', 'fold' : 0},
+        \ {'short' : 'l', 'long' : 'labels',  'fold' : 0}
     \ ]
     let s:known_types.asm = type_asm
     " ASP {{{3
     let type_aspvbs = {}
     let type_aspvbs.ctagstype = 'asp'
     let type_aspvbs.kinds     = [
-        \ 'd:constants',
-        \ 'c:classes',
-        \ 'f:functions',
-        \ 's:subroutines',
-        \ 'v:variables'
+        \ {'short' : 'd', 'long' : 'constants',   'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0},
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0}
     \ ]
     let s:known_types.aspvbs = type_aspvbs
     " Awk {{{3
     let type_awk = {}
     let type_awk.ctagstype = 'awk'
     let type_awk.kinds     = [
-        \ 'f:functions'
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
     \ ]
     let s:known_types.awk = type_awk
     " Basic {{{3
     let type_basic = {}
     let type_basic.ctagstype = 'basic'
     let type_basic.kinds     = [
-        \ 'c:constants',
-        \ 'g:enumerations',
-        \ 'f:functions',
-        \ 'l:labels',
-        \ 't:types',
-        \ 'v:variables'
+        \ {'short' : 'c', 'long' : 'constants',    'fold' : 0},
+        \ {'short' : 'g', 'long' : 'enumerations', 'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',    'fold' : 0},
+        \ {'short' : 'l', 'long' : 'labels',       'fold' : 0},
+        \ {'short' : 't', 'long' : 'types',        'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',    'fold' : 0}
     \ ]
     let s:known_types.basic = type_basic
     " BETA {{{3
     let type_beta = {}
     let type_beta.ctagstype = 'beta'
     let type_beta.kinds     = [
-        \ 'f:fragments',
-        \ 's:slots',
-        \ 'v:patterns'
+        \ {'short' : 'f', 'long' : 'fragments', 'fold' : 0},
+        \ {'short' : 's', 'long' : 'slots',     'fold' : 0},
+        \ {'short' : 'v', 'long' : 'patterns',  'fold' : 0}
     \ ]
     let s:known_types.beta = type_beta
     " C {{{3
     let type_c = {}
     let type_c.ctagstype = 'c'
     let type_c.kinds     = [
-        \ 'd:macros',
-        \ 'p:prototypes',
-        \ 'g:enums',
-        \ 'e:enumerators',
-        \ 't:typedefs',
-        \ 's:structs',
-        \ 'u:unions',
-        \ 'm:members',
-        \ 'v:variables',
-        \ 'f:functions'
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
+        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0},
+        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0}
     \ ]
     let type_c.sro        = '::'
     let type_c.kind2scope = {
@@ -177,18 +185,18 @@ function! s:InitTypes()
     let type_cpp = {}
     let type_cpp.ctagstype = 'c++'
     let type_cpp.kinds     = [
-        \ 'd:macros',
-        \ 'p:prototypes',
-        \ 'g:enums',
-        \ 'e:enumerators',
-        \ 't:typedefs',
-        \ 'n:namespaces',
-        \ 'c:classes',
-        \ 's:structs',
-        \ 'u:unions',
-        \ 'f:functions',
-        \ 'm:members',
-        \ 'v:variables'
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
+        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0},
+        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0},
+        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0}
     \ ]
     let type_cpp.sro        = '::'
     let type_cpp.kind2scope = {
@@ -210,18 +218,18 @@ function! s:InitTypes()
     let type_cs = {}
     let type_cs.ctagstype = 'c#'
     let type_cs.kinds     = [
-        \ 'd:macros',
-        \ 'f:fields',
-        \ 'g:enums',
-        \ 'e:enumerators',
-        \ 't:typedefs',
-        \ 'n:namespaces',
-        \ 'i:interfaces',
-        \ 'c:classes',
-        \ 's:structs',
-        \ 'E:events',
-        \ 'm:methods',
-        \ 'p:properties'
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
+        \ {'short' : 'f', 'long' : 'fields',      'fold' : 0},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0},
+        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0},
+        \ {'short' : 'i', 'long' : 'interfaces',  'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0},
+        \ {'short' : 'E', 'long' : 'events',      'fold' : 0},
+        \ {'short' : 'm', 'long' : 'methods',     'fold' : 0},
+        \ {'short' : 'p', 'long' : 'properties',  'fold' : 0}
     \ ]
     let type_cs.sro        = '.'
     let type_cs.kind2scope = {
@@ -243,28 +251,28 @@ function! s:InitTypes()
     let type_cobol = {}
     let type_cobol.ctagstype = 'cobol'
     let type_cobol.kinds     = [
-        \ 'd:data items',
-        \ 'f:file descriptions',
-        \ 'g:group items',
-        \ 'p:paragraphs',
-        \ 'P:program ids',
-        \ 's:sections'
+        \ {'short' : 'd', 'long' : 'data items',        'fold' : 0},
+        \ {'short' : 'f', 'long' : 'file descriptions', 'fold' : 0},
+        \ {'short' : 'g', 'long' : 'group items',       'fold' : 0},
+        \ {'short' : 'p', 'long' : 'paragraphs',        'fold' : 0},
+        \ {'short' : 'P', 'long' : 'program ids',       'fold' : 0},
+        \ {'short' : 's', 'long' : 'sections',          'fold' : 0}
     \ ]
     let s:known_types.cobol = type_cobol
     " DOS Batch {{{3
     let type_dosbatch = {}
     let type_dosbatch.ctagstype = 'dosbatch'
     let type_dosbatch.kinds     = [
-        \ 'l:labels',
-        \ 'v:variables'
+        \ {'short' : 'l', 'long' : 'labels',    'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0}
     \ ]
     let s:known_types.dosbatch = type_dosbatch
     " Eiffel {{{3
     let type_eiffel = {}
     let type_eiffel.ctagstype = 'eiffel'
     let type_eiffel.kinds     = [
-        \ 'c:classes',
-        \ 'f:features'
+        \ {'short' : 'c', 'long' : 'classes',  'fold' : 0},
+        \ {'short' : 'f', 'long' : 'features', 'fold' : 0}
     \ ]
     let type_eiffel.sro        = '.' " Not sure, is nesting even possible?
     let type_eiffel.kind2scope = {
@@ -280,10 +288,10 @@ function! s:InitTypes()
     let type_erlang = {}
     let type_erlang.ctagstype = 'erlang'
     let type_erlang.kinds     = [
-        \ 'm:modules',
-        \ 'd:macro definitions',
-        \ 'f:functions',
-        \ 'r:record definitions'
+        \ {'short' : 'm', 'long' : 'modules',            'fold' : 0},
+        \ {'short' : 'd', 'long' : 'macro definitions',  'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0},
+        \ {'short' : 'r', 'long' : 'record definitions', 'fold' : 0}
     \ ]
     let type_erlang.sro        = '.' " Not sure, is nesting even possible?
     let type_erlang.kind2scope = {
@@ -301,12 +309,12 @@ function! s:InitTypes()
     let type_mxml = {}
     let type_mxml.ctagstype = 'flex'
     let type_mxml.kinds     = [
-        \ 'v:global variables',
-        \ 'c:classes',
-        \ 'm:methods',
-        \ 'p:properties',
-        \ 'f:functions',
-        \ 'x:mxtags'
+        \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',          'fold' : 0},
+        \ {'short' : 'm', 'long' : 'methods',          'fold' : 0},
+        \ {'short' : 'p', 'long' : 'properties',       'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',        'fold' : 0},
+        \ {'short' : 'x', 'long' : 'mxtags',           'fold' : 0}
     \ ]
     let type_mxml.sro        = '.'
     let type_mxml.kind2scope = {
@@ -320,18 +328,18 @@ function! s:InitTypes()
     let type_fortran = {}
     let type_fortran.ctagstype = 'fortran'
     let type_fortran.kinds     = [
-        \ 'm:modules',
-        \ 'p:programs',
-        \ 'k:components',
-        \ 't:derived types and structures',
-        \ 'c:common blocks',
-        \ 'b:block data',
-        \ 'e:entry points',
-        \ 'f:functions',
-        \ 's:subroutines',
-        \ 'l:labels',
-        \ 'n:namelists',
-        \ 'v:variables'
+        \ {'short' : 'm', 'long' : 'modules',                      'fold' : 0},
+        \ {'short' : 'p', 'long' : 'programs',                     'fold' : 0},
+        \ {'short' : 'k', 'long' : 'components',                   'fold' : 0},
+        \ {'short' : 't', 'long' : 'derived types and structures', 'fold' : 0},
+        \ {'short' : 'c', 'long' : 'common blocks',                'fold' : 0},
+        \ {'short' : 'b', 'long' : 'block data',                   'fold' : 0},
+        \ {'short' : 'e', 'long' : 'entry points',                 'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',                    'fold' : 0},
+        \ {'short' : 's', 'long' : 'subroutines',                  'fold' : 0},
+        \ {'short' : 'l', 'long' : 'labels',                       'fold' : 0},
+        \ {'short' : 'n', 'long' : 'namelists',                    'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',                    'fold' : 0}
     \ ]
     let type_fortran.sro        = '.' " Not sure, is nesting even possible?
     let type_fortran.kind2scope = {
@@ -351,21 +359,21 @@ function! s:InitTypes()
     let type_html = {}
     let type_html.ctagstype = 'html'
     let type_html.kinds     = [
-        \ 'f:JavaScript funtions',
-        \ 'a:named anchors'
+        \ {'short' : 'f', 'long' : 'JavaScript funtions', 'fold' : 0},
+        \ {'short' : 'a', 'long' : 'named anchors',       'fold' : 0}
     \ ]
     let s:known_types.html = type_html
     " Java {{{3
     let type_java = {}
     let type_java.ctagstype = 'java'
     let type_java.kinds     = [
-        \ 'p:packages',
-        \ 'f:fields',
-        \ 'g:enum types',
-        \ 'e:enum constants',
-        \ 'i:interfaces',
-        \ 'c:classes',
-        \ 'm:methods'
+        \ {'short' : 'p', 'long' : 'packages',       'fold' : 1},
+        \ {'short' : 'f', 'long' : 'fields',         'fold' : 0},
+        \ {'short' : 'g', 'long' : 'enum types',     'fold' : 0},
+        \ {'short' : 'e', 'long' : 'enum constants', 'fold' : 0},
+        \ {'short' : 'i', 'long' : 'interfaces',     'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',        'fold' : 0},
+        \ {'short' : 'm', 'long' : 'methods',        'fold' : 0}
     \ ]
     let type_java.sro        = '.'
     let type_java.kind2scope = {
@@ -386,54 +394,54 @@ function! s:InitTypes()
     let type_javascript = {}
     let type_javascript.ctagstype = 'javascript'
     let type_javascript.kinds     = [
-        \ 'v:global variables',
-        \ 'c:classes',
-        \ 'p:properties',
-        \ 'm:methods',
-        \ 'f:functions'
+        \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',          'fold' : 0},
+        \ {'short' : 'p', 'long' : 'properties',       'fold' : 0},
+        \ {'short' : 'm', 'long' : 'methods',          'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',        'fold' : 0}
     \ ]
     let s:known_types.javascript = type_javascript
     " Lisp {{{3
     let type_lisp = {}
     let type_lisp.ctagstype = 'lisp'
     let type_lisp.kinds     = [
-        \ 'f:functions'
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
     \ ]
     let s:known_types.lisp = type_lisp
     " Lua {{{3
     let type_lua = {}
     let type_lua.ctagstype = 'lua'
     let type_lua.kinds     = [
-        \ 'f:functions'
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
     \ ]
     let s:known_types.lua = type_lua
     " Make {{{3
     let type_make = {}
     let type_make.ctagstype = 'make'
     let type_make.kinds     = [
-        \ 'm:macros'
+        \ {'short' : 'm', 'long' : 'macros', 'fold' : 0}
     \ ]
     let s:known_types.make = type_make
     " Matlab {{{3
     let type_matlab = {}
     let type_matlab.ctagstype = 'matlab'
     let type_matlab.kinds     = [
-        \ 'f:functions'
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
     \ ]
     let s:known_types.matlab = type_matlab
     " Ocaml {{{3
     let type_ocaml = {}
     let type_ocaml.ctagstype = 'ocaml'
     let type_ocaml.kinds     = [
-        \ 'M:modules or functors',
-        \ 'v:global variables',
-        \ 'c:classes',
-        \ 'C:constructors',
-        \ 'm:methods',
-        \ 'e:exceptions',
-        \ 't:type names',
-        \ 'f:functions',
-        \ 'r:structure fields'
+        \ {'short' : 'M', 'long' : 'modules or functors', 'fold' : 0},
+        \ {'short' : 'v', 'long' : 'global variables',    'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',             'fold' : 0},
+        \ {'short' : 'C', 'long' : 'constructors',        'fold' : 0},
+        \ {'short' : 'm', 'long' : 'methods',             'fold' : 0},
+        \ {'short' : 'e', 'long' : 'exceptions',          'fold' : 0},
+        \ {'short' : 't', 'long' : 'type names',          'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',           'fold' : 0},
+        \ {'short' : 'r', 'long' : 'structure fields',    'fold' : 0}
     \ ]
     let type_ocaml.sro        = '.' " Not sure, is nesting even possible?
     let type_ocaml.kind2scope = {
@@ -451,49 +459,49 @@ function! s:InitTypes()
     let type_pascal = {}
     let type_pascal.ctagstype = 'pascal'
     let type_pascal.kinds     = [
-        \ 'f:functions',
-        \ 'p:procedures'
+        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0},
+        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0}
     \ ]
     let s:known_types.pascal = type_pascal
     " Perl {{{3
     let type_perl = {}
     let type_perl.ctagstype = 'perl'
     let type_perl.kinds     = [
-        \ 'p:packages',
-        \ 'c:constants',
-        \ 'f:formats',
-        \ 'l:labels',
-        \ 's:subroutines'
+        \ {'short' : 'p', 'long' : 'packages',    'fold' : 1},
+        \ {'short' : 'c', 'long' : 'constants',   'fold' : 0},
+        \ {'short' : 'f', 'long' : 'formats',     'fold' : 0},
+        \ {'short' : 'l', 'long' : 'labels',      'fold' : 0},
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0}
     \ ]
     let s:known_types.perl = type_perl
     " PHP {{{3
     let type_php = {}
     let type_php.ctagstype = 'php'
     let type_php.kinds     = [
-        \ 'i:interfaces',
-        \ 'c:classes',
-        \ 'd:constant definitions',
-        \ 'f:functions',
-        \ 'v:variables',
-        \ 'j:javascript functions'
+        \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',              'fold' : 0},
+        \ {'short' : 'd', 'long' : 'constant definitions', 'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',            'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',            'fold' : 0},
+        \ {'short' : 'j', 'long' : 'javascript functions', 'fold' : 0}
     \ ]
     let s:known_types.php = type_php
     " Python {{{3
     let type_python = {}
     let type_python.ctagstype = 'python'
     let type_python.kinds     = [
-        \ 'i:imports',
-        \ 'c:classes',
-        \ 'f:functions',
-        \ 'm:members',
-        \ 'v:variables'
+        \ {'short' : 'i', 'long' : 'imports',   'fold' : 1},
+        \ {'short' : 'c', 'long' : 'classes',   'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0},
+        \ {'short' : 'm', 'long' : 'members',   'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0}
     \ ]
+    let type_python.sro        = '.'
     let type_python.kind2scope = {
         \ 'c' : 'class',
         \ 'f' : 'function',
         \ 'm' : 'function'
     \ }
-    let type_python.sro        = '.'
     let type_python.scope2kind = {
         \ 'class'    : 'c',
         \ 'function' : 'f'
@@ -503,17 +511,17 @@ function! s:InitTypes()
     let type_rexx = {}
     let type_rexx.ctagstype = 'rexx'
     let type_rexx.kinds     = [
-        \ 's:subroutines'
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0}
     \ ]
     let s:known_types.rexx = type_rexx
     " Ruby {{{3
     let type_ruby = {}
     let type_ruby.ctagstype = 'ruby'
     let type_ruby.kinds     = [
-        \ 'm:modules',
-        \ 'c:classes',
-        \ 'f:methods',
-        \ 'F:singleton methods'
+        \ {'short' : 'm', 'long' : 'modules',           'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',           'fold' : 0},
+        \ {'short' : 'f', 'long' : 'methods',           'fold' : 0},
+        \ {'short' : 'F', 'long' : 'singleton methods', 'fold' : 0}
     \ ]
     let type_ruby.sro        = '.'
     let type_ruby.kind2scope = {
@@ -528,15 +536,15 @@ function! s:InitTypes()
     let type_scheme = {}
     let type_scheme.ctagstype = 'scheme'
     let type_scheme.kinds     = [
-        \ 'f:functions',
-        \ 's:sets'
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0},
+        \ {'short' : 's', 'long' : 'sets',      'fold' : 0}
     \ ]
     let s:known_types.scheme = type_scheme
     " Shell script {{{3
     let type_sh = {}
     let type_sh.ctagstype = 'sh'
     let type_sh.kinds     = [
-        \ 'f:functions'
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
     \ ]
     let s:known_types.sh = type_sh
     let s:known_types.csh = type_sh
@@ -545,21 +553,21 @@ function! s:InitTypes()
     let type_slang = {}
     let type_slang.ctagstype = 'slang'
     let type_slang.kinds     = [
-        \ 'n:namespaces',
-        \ 'f:functions'
+        \ {'short' : 'n', 'long' : 'namespaces', 'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0}
     \ ]
     let s:known_types.slang = type_slang
     " SML {{{3
     let type_sml = {}
     let type_sml.ctagstype = 'sml'
     let type_sml.kinds     = [
-        \ 'e:exception declarations',
-        \ 'f:function definitions',
-        \ 'c:functor definitions',
-        \ 's:signature declarations',
-        \ 'r:structure declarations',
-        \ 't:type definitions',
-        \ 'v:value bindings'
+        \ {'short' : 'e', 'long' : 'exception declarations', 'fold' : 0},
+        \ {'short' : 'f', 'long' : 'function definitions',   'fold' : 0},
+        \ {'short' : 'c', 'long' : 'functor definitions',    'fold' : 0},
+        \ {'short' : 's', 'long' : 'signature declarations', 'fold' : 0},
+        \ {'short' : 'r', 'long' : 'structure declarations', 'fold' : 0},
+        \ {'short' : 't', 'long' : 'type definitions',       'fold' : 0},
+        \ {'short' : 'v', 'long' : 'value bindings',         'fold' : 0}
     \ ]
     let s:known_types.sml = type_sml
     " SQL {{{3
@@ -569,47 +577,47 @@ function! s:InitTypes()
     let type_sql = {}
     let type_sql.ctagstype = 'sql'
     let type_sql.kinds     = [
-        \ 'c:cursors',
-        \ 'f:functions',
-        \ 'F:record fields',
-        \ 'L:block label',
-        \ 'P:packages',
-        \ 'p:procedures',
-        \ 's:subtypes',
-        \ 't:tables',
-        \ 'T:triggers',
-        \ 'v:variables',
-        \ 'i:indexes',
-        \ 'e:events',
-        \ 'U:publications',
-        \ 'R:services',
-        \ 'D:domains',
-        \ 'V:views',
-        \ 'n:synonyms',
-        \ 'x:MobiLink Table Scripts',
-        \ 'y:MobiLink Conn Scripts'
+        \ {'short' : 'P', 'long' : 'packages',               'fold' : 1},
+        \ {'short' : 'c', 'long' : 'cursors',                'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',              'fold' : 0},
+        \ {'short' : 'F', 'long' : 'record fields',          'fold' : 0},
+        \ {'short' : 'L', 'long' : 'block label',            'fold' : 0},
+        \ {'short' : 'p', 'long' : 'procedures',             'fold' : 0},
+        \ {'short' : 's', 'long' : 'subtypes',               'fold' : 0},
+        \ {'short' : 't', 'long' : 'tables',                 'fold' : 0},
+        \ {'short' : 'T', 'long' : 'triggers',               'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',              'fold' : 0},
+        \ {'short' : 'i', 'long' : 'indexes',                'fold' : 0},
+        \ {'short' : 'e', 'long' : 'events',                 'fold' : 0},
+        \ {'short' : 'U', 'long' : 'publications',           'fold' : 0},
+        \ {'short' : 'R', 'long' : 'services',               'fold' : 0},
+        \ {'short' : 'D', 'long' : 'domains',                'fold' : 0},
+        \ {'short' : 'V', 'long' : 'views',                  'fold' : 0},
+        \ {'short' : 'n', 'long' : 'synonyms',               'fold' : 0},
+        \ {'short' : 'x', 'long' : 'MobiLink Table Scripts', 'fold' : 0},
+        \ {'short' : 'y', 'long' : 'MobiLink Conn Scripts',  'fold' : 0}
     \ ]
     let s:known_types.sql = type_sql
     " Tcl {{{3
     let type_tcl = {}
     let type_tcl.ctagstype = 'tcl'
     let type_tcl.kinds     = [
-        \ 'c:classes',
-        \ 'm:methods',
-        \ 'p:procedures'
+        \ {'short' : 'c', 'long' : 'classes',    'fold' : 0},
+        \ {'short' : 'm', 'long' : 'methods',    'fold' : 0},
+        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0}
     \ ]
     let s:known_types.tcl = type_tcl
     " LaTeX {{{3
     let type_tex = {}
     let type_tex.ctagstype = 'tex'
     let type_tex.kinds     = [
-        \ 'p:parts',
-        \ 'c:chapters',
-        \ 's:sections',
-        \ 'u:subsections',
-        \ 'b:subsubsections',
-        \ 'P:paragraphs',
-        \ 'G:subparagraphs',
+        \ {'short' : 'p', 'long' : 'parts',          'fold' : 0},
+        \ {'short' : 'c', 'long' : 'chapters',       'fold' : 0},
+        \ {'short' : 's', 'long' : 'sections',       'fold' : 0},
+        \ {'short' : 'u', 'long' : 'subsections',    'fold' : 0},
+        \ {'short' : 'b', 'long' : 'subsubsections', 'fold' : 0},
+        \ {'short' : 'P', 'long' : 'paragraphs',     'fold' : 0},
+        \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0}
     \ ]
     let s:known_types.tex = type_tex
     " Vera {{{3
@@ -617,16 +625,16 @@ function! s:InitTypes()
     let type_vera = {}
     let type_vera.ctagstype = 'vera'
     let type_vera.kinds     = [
-        \ 'd:macros',
-        \ 'g:enums',
-        \ 'T:typedefs',
-        \ 'c:classes',
-        \ 'e:enumerators',
-        \ 'm:members',
-        \ 'f:functions',
-        \ 't:tasks',
-        \ 'v:variables',
-        \ 'p:programs'
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
+        \ {'short' : 'T', 'long' : 'typedefs',    'fold' : 0},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0},
+        \ {'short' : 't', 'long' : 'tasks',       'fold' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0},
+        \ {'short' : 'p', 'long' : 'programs',    'fold' : 0}
     \ ]
     let type_vera.sro        = '.' " Nesting doesn't seem to be possible
     let type_vera.kind2scope = {
@@ -644,14 +652,14 @@ function! s:InitTypes()
     let type_verilog = {}
     let type_verilog.ctagstype = 'verilog'
     let type_verilog.kinds     = [
-        \ 'c:constants',
-        \ 'e:events',
-        \ 'f:functions',
-        \ 'm:modules',
-        \ 'n:net data types',
-        \ 'p:ports',
-        \ 'r:register data types',
-        \ 't:tasks'
+        \ {'short' : 'c', 'long' : 'constants',           'fold' : 0},
+        \ {'short' : 'e', 'long' : 'events',              'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',           'fold' : 0},
+        \ {'short' : 'm', 'long' : 'modules',             'fold' : 0},
+        \ {'short' : 'n', 'long' : 'net data types',      'fold' : 0},
+        \ {'short' : 'p', 'long' : 'ports',               'fold' : 0},
+        \ {'short' : 'r', 'long' : 'register data types', 'fold' : 0},
+        \ {'short' : 't', 'long' : 'tasks',               'fold' : 0}
     \ ]
     let s:known_types.verilog = type_verilog
     " VHDL {{{3
@@ -659,32 +667,32 @@ function! s:InitTypes()
     let type_vhdl = {}
     let type_vhdl.ctagstype = 'vhdl'
     let type_vhdl.kinds     = [
-        \ 'c:constants',
-        \ 't:types',
-        \ 'T:subtypes',
-        \ 'r:records',
-        \ 'e:entities',
-        \ 'f:functions',
-        \ 'p:procedures',
-        \ 'P:packages'
+        \ {'short' : 'P', 'long' : 'packages',   'fold' : 1},
+        \ {'short' : 'c', 'long' : 'constants',  'fold' : 0},
+        \ {'short' : 't', 'long' : 'types',      'fold' : 0},
+        \ {'short' : 'T', 'long' : 'subtypes',   'fold' : 0},
+        \ {'short' : 'r', 'long' : 'records',    'fold' : 0},
+        \ {'short' : 'e', 'long' : 'entities',   'fold' : 0},
+        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0},
+        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0}
     \ ]
     let s:known_types.vhdl = type_vhdl
     " Vim {{{3
     let type_vim = {}
     let type_vim.ctagstype = 'vim'
     let type_vim.kinds     = [
-        \ 'v:variables',
-        \ 'f:functions',
-        \ 'a:autocommand groups',
-        \ 'c:commands',
-        \ 'm:maps'
+        \ {'short' : 'v', 'long' : 'variables',          'fold' : 1},
+        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0},
+        \ {'short' : 'a', 'long' : 'autocommand groups', 'fold' : 1},
+        \ {'short' : 'c', 'long' : 'commands',           'fold' : 0},
+        \ {'short' : 'm', 'long' : 'maps',               'fold' : 0}
     \ ]
     let s:known_types.vim = type_vim
     " YACC {{{3
     let type_yacc = {}
     let type_yacc.ctagstype = 'yacc'
     let type_yacc.kinds     = [
-        \ 'l:labels'
+        \ {'short' : 'l', 'long' : 'labels', 'fold' : 0}
     \ ]
     let s:known_types.yacc = type_yacc
     " }}}3
@@ -705,7 +713,7 @@ function! s:InitTypes()
         let i = 0
         let type.kinddict = {}
         for kind in type.kinds
-            let type.kinddict[kind[0]] = i
+            let type.kinddict[kind.short] = i
             let i += 1
         endfor
     endfor
@@ -737,7 +745,21 @@ function! s:GetUserTypeDefs()
 
     " If the user only specified one of kind2scope and scope2kind use it to
     " generate the other one
+    " Also, transform the 'kind' definitions into dictionary format
     for def in values(defdict)
+        let kinds = def.kinds
+        let def.kinds = []
+        for kind in kinds
+            let kindlist = split(kind, ':')
+            let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
+            if len(kindlist) == 3
+                let kinddict.kindfolds = kindlist[2]
+            else
+                let kinddict.kindfolds = 0
+            endif
+            call add(def.kinds, kinddict)
+        endfor
+
         if has_key(def, 'kind2scope') && !has_key(def, 'scope2kind')
             let def.scope2kind = {}
             for [key, value] in items(def.kind2scope)
@@ -761,16 +783,18 @@ function! s:MapKeys()
                                               \ :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
 
-    nnoremap <script> <silent> <buffer> +           :silent! foldopen<CR>
-    nnoremap <script> <silent> <buffer> <kPlus>     :silent! foldopen<CR>
-    nnoremap <script> <silent> <buffer> -           :silent! foldclose<CR>
-    nnoremap <script> <silent> <buffer> <kMinus>    :silent! foldclose<CR>
-    nnoremap <script> <silent> <buffer> *           :silent! %foldopen!<CR>
-    nnoremap <script> <silent> <buffer> <kMultiply> :silent! %foldopen!<CR>
-    nnoremap <script> <silent> <buffer> =           :silent! %foldclose!<CR>
+    nnoremap <script> <silent> <buffer> +           :call <SID>OpenFold()<CR>
+    nnoremap <script> <silent> <buffer> <kPlus>     :call <SID>OpenFold()<CR>
+    nnoremap <script> <silent> <buffer> o           :call <SID>ToggleFold()<CR>
+    nnoremap <script> <silent> <buffer> -           :call <SID>CloseFold()<CR>
+    nnoremap <script> <silent> <buffer> <kMinus>    :call <SID>CloseFold()<CR>
+    nnoremap <script> <silent> <buffer> x           :call <SID>CloseParent()<CR>
+    nnoremap <script> <silent> <buffer> *           :call <SID>SetFoldLevel(99)<CR>
+    nnoremap <script> <silent> <buffer> <kMultiply> :call <SID>SetFoldLevel(99)<CR>
+    nnoremap <script> <silent> <buffer> =           :call <SID>SetFoldLevel(0)<CR>
 
     nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
-    nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
+    nnoremap <script> <silent> <buffer> z    :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q    :close<CR>
     nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
 endfunction
@@ -843,13 +867,7 @@ function! s:OpenWindow(autoclose)
         setlocal norelativenumber
     endif
 
-    setlocal foldenable
-    setlocal foldminlines=0
-    setlocal foldmethod=expr
-    setlocal foldexpr=s:GetFoldLevel(v:lnum)
-    setlocal foldlevel=9999
-    setlocal foldcolumn=1
-    setlocal foldtext=getline(v:foldstart)
+    setlocal nofoldenable
 
     setlocal statusline=%!TagbarGenerateStatusline()
 
@@ -973,8 +991,7 @@ function! s:ProcessFile(fname, ftype)
 
     let ctags_kinds = ""
     for kind in typeinfo.kinds
-        let [short, full] = split(kind, ':')
-        let ctags_kinds .= short
+        let ctags_kinds .= kind.short
     endfor
 
     let ctags_args .= ' --language-force=' . ctags_type .
@@ -992,25 +1009,43 @@ function! s:ProcessFile(fname, ftype)
         return
     endif
 
-    let fileinfo = {}
+    " If the file has only been updated preserve the fold states, otherwise
+    " create a new entry
+    if has_key(s:known_files, a:fname)
+        let fileinfo = s:known_files[a:fname]
+        let tagfolds_old = fileinfo.tagfolds
+    else
+        let fileinfo = {}
+
+        let fileinfo.kindfolds = {}
+        for kind in typeinfo.kinds
+            let fileinfo.kindfolds[kind.short] = kind.fold
+        endfor
+    endif
+    let fileinfo.tagfolds = {}
+    for kind in typeinfo.kinds
+        let fileinfo.tagfolds[kind.short]  = {}
+    endfor
+
     let fileinfo.mtime = getftime(a:fname)
-
-    let rawtaglist = split(ctags_output, '\n\+')
-
     let fileinfo.ftype = a:ftype
     let fileinfo.tags  = []
     let fileinfo.fline = {}
     let fileinfo.tline = {}
 
+    " Parse the ctags output lines
+    let rawtaglist = split(ctags_output, '\n\+')
     for line in rawtaglist
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
-            let taginfo = s:ParseTagline(parts[0], parts[1], typeinfo)
+            let taginfo = s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
             let fileinfo.fline[taginfo.fields.line] = taginfo
             call add(fileinfo.tags, taginfo)
         endif
     endfor
 
+    " Process scoped tags
+    let processedtags = []
     if has_key(typeinfo, 'kind2scope')
         let scopedtags = []
         let is_scoped = 'has_key(typeinfo.kind2scope, v:val.fields.kind) ||
@@ -1018,19 +1053,57 @@ function! s:ProcessFile(fname, ftype)
         let scopedtags += filter(copy(fileinfo.tags), is_scoped)
         call filter(fileinfo.tags, '!(' . is_scoped . ')')
 
-        let processedtags = []
-        call s:AddScopedTags(scopedtags, processedtags, {}, 0, typeinfo)
+        call s:AddScopedTags(scopedtags, processedtags, {}, 0,
+                           \ typeinfo, fileinfo)
 
         if !empty(scopedtags)
             echoerr 'Tagbar: ''scopedtags'' not empty after processing,'
                   \ 'this should never happen!'
                   \ 'Please contact the script maintainer with an example.'
         endif
+    endif
+
+    " Create a placeholder tag for the 'kind' header for folding purposes
+    for kind in typeinfo.kinds
+        let curtags = filter(copy(fileinfo.tags),
+                           \ 'v:val.fields.kind ==# kind.short')
+
+        if empty(curtags)
+            continue
+        endif
+
+        let kindtag = {
+            \ 'short'   : kind.short,
+            \ 'name'    : kind.long,
+            \ 'numtags' : len(curtags),
+            \ 'tline'   : 0
+        \ }
+
+        for tag in curtags
+            let tag.parent = kindtag
+        endfor
+    endfor
+
+    if !empty(processedtags)
         call extend(fileinfo.tags, processedtags)
     endif
 
-    let s:compare_typeinfo = typeinfo
+    " Copy over the saved tag folding states to avoid memory leaks in case of
+    " deleted tags
+    if has_key(s:known_files, a:fname)
+        unlet kind
+        for [kind, val] in items(tagfolds_old)
+            for path in keys(val)
+                if has_key(fileinfo.tagfolds[kind], path)
+                    let fileinfo.tagfolds[kind][path] = tagfolds_old[kind][path]
+                endif
+            endfor
+        endfor
+        unlet tagfolds_old
+    endif
 
+    " Sort the tags
+    let s:compare_typeinfo = typeinfo
     if has_key(typeinfo, 'sort')
         if typeinfo.sort
             call s:SortTags(fileinfo.tags, 's:CompareByKind')
@@ -1051,7 +1124,7 @@ endfunction
 " tagname<TAB>filename<TAB>expattern;"fields
 " fields: <TAB>name:value
 " fields that are always present: kind, line
-function! s:ParseTagline(part1, part2, typeinfo)
+function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
     let taginfo = {}
 
     let basic_info      = split(a:part1, '\t')
@@ -1086,8 +1159,9 @@ function! s:ParseTagline(part1, part2, typeinfo)
     endfor
 
     " Make some information easier accessible
-    let taginfo.path = ''
+    let taginfo.path     = ''
     let taginfo.fullpath = taginfo.name
+    let taginfo.depth    = 0
     if has_key(a:typeinfo, 'scope2kind')
         for scope in keys(a:typeinfo.scope2kind)
             if has_key(taginfo.fields, scope)
@@ -1102,6 +1176,12 @@ function! s:ParseTagline(part1, part2, typeinfo)
         let taginfo.depth = len(split(taginfo.path, '\V' . a:typeinfo.sro))
     endif
 
+    " Needed for folding
+    let taginfo.parent = {}
+    let a:fileinfo.tagfolds[taginfo.fields.kind][taginfo.fullpath] =
+                \ a:fileinfo.kindfolds[taginfo.fields.kind]
+    let taginfo.tline = -1
+
     return taginfo
 endfunction
 
@@ -1114,7 +1194,8 @@ endfunction
 " also don't get a tag themselves. These tags are thus called 'pseudo-tags' in
 " Tagbar. Properly parsing them is quite tricky, so try not to think about it
 " too much.
-function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
+function! s:AddScopedTags(tags, processedtags, parent, depth,
+                        \ typeinfo, fileinfo)
     if !empty(a:parent)
         let curpath = a:parent.fullpath
         let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
@@ -1140,7 +1221,7 @@ function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
     if !empty(curtags)
         call filter(a:tags, '!(' . is_cur_tag . ')')
 
-        let realtags = []
+        let realtags   = []
         let pseudotags = []
 
         while !empty(curtags)
@@ -1150,7 +1231,7 @@ function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
                 " tag is child of a pseudo-tag, so create a new pseudo-tag and
                 " add all its children to it
                 let pseudotag = s:ProcessPseudoTag(curtags, tag, a:parent,
-                                                 \ a:typeinfo)
+                                                 \ a:typeinfo, a:fileinfo)
 
                 call add(pseudotags, pseudotag)
             else
@@ -1160,6 +1241,8 @@ function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
 
         " Recursively add the children of the tags on the current level
         for tag in realtags
+            let tag.parent = a:parent
+
             if !has_key(a:typeinfo.kind2scope, tag.fields.kind)
                 continue
             endif
@@ -1169,14 +1252,15 @@ function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
             endif
 
             call s:AddScopedTags(a:tags, tag.children, tag, a:depth + 1,
-                               \ a:typeinfo)
+                               \ a:typeinfo, a:fileinfo)
         endfor
         call extend(a:processedtags, realtags)
 
         " Recursively add the children of the tags that are children of the
         " pseudo-tags on the current level
         for tag in pseudotags
-            call s:ProcessPseudoChildren(a:tags, tag, a:depth, a:typeinfo)
+            call s:ProcessPseudoChildren(a:tags, tag, a:depth, a:typeinfo,
+                                       \ a:fileinfo)
         endfor
         call extend(a:processedtags, pseudotags)
     endif
@@ -1194,18 +1278,18 @@ function! s:AddScopedTags(tags, processedtags, parent, depth, typeinfo)
 
     if !empty(grandchildren)
         call s:AddScopedTags(a:tags, a:processedtags, a:parent, a:depth + 1,
-                           \ a:typeinfo)
+                           \ a:typeinfo, a:fileinfo)
     endif
 endfunction
 
 " s:ProcessPseudoTag() {{{2
-function! s:ProcessPseudoTag(curtags, tag, parent, typeinfo)
+function! s:ProcessPseudoTag(curtags, tag, parent, typeinfo, fileinfo)
     let curpath = !empty(a:parent) ? a:parent.fullpath : ''
 
     let pseudoname = substitute(a:tag.path, curpath, '', '')
     let pseudoname = substitute(pseudoname, '\V\^' . a:typeinfo.sro, '', '')
-    let pseudotag = s:CreatePseudoTag(pseudoname, a:parent, a:tag.scope,
-                                    \ a:typeinfo)
+    let pseudotag  = s:CreatePseudoTag(pseudoname, a:parent, a:tag.scope,
+                                     \ a:typeinfo, a:fileinfo)
     let pseudotag.children = [a:tag]
 
     " get all the other (direct) children of the current pseudo-tag
@@ -1220,8 +1304,10 @@ function! s:ProcessPseudoTag(curtags, tag, parent, typeinfo)
 endfunction
 
 " s:ProcessPseudoChildren() {{{2
-function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo)
+function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo, fileinfo)
     for childtag in a:tag.children
+        let childtag.parent = a:tag
+
         if !has_key(a:typeinfo.kind2scope, childtag.fields.kind)
             continue
         endif
@@ -1231,7 +1317,7 @@ function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo)
         endif
 
         call s:AddScopedTags(a:tags, childtag.children, childtag, a:depth + 1,
-                           \ a:typeinfo)
+                           \ a:typeinfo, a:fileinfo)
     endfor
 
     let is_grandchild = 'v:val.depth > a:depth &&
@@ -1239,12 +1325,12 @@ function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo)
     let grandchildren = filter(copy(a:tags), is_grandchild)
     if !empty(grandchildren)
         call s:AddScopedTags(a:tags, a:tag.children, a:tag, a:depth + 1,
-                           \ a:typeinfo)
+                           \ a:typeinfo, a:fileinfo)
     endif
 endfunction
 
 " s:CreatePseudoTag() {{{2
-function! s:CreatePseudoTag(name, parent, scope, typeinfo)
+function! s:CreatePseudoTag(name, parent, scope, typeinfo, fileinfo)
     if !empty(a:parent)
         let curpath = a:parent.fullpath
         let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
@@ -1273,6 +1359,11 @@ function! s:CreatePseudoTag(name, parent, scope, typeinfo)
                     \ pseudotag.path . a:typeinfo.sro . pseudotag.name
     endif
     let pseudotag.depth = len(split(pseudotag.path, '\V' . a:typeinfo.sro))
+
+    let pseudotag.parent = a:parent
+    let a:fileinfo.tagfolds[pseudotag.fields.kind][pseudotag.fullpath] =
+                \ a:fileinfo.kindfolds[pseudotag.fields.kind]
+    let pseudotag.tline = -1
 
     return pseudotag
 endfunction
@@ -1358,14 +1449,24 @@ function! s:ToggleSort()
         call s:SortTags(fileinfo.tags, 's:CompareByLine')
     endif
 
-    call s:RenderContent(s:current_file, fileinfo.ftype)
+    call s:RenderContent()
 
     execute curline
 endfunction
 
 " Display {{{1
 " s:RenderContent() {{{2
-function! s:RenderContent(fname, ftype)
+function! s:RenderContent(...)
+    if a:0 == 1
+        let fname = a:1
+    else
+        let fname = s:current_file
+    endif
+
+    if fname == ''
+        return
+    endif
+
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
     if &filetype == 'tagbar'
@@ -1376,15 +1477,15 @@ function! s:RenderContent(fname, ftype)
         execute tagbarwinnr . 'wincmd w'
     endif
 
-    let lazyredraw_save = &lazyredraw
-    set lazyredraw
-
-    if a:fname == s:current_file
+    if fname == s:current_file
         " We're redisplaying the same file, so save the view
         let saveline = line('.')
         let savecol  = col('.')
         let topline  = line('w0')
     endif
+
+    let lazyredraw_save = &lazyredraw
+    set lazyredraw
 
     setlocal modifiable
 
@@ -1394,7 +1495,7 @@ function! s:RenderContent(fname, ftype)
 
     " If we don't have an entry for the file by now something must have gone
     " wrong
-    if !has_key(s:known_files, a:fname)
+    if !has_key(s:known_files, fname)
         silent! put ='There was an error processing the file. Please run ' .
                    \ 'ctags manually to determine what the problem is.'
         normal! gqq
@@ -1410,21 +1511,22 @@ function! s:RenderContent(fname, ftype)
 
         return
     endif
-    let fileinfo = s:known_files[a:fname]
+    let fileinfo = s:known_files[fname]
 
-    let typeinfo = s:known_types[a:ftype]
+    let typeinfo = s:known_types[fileinfo.ftype]
 
     " Print tags
+    let first_kind = 1
     for kind in typeinfo.kinds
         let curtags = filter(copy(fileinfo.tags),
-                           \ 'v:val.fields.kind ==# kind[0]')
+                           \ 'v:val.fields.kind ==# kind.short')
 
         if empty(curtags)
             continue
         endif
 
         if has_key(typeinfo, 'kind2scope') &&
-         \ has_key(typeinfo.kind2scope, kind[0])
+         \ has_key(typeinfo.kind2scope, kind.short)
             " Scoped tags
             for tag in curtags
                 let taginfo = ''
@@ -1435,11 +1537,11 @@ function! s:RenderContent(fname, ftype)
                 if has_key(tag.fields, 'signature')
                     let taginfo .= tag.fields.signature
                 endif
-                let taginfo .= ' : ' . typeinfo.kind2scope[kind[0]]
+                let taginfo .= ' : ' . typeinfo.kind2scope[kind.short]
 
-                let prefix = s:GetPrefix(tag)
+                let prefix = s:GetPrefix(tag, fileinfo)
 
-                if g:tagbar_compact && line('.') == 1
+                if g:tagbar_compact && first_kind && s:short_help
                     silent! 0put =prefix . tag.name . taginfo
                 else
                     silent! put =prefix . tag.name . taginfo
@@ -1451,7 +1553,8 @@ function! s:RenderContent(fname, ftype)
                 let tag.tline               = curline
                 let fileinfo.tline[curline] = tag
 
-                if has_key(tag, 'children')
+                if has_key(tag, 'children') &&
+                 \ !fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
                     for childtag in tag.children
                         call s:PrintTag(childtag, 1, fileinfo, typeinfo)
                     endfor
@@ -1460,42 +1563,60 @@ function! s:RenderContent(fname, ftype)
                 if !g:tagbar_compact
                     silent! put _
                 endif
+
             endfor
+            let first_kind = 0
         else
             " Non-scoped tags
-            if g:tagbar_compact && line('.') == 1
-                silent! 0put =' ' . strpart(kind, 2)
+            if fileinfo.kindfolds[kind.short]
+                let foldmarker = '+'
             else
-                silent! put =' ' . strpart(kind, 2)
+                let foldmarker = '-'
             endif
 
-            for tag in curtags
-                let taginfo = ''
+            if g:tagbar_compact && first_kind && s:short_help
+                silent! 0put =foldmarker . ' ' . kind.long
+            else
+                silent! put =foldmarker . ' ' . kind.long
+            endif
 
-                if has_key(tag.fields, 'signature')
-                    let taginfo .= tag.fields.signature
-                endif
+            let kindtag                 = curtags[0].parent
+            let curline                 = line('.')
+            let kindtag.tline           = curline
+            let fileinfo.tline[curline] = kindtag
 
-                let prefix = s:GetPrefix(tag)
+            if !fileinfo.kindfolds[kind.short]
+                for tag in curtags
+                    let taginfo = ''
 
-                silent! put ='  ' . prefix . tag.name . taginfo
+                    if has_key(tag.fields, 'signature')
+                        let taginfo .= tag.fields.signature
+                    endif
 
-                " Save the current tagbar line in the tag for easy
-                " highlighting access
-                let curline                 = line('.')
-                let tag.tline               = curline
-                let fileinfo.tline[curline] = tag
-            endfor
+                    let prefix = s:GetPrefix(tag, fileinfo)
+
+                    silent! put ='  ' . prefix . tag.name . taginfo
+
+                    " Save the current tagbar line in the tag for easy
+                    " highlighting access
+                    let curline                 = line('.')
+                    let tag.tline               = curline
+                    let fileinfo.tline[curline] = tag
+                    let tag.depth               = 1
+                endfor
+            endif
 
             if !g:tagbar_compact
                 silent! put _
             endif
+
+            let first_kind = 0
         endif
     endfor
 
     setlocal nomodifiable
 
-    if a:fname == s:current_file
+    if fname == s:current_file
         let scrolloff_save = &scrolloff
         set scrolloff=0
 
@@ -1518,6 +1639,32 @@ function! s:RenderContent(fname, ftype)
     endif
 endfunction
 
+" s:RenderKeepView() {{{2
+" The gist of this function was taken from NERDTree by Martin Grenfell.
+function! s:RenderKeepView(...)
+    if a:0 == 1
+        let line = a:1
+    else
+        let line = line('.')
+    endif
+
+    let curcol  = col('.')
+    let topline = line('w0')
+
+    call s:RenderContent()
+
+    let scrolloff_save = &scrolloff
+    set scrolloff=0
+
+    call cursor(topline, 1)
+    normal! zt
+    call cursor(line, curcol)
+
+    let &scrolloff = scrolloff_save
+
+    redraw
+endfunction
+
 " s:PrintTag() {{{2
 function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     let taginfo = ''
@@ -1532,7 +1679,7 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
         let taginfo .= ' : ' . a:typeinfo.kind2scope[a:tag.fields.kind]
     endif
 
-    let prefix = s:GetPrefix(a:tag)
+    let prefix = s:GetPrefix(a:tag, a:fileinfo)
 
     " Print tag indented according to depth
     silent! put =repeat(' ', a:depth * 2) . prefix . a:tag.name . taginfo
@@ -1544,7 +1691,8 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     let a:fileinfo.tline[curline] = a:tag
 
     " Recursively print children
-    if has_key(a:tag, 'children')
+    if has_key(a:tag, 'children') &&
+     \ !a:fileinfo.tagfolds[a:tag.fields.kind][a:tag.fullpath]
         for childtag in a:tag.children
             call s:PrintTag(childtag, a:depth + 1, a:fileinfo, a:typeinfo)
         endfor
@@ -1552,12 +1700,22 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
 endfunction
 
 " s:GetPrefix() {{{2
-function! s:GetPrefix(tag)
-    if has_key(a:tag.fields, 'access') &&
-     \ has_key(s:access_symbols, a:tag.fields.access)
-        let prefix = s:access_symbols[a:tag.fields.access]
+function! s:GetPrefix(tag, fileinfo)
+    if has_key(a:tag, 'children') && !empty(a:tag.children)
+        if a:fileinfo.tagfolds[a:tag.fields.kind][a:tag.fullpath]
+            let prefix = '+'
+        else
+            let prefix = '-'
+        endif
     else
         let prefix = ' '
+    endif
+
+    if has_key(a:tag.fields, 'access') &&
+     \ has_key(s:access_symbols, a:tag.fields.access)
+        let prefix .= s:access_symbols[a:tag.fields.access]
+    else
+        let prefix .= ' '
     endif
 
     return prefix
@@ -1566,43 +1724,36 @@ endfunction
 " s:PrintHelp() {{{2
 function! s:PrintHelp()
     if !g:tagbar_compact && s:short_help
-        call append(0, '" Press <F1> for help')
+        silent! 0put ='\" Press <F1> for help'
+        silent!  put _
     elseif !s:short_help
-        call append(0, '" <Enter> : Jump to tag definition')
-        call append(1, '" <Space> : Display tag prototype')
-        call append(2, '" +       : Open fold')
-        call append(3, '" -       : Close fold')
-        call append(4, '" *       : Open all folds')
-        call append(5, '" =       : Close all folds')
-        call append(6, '" s       : Toggle sort')
-        call append(7, '" x       : Zoom window in/out')
-        call append(8, '" q       : Close window')
-        call append(9, '" <F1>    : Remove help')
+        silent! 0put ='\" Tagbar keybindings'
+        silent!  put ='\"'
+        silent!  put ='\" --------- General ---------'
+        silent!  put ='\" <Enter> : Jump to tag definition'
+        silent!  put ='\" <Space> : Display tag prototype'
+        silent!  put ='\"'
+        silent!  put ='\" ---------- Folds ----------'
+        silent!  put ='\" o       : Toggle fold'
+        silent!  put ='\" +       : Open fold'
+        silent!  put ='\" -       : Close fold'
+        silent!  put ='\" x       : Close parent'
+        silent!  put ='\" *       : Open all folds'
+        silent!  put ='\" =       : Close all folds'
+        silent!  put ='\"'
+        silent!  put ='\" ---------- Misc -----------'
+        silent!  put ='\" s       : Toggle sort'
+        silent!  put ='\" z       : Zoom window in/out'
+        silent!  put ='\" q       : Close window'
+        silent!  put ='\" <F1>    : Remove help'
+        silent!  put _
     endif
-endfunction
-
-" s:ToggleHelp() {{{2
-function! s:ToggleHelp()
-    let s:short_help = !s:short_help
-
-    " Prevent highlighting from being off after adding/removing the help text
-    match none
-
-    if s:current_file == ''
-        call s:RenderContent(s:current_file, '')
-    else
-        let fileinfo = s:known_files[s:current_file]
-        call s:RenderContent(s:current_file, fileinfo.ftype)
-    endif
-
-    execute 1
-    redraw
 endfunction
 
 " User actions {{{1
 " s:HighlightTag() {{{2
-function! s:HighlightTag(fname)
-    let fileinfo = s:known_files[a:fname]
+function! s:HighlightTag()
+    let fileinfo = s:known_files[s:current_file]
 
     let curline = line('.')
 
@@ -1614,9 +1765,9 @@ function! s:HighlightTag(fname)
     " making everything slower. Since this should be a rare occurence and
     " highlighting isn't /that/ important ignore it for now.
     for line in range(curline, 1, -1)
-        if has_key(fileinfo.fline, line) &&
-         \ has_key(fileinfo.fline[line], 'tline')
-            let tagline = fileinfo.fline[line].tline
+        if has_key(fileinfo.fline, line)
+            let tag     = fileinfo.fline[line]
+            let tagline = tag.tline
             break
         endif
     endfor
@@ -1638,17 +1789,31 @@ function! s:HighlightTag(fname)
         return
     endif
 
+    " Check whether the tag is inside a closed fold and highlight the parent
+    " instead in that case
+    let parent = tag.parent
+    while !empty(parent)
+        if has_key(parent, 'numtags')
+            if fileinfo.kindfolds[parent.short]
+                let tagline = parent.tline
+            endif
+            break
+        else
+            if fileinfo.tagfolds[parent.fields.kind][parent.fullpath]
+                let tagline = parent.tline
+            endif
+            break
+        endif
+        let parent = parent.parent
+    endwhile
+
     " Go to the line containing the tag
     execute tagline
-
-    if foldclosed('.') != -1
-        .foldopen!
-    endif
 
     " Make sure the tag is visible in the window
     call winline()
 
-    let pattern = '/^\%' . tagline . 'l\s*[-+#]\?\zs[^( ]\+\ze/'
+    let pattern = '/^\%' . tagline . 'l\s*[-+ ][-+# ]\zs[^( ]\+\ze/'
     execute 'match Search ' . pattern
 
     execute prevwinnr . 'wincmd w'
@@ -1660,11 +1825,11 @@ endfunction
 
 " s:JumpToTag() {{{2
 function! s:JumpToTag()
-    let taginfo = s:GetTagInfo(line('.'))
+    let taginfo = s:GetTagInfo(line('.'), 1)
 
     let autoclose = w:autoclose
 
-    if empty(taginfo)
+    if empty(taginfo) || has_key(taginfo, 'numtags')
         return
     endif
 
@@ -1690,19 +1855,214 @@ function! s:JumpToTag()
     if g:tagbar_autoclose || autoclose
         call s:CloseWindow()
     else
-        call s:HighlightTag(s:current_file)
+        call s:HighlightTag()
     endif
 endfunction
 
 " s:ShowPrototype() {{{2
 function! s:ShowPrototype()
-    let taginfo = s:GetTagInfo(line('.'))
+    let taginfo = s:GetTagInfo(line('.'), 1)
 
     if empty(taginfo)
         return
     endif
 
-    echo taginfo.prototype
+    if has_key(taginfo, 'prototype')
+        echo taginfo.prototype
+    else
+        echo taginfo.name ':'
+           \ taginfo.numtags (taginfo.numtags > 1 ? 'tags' : 'tag')
+    endif
+endfunction
+
+" s:ToggleHelp() {{{2
+function! s:ToggleHelp()
+    let s:short_help = !s:short_help
+
+    " Prevent highlighting from being off after adding/removing the help text
+    match none
+
+    call s:RenderContent()
+
+    execute 1
+    redraw
+endfunction
+
+" Folding {{{1
+" s:OpenFold() {{{2
+function! s:OpenFold()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    let curline = line('.')
+
+    let tag = s:GetTagInfo(curline, 0)
+    if empty(tag)
+        return
+    endif
+
+    let fileinfo = s:known_files[s:current_file]
+
+    if has_key(tag, 'numtags')
+        " Tag is 'kind' header
+        let fileinfo.kindfolds[tag.short] = 0
+    elseif has_key(tag, 'children') && !empty(tag.children) &&
+         \ fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
+        " Tag is parent of a scope
+        let fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 0
+    endif
+
+    call s:RenderKeepView()
+endfunction
+
+" s:CloseFold() {{{2
+function! s:CloseFold()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    match none
+
+    let curline = line('.')
+    let newline = curline
+
+    let curtag = s:GetTagInfo(curline, 0)
+    if empty(curtag)
+        return
+    endif
+
+    let nexttag = s:GetTagInfo(curline + 1, 0)
+
+    let fileinfo = s:known_files[s:current_file]
+
+    if !has_key(curtag, 'depth')
+        " Tag is 'kind' header
+        let fileinfo.kindfolds[curtag.short] = 1
+    elseif curtag.depth == 1 && has_key(curtag.parent, 'numtags')
+        " Tag is child of generic 'kind'
+        let fileinfo.kindfolds[curtag.parent.short] = 1
+        let newline = curtag.parent.tline
+    elseif has_key(nexttag, 'depth') && nexttag.depth > curtag.depth
+        " Tag is parent of a scope
+        let fileinfo.tagfolds[curtag.fields.kind][curtag.fullpath] = 1
+    elseif empty(curtag.parent)
+        " Tag is top-level parent of a scope without children, so there's
+        " nothing to do
+        return
+    else
+        " Tag is normal child, so close parent
+        let parent = curtag.parent
+        let fileinfo.tagfolds[parent.fields.kind][parent.fullpath] = 1
+        let newline = parent.tline
+    endif
+
+    call s:RenderKeepView(newline)
+endfunction
+
+" s:CloseParent() {{{2
+function! s:CloseParent()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    match none
+
+    let curline = line('.')
+    let newline = curline
+
+    let curtag  = s:GetTagInfo(curline, 0)
+
+    let fileinfo = s:known_files[s:current_file]
+
+    if has_key(curtag, 'depth') && curtag.depth == 1 &&
+     \ has_key(curtag.parent, 'numtags')
+        " Tag is child of generic 'kind'
+        let fileinfo.kindfolds[curtag.parent.short] = 1
+        let newline = curtag.parent.tline
+    elseif has_key(curtag, 'parent') && !empty(curtag.parent)
+        " Tag is normal child, so close parent
+        let parent = curtag.parent
+        let fileinfo.tagfolds[parent.fields.kind][parent.fullpath] = 1
+        let newline = parent.tline
+    endif
+
+    call s:RenderKeepView(newline)
+endfunction
+
+" s:ToggleFold() {{{2
+function! s:ToggleFold()
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    match none
+
+    let curtag = s:GetTagInfo(line('.'), 0)
+    if empty(curtag)
+        return
+    endif
+
+    let fileinfo = s:known_files[s:current_file]
+
+    if !has_key(curtag, 'depth')
+        let fileinfo.kindfolds[curtag.short] = !fileinfo.kindfolds[curtag.short]
+    elseif has_key(curtag, 'children') && !empty(curtag.children)
+        if fileinfo.tagfolds[curtag.fields.kind][curtag.fullpath]
+            call s:OpenFold()
+        else
+            call s:CloseFold()
+        endif
+    endif
+
+    call s:RenderKeepView()
+endfunction
+
+" s:SetFoldLevel() {{{2
+function! s:SetFoldLevel(level)
+    if a:level < 0
+        echoerr 'Foldlevel can''t be negative'
+        return
+    endif
+
+    if !has_key(s:known_files, s:current_file)
+        return
+    endif
+
+    let fileinfo = s:known_files[s:current_file]
+
+    call s:SetFoldLevelRecursive(fileinfo, fileinfo.tags, a:level)
+
+    let typeinfo = s:known_types[fileinfo.ftype]
+
+    " Apply foldlevel to 'kind's
+    if a:level == 0
+        for kind in typeinfo.kinds
+            let fileinfo.kindfolds[kind.short] = 1
+        endfor
+    else
+        for kind in typeinfo.kinds
+            let fileinfo.kindfolds[kind.short] = 0
+        endfor
+    endif
+
+    call s:RenderContent()
+endfunction
+
+" s:SetFoldLevelRecursive() {{{2
+" Apply foldlevel to normal tags
+function! s:SetFoldLevelRecursive(fileinfo, tags, level)
+    for tag in a:tags
+        if tag.depth >= a:level
+            let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 1
+        else
+            let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 0
+        endif
+
+        if has_key(tag, 'children')
+            call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level)
+        endif
+    endfor
 endfunction
 
 " Helper functions {{{1
@@ -1746,15 +2106,17 @@ function! s:AutoUpdate(fname)
 
     " Process the file if it's unknown or the information is outdated
     if has_key(s:known_files, a:fname)
+        let is_new = 0
         if s:known_files[a:fname].mtime != getftime(a:fname)
             call s:ProcessFile(a:fname, &filetype)
         endif
     else
+        let is_new = 1
         call s:ProcessFile(a:fname, &filetype)
     endif
 
     " Display the tagbar content
-    call s:RenderContent(a:fname, &filetype)
+    call s:RenderContent(a:fname)
 
     " If we don't have an entry for the file by now something must have gone
     " wrong
@@ -1764,7 +2126,11 @@ function! s:AutoUpdate(fname)
 
     let s:current_file = a:fname
 
-    call s:HighlightTag(a:fname)
+    if is_new
+        call s:SetFoldLevel(g:tagbar_foldlevel)
+    endif
+
+    call s:HighlightTag()
 endfunction
 
 " s:IsValidFile() {{{2
@@ -1784,32 +2150,11 @@ function! s:IsValidFile(fname, ftype)
     return 1
 endfunction
 
-" s:GetFoldLevel() {{{2
-function! s:GetFoldLevel(lnum)
-    let curline = getline(a:lnum)
-
-    " Don't fold comments
-    if curline[0] == '"'
-        return 0
-    endif
-
-    let nextline = getline(a:lnum + 1)
-
-    let curindent  = len(matchstr(curline[1:],  '^[ ]*[-+#]\?')) / 2
-    let nextindent = len(matchstr(nextline[1:], '^[ ]*[-+#]\?')) / 2
-
-    if curindent < nextindent
-        return '>' . (curindent + 1)
-    else
-        return curindent
-    endif
-endfunction
-
 " s:GetTagInfo() {{{2
 " Return the info dictionary of the tag on the specified line. If the line
 " does not contain a valid tag (for example because it is empty or only
 " contains a pseudo-tag) return an empty dictionary.
-function! s:GetTagInfo(linenr)
+function! s:GetTagInfo(linenr, ignorepseudo)
     if !has_key(s:known_files, s:current_file)
         return {}
     endif
@@ -1830,7 +2175,8 @@ function! s:GetTagInfo(linenr)
     let taginfo = fileinfo.tline[a:linenr]
 
     " Check if the current tag is not a pseudo-tag
-    if taginfo.fields.line == 0
+    if !has_key(taginfo, 'numtags')
+     \ && (a:ignorepseudo && taginfo.fields.line == 0)
         return {}
     endif
 
@@ -1839,13 +2185,18 @@ endfunction
 
 " TagbarBalloonExpr() {{{2
 function! TagbarBalloonExpr()
-    let taginfo = s:GetTagInfo(v:beval_lnum)
+    let taginfo = s:GetTagInfo(v:beval_lnum, 1)
 
     if empty(taginfo)
         return
     endif
 
-    return taginfo.prototype
+    if has_key(taginfo, 'prototype')
+        return taginfo.prototype
+    else
+        return taginfo.name ':'
+             \ taginfo.numtags (taginfo.numtags > 1 ? 'tags' : 'tag')
+    endif
 endfunction
 
 " TagbarGenerateStatusline() {{{2
@@ -1867,6 +2218,7 @@ command! -nargs=0 TagbarToggle        call s:ToggleWindow()
 command! -nargs=0 TagbarOpen          call s:OpenWindow(0)
 command! -nargs=0 TagbarOpenAutoClose call s:OpenWindow(1)
 command! -nargs=0 TagbarClose         call s:CloseWindow()
+command! -nargs=1 TagbarSetFoldlevel  call s:SetFoldLevel(<args>)
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1

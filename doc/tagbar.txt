@@ -606,10 +606,6 @@ files.
     problem in practice anyway. Tags with the same name at any other level are
     no problem, though.
 
-  - The fold state of the Tagbar window is lost when the window is left.
-    Again, I don't know of any proper way around this that still allows
-    auto-updating -- |winsaveview()| doesn't really help here.
-
 ==============================================================================
 8. History						*tagbar-history*
 
@@ -658,6 +654,8 @@ anything else that's free, taglist.vim is provided *as is* and comes with no
 warranty of any kind, either expressed or implied. In no event will the
 copyright holder be liable for any damamges resulting from the use of this
 software.
+
+The folding technique was inspired by NERDTree by Martin Grenfell.
 
 ==============================================================================
  vim: tw=78 ts=8 sw=8 sts=8 noet ft=help

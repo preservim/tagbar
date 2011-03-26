@@ -9,19 +9,30 @@ if exists("b:current_syntax")
   finish
 endif
 
-syntax match Comment    '^" .*'             " Comments
-syntax match Identifier '^ [^: ]\+[^:]\+$'  " Non-scoped kinds
-syntax match Title      '[^(* ]\+\ze\*\? :' " Scope names
-syntax match Type       ' : \zs.*'          " Scope types
-syntax match SpecialKey '(.*)'              " Signatures
-syntax match NonText    '\*\ze :'           " Pseudo-tag identifiers
+syntax match TagbarComment   '^".*'
+
+syntax match TagbarKind      '\([-+][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
+syntax match TagbarScope     '[^-+#(* ]\+\(\*\? :\)\@='
+syntax match TagbarScopeType ' : \zs.*'
+syntax match TagbarSignature '(.*)'
+syntax match TagbarPseudoID  '\*\ze :'
+
+syntax match TagbarFoldIcon  '[-+]\([-+# ]\)\@='
+
+syntax match TagbarAccessPublic    '\([-+ ]\)\@<=+\([^-+# ]\)\@='
+syntax match TagbarAccessProtected '\([-+ ]\)\@<=#\([^-+# ]\)\@='
+syntax match TagbarAccessPrivate   '\([-+ ]\)\@<=-\([^-+# ]\)\@='
+
+highlight default link TagbarComment   Comment
+highlight default link TagbarKind      Identifier
+highlight default link TagbarScope     Title
+highlight default link TagbarScopeType Type
+highlight default link TagbarSignature SpecialKey
+highlight default link TagbarPseudoID  NonText
+highlight default link TagbarFoldIcon  FoldColumn
 
 highlight default TagbarAccessPublic    guifg=Green ctermfg=Green
 highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
 highlight default TagbarAccessPrivate   guifg=Red   ctermfg=Red
-
-syntax match TagbarAccessPublic    '^\s*+\ze[^ ]'
-syntax match TagbarAccessProtected '^\s*#\ze[^ ]'
-syntax match TagbarAccessPrivate   '^\s*-\ze[^ ]'
 
 let b:current_syntax = "tagbar"
