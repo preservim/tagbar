@@ -74,7 +74,8 @@ if !exists('g:tagbar_foldlevel')
     let g:tagbar_foldlevel = 99
 endif
 
-if has('multi_byte') && &encoding == 'utf-8'
+if has('multi_byte') && &encoding == 'utf-8' &&
+            \ (empty(&termencoding) || &termencoding == 'utf-8')
     let s:icon_closed = '▶'
     let s:icon_open   = '▼'
 else

@@ -9,7 +9,8 @@ if exists("b:current_syntax")
   finish
 endif
 
-if has('multi_byte') && &encoding == 'utf-8'
+if has('multi_byte') && &encoding == 'utf-8' &&
+            \ (empty(&termencoding) || &termencoding == 'utf-8')
     syntax match TagbarKind      '\([▶▼][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
     syntax match TagbarScope     '[^-+#▶▼(* ]\+\(\*\? :\)\@='
 
