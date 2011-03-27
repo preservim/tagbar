@@ -783,6 +783,8 @@ function! s:MapKeys()
     nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
                                               \ :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> <LeftRelease>
+                \ <LeftRelease>:call <SID>CheckMouseClick()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
 
     nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
@@ -2211,6 +2213,18 @@ function! s:GetTagInfo(linenr, ignorepseudo)
     endif
 
     return taginfo
+endfunction
+
+" s:CheckMouseClick() {{{2
+function! s:CheckMouseClick()
+    let curchar  = strpart(getline('.'), col('.') - 1, 1)
+    let nextchar = strpart(getline('.'), col('.'),     1)
+
+    if curchar =~# '-' && nextchar =~# '[-+ ]'
+        call s:CloseFold()
+    elseif curchar =~# '+' && nextchar =~# '[-+ ]'
+        call s:OpenFold()
+    endif
 endfunction
 
 " TagbarBalloonExpr() {{{2
