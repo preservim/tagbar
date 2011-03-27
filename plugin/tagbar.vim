@@ -38,6 +38,13 @@ if !exists('g:tagbar_ctags_bin')
         echomsg 'Tagbar: Exuberant ctags not found, skipping plugin'
         finish
     endif
+else
+    let g:tagbar_ctags_bin = expand(g:tagbar_ctags_bin)
+    if !executable(g:tagbar_ctags_bin)
+        echomsg 'Tagbar: Exuberant ctags not found in specified place,'
+              \ 'skipping plugin'
+        finish
+    endif
 endif
 
 let g:loaded_tagbar = 1
