@@ -1516,103 +1516,7 @@ function! s:RenderContent(...)
     let typeinfo = s:known_types[fileinfo.ftype]
 
     " Print tags
-    let first_kind = 1
-    for kind in typeinfo.kinds
-        let curtags = filter(copy(fileinfo.tags),
-                           \ 'v:val.fields.kind ==# kind.short')
-
-        if empty(curtags)
-            continue
-        endif
-
-        if has_key(typeinfo, 'kind2scope') &&
-         \ has_key(typeinfo.kind2scope, kind.short)
-            " Scoped tags
-            for tag in curtags
-                let taginfo = ''
-
-                if tag.fields.line == 0 " Tag is a pseudo-tag
-                    let taginfo .= '*'
-                endif
-                if has_key(tag.fields, 'signature')
-                    let taginfo .= tag.fields.signature
-                endif
-                let taginfo .= ' : ' . typeinfo.kind2scope[kind.short]
-
-                let prefix = s:GetPrefix(tag, fileinfo)
-
-                if g:tagbar_compact && first_kind && s:short_help
-                    silent! 0put =prefix . tag.name . taginfo
-                else
-                    silent! put =prefix . tag.name . taginfo
-                endif
-
-                " Save the current tagbar line in the tag for easy
-                " highlighting access
-                let curline                 = line('.')
-                let tag.tline               = curline
-                let fileinfo.tline[curline] = tag
-
-                if has_key(tag, 'children') &&
-                 \ !fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
-                    for childtag in tag.children
-                        call s:PrintTag(childtag, 1, fileinfo, typeinfo)
-                    endfor
-                endif
-
-                if !g:tagbar_compact
-                    silent! put _
-                endif
-
-            endfor
-            let first_kind = 0
-        else
-            " Non-scoped tags
-            if fileinfo.kindfolds[kind.short]
-                let foldmarker = '+'
-            else
-                let foldmarker = '-'
-            endif
-
-            if g:tagbar_compact && first_kind && s:short_help
-                silent! 0put =foldmarker . ' ' . kind.long
-            else
-                silent! put =foldmarker . ' ' . kind.long
-            endif
-
-            let kindtag                 = curtags[0].parent
-            let curline                 = line('.')
-            let kindtag.tline           = curline
-            let fileinfo.tline[curline] = kindtag
-
-            if !fileinfo.kindfolds[kind.short]
-                for tag in curtags
-                    let taginfo = ''
-
-                    if has_key(tag.fields, 'signature')
-                        let taginfo .= tag.fields.signature
-                    endif
-
-                    let prefix = s:GetPrefix(tag, fileinfo)
-
-                    silent! put ='  ' . prefix . tag.name . taginfo
-
-                    " Save the current tagbar line in the tag for easy
-                    " highlighting access
-                    let curline                 = line('.')
-                    let tag.tline               = curline
-                    let fileinfo.tline[curline] = tag
-                    let tag.depth               = 1
-                endfor
-            endif
-
-            if !g:tagbar_compact
-                silent! put _
-            endif
-
-            let first_kind = 0
-        endif
-    endfor
+    call s:PrintKinds(typeinfo, fileinfo)
 
     setlocal nomodifiable
 
@@ -1639,30 +1543,106 @@ function! s:RenderContent(...)
     endif
 endfunction
 
-" s:RenderKeepView() {{{2
-" The gist of this function was taken from NERDTree by Martin Grenfell.
-function! s:RenderKeepView(...)
-    if a:0 == 1
-        let line = a:1
-    else
-        let line = line('.')
-    endif
+" s:PrintKinds() {{{2
+function! s:PrintKinds(typeinfo, fileinfo)
+    let first_kind = 1
 
-    let curcol  = col('.')
-    let topline = line('w0')
+    for kind in a:typeinfo.kinds
+        let curtags = filter(copy(a:fileinfo.tags),
+                           \ 'v:val.fields.kind ==# kind.short')
 
-    call s:RenderContent()
+        if empty(curtags)
+            continue
+        endif
 
-    let scrolloff_save = &scrolloff
-    set scrolloff=0
+        if has_key(a:typeinfo, 'kind2scope') &&
+         \ has_key(a:typeinfo.kind2scope, kind.short)
+            " Scoped tags
+            for tag in curtags
+                let taginfo = ''
 
-    call cursor(topline, 1)
-    normal! zt
-    call cursor(line, curcol)
+                if tag.fields.line == 0 " Tag is a pseudo-tag
+                    let taginfo .= '*'
+                endif
+                if has_key(tag.fields, 'signature')
+                    let taginfo .= tag.fields.signature
+                endif
+                let taginfo .= ' : ' . a:typeinfo.kind2scope[kind.short]
 
-    let &scrolloff = scrolloff_save
+                let prefix = s:GetPrefix(tag, a:fileinfo)
 
-    redraw
+                if g:tagbar_compact && first_kind && s:short_help
+                    silent! 0put =prefix . tag.name . taginfo
+                else
+                    silent!  put =prefix . tag.name . taginfo
+                endif
+
+                " Save the current tagbar line in the tag for easy
+                " highlighting access
+                let curline                   = line('.')
+                let tag.tline                 = curline
+                let a:fileinfo.tline[curline] = tag
+
+                if has_key(tag, 'children') &&
+                         \ !a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
+                    for childtag in tag.children
+                        call s:PrintTag(childtag, 1, a:fileinfo, a:typeinfo)
+                    endfor
+                endif
+
+                if !g:tagbar_compact
+                    silent! put _
+                endif
+
+            endfor
+            let first_kind = 0
+        else
+            " Non-scoped tags
+            if a:fileinfo.kindfolds[kind.short]
+                let foldmarker = '+'
+            else
+                let foldmarker = '-'
+            endif
+
+            if g:tagbar_compact && first_kind && s:short_help
+                silent! 0put =foldmarker . ' ' . kind.long
+            else
+                silent!  put =foldmarker . ' ' . kind.long
+            endif
+
+            let kindtag                   = curtags[0].parent
+            let curline                   = line('.')
+            let kindtag.tline             = curline
+            let a:fileinfo.tline[curline] = kindtag
+
+            if !a:fileinfo.kindfolds[kind.short]
+                for tag in curtags
+                    let taginfo = ''
+
+                    if has_key(tag.fields, 'signature')
+                        let taginfo .= tag.fields.signature
+                    endif
+
+                    let prefix = s:GetPrefix(tag, a:fileinfo)
+
+                    silent! put ='  ' . prefix . tag.name . taginfo
+
+                    " Save the current tagbar line in the tag for easy
+                    " highlighting access
+                    let curline                   = line('.')
+                    let tag.tline                 = curline
+                    let a:fileinfo.tline[curline] = tag
+                    let tag.depth                 = 1
+                endfor
+            endif
+
+            if !g:tagbar_compact
+                silent! put _
+            endif
+
+            let first_kind = 0
+        endif
+    endfor
 endfunction
 
 " s:PrintTag() {{{2
@@ -1748,6 +1728,32 @@ function! s:PrintHelp()
         silent!  put ='\" <F1>    : Remove help'
         silent!  put _
     endif
+endfunction
+
+" s:RenderKeepView() {{{2
+" The gist of this function was taken from NERDTree by Martin Grenfell.
+function! s:RenderKeepView(...)
+    if a:0 == 1
+        let line = a:1
+    else
+        let line = line('.')
+    endif
+
+    let curcol  = col('.')
+    let topline = line('w0')
+
+    call s:RenderContent()
+
+    let scrolloff_save = &scrolloff
+    set scrolloff=0
+
+    call cursor(topline, 1)
+    normal! zt
+    call cursor(line, curcol)
+
+    let &scrolloff = scrolloff_save
+
+    redraw
 endfunction
 
 " User actions {{{1
