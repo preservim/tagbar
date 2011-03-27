@@ -83,6 +83,7 @@ function! s:InitTypes()
     " Dictionary of the already processed files, indexed by file name with
     " complete path.
     " The entries are again dictionaries with the following fields:
+    " - fpath:     The complete file path
     " - mtime:     File modification time
     " - ftype:     The vim file type
     " - tags:      List of the tags that are present in the file, sorted
@@ -93,6 +94,7 @@ function! s:InitTypes()
     "              name
     " - tagfolds:  Dictionary of dictionaries of the folding state of
     "              individual tags, indexed by kind and full path
+    " - foldlevel: The current foldlevel of the file
     let s:known_files = {}
 
     let s:known_types = {}
@@ -783,15 +785,17 @@ function! s:MapKeys()
                                               \ :call <SID>JumpToTag()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
 
-    nnoremap <script> <silent> <buffer> +           :call <SID>OpenFold()<CR>
-    nnoremap <script> <silent> <buffer> <kPlus>     :call <SID>OpenFold()<CR>
-    nnoremap <script> <silent> <buffer> o           :call <SID>ToggleFold()<CR>
-    nnoremap <script> <silent> <buffer> -           :call <SID>CloseFold()<CR>
-    nnoremap <script> <silent> <buffer> <kMinus>    :call <SID>CloseFold()<CR>
-    nnoremap <script> <silent> <buffer> x           :call <SID>CloseParent()<CR>
-    nnoremap <script> <silent> <buffer> *           :call <SID>SetFoldLevel(99)<CR>
-    nnoremap <script> <silent> <buffer> <kMultiply> :call <SID>SetFoldLevel(99)<CR>
-    nnoremap <script> <silent> <buffer> =           :call <SID>SetFoldLevel(0)<CR>
+    nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
+    nnoremap <script> <silent> <buffer> <kPlus>  :call <SID>OpenFold()<CR>
+    nnoremap <script> <silent> <buffer> o        :call <SID>ToggleFold()<CR>
+    nnoremap <script> <silent> <buffer> -        :call <SID>CloseFold()<CR>
+    nnoremap <script> <silent> <buffer> <kMinus> :call <SID>CloseFold()<CR>
+    nnoremap <script> <silent> <buffer> x        :call <SID>CloseParent()<CR>
+
+    nnoremap <script> <silent> <buffer> *     :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> <kMultiply>
+                                            \ :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> =     :call <SID>SetFoldLevel(0,  1)<CR>
 
     nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
     nnoremap <script> <silent> <buffer> z    :call <SID>ZoomWindow()<CR>
@@ -1016,11 +1020,15 @@ function! s:ProcessFile(fname, ftype)
         let tagfolds_old = fileinfo.tagfolds
     else
         let fileinfo = {}
+        let fileinfo.fpath = a:fname
 
         let fileinfo.kindfolds = {}
         for kind in typeinfo.kinds
-            let fileinfo.kindfolds[kind.short] = kind.fold
+            let fileinfo.kindfolds[kind.short] =
+                        \ g:tagbar_foldlevel == 0 ? 1 : kind.fold
         endfor
+
+        let fileinfo.foldlevel = g:tagbar_foldlevel
     endif
     let fileinfo.tagfolds = {}
     for kind in typeinfo.kinds
@@ -1178,8 +1186,13 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
 
     " Needed for folding
     let taginfo.parent = {}
-    let a:fileinfo.tagfolds[taginfo.fields.kind][taginfo.fullpath] =
-                \ a:fileinfo.kindfolds[taginfo.fields.kind]
+    if !has_key(s:known_files, a:fileinfo.fpath) &&
+     \ taginfo.depth >= a:fileinfo.foldlevel
+        let a:fileinfo.tagfolds[taginfo.fields.kind][taginfo.fullpath] = 1
+    else
+        let a:fileinfo.tagfolds[taginfo.fields.kind][taginfo.fullpath] =
+                    \ a:fileinfo.kindfolds[taginfo.fields.kind]
+    endif
     let taginfo.tline = -1
 
     return taginfo
@@ -1361,8 +1374,13 @@ function! s:CreatePseudoTag(name, parent, scope, typeinfo, fileinfo)
     let pseudotag.depth = len(split(pseudotag.path, '\V' . a:typeinfo.sro))
 
     let pseudotag.parent = a:parent
-    let a:fileinfo.tagfolds[pseudotag.fields.kind][pseudotag.fullpath] =
-                \ a:fileinfo.kindfolds[pseudotag.fields.kind]
+    if !has_key(s:known_files, a:fileinfo.fpath) &&
+     \ pseudotag.depth >= a:fileinfo.foldlevel
+        let a:fileinfo.tagfolds[pseudotag.fields.kind][pseudotag.fullpath] = 1
+    else
+        let a:fileinfo.tagfolds[pseudotag.fields.kind][pseudotag.fullpath] =
+                    \ a:fileinfo.kindfolds[pseudotag.fields.kind]
+    endif
     let pseudotag.tline = -1
 
     return pseudotag
@@ -2025,7 +2043,7 @@ function! s:ToggleFold()
 endfunction
 
 " s:SetFoldLevel() {{{2
-function! s:SetFoldLevel(level)
+function! s:SetFoldLevel(level, force)
     if a:level < 0
         echoerr 'Foldlevel can''t be negative'
         return
@@ -2037,36 +2055,48 @@ function! s:SetFoldLevel(level)
 
     let fileinfo = s:known_files[s:current_file]
 
-    call s:SetFoldLevelRecursive(fileinfo, fileinfo.tags, a:level)
+    call s:SetFoldLevelRecursive(fileinfo, fileinfo.tags, a:level, a:force)
 
     let typeinfo = s:known_types[fileinfo.ftype]
 
     " Apply foldlevel to 'kind's
-    if a:level == 0
-        for kind in typeinfo.kinds
-            let fileinfo.kindfolds[kind.short] = 1
-        endfor
-    else
-        for kind in typeinfo.kinds
-            let fileinfo.kindfolds[kind.short] = 0
-        endfor
+    if min([a:level, fileinfo.foldlevel]) == 0 || a:force
+        if a:level == 0
+            for kind in typeinfo.kinds
+                let fileinfo.kindfolds[kind.short] = 1
+            endfor
+        else
+            for kind in typeinfo.kinds
+                let fileinfo.kindfolds[kind.short] = 0
+            endfor
+        endif
     endif
+
+    let fileinfo.foldlevel = a:level
 
     call s:RenderContent()
 endfunction
 
 " s:SetFoldLevelRecursive() {{{2
 " Apply foldlevel to normal tags
-function! s:SetFoldLevelRecursive(fileinfo, tags, level)
+function! s:SetFoldLevelRecursive(fileinfo, tags, level, force)
+    " Only change folds in the range between the old and the new foldlevel
+    " (unless 'force' is true)
+    let left  = min([a:level, a:fileinfo.foldlevel])
+    let right = max([a:level, a:fileinfo.foldlevel])
+
     for tag in a:tags
-        if tag.depth >= a:level
-            let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 1
-        else
-            let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 0
+        if (left <= tag.depth && tag.depth <= right) || a:force
+            if tag.depth >= a:level
+                let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 1
+            else
+                let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 0
+            endif
         endif
 
         if has_key(tag, 'children')
-            call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level)
+            call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level,
+                                       \ a:force)
         endif
     endfor
 endfunction
@@ -2112,12 +2142,10 @@ function! s:AutoUpdate(fname)
 
     " Process the file if it's unknown or the information is outdated
     if has_key(s:known_files, a:fname)
-        let is_new = 0
         if s:known_files[a:fname].mtime != getftime(a:fname)
             call s:ProcessFile(a:fname, &filetype)
         endif
     else
-        let is_new = 1
         call s:ProcessFile(a:fname, &filetype)
     endif
 
@@ -2131,10 +2159,6 @@ function! s:AutoUpdate(fname)
     endif
 
     let s:current_file = a:fname
-
-    if is_new
-        call s:SetFoldLevel(g:tagbar_foldlevel)
-    endif
 
     call s:HighlightTag()
 endfunction
@@ -2224,7 +2248,8 @@ command! -nargs=0 TagbarToggle        call s:ToggleWindow()
 command! -nargs=0 TagbarOpen          call s:OpenWindow(0)
 command! -nargs=0 TagbarOpenAutoClose call s:OpenWindow(1)
 command! -nargs=0 TagbarClose         call s:CloseWindow()
-command! -nargs=1 TagbarSetFoldlevel  call s:SetFoldLevel(<args>)
+command! -nargs=1 -bang TagbarSetFoldlevel
+                                  \ call s:SetFoldLevel(<args>, '<bang>' == '!')
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
