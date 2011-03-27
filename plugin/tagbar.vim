@@ -74,6 +74,14 @@ if !exists('g:tagbar_foldlevel')
     let g:tagbar_foldlevel = 99
 endif
 
+if has('multi_byte') && &encoding == 'utf-8'
+    let s:icon_closed = '▶'
+    let s:icon_open   = '▼'
+else
+    let s:icon_closed = '+'
+    let s:icon_open   = '-'
+endif
+
 let s:type_init_done    = 0
 let s:autocommands_done = 0
 let s:window_expanded   = 0
@@ -1619,9 +1627,9 @@ function! s:PrintKinds(typeinfo, fileinfo)
         else
             " Non-scoped tags
             if a:fileinfo.kindfolds[kind.short]
-                let foldmarker = '+'
+                let foldmarker = s:icon_closed
             else
-                let foldmarker = '-'
+                let foldmarker = s:icon_open
             endif
 
             if g:tagbar_compact && first_kind && s:short_help
@@ -1703,9 +1711,9 @@ endfunction
 function! s:GetPrefix(tag, fileinfo)
     if has_key(a:tag, 'children') && !empty(a:tag.children)
         if a:fileinfo.tagfolds[a:tag.fields.kind][a:tag.fullpath]
-            let prefix = '+'
+            let prefix = s:icon_closed
         else
-            let prefix = '-'
+            let prefix = s:icon_open
         endif
     else
         let prefix = ' '
@@ -1839,7 +1847,8 @@ function! s:HighlightTag()
     " Make sure the tag is visible in the window
     call winline()
 
-    let pattern = '/^\%' . tagline . 'l\s*[-+ ][-+# ]\zs[^( ]\+\ze/'
+    let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
+    let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
     execute 'match Search ' . pattern
 
     execute prevwinnr . 'wincmd w'
@@ -2217,12 +2226,12 @@ endfunction
 
 " s:CheckMouseClick() {{{2
 function! s:CheckMouseClick()
-    let curchar  = strpart(getline('.'), col('.') - 1, 1)
-    let nextchar = strpart(getline('.'), col('.'),     1)
+    let line   = getline('.')
+    let curcol = col('.')
 
-    if curchar =~# '-' && nextchar =~# '[-+ ]'
+    if (match(line, s:icon_open . '[-+ ]') + 1) == curcol
         call s:CloseFold()
-    elseif curchar =~# '+' && nextchar =~# '[-+ ]'
+    elseif (match(line, s:icon_closed . '[-+ ]') + 1) == curcol
         call s:OpenFold()
     endif
 endfunction

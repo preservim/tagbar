@@ -9,19 +9,30 @@ if exists("b:current_syntax")
   finish
 endif
 
-syntax match TagbarComment   '^".*'
+if has('multi_byte') && &encoding == 'utf-8'
+    syntax match TagbarKind      '\([▶▼][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
+    syntax match TagbarScope     '[^-+#▶▼(* ]\+\(\*\? :\)\@='
 
-syntax match TagbarKind      '\([-+][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
-syntax match TagbarScope     '[^-+#(* ]\+\(\*\? :\)\@='
+    syntax match TagbarFoldIcon  '[▶▼]\([-+# ]\)\@='
+
+    syntax match TagbarAccessPublic    '\([▶▼ ]\)\@<=+\([^-+# ]\)\@='
+    syntax match TagbarAccessProtected '\([▶▼ ]\)\@<=#\([^-+# ]\)\@='
+    syntax match TagbarAccessPrivate   '\([▶▼ ]\)\@<=-\([^-+# ]\)\@='
+else
+    syntax match TagbarKind      '\([-+][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
+    syntax match TagbarScope     '[^-+#(* ]\+\(\*\? :\)\@='
+
+    syntax match TagbarFoldIcon  '[-+]\([-+# ]\)\@='
+
+    syntax match TagbarAccessPublic    '\([-+ ]\)\@<=+\([^-+# ]\)\@='
+    syntax match TagbarAccessProtected '\([-+ ]\)\@<=#\([^-+# ]\)\@='
+    syntax match TagbarAccessPrivate   '\([-+ ]\)\@<=-\([^-+# ]\)\@='
+endif
+
+syntax match TagbarComment   '^".*'
 syntax match TagbarScopeType ' : \zs.*'
 syntax match TagbarSignature '(.*)'
 syntax match TagbarPseudoID  '\*\ze :'
-
-syntax match TagbarFoldIcon  '[-+]\([-+# ]\)\@='
-
-syntax match TagbarAccessPublic    '\([-+ ]\)\@<=+\([^-+# ]\)\@='
-syntax match TagbarAccessProtected '\([-+ ]\)\@<=#\([^-+# ]\)\@='
-syntax match TagbarAccessPrivate   '\([-+ ]\)\@<=-\([^-+# ]\)\@='
 
 highlight default link TagbarComment   Comment
 highlight default link TagbarKind      Identifier
