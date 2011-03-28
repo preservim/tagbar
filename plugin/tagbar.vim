@@ -837,7 +837,7 @@ function! s:CreateAutocommands()
         autocmd BufUnload  __Tagbar__ call s:CleanUp()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
-        autocmd BufEnter,CursorHold * silent call
+        autocmd BufEnter,CursorHold * call
                     \ s:AutoUpdate(fnamemodify(bufname('%'), ':p'))
     augroup END
 
