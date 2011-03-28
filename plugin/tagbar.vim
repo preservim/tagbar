@@ -86,15 +86,13 @@ if !exists('g:tagbar_usearrows')
 endif
 
 
-if has('multi_byte')
-    if has('unix') && &encoding == 'utf-8' &&
-     \ (empty(&termencoding) || &termencoding == 'utf-8')
-        let s:icon_closed = '▶'
-        let s:icon_open   = '▼'
-    elseif (has('win32') || has('win64')) && g:tagbar_usearrows
-        let s:icon_closed = '▷'
-        let s:icon_open   = '◢'
-    endif
+if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
+ \ (empty(&termencoding) || &termencoding == 'utf-8')
+    let s:icon_closed = '▶'
+    let s:icon_open   = '▼'
+elseif has('multi_byte') && (has('win32') || has('win64')) && g:tagbar_usearrows
+    let s:icon_closed = '▷'
+    let s:icon_open   = '◢'
 else
     let s:icon_closed = '+'
     let s:icon_open   = '-'
