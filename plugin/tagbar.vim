@@ -1913,8 +1913,8 @@ function! s:ShowPrototype()
     if has_key(taginfo, 'prototype')
         echo taginfo.prototype
     else
-        echo taginfo.name ':'
-           \ taginfo.numtags (taginfo.numtags > 1 ? 'tags' : 'tag')
+        echo taginfo.name . ': ' .
+           \ taginfo.numtags . ' ' . (taginfo.numtags > 1 ? 'tags' : 'tag')
     endif
 endfunction
 
@@ -2255,8 +2255,8 @@ function! TagbarBalloonExpr()
     if has_key(taginfo, 'prototype')
         return taginfo.prototype
     else
-        return taginfo.name ':'
-             \ taginfo.numtags (taginfo.numtags > 1 ? 'tags' : 'tag')
+        return taginfo.name . ': ' .
+             \ taginfo.numtags . ' ' . (taginfo.numtags > 1 ? 'tags' : 'tag')
     endif
 endfunction
 
