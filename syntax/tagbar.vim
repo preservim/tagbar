@@ -9,16 +9,27 @@ if exists("b:current_syntax")
   finish
 endif
 
-if has('multi_byte') && &encoding == 'utf-8' &&
-            \ (empty(&termencoding) || &termencoding == 'utf-8')
-    syntax match TagbarKind      '\([▶▼][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
-    syntax match TagbarScope     '[^-+#▶▼(* ]\+\(\*\? :\)\@='
+if has('multi_byte')
+    if has('unix') && &encoding == 'utf-8' &&
+     \ (empty(&termencoding) || &termencoding == 'utf-8')
+        syntax match TagbarKind      '\([▶▼][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
+        syntax match TagbarScope     '[^-+#▶▼(* ]\+\(\*\? :\)\@='
 
-    syntax match TagbarFoldIcon  '[▶▼]\([-+# ]\)\@='
+        syntax match TagbarFoldIcon  '[▶▼]\([-+# ]\)\@='
 
-    syntax match TagbarAccessPublic    '\([▶▼ ]\)\@<=+\([^-+# ]\)\@='
-    syntax match TagbarAccessProtected '\([▶▼ ]\)\@<=#\([^-+# ]\)\@='
-    syntax match TagbarAccessPrivate   '\([▶▼ ]\)\@<=-\([^-+# ]\)\@='
+        syntax match TagbarAccessPublic    '\([▶▼ ]\)\@<=+\([^-+# ]\)\@='
+        syntax match TagbarAccessProtected '\([▶▼ ]\)\@<=#\([^-+# ]\)\@='
+        syntax match TagbarAccessPrivate   '\([▶▼ ]\)\@<=-\([^-+# ]\)\@='
+    elseif (has('win32') || has('win64')) && g:tagbar_usearrows
+        syntax match TagbarKind      '\([▷◢][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
+        syntax match TagbarScope     '[^-+#▷◢(* ]\+\(\*\? :\)\@='
+
+        syntax match TagbarFoldIcon  '[▷◢]\([-+# ]\)\@='
+
+        syntax match TagbarAccessPublic    '\([▷◢ ]\)\@<=+\([^-+# ]\)\@='
+        syntax match TagbarAccessProtected '\([▷◢ ]\)\@<=#\([^-+# ]\)\@='
+        syntax match TagbarAccessPrivate   '\([▷◢ ]\)\@<=-\([^-+# ]\)\@='
+    endif
 else
     syntax match TagbarKind      '\([-+][-+ ]\)\@<=[^-+: ]\+[^:]\+$'
     syntax match TagbarScope     '[^-+#(* ]\+\(\*\? :\)\@='

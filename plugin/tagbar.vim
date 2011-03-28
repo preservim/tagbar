@@ -81,10 +81,20 @@ if !exists('g:tagbar_foldlevel')
     let g:tagbar_foldlevel = 99
 endif
 
-if has('multi_byte') && &encoding == 'utf-8' &&
-            \ (empty(&termencoding) || &termencoding == 'utf-8')
-    let s:icon_closed = '▶'
-    let s:icon_open   = '▼'
+if !exists('g:tagbar_usearrows')
+    let g:tagbar_usearrows = 0
+endif
+
+
+if has('multi_byte')
+    if has('unix') && &encoding == 'utf-8' &&
+     \ (empty(&termencoding) || &termencoding == 'utf-8')
+        let s:icon_closed = '▶'
+        let s:icon_open   = '▼'
+    elseif (has('win32') || has('win64')) && g:tagbar_usearrows
+        let s:icon_closed = '▷'
+        let s:icon_open   = '◢'
+    endif
 else
     let s:icon_closed = '+'
     let s:icon_open   = '-'
