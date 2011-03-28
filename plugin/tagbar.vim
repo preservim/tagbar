@@ -1029,7 +1029,12 @@ function! s:ProcessFile(fname, ftype)
     let ctags_args .= ' --language-force=' . ctags_type .
                     \ ' --' . ctags_type . '-kinds=' . ctags_kinds . ' '
 
-    let ctags_cmd = g:tagbar_ctags_bin . ctags_args . shellescape(a:fname)
+    if has('win32') || has('win64')
+        let ctags_bin = fnamemodify(g:tagbar_ctags_bin, ':8')
+    else
+        let ctags_bin = shellescape(g:tagbar_ctags_bin)
+    endif
+    let ctags_cmd = ctags_bin . ctags_args . shellescape(a:fname)
     let ctags_output = system(ctags_cmd)
 
     if v:shell_error
