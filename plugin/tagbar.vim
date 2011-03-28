@@ -771,9 +771,9 @@ function! s:GetUserTypeDefs()
             let kindlist = split(kind, ':')
             let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
             if len(kindlist) == 3
-                let kinddict.kindfolds = kindlist[2]
+                let kinddict.fold = kindlist[2]
             else
-                let kinddict.kindfolds = 0
+                let kinddict.fold = 0
             endif
             call add(def.kinds, kinddict)
         endfor
