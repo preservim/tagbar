@@ -813,18 +813,25 @@ function! s:MapKeys()
 
     nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
     nnoremap <script> <silent> <buffer> <kPlus>  :call <SID>OpenFold()<CR>
+    nnoremap <script> <silent> <buffer> zo       :call <SID>OpenFold()<CR>
     nnoremap <script> <silent> <buffer> o        :call <SID>ToggleFold()<CR>
+    nnoremap <script> <silent> <buffer> za       :call <SID>ToggleFold()<CR>
     nnoremap <script> <silent> <buffer> -        :call <SID>CloseFold()<CR>
     nnoremap <script> <silent> <buffer> <kMinus> :call <SID>CloseFold()<CR>
+    nnoremap <script> <silent> <buffer> zc       :call <SID>CloseFold()<CR>
     nnoremap <script> <silent> <buffer> x        :call <SID>CloseParent()<CR>
+    nnoremap <script> <silent> <buffer> zC       :call <SID>CloseParent()<CR>
 
-    nnoremap <script> <silent> <buffer> *     :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> *    :call <SID>SetFoldLevel(99, 1)<CR>
     nnoremap <script> <silent> <buffer> <kMultiply>
-                                            \ :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> =     :call <SID>SetFoldLevel(0,  1)<CR>
+                                        \    :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> zR   :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> zn   :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0,  1)<CR>
+    nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0,  1)<CR>
 
     nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
-    nnoremap <script> <silent> <buffer> z    :call <SID>ZoomWindow()<CR>
+    nnoremap <script> <silent> <buffer> zz   :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q    :close<CR>
     nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
 endfunction
@@ -1759,22 +1766,22 @@ function! s:PrintHelp()
         silent! 0put ='\" Tagbar keybindings'
         silent!  put ='\"'
         silent!  put ='\" --------- General ---------'
-        silent!  put ='\" <Enter> : Jump to tag definition'
-        silent!  put ='\" <Space> : Display tag prototype'
+        silent!  put ='\" <Enter>   : Jump to tag definition'
+        silent!  put ='\" <Space>   : Display tag prototype'
         silent!  put ='\"'
         silent!  put ='\" ---------- Folds ----------'
-        silent!  put ='\" o       : Toggle fold'
-        silent!  put ='\" +       : Open fold'
-        silent!  put ='\" -       : Close fold'
-        silent!  put ='\" x       : Close parent'
-        silent!  put ='\" *       : Open all folds'
-        silent!  put ='\" =       : Close all folds'
+        silent!  put ='\" o, za     : Toggle fold'
+        silent!  put ='\" +, zo     : Open fold'
+        silent!  put ='\" -, zc     : Close fold'
+        silent!  put ='\" x, zC     : Close parent'
+        silent!  put ='\" *, zR, zn : Open all folds'
+        silent!  put ='\" =, zM     : Close all folds'
         silent!  put ='\"'
         silent!  put ='\" ---------- Misc -----------'
-        silent!  put ='\" s       : Toggle sort'
-        silent!  put ='\" z       : Zoom window in/out'
-        silent!  put ='\" q       : Close window'
-        silent!  put ='\" <F1>    : Remove help'
+        silent!  put ='\" s          : Toggle sort'
+        silent!  put ='\" zz         : Zoom window in/out'
+        silent!  put ='\" q          : Close window'
+        silent!  put ='\" <F1>       : Remove help'
         silent!  put _
     endif
 endfunction
