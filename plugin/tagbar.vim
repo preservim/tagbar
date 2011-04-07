@@ -986,7 +986,8 @@ endfunction
 " s:NormalTag.str() {{{3
 function! s:NormalTag.str(fileinfo, typeinfo) dict
     let suffix = get(self.fields, 'signature', '')
-    if has_key(a:typeinfo.kind2scope, self.fields.kind)
+    if has_key(a:typeinfo, 'kind2scope') &&
+     \ has_key(a:typeinfo.kind2scope, self.fields.kind)
         let suffix .= ' : ' . a:typeinfo.kind2scope[self.fields.kind]
     endif
 
