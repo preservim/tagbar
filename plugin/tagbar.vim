@@ -1405,7 +1405,6 @@ function! s:ProcessFile(fname, ftype)
 
     if v:shell_error
         echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
-        echomsg 'Please run ctags manually to determine what the problem is.'
         echomsg 'Executed command: "' . ctags_cmd . '"'
         if !empty(ctags_output)
             echomsg 'Command output:'
