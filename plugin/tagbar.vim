@@ -1850,6 +1850,15 @@ function! s:RenderContent(...)
     " Print tags
     call s:PrintKinds(typeinfo, fileinfo)
 
+    " Delete empty lines at the end of the buffer
+    for linenr in range(line('$'), 1, -1)
+        if getline(linenr) =~ '^$'
+            execute linenr . 'delete'
+        else
+            break
+        endif
+    endfor
+
     setlocal nomodifiable
 
     if !empty(s:known_files.getCurrent()) &&
