@@ -1136,6 +1136,8 @@ function! s:FileInfo.reset() dict
 
     let self._tagfolds_old = self.tagfolds
     let self.tagfolds = {}
+
+    let typeinfo = s:known_types[self.ftype]
     for kind in typeinfo.kinds
         let self.tagfolds[kind.short] = {}
     endfor
