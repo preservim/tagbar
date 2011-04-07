@@ -102,25 +102,14 @@ let s:type_init_done    = 0
 let s:autocommands_done = 0
 let s:window_expanded   = 0
 
+let s:access_symbols = {
+    \ 'public'    : '+',
+    \ 'protected' : '#',
+    \ 'private'   : '-'
+\ }
+
 " s:InitTypes() {{{2
 function! s:InitTypes()
-    " Dictionary of the already processed files, indexed by file name with
-    " complete path.
-    " The entries are again dictionaries with the following fields:
-    " - fpath:     The complete file path
-    " - mtime:     File modification time
-    " - ftype:     The vim file type
-    " - tags:      List of the tags that are present in the file, sorted
-    "              according to the value of 'g:tagbar_sort'
-    " - fline:     Dictionary of the tags, indexed by line number in the file
-    " - tline:     Dictionary of the tags, indexed by line number in the tagbar
-    " - kindfolds: Dictionary of the folding state of 'kind's, indexed by short
-    "              name
-    " - tagfolds:  Dictionary of dictionaries of the folding state of
-    "              individual tags, indexed by kind and full path
-    " - foldlevel: The current foldlevel of the file
-    let s:known_files = {}
-
     let s:known_types = {}
 
     " Ant {{{3
@@ -744,12 +733,6 @@ function! s:InitTypes()
         endfor
     endfor
 
-    let s:access_symbols = {
-        \ 'public'    : '+',
-        \ 'protected' : '#',
-        \ 'private'   : '-'
-    \ }
-
     let s:type_init_done = 1
 endfunction
 
@@ -814,24 +797,21 @@ function! s:MapKeys()
     nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
     nnoremap <script> <silent> <buffer> <kPlus>  :call <SID>OpenFold()<CR>
     nnoremap <script> <silent> <buffer> zo       :call <SID>OpenFold()<CR>
-    nnoremap <script> <silent> <buffer> o        :call <SID>ToggleFold()<CR>
-    nnoremap <script> <silent> <buffer> za       :call <SID>ToggleFold()<CR>
     nnoremap <script> <silent> <buffer> -        :call <SID>CloseFold()<CR>
     nnoremap <script> <silent> <buffer> <kMinus> :call <SID>CloseFold()<CR>
     nnoremap <script> <silent> <buffer> zc       :call <SID>CloseFold()<CR>
-    nnoremap <script> <silent> <buffer> x        :call <SID>CloseParent()<CR>
-    nnoremap <script> <silent> <buffer> zC       :call <SID>CloseParent()<CR>
+    nnoremap <script> <silent> <buffer> o        :call <SID>ToggleFold()<CR>
+    nnoremap <script> <silent> <buffer> za       :call <SID>ToggleFold()<CR>
 
-    nnoremap <script> <silent> <buffer> *    :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> *    :call <SID>SetFoldLevel(99)<CR>
     nnoremap <script> <silent> <buffer> <kMultiply>
-                                        \    :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> zR   :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> zn   :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0,  1)<CR>
-    nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0,  1)<CR>
+                                           \ :call <SID>SetFoldLevel(99)<CR>
+    nnoremap <script> <silent> <buffer> zR   :call <SID>SetFoldLevel(99)<CR>
+    nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0)<CR>
+    nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0)<CR>
 
     nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
-    nnoremap <script> <silent> <buffer> zz   :call <SID>ZoomWindow()<CR>
+    nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q    :close<CR>
     nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
 endfunction
@@ -849,6 +829,383 @@ function! s:CreateAutocommands()
     augroup END
 
     let s:autocommands_done = 1
+endfunction
+
+" Prototypes {{{1
+" Base tag {{{2
+let s:BaseTag = {}
+
+" s:BaseTag._init() {{{3
+function! s:BaseTag._init(name) dict
+    let self.name        = a:name
+    let self.fields      = {}
+    let self.fields.line = 0
+    let self.path        = ''
+    let self.fullpath    = a:name
+    let self.depth       = 0
+    let self.parent      = {}
+    let self.tline       = -1
+    let self.fileinfo    = {}
+endfunction
+
+" s:BaseTag.isNormalTag() {{{3
+function! s:BaseTag.isNormalTag() dict
+    return 0
+endfunction
+
+" s:BaseTag.isPseudoTag() {{{3
+function! s:BaseTag.isPseudoTag() dict
+    return 0
+endfunction
+
+" s:BaseTag.isKindheader() {{{3
+function! s:BaseTag.isKindheader() dict
+    return 0
+endfunction
+
+" s:BaseTag.getPrototype() {{{3
+function! s:BaseTag.getPrototype() dict
+    return ''
+endfunction
+
+" s:BaseTag._getPrefix() {{{3
+function! s:BaseTag._getPrefix(fileinfo, typeinfo) dict
+    if has_key(self, 'children') && !empty(self.children)
+        if a:fileinfo.tagfolds[self.fields.kind][self.fullpath]
+            let prefix = s:icon_closed
+        else
+            let prefix = s:icon_open
+        endif
+    else
+        let prefix = ' '
+    endif
+    if has_key(self.fields, 'access')
+        let prefix .= get(s:access_symbols, self.fields.access, ' ')
+    else
+        let prefix .= ' '
+    endif
+
+    return prefix
+endfunction
+
+" s:BaseTag.initFoldState() {{{3
+function! s:BaseTag.initFoldState() dict
+    let fileinfo = self.fileinfo
+
+    if s:known_files.has(fileinfo.fpath) &&
+     \ has_key(fileinfo._tagfolds_old[self.fields.kind], self.fullpath)
+        " The file has been updated and the tag was there before, so copy its
+        " old fold state
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] =
+                    \ fileinfo._tagfolds_old[self.fields.kind][self.fullpath]
+    elseif self.depth >= fileinfo.foldlevel
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] = 1
+    else
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] =
+                    \ fileinfo.kindfolds[self.fields.kind]
+    endif
+endfunction
+
+" s:BaseTag.getClosedParentTline() {{{3
+function! s:BaseTag.getClosedParentTline() dict
+    let tagline = self.tline
+    let fileinfo = self.fileinfo
+
+    let parent = self.parent
+    while !empty(parent)
+        if parent.isFolded()
+            let tagline = parent.tline
+            break
+        endif
+        let parent = parent.parent
+    endwhile
+
+    return tagline
+endfunction
+
+" s:BaseTag.isFoldable() {{{3
+function! s:BaseTag.isFoldable() dict
+    return has_key(self, 'children') && !empty(self.children)
+endfunction
+
+" s:BaseTag.isFolded() {{{3
+function! s:BaseTag.isFolded() dict
+    return self.fileinfo.tagfolds[self.fields.kind][self.fullpath]
+endfunction
+
+" s:BaseTag.openFold() {{{3
+function! s:BaseTag.openFold() dict
+    if self.isFoldable()
+        let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = 0
+    endif
+endfunction
+
+" s:BaseTag.closeFold() {{{3
+function! s:BaseTag.closeFold() dict
+    let newline = line('.')
+
+    if !empty(self.parent) && self.parent.isKindheader()
+        " Tag is child of generic 'kind'
+        call self.parent.closeFold()
+        let newline = self.parent.tline
+    elseif self.isFoldable() && !self.isFolded()
+        " Tag is parent of a scope and is not folded
+        let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = 1
+    elseif !empty(self.parent)
+        " Tag is normal child, so close parent
+        let parent = self.parent
+        let self.fileinfo.tagfolds[parent.fields.kind][parent.fullpath] = 1
+        let newline = parent.tline
+    endif
+
+    return newline
+endfunction
+
+" s:BaseTag.setFolded() {{{3
+function! s:BaseTag.setFolded(folded) dict
+    let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = a:folded
+endfunction
+
+" Normal tag {{{2
+let s:NormalTag = copy(s:BaseTag)
+
+" s:NormalTag.New() {{{3
+function! s:NormalTag.New(name) dict
+    let newobj = copy(self)
+
+    call newobj._init(a:name)
+
+    return newobj
+endfunction
+
+" s:NormalTag.isNormalTag() {{{3
+function! s:NormalTag.isNormalTag() dict
+    return 1
+endfunction
+
+" s:NormalTag.str() {{{3
+function! s:NormalTag.str(fileinfo, typeinfo) dict
+    let suffix = get(self.fields, 'signature', '')
+    if has_key(a:typeinfo.kind2scope, self.fields.kind)
+        let suffix .= ' : ' . a:typeinfo.kind2scope[self.fields.kind]
+    endif
+
+    return self._getPrefix(a:fileinfo, a:typeinfo) . self.name . suffix
+endfunction
+
+" s:NormalTag.getPrototype() {{{3
+function! s:NormalTag.getPrototype() dict
+    return self.prototype
+endfunction
+
+" Pseudo tag {{{2
+let s:PseudoTag = copy(s:BaseTag)
+
+" s:PseudoTag.New() {{{3
+function! s:PseudoTag.New(name) dict
+    let newobj = copy(self)
+
+    call newobj._init(a:name)
+
+    return newobj
+endfunction
+
+" s:PseudoTag.isPseudoTag() {{{3
+function! s:PseudoTag.isPseudoTag() dict
+    return 1
+endfunction
+
+" s:PseudoTag.str() {{{3
+function! s:PseudoTag.str(fileinfo, typeinfo) dict
+    let suffix = get(self.fields, 'signature', '')
+    if has_key(a:typeinfo.kind2scope, self.fields.kind)
+        let suffix .= ' : ' . a:typeinfo.kind2scope[self.fields.kind]
+    endif
+
+    return self._getPrefix(a:fileinfo, a:typeinfo) . self.name . '*' . suffix
+endfunction
+
+" Kind header {{{2
+let s:KindheaderTag = copy(s:BaseTag)
+
+" s:KindheaderTag.New() {{{3
+function! s:KindheaderTag.New(name) dict
+    let newobj = copy(self)
+
+    call newobj._init(a:name)
+
+    return newobj
+endfunction
+
+" s:KindheaderTag.isKindheader() {{{3
+function! s:KindheaderTag.isKindheader() dict
+    return 1
+endfunction
+
+" s:KindheaderTag.getPrototype() {{{3
+function! s:KindheaderTag.getPrototype() dict
+    return self.name . ': ' .
+         \ self.numtags . ' ' . (self.numtags > 1 ? 'tags' : 'tag')
+endfunction
+
+" s:KindheaderTag.isFoldable() {{{3
+function! s:KindheaderTag.isFoldable() dict
+    return 1
+endfunction
+
+" s:KindheaderTag.isFolded() {{{3
+function! s:KindheaderTag.isFolded() dict
+    return self.fileinfo.kindfolds[self.short]
+endfunction
+
+" s:KindheaderTag.openFold() {{{3
+function! s:KindheaderTag.openFold() dict
+    let self.fileinfo.kindfolds[self.short] = 0
+endfunction
+
+" s:KindheaderTag.closeFold() {{{3
+function! s:KindheaderTag.closeFold() dict
+    let self.fileinfo.kindfolds[self.short] = 1
+    return line('.')
+endfunction
+
+" s:KindheaderTag.toggleFold() {{{3
+function! s:KindheaderTag.toggleFold() dict
+    let fileinfo = s:known_files.getCurrent()
+
+    let fileinfo.kindfolds[self.short] = !fileinfo.kindfolds[self.short]
+endfunction
+
+" File info {{{2
+let s:FileInfo = {}
+
+" s:FileInfo.New() {{{3
+function! s:FileInfo.New(fname, ftype) dict
+    let newobj = copy(self)
+
+    " The complete file path
+    let newobj.fpath = a:fname
+
+    " File modification time
+    let newobj.mtime = getftime(a:fname)
+
+    " The vim file type
+    let newobj.ftype = a:ftype
+
+    " List of the tags that are present in the file, sorted according to the
+    " value of 'g:tagbar_sort'
+    let newobj.tags = []
+
+    " Dictionary of the tags, indexed by line number in the file
+    let newobj.fline = {}
+
+    " Dictionary of the tags, indexed by line number in the tagbar
+    let newobj.tline = {}
+
+    " Dictionary of the folding state of 'kind's, indexed by short name
+    let newobj.kindfolds = {}
+    let typeinfo = s:known_types[a:ftype]
+    " copy the default fold state from the type info
+    for kind in typeinfo.kinds
+        let newobj.kindfolds[kind.short] =
+                    \ g:tagbar_foldlevel == 0 ? 1 : kind.fold
+    endfor
+
+    " Dictionary of dictionaries of the folding state of individual tags,
+    " indexed by kind and full path
+    let newobj.tagfolds = {}
+    for kind in typeinfo.kinds
+        let newobj.tagfolds[kind.short] = {}
+    endfor
+
+    " The current foldlevel of the file
+    let newobj.foldlevel = g:tagbar_foldlevel
+
+    return newobj
+endfunction
+
+" s:FileInfo.reset() {{{3
+" Reset stuff that gets regenerated while processing a file and save the old
+" tag folds
+function! s:FileInfo.reset() dict
+    let self.mtime = getftime(self.fpath)
+    let self.tags  = []
+    let self.fline = {}
+    let self.tline = {}
+
+    let self._tagfolds_old = self.tagfolds
+    let self.tagfolds = {}
+    for kind in typeinfo.kinds
+        let self.tagfolds[kind.short] = {}
+    endfor
+endfunction
+
+" s:FileInfo.clearOldFolds() {{{3
+function! s:FileInfo.clearOldFolds() dict
+    if exists('self._tagfolds_old')
+        unlet self._tagfolds_old
+    endif
+endfunction
+
+" s:FileInfo.sortTags() {{{3
+function! s:FileInfo.sortTags() dict
+    if has_key(s:compare_typeinfo, 'sort')
+        if s:compare_typeinfo.sort
+            call s:SortTags(self.tags, 's:CompareByKind')
+        else
+            call s:SortTags(self.tags, 's:CompareByLine')
+        endif
+    elseif g:tagbar_sort
+        call s:SortTags(self.tags, 's:CompareByKind')
+    else
+        call s:SortTags(self.tags, 's:CompareByLine')
+    endif
+endfunction
+
+" s:FileInfo.openKindFold() {{{3
+function! s:FileInfo.openKindFold(kind) dict
+    let self.kindfolds[a:kind.short] = 0
+endfunction
+
+" s:FileInfo.closeKindFold() {{{3
+function! s:FileInfo.closeKindFold(kind) dict
+    let self.kindfolds[a:kind.short] = 1
+endfunction
+
+" Known files {{{2
+let s:known_files = {
+    \ '_current' : {},
+    \ '_files'   : {}
+\ }
+
+" s:known_files.getCurrent() {{{3
+function! s:known_files.getCurrent() dict
+    return self._current
+endfunction
+
+" s:known_files.setCurrent() {{{3
+function! s:known_files.setCurrent(fileinfo) dict
+    let self._current = a:fileinfo
+endfunction
+
+" s:known_files.get() {{{3
+function! s:known_files.get(fname) dict
+    return get(self._files, a:fname, {})
+endfunction
+
+" s:known_files.put() {{{3
+function! s:known_files.put(fileinfo, ...) dict
+    if a:0 == 1
+        let self._files[a:1] = a:fileinfo
+    else
+        let fname = a:fileinfo.fpath
+        let self._files[fname] = a:fileinfo
+    endif
+endfunction
+
+" s:known_files.has() {{{3
+function! s:known_files.has(fname) dict
+    return has_key(self._files, a:fname)
 endfunction
 
 " Window management {{{1
@@ -1005,6 +1362,7 @@ endfunction
 
 " Tag processing {{{1
 " s:ProcessFile() {{{2
+" Execute ctags and put the information into a 'FileInfo' object
 function! s:ProcessFile(fname, ftype)
     if !s:IsValidFile(a:fname, a:ftype)
         return
@@ -1026,7 +1384,7 @@ function! s:ProcessFile(fname, ftype)
 
     let ctags_type = typeinfo.ctagstype
 
-    let ctags_kinds = ""
+    let ctags_kinds = ''
     for kind in typeinfo.kinds
         let ctags_kinds .= kind.short
     endfor
@@ -1043,41 +1401,29 @@ function! s:ProcessFile(fname, ftype)
     let ctags_output = system(ctags_cmd)
 
     if v:shell_error
-        let msg = 'Tagbar: Could not generate tags for ' . a:fname
-        echohl WarningMsg | echomsg msg | echohl None
+        echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
+        echomsg 'Please run ctags manually to determine what the problem is.'
+        echomsg 'Executed command: "' . ctags_cmd . '"'
         if !empty(ctags_output)
-            echohl WarningMsg | echomsg ctags_output | echohl None
+            echomsg 'Command output:'
+            for line in split(ctags_output, '\n')
+                echomsg line
+            endfor
         endif
+        " put an empty entry into known_files so the error message is only
+        " shown once
+        call s:known_files.put({}, a:fname)
         return
     endif
 
     " If the file has only been updated preserve the fold states, otherwise
     " create a new entry
-    if has_key(s:known_files, a:fname)
-        let fileinfo = s:known_files[a:fname]
-        let tagfolds_old = fileinfo.tagfolds
+    if s:known_files.has(a:fname)
+        let fileinfo = s:known_files.get(a:fname)
+        call fileinfo.reset()
     else
-        let fileinfo = {}
-        let fileinfo.fpath = a:fname
-
-        let fileinfo.kindfolds = {}
-        for kind in typeinfo.kinds
-            let fileinfo.kindfolds[kind.short] =
-                        \ g:tagbar_foldlevel == 0 ? 1 : kind.fold
-        endfor
-
-        let fileinfo.foldlevel = g:tagbar_foldlevel
+        let fileinfo = s:FileInfo.New(a:fname, a:ftype)
     endif
-    let fileinfo.tagfolds = {}
-    for kind in typeinfo.kinds
-        let fileinfo.tagfolds[kind.short]  = {}
-    endfor
-
-    let fileinfo.mtime = getftime(a:fname)
-    let fileinfo.ftype = a:ftype
-    let fileinfo.tags  = []
-    let fileinfo.fline = {}
-    let fileinfo.tline = {}
 
     " Parse the ctags output lines
     let rawtaglist = split(ctags_output, '\n\+')
@@ -1118,12 +1464,10 @@ function! s:ProcessFile(fname, ftype)
             continue
         endif
 
-        let kindtag = {
-            \ 'short'   : kind.short,
-            \ 'name'    : kind.long,
-            \ 'numtags' : len(curtags),
-            \ 'tline'   : 0
-        \ }
+        let kindtag          = s:KindheaderTag.New(kind.long)
+        let kindtag.short    = kind.short
+        let kindtag.numtags  = len(curtags)
+        let kindtag.fileinfo = fileinfo
 
         for tag in curtags
             let tag.parent = kindtag
@@ -1134,35 +1478,14 @@ function! s:ProcessFile(fname, ftype)
         call extend(fileinfo.tags, processedtags)
     endif
 
-    " Copy over the saved tag folding states to avoid memory leaks in case of
-    " deleted tags
-    if has_key(s:known_files, a:fname)
-        unlet kind
-        for [kind, val] in items(tagfolds_old)
-            for path in keys(val)
-                if has_key(fileinfo.tagfolds[kind], path)
-                    let fileinfo.tagfolds[kind][path] = tagfolds_old[kind][path]
-                endif
-            endfor
-        endfor
-        unlet tagfolds_old
-    endif
+    " Clear old folding information from previous file version
+    call fileinfo.clearOldFolds()
 
     " Sort the tags
     let s:compare_typeinfo = typeinfo
-    if has_key(typeinfo, 'sort')
-        if typeinfo.sort
-            call s:SortTags(fileinfo.tags, 's:CompareByKind')
-        else
-            call s:SortTags(fileinfo.tags, 's:CompareByLine')
-        endif
-    elseif g:tagbar_sort
-        call s:SortTags(fileinfo.tags, 's:CompareByKind')
-    else
-        call s:SortTags(fileinfo.tags, 's:CompareByLine')
-    endif
+    call fileinfo.sortTags()
 
-    let s:known_files[a:fname] = fileinfo
+    call s:known_files.put(fileinfo)
 endfunction
 
 " s:ParseTagline() {{{2
@@ -1171,11 +1494,10 @@ endfunction
 " fields: <TAB>name:value
 " fields that are always present: kind, line
 function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
-    let taginfo = {}
+    let basic_info  = split(a:part1, '\t')
 
-    let basic_info      = split(a:part1, '\t')
-    let taginfo.name    = basic_info[0]
-    let taginfo.file    = basic_info[1]
+    let taginfo      = s:NormalTag.New(basic_info[0])
+    let taginfo.file = basic_info[1]
 
     " the pattern can contain tabs and thus may have been split up, so join
     " the rest of the items together again
@@ -1194,7 +1516,6 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
     let prototype         = substitute(prototype, '[[:space:]]\+$', '', '')
     let taginfo.prototype = prototype
 
-    let taginfo.fields = {}
     let fields = split(a:part2, '\t')
     for field in fields
         " can't use split() since the value can contain ':'
@@ -1205,9 +1526,6 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
     endfor
 
     " Make some information easier accessible
-    let taginfo.path     = ''
-    let taginfo.fullpath = taginfo.name
-    let taginfo.depth    = 0
     if has_key(a:typeinfo, 'scope2kind')
         for scope in keys(a:typeinfo.scope2kind)
             if has_key(taginfo.fields, scope)
@@ -1222,16 +1540,10 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
         let taginfo.depth = len(split(taginfo.path, '\V' . a:typeinfo.sro))
     endif
 
+    let taginfo.fileinfo = a:fileinfo
+
     " Needed for folding
-    let taginfo.parent = {}
-    if !has_key(s:known_files, a:fileinfo.fpath) &&
-     \ taginfo.depth >= a:fileinfo.foldlevel
-        let a:fileinfo.tagfolds[taginfo.fields.kind][taginfo.fullpath] = 1
-    else
-        let a:fileinfo.tagfolds[taginfo.fields.kind][taginfo.fullpath] =
-                    \ a:fileinfo.kindfolds[taginfo.fields.kind]
-    endif
-    let taginfo.tline = -1
+    call taginfo.initFoldState()
 
     return taginfo
 endfunction
@@ -1390,18 +1702,13 @@ function! s:CreatePseudoTag(name, parent, scope, typeinfo, fileinfo)
         let pscope  = ''
     endif
 
-    let pseudotag             = {}
-    let pseudotag.name        = a:name
-    let pseudotag.fields      = {}
+    let pseudotag             = s:PseudoTag.New(a:name)
     let pseudotag.fields.kind = a:typeinfo.scope2kind[a:scope]
-    let pseudotag.fields.line = 0
 
     let parentscope = substitute(curpath, a:name . '$', '', '')
     let parentscope = substitute(parentscope,
                                \ '\V\^' . a:typeinfo.sro . '\$', '', '')
 
-    let pseudotag.path     = ''
-    let pseudotag.fullpath = pseudotag.name
     if pscope != ''
         let pseudotag.fields[pscope] = parentscope
         let pseudotag.scope    = pscope
@@ -1412,14 +1719,10 @@ function! s:CreatePseudoTag(name, parent, scope, typeinfo, fileinfo)
     let pseudotag.depth = len(split(pseudotag.path, '\V' . a:typeinfo.sro))
 
     let pseudotag.parent = a:parent
-    if !has_key(s:known_files, a:fileinfo.fpath) &&
-     \ pseudotag.depth >= a:fileinfo.foldlevel
-        let a:fileinfo.tagfolds[pseudotag.fields.kind][pseudotag.fullpath] = 1
-    else
-        let a:fileinfo.tagfolds[pseudotag.fields.kind][pseudotag.fullpath] =
-                    \ a:fileinfo.kindfolds[pseudotag.fields.kind]
-    endif
-    let pseudotag.tline = -1
+
+    let pseudotag.fileinfo = a:fileinfo
+
+    call pseudotag.initFoldState()
 
     return pseudotag
 endfunction
@@ -1475,13 +1778,12 @@ endfunction
 
 " s:ToggleSort() {{{2
 function! s:ToggleSort()
-    if !has_key(s:known_files, s:current_file)
+    let fileinfo = s:known_files.getCurrent()
+    if empty(fileinfo)
         return
     endif
 
     let curline = line('.')
-
-    let fileinfo = s:known_files[s:current_file]
 
     match none
 
@@ -1493,17 +1795,7 @@ function! s:ToggleSort()
         let g:tagbar_sort = !g:tagbar_sort
     endif
 
-    if has_key(s:compare_typeinfo, 'sort')
-        if s:compare_typeinfo.sort
-            call s:SortTags(fileinfo.tags, 's:CompareByKind')
-        else
-            call s:SortTags(fileinfo.tags, 's:CompareByLine')
-        endif
-    elseif g:tagbar_sort
-        call s:SortTags(fileinfo.tags, 's:CompareByKind')
-    else
-        call s:SortTags(fileinfo.tags, 's:CompareByLine')
-    endif
+    call fileinfo.sortTags()
 
     call s:RenderContent()
 
@@ -1514,12 +1806,12 @@ endfunction
 " s:RenderContent() {{{2
 function! s:RenderContent(...)
     if a:0 == 1
-        let fname = a:1
+        let fileinfo = a:1
     else
-        let fname = s:current_file
+        let fileinfo = s:known_files.getCurrent()
     endif
 
-    if fname == ''
+    if empty(fileinfo)
         return
     endif
 
@@ -1533,7 +1825,8 @@ function! s:RenderContent(...)
         execute tagbarwinnr . 'wincmd w'
     endif
 
-    if fname == s:current_file
+    if !empty(s:known_files.getCurrent()) &&
+     \ fileinfo.fpath == s:known_files.getCurrent().fpath
         " We're redisplaying the same file, so save the view
         let saveline = line('.')
         let savecol  = col('.')
@@ -1549,26 +1842,6 @@ function! s:RenderContent(...)
 
     call s:PrintHelp()
 
-    " If we don't have an entry for the file by now something must have gone
-    " wrong
-    if !has_key(s:known_files, fname)
-        silent! put ='There was an error processing the file. Please run ' .
-                   \ 'ctags manually to determine what the problem is.'
-        normal! gqq
-
-        let s:current_file = ''
-
-        setlocal nomodifiable
-        let &lazyredraw = lazyredraw_save
-
-        if !in_tagbar
-            execute prevwinnr . 'wincmd w'
-        endif
-
-        return
-    endif
-    let fileinfo = s:known_files[fname]
-
     let typeinfo = s:known_types[fileinfo.ftype]
 
     " Print tags
@@ -1576,7 +1849,8 @@ function! s:RenderContent(...)
 
     setlocal nomodifiable
 
-    if fname == s:current_file
+    if !empty(s:known_files.getCurrent()) &&
+     \ fileinfo.fpath == s:known_files.getCurrent().fpath
         let scrolloff_save = &scrolloff
         set scrolloff=0
 
@@ -1615,22 +1889,10 @@ function! s:PrintKinds(typeinfo, fileinfo)
          \ has_key(a:typeinfo.kind2scope, kind.short)
             " Scoped tags
             for tag in curtags
-                let taginfo = ''
-
-                if tag.fields.line == 0 " Tag is a pseudo-tag
-                    let taginfo .= '*'
-                endif
-                if has_key(tag.fields, 'signature')
-                    let taginfo .= tag.fields.signature
-                endif
-                let taginfo .= ' : ' . a:typeinfo.kind2scope[kind.short]
-
-                let prefix = s:GetPrefix(tag, a:fileinfo)
-
                 if g:tagbar_compact && first_kind && s:short_help
-                    silent! 0put =prefix . tag.name . taginfo
+                    silent 0put =tag.str(a:fileinfo, a:typeinfo)
                 else
-                    silent!  put =prefix . tag.name . taginfo
+                    silent  put =tag.str(a:fileinfo, a:typeinfo)
                 endif
 
                 " Save the current tagbar line in the tag for easy
@@ -1640,14 +1902,14 @@ function! s:PrintKinds(typeinfo, fileinfo)
                 let a:fileinfo.tline[curline] = tag
 
                 if has_key(tag, 'children') &&
-                         \ !a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
+                 \ !a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
                     for childtag in tag.children
                         call s:PrintTag(childtag, 1, a:fileinfo, a:typeinfo)
                     endfor
                 endif
 
                 if !g:tagbar_compact
-                    silent! put _
+                    silent put _
                 endif
 
             endfor
@@ -1661,9 +1923,9 @@ function! s:PrintKinds(typeinfo, fileinfo)
             endif
 
             if g:tagbar_compact && first_kind && s:short_help
-                silent! 0put =foldmarker . ' ' . kind.long
+                silent 0put =foldmarker . ' ' . kind.long
             else
-                silent!  put =foldmarker . ' ' . kind.long
+                silent  put =foldmarker . ' ' . kind.long
             endif
 
             let kindtag                   = curtags[0].parent
@@ -1673,15 +1935,8 @@ function! s:PrintKinds(typeinfo, fileinfo)
 
             if !a:fileinfo.kindfolds[kind.short]
                 for tag in curtags
-                    let taginfo = ''
-
-                    if has_key(tag.fields, 'signature')
-                        let taginfo .= tag.fields.signature
-                    endif
-
-                    let prefix = s:GetPrefix(tag, a:fileinfo)
-
-                    silent! put ='  ' . prefix . tag.name . taginfo
+                    let str = tag.str(a:fileinfo, a:typeinfo)
+                    silent put ='  ' . str
 
                     " Save the current tagbar line in the tag for easy
                     " highlighting access
@@ -1693,7 +1948,7 @@ function! s:PrintKinds(typeinfo, fileinfo)
             endif
 
             if !g:tagbar_compact
-                silent! put _
+                silent put _
             endif
 
             let first_kind = 0
@@ -1703,22 +1958,8 @@ endfunction
 
 " s:PrintTag() {{{2
 function! s:PrintTag(tag, depth, fileinfo, typeinfo)
-    let taginfo = ''
-
-    if a:tag.fields.line == 0 " Tag is a pseudo-tag
-        let taginfo .= '*'
-    endif
-    if has_key(a:tag.fields, 'signature')
-        let taginfo .= a:tag.fields.signature
-    endif
-    if has_key(a:typeinfo.kind2scope, a:tag.fields.kind)
-        let taginfo .= ' : ' . a:typeinfo.kind2scope[a:tag.fields.kind]
-    endif
-
-    let prefix = s:GetPrefix(a:tag, a:fileinfo)
-
     " Print tag indented according to depth
-    silent! put =repeat(' ', a:depth * 2) . prefix . a:tag.name . taginfo
+    silent put =repeat(' ', a:depth * 2) . a:tag.str(a:fileinfo, a:typeinfo)
 
     " Save the current tagbar line in the tag for easy
     " highlighting access
@@ -1735,28 +1976,6 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     endif
 endfunction
 
-" s:GetPrefix() {{{2
-function! s:GetPrefix(tag, fileinfo)
-    if has_key(a:tag, 'children') && !empty(a:tag.children)
-        if a:fileinfo.tagfolds[a:tag.fields.kind][a:tag.fullpath]
-            let prefix = s:icon_closed
-        else
-            let prefix = s:icon_open
-        endif
-    else
-        let prefix = ' '
-    endif
-
-    if has_key(a:tag.fields, 'access') &&
-     \ has_key(s:access_symbols, a:tag.fields.access)
-        let prefix .= s:access_symbols[a:tag.fields.access]
-    else
-        let prefix .= ' '
-    endif
-
-    return prefix
-endfunction
-
 " s:PrintHelp() {{{2
 function! s:PrintHelp()
     if !g:tagbar_compact && s:short_help
@@ -1770,16 +1989,15 @@ function! s:PrintHelp()
         silent!  put ='\" <Space>   : Display tag prototype'
         silent!  put ='\"'
         silent!  put ='\" ---------- Folds ----------'
-        silent!  put ='\" o, za     : Toggle fold'
         silent!  put ='\" +, zo     : Open fold'
         silent!  put ='\" -, zc     : Close fold'
-        silent!  put ='\" x, zC     : Close parent'
-        silent!  put ='\" *, zR, zn : Open all folds'
+        silent!  put ='\" o, za     : Toggle fold'
+        silent!  put ='\" *, zR     : Open all folds'
         silent!  put ='\" =, zM     : Close all folds'
         silent!  put ='\"'
         silent!  put ='\" ---------- Misc -----------'
         silent!  put ='\" s          : Toggle sort'
-        silent!  put ='\" zz         : Zoom window in/out'
+        silent!  put ='\" x          : Zoom window in/out'
         silent!  put ='\" q          : Close window'
         silent!  put ='\" <F1>       : Remove help'
         silent!  put _
@@ -1815,7 +2033,7 @@ endfunction
 " User actions {{{1
 " s:HighlightTag() {{{2
 function! s:HighlightTag()
-    let fileinfo = s:known_files[s:current_file]
+    let fileinfo = s:known_files.getCurrent()
 
     let curline = line('.')
 
@@ -1853,21 +2071,7 @@ function! s:HighlightTag()
 
     " Check whether the tag is inside a closed fold and highlight the parent
     " instead in that case
-    let parent = tag.parent
-    while !empty(parent)
-        if has_key(parent, 'numtags')
-            if fileinfo.kindfolds[parent.short]
-                let tagline = parent.tline
-            endif
-            break
-        else
-            if fileinfo.tagfolds[parent.fields.kind][parent.fullpath]
-                let tagline = parent.tline
-            endif
-            break
-        endif
-        let parent = parent.parent
-    endwhile
+    let tagline = tag.getClosedParentTline()
 
     " Go to the line containing the tag
     execute tagline
@@ -1930,12 +2134,7 @@ function! s:ShowPrototype()
         return
     endif
 
-    if has_key(taginfo, 'prototype')
-        echo taginfo.prototype
-    else
-        echo taginfo.name . ': ' .
-           \ taginfo.numtags . ' ' . (taginfo.numtags > 1 ? 'tags' : 'tag')
-    endif
+    echo taginfo.getPrototype()
 endfunction
 
 " s:ToggleHelp() {{{2
@@ -1954,7 +2153,8 @@ endfunction
 " Folding {{{1
 " s:OpenFold() {{{2
 function! s:OpenFold()
-    if !has_key(s:known_files, s:current_file)
+    let fileinfo = s:known_files.getCurrent()
+    if empty(fileinfo)
         return
     endif
 
@@ -1965,97 +2165,36 @@ function! s:OpenFold()
         return
     endif
 
-    let fileinfo = s:known_files[s:current_file]
-
-    if has_key(tag, 'numtags')
-        " Tag is 'kind' header
-        let fileinfo.kindfolds[tag.short] = 0
-    elseif has_key(tag, 'children') && !empty(tag.children) &&
-         \ fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
-        " Tag is parent of a scope
-        let fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 0
-    endif
+    call tag.openFold()
 
     call s:RenderKeepView()
 endfunction
 
 " s:CloseFold() {{{2
 function! s:CloseFold()
-    if !has_key(s:known_files, s:current_file)
+    let fileinfo = s:known_files.getCurrent()
+    if empty(fileinfo)
         return
     endif
 
     match none
 
     let curline = line('.')
-    let newline = curline
 
     let curtag = s:GetTagInfo(curline, 0)
     if empty(curtag)
         return
     endif
 
-    let nexttag = s:GetTagInfo(curline + 1, 0)
-
-    let fileinfo = s:known_files[s:current_file]
-
-    if !has_key(curtag, 'depth')
-        " Tag is 'kind' header
-        let fileinfo.kindfolds[curtag.short] = 1
-    elseif curtag.depth == 1 && has_key(curtag.parent, 'numtags')
-        " Tag is child of generic 'kind'
-        let fileinfo.kindfolds[curtag.parent.short] = 1
-        let newline = curtag.parent.tline
-    elseif has_key(nexttag, 'depth') && nexttag.depth > curtag.depth
-        " Tag is parent of a scope
-        let fileinfo.tagfolds[curtag.fields.kind][curtag.fullpath] = 1
-    elseif empty(curtag.parent)
-        " Tag is top-level parent of a scope without children, so there's
-        " nothing to do
-        return
-    else
-        " Tag is normal child, so close parent
-        let parent = curtag.parent
-        let fileinfo.tagfolds[parent.fields.kind][parent.fullpath] = 1
-        let newline = parent.tline
-    endif
-
-    call s:RenderKeepView(newline)
-endfunction
-
-" s:CloseParent() {{{2
-function! s:CloseParent()
-    if !has_key(s:known_files, s:current_file)
-        return
-    endif
-
-    match none
-
-    let curline = line('.')
-    let newline = curline
-
-    let curtag  = s:GetTagInfo(curline, 0)
-
-    let fileinfo = s:known_files[s:current_file]
-
-    if has_key(curtag, 'depth') && curtag.depth == 1 &&
-     \ has_key(curtag.parent, 'numtags')
-        " Tag is child of generic 'kind'
-        let fileinfo.kindfolds[curtag.parent.short] = 1
-        let newline = curtag.parent.tline
-    elseif has_key(curtag, 'parent') && !empty(curtag.parent)
-        " Tag is normal child, so close parent
-        let parent = curtag.parent
-        let fileinfo.tagfolds[parent.fields.kind][parent.fullpath] = 1
-        let newline = parent.tline
-    endif
+    let newline = curtag.closeFold()
 
     call s:RenderKeepView(newline)
 endfunction
 
 " s:ToggleFold() {{{2
 function! s:ToggleFold()
-    if !has_key(s:known_files, s:current_file)
+    let fileinfo = s:known_files.getCurrent()
+    if empty(fileinfo)
         return
     endif
 
@@ -2066,49 +2205,48 @@ function! s:ToggleFold()
         return
     endif
 
-    let fileinfo = s:known_files[s:current_file]
+    let newline = line('.')
 
-    if !has_key(curtag, 'depth')
-        let fileinfo.kindfolds[curtag.short] = !fileinfo.kindfolds[curtag.short]
-    elseif has_key(curtag, 'children') && !empty(curtag.children)
-        if fileinfo.tagfolds[curtag.fields.kind][curtag.fullpath]
-            call s:OpenFold()
+    if curtag.isKindheader()
+        call curtag.toggleFold()
+    elseif curtag.isFoldable()
+        if curtag.isFolded()
+            call curtag.openFold()
         else
-            call s:CloseFold()
+            let newline = curtag.closeFold()
         endif
+    else
+        let newline = curtag.closeFold()
     endif
 
-    call s:RenderKeepView()
+    call s:RenderKeepView(newline)
 endfunction
 
 " s:SetFoldLevel() {{{2
-function! s:SetFoldLevel(level, force)
+function! s:SetFoldLevel(level)
     if a:level < 0
         echoerr 'Foldlevel can''t be negative'
         return
     endif
 
-    if !has_key(s:known_files, s:current_file)
+    let fileinfo = s:known_files.getCurrent()
+    if empty(fileinfo)
         return
     endif
 
-    let fileinfo = s:known_files[s:current_file]
-
-    call s:SetFoldLevelRecursive(fileinfo, fileinfo.tags, a:level, a:force)
+    call s:SetFoldLevelRecursive(fileinfo, fileinfo.tags, a:level)
 
     let typeinfo = s:known_types[fileinfo.ftype]
 
     " Apply foldlevel to 'kind's
-    if min([a:level, fileinfo.foldlevel]) == 0 || a:force
-        if a:level == 0
-            for kind in typeinfo.kinds
-                let fileinfo.kindfolds[kind.short] = 1
-            endfor
-        else
-            for kind in typeinfo.kinds
-                let fileinfo.kindfolds[kind.short] = 0
-            endfor
-        endif
+    if a:level == 0
+        for kind in typeinfo.kinds
+            call fileinfo.closeKindFold(kind)
+        endfor
+    else
+        for kind in typeinfo.kinds
+            call fileinfo.openKindFold(kind)
+        endfor
     endif
 
     let fileinfo.foldlevel = a:level
@@ -2118,24 +2256,16 @@ endfunction
 
 " s:SetFoldLevelRecursive() {{{2
 " Apply foldlevel to normal tags
-function! s:SetFoldLevelRecursive(fileinfo, tags, level, force)
-    " Only change folds in the range between the old and the new foldlevel
-    " (unless 'force' is true)
-    let left  = min([a:level, a:fileinfo.foldlevel])
-    let right = max([a:level, a:fileinfo.foldlevel])
-
+function! s:SetFoldLevelRecursive(fileinfo, tags, level)
     for tag in a:tags
-        if (left <= tag.depth && tag.depth <= right) || a:force
-            if tag.depth >= a:level
-                let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 1
-            else
-                let a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath] = 0
-            endif
+        if tag.depth >= a:level
+            call tag.setFolded(1)
+        else
+            call tag.setFolded(0)
         endif
 
         if has_key(tag, 'children')
-            call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level,
-                                       \ a:force)
+            call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level)
         endif
     endfor
 endfunction
@@ -2180,24 +2310,32 @@ function! s:AutoUpdate(fname)
     endif
 
     " Process the file if it's unknown or the information is outdated
-    if has_key(s:known_files, a:fname)
-        if s:known_files[a:fname].mtime != getftime(a:fname)
+    " Also test for entries that exist but are empty, which will be the case
+    " if there was an error during the ctags execution
+    if s:known_files.has(a:fname) && !empty(s:known_files.get(a:fname))
+        if s:known_files.get(a:fname).mtime != getftime(a:fname)
             call s:ProcessFile(a:fname, &filetype)
         endif
-    else
+    elseif !s:known_files.has(a:fname)
         call s:ProcessFile(a:fname, &filetype)
     endif
 
-    " Display the tagbar content
-    call s:RenderContent(a:fname)
+    let fileinfo = s:known_files.get(a:fname)
 
     " If we don't have an entry for the file by now something must have gone
-    " wrong
-    if !has_key(s:known_files, a:fname)
+    " wrong, so don't change the tagbar content
+    if empty(fileinfo)
         return
     endif
 
-    let s:current_file = a:fname
+    " Display the tagbar content
+    call s:RenderContent(fileinfo)
+
+    " Call setCurrent after rendering so RenderContent can check whether the
+    " same file is redisplayed
+    if !empty(fileinfo)
+        call s:known_files.setCurrent(fileinfo)
+    endif
 
     call s:HighlightTag()
 endfunction
@@ -2224,7 +2362,9 @@ endfunction
 " does not contain a valid tag (for example because it is empty or only
 " contains a pseudo-tag) return an empty dictionary.
 function! s:GetTagInfo(linenr, ignorepseudo)
-    if !has_key(s:known_files, s:current_file)
+    let fileinfo = s:known_files.getCurrent()
+
+    if empty(fileinfo)
         return {}
     endif
 
@@ -2234,8 +2374,6 @@ function! s:GetTagInfo(linenr, ignorepseudo)
         return {}
     endif
 
-    let fileinfo = s:known_files[s:current_file]
-
     " Check if there is a tag on the current line
     if !has_key(fileinfo.tline, a:linenr)
         return {}
@@ -2244,8 +2382,8 @@ function! s:GetTagInfo(linenr, ignorepseudo)
     let taginfo = fileinfo.tline[a:linenr]
 
     " Check if the current tag is not a pseudo-tag
-    if !has_key(taginfo, 'numtags')
-     \ && (a:ignorepseudo && taginfo.fields.line == 0)
+    if !has_key(taginfo, 'numtags') &&
+     \ (a:ignorepseudo && taginfo.fields.line == 0)
         return {}
     endif
 
@@ -2272,12 +2410,7 @@ function! TagbarBalloonExpr()
         return
     endif
 
-    if has_key(taginfo, 'prototype')
-        return taginfo.prototype
-    else
-        return taginfo.name . ': ' .
-             \ taginfo.numtags . ' ' . (taginfo.numtags > 1 ? 'tags' : 'tag')
-    endif
+    return taginfo.getPrototype()
 endfunction
 
 " TagbarGenerateStatusline() {{{2
@@ -2299,8 +2432,7 @@ command! -nargs=0 TagbarToggle        call s:ToggleWindow()
 command! -nargs=0 TagbarOpen          call s:OpenWindow(0)
 command! -nargs=0 TagbarOpenAutoClose call s:OpenWindow(1)
 command! -nargs=0 TagbarClose         call s:CloseWindow()
-command! -nargs=1 -bang TagbarSetFoldlevel
-                                  \ call s:SetFoldLevel(<args>, '<bang>' == '!')
+command! -nargs=1 TagbarSetFoldlevel  call s:SetFoldLevel(<args>)
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
