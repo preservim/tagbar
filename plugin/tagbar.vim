@@ -2304,8 +2304,11 @@ function! s:AutoUpdate(fname)
         return
     endif
 
+    " Only consider the main filetype in cases like 'python.django'
+    let filetype = split(&filetype, '\.')[0]
+
     " Don't do anything if the file isn't supported
-    if !s:IsValidFile(a:fname, &filetype)
+    if !s:IsValidFile(a:fname, filetype)
         return
     endif
 
@@ -2314,10 +2317,10 @@ function! s:AutoUpdate(fname)
     " if there was an error during the ctags execution
     if s:known_files.has(a:fname) && !empty(s:known_files.get(a:fname))
         if s:known_files.get(a:fname).mtime != getftime(a:fname)
-            call s:ProcessFile(a:fname, &filetype)
+            call s:ProcessFile(a:fname, filetype)
         endif
     elseif !s:known_files.has(a:fname)
-        call s:ProcessFile(a:fname, &filetype)
+        call s:ProcessFile(a:fname, filetype)
     endif
 
     let fileinfo = s:known_files.get(a:fname)
