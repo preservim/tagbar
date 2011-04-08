@@ -2435,8 +2435,10 @@ function! TagbarGenerateStatusline()
         let text = '[Order]'
     endif
 
-    let filename = fnamemodify(s:known_files.getCurrent().fpath, ':t')
-    let text .= ' ' . filename
+    if !empty(s:known_files.getCurrent())
+        let filename = fnamemodify(s:known_files.getCurrent().fpath, ':t')
+        let text .= ' ' . filename
+    endif
 
     return text
 endfunction
