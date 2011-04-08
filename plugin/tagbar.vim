@@ -739,7 +739,7 @@ endfunction
 " s:GetUserTypeDefs() {{{2
 function! s:GetUserTypeDefs()
     redir => defs
-    silent! execute 'let g:'
+    silent execute 'let g:'
     redir END
 
     let deflist = split(defs, '\n')
@@ -1245,7 +1245,7 @@ function! s:OpenWindow(autoclose)
     endif
 
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
-    exe 'silent! keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
+    exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
@@ -1840,7 +1840,7 @@ function! s:RenderContent(...)
 
     setlocal modifiable
 
-    silent! %delete _
+    silent %delete _
 
     call s:PrintHelp()
 
@@ -1990,28 +1990,28 @@ endfunction
 " s:PrintHelp() {{{2
 function! s:PrintHelp()
     if !g:tagbar_compact && s:short_help
-        silent! 0put ='\" Press <F1> for help'
-        silent!  put _
+        silent 0put ='\" Press <F1> for help'
+        silent  put _
     elseif !s:short_help
-        silent! 0put ='\" Tagbar keybindings'
-        silent!  put ='\"'
-        silent!  put ='\" --------- General ---------'
-        silent!  put ='\" <Enter>   : Jump to tag definition'
-        silent!  put ='\" <Space>   : Display tag prototype'
-        silent!  put ='\"'
-        silent!  put ='\" ---------- Folds ----------'
-        silent!  put ='\" +, zo     : Open fold'
-        silent!  put ='\" -, zc     : Close fold'
-        silent!  put ='\" o, za     : Toggle fold'
-        silent!  put ='\" *, zR     : Open all folds'
-        silent!  put ='\" =, zM     : Close all folds'
-        silent!  put ='\"'
-        silent!  put ='\" ---------- Misc -----------'
-        silent!  put ='\" s          : Toggle sort'
-        silent!  put ='\" x          : Zoom window in/out'
-        silent!  put ='\" q          : Close window'
-        silent!  put ='\" <F1>       : Remove help'
-        silent!  put _
+        silent 0put ='\" Tagbar keybindings'
+        silent  put ='\"'
+        silent  put ='\" --------- General ---------'
+        silent  put ='\" <Enter>   : Jump to tag definition'
+        silent  put ='\" <Space>   : Display tag prototype'
+        silent  put ='\"'
+        silent  put ='\" ---------- Folds ----------'
+        silent  put ='\" +, zo     : Open fold'
+        silent  put ='\" -, zc     : Close fold'
+        silent  put ='\" o, za     : Toggle fold'
+        silent  put ='\" *, zR     : Open all folds'
+        silent  put ='\" =, zM     : Close all folds'
+        silent  put ='\"'
+        silent  put ='\" ---------- Misc -----------'
+        silent  put ='\" s          : Toggle sort'
+        silent  put ='\" x          : Zoom window in/out'
+        silent  put ='\" q          : Close window'
+        silent  put ='\" <F1>       : Remove help'
+        silent  put _
     endif
 endfunction
 
@@ -2284,7 +2284,7 @@ endfunction
 " Helper functions {{{1
 " s:CleanUp() {{{2
 function! s:CleanUp()
-    silent! autocmd! TagbarAutoCmds
+    silent autocmd! TagbarAutoCmds
 
     unlet s:current_file
     unlet s:is_maximized
