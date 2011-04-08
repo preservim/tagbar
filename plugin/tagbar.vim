@@ -1852,7 +1852,7 @@ function! s:RenderContent(...)
     " Delete empty lines at the end of the buffer
     for linenr in range(line('$'), 1, -1)
         if getline(linenr) =~ '^$'
-            execute linenr . 'delete'
+            execute linenr . 'delete _'
         else
             break
         endif
