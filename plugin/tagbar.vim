@@ -1912,8 +1912,7 @@ function! s:PrintKinds(typeinfo, fileinfo)
                 let tag.tline                 = curline
                 let a:fileinfo.tline[curline] = tag
 
-                if has_key(tag, 'children') &&
-                 \ !a:fileinfo.tagfolds[tag.fields.kind][tag.fullpath]
+                if tag.isFoldable() && !tag.isFolded()
                     for childtag in tag.children
                         call s:PrintTag(childtag, 1, a:fileinfo, a:typeinfo)
                     endfor
@@ -1927,7 +1926,9 @@ function! s:PrintKinds(typeinfo, fileinfo)
             let first_kind = 0
         else
             " Non-scoped tags
-            if a:fileinfo.kindfolds[kind.short]
+            let kindtag = curtags[0].parent
+
+            if kindtag.isFolded()
                 let foldmarker = s:icon_closed
             else
                 let foldmarker = s:icon_open
@@ -1939,12 +1940,11 @@ function! s:PrintKinds(typeinfo, fileinfo)
                 silent  put =foldmarker . ' ' . kind.long
             endif
 
-            let kindtag                   = curtags[0].parent
             let curline                   = line('.')
             let kindtag.tline             = curline
             let a:fileinfo.tline[curline] = kindtag
 
-            if !a:fileinfo.kindfolds[kind.short]
+            if !kindtag.isFolded()
                 for tag in curtags
                     let str = tag.str(a:fileinfo, a:typeinfo)
                     silent put ='  ' . str
@@ -1979,8 +1979,7 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     let a:fileinfo.tline[curline] = a:tag
 
     " Recursively print children
-    if has_key(a:tag, 'children') &&
-     \ !a:fileinfo.tagfolds[a:tag.fields.kind][a:tag.fullpath]
+    if a:tag.isFoldable() && !a:tag.isFolded()
         for childtag in a:tag.children
             call s:PrintTag(childtag, a:depth + 1, a:fileinfo, a:typeinfo)
         endfor
