@@ -657,5 +657,12 @@ software.
 
 The folding technique was inspired by NERDTree by Martin Grenfell.
 
+Taybin Rutkin:
+  - Contributed tagbar_autofocus option
+Jan Christoph Ebersbach:
+  - Suggested "deffile" option
+Seth Milliken:
+  - Contributed folding keybindings that resemble the built-in ones
+
 ==============================================================================
  vim: tw=78 ts=8 sw=8 sts=8 noet ft=help
