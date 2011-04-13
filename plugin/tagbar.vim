@@ -2091,7 +2091,7 @@ function! s:HighlightTag()
 
     let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
     let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
-    execute 'match Search ' . pattern
+    execute 'match TagbarHighlight ' . pattern
 
     execute prevwinnr . 'wincmd w'
 

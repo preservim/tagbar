@@ -51,6 +51,7 @@ highlight default link TagbarScopeType Type
 highlight default link TagbarSignature SpecialKey
 highlight default link TagbarPseudoID  NonText
 highlight default link TagbarFoldIcon  Statement
+highlight default link TagbarHighlight Search
 
 highlight default TagbarAccessPublic    guifg=Green ctermfg=Green
 highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
