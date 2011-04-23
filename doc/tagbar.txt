@@ -17,6 +17,7 @@ Contents					*tagbar* *tagbar-contents*
 	      Commands ...................... |tagbar-commands|
 	      Key mappings .................. |tagbar-keys|
 	 5. Configuration ................... |tagbar-configuration|
+	      Highlight colours ............. |tagbar-highlight|
 	 6. Extending Tagbar ................ |tagbar-extend|
 	 7. Bugs and limitations ............ |tagbar-bugs|
 	 8. History ......................... |tagbar-history|
@@ -378,6 +379,52 @@ Example:
 >
 	let g:tagbar_usearrows = 1
 <
+
+------------------------------------------------------------------------------
+HIGHLIGHT COLOURS					*tagbar-highlight*
+
+All of the colours used by Tagbar can be customized. Here is a list of the
+highlight groups that are defined by Tagbar:
+
+TagbarComment
+    The help at the top of the buffer.
+
+TagbarKind
+    The header of generic "kinds" like "functions" and "variables".
+
+TagbarScope
+    Tags that define a scope like classes, structs etc.
+
+TagbarScopeType
+    The type of a scope after the colon, for example "class", "struct" etc.
+
+TagbarSignature
+    Function signatures.
+
+TagbarPseudoID
+    The asterisk (*) that signifies a pseudo-tag.
+
+TagbarFoldIcon
+    The fold icon on the left of foldable tags.
+
+TagbarHighlight
+    The colour that is used for automatically highlighting the current tag.
+
+TagbarAccessPublic
+    The "public" visibility/access symbol.
+
+TagbarAccessProtected
+    The "protected" visibility/access symbol.
+
+TagbarAccessPrivate
+    The "private" visibility/access symbol.
+
+If you want to change any of those colours put a line like the following in
+your vimrc:
+>
+	highlight TagbarScope guifg=Green ctermfg=Green
+<
+See |:highlight| for more information.
 
 ==============================================================================
 6. Extending Tagbar					*tagbar-extend*
