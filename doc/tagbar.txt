@@ -224,10 +224,10 @@ COMMANDS						*tagbar-commands*
     Open the Tagbar window and close it on tag selection, regardless of the
     setting of |g:tagbar_autoclose|. If it was already open jump to it.
 
-:TagbarSetFoldlevel
-    Set the foldlevel of the tags that are currently displayed. The foldlevel
-    of tags in other files remains unaffected. Works in the same way as
-    'foldlevel'.
+:TagbarSetFoldlevel [number]
+    Set the foldlevel of the tags of the current file to [number]. The
+    foldlevel of tags in other files remains unaffected. Works in the same way
+    as 'foldlevel'.
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS						*tagbar-keys*
@@ -246,8 +246,8 @@ These mappings are valid in the Tagbar window:
               no fold under the cursor.
 o/za          Toggle the fold under the cursor or the current one if there is
               no fold under the cursor.
-*/zR          Open all folds.
-=/zM          Close all folds.
+*/zR          Open all folds by setting foldlevel to 99.
+=/zM          Close all folds by setting foldlevel to 0.
 s             Toggle sort order between name and file order.
 x             Toggle zooming the window.
 q             Close the Tagbar window.
