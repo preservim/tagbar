@@ -125,7 +125,7 @@ The following requirements have to be met in order to be able to use tagbar:
         filetype on
 <
     See |filetype| for more information.
-  - Tagbar will not work in |restricted-mode|.
+  - Tagbar will not work in |restricted-mode| or with 'compatible' set.
 
 ==============================================================================
 3. Installation						*tagbar-installation*
@@ -195,9 +195,9 @@ in the Tagbar window. The current sort order is displayed in the statusbar of
 the Tagbar window.
 
 Folding~
-The displayed scopes (and unscoped types) can be folded to hide untinteresting
-information. Unfortunately the folding state is lost once you leave the Tagbar
-window, see |tagbar-bugs|.
+The displayed scopes (and unscoped types) can be folded to hide uninteresting
+information. Mappings similar to Vim's built-in ones are provided. Folds can
+also be opened and closed by clicking on the fold icon with the mouse.
 
 Displaying the prototype of a tag~
 Tagbar can display the prototype of a tag. More precisely it can display the
@@ -223,6 +223,11 @@ COMMANDS						*tagbar-commands*
     Open the Tagbar window and close it on tag selection, regardless of the
     setting of |g:tagbar_autoclose|. If it was already open jump to it.
 
+:TagbarSetFoldlevel
+    Set the foldlevel of the tags that are currently displayed. The foldlevel
+    of tags in other files remains unaffected. Works in the same way as
+    'foldlevel'.
+
 ------------------------------------------------------------------------------
 KEY MAPPINGS						*tagbar-keys*
 
@@ -230,13 +235,18 @@ These mappings are valid in the Tagbar window:
 
 <F1>          Display key mapping help.
 <CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags.
+<LeftMouse>   When on a fold icon, open or close the fold depending on the
+              current state.
 <2-LeftMouse> Same as <CR>.
 <Space>       Display the prototype of the current tag (i.e. the line defining
               it) in the command line.
-+             Open the fold under the cursor.
--             Close the fold under the cursor.
-*             Open all folds.
-=             Close all folds.
++/zo          Open the fold under the cursor.
+-/zc          Close the fold under the cursor or the current one if there is
+              no fold under the cursor.
+o/za          Toggle the fold under the cursor or the current one if there is
+              no fold under the cursor.
+*/zR          Open all folds.
+=/zM          Close all folds.
 s             Toggle sort order between name and file order.
 x             Toggle zooming the window.
 q             Close the Tagbar window.
@@ -246,6 +256,8 @@ q             Close the Tagbar window.
 
 							*g:tagbar_ctags_bin*
 g:tagbar_ctags_bin~
+Default: empty
+
 Use this option to specify the location of your ctags executable. Only needed
 if it is not in one of the directories in your $PATH environment variable.
 
@@ -256,6 +268,8 @@ Example:
 
 							*g:tagbar_left*
 g:tagbar_left~
+Default: 0
+
 By default the Tagbar window will be opened on the right-hand side of vim. Set
 this option to open it on the left instead.
 
@@ -266,7 +280,9 @@ Example:
 
 							*g:tagbar_width*
 g:tagbar_width~
-Width of the Tagbar window in characters. The default is 40.
+Default: 40
+
+Width of the Tagbar window in characters.
 
 Example:
 >
@@ -275,8 +291,10 @@ Example:
 
 							*g:tagbar_autoclose*
 g:tagbar_autoclose~
+Default: 0
+
 If you set this option the Tagbar window will automatically close when you
-jump to a tag. The default is to not automatically close the window.
+jump to a tag.
 
 Example:
 >
@@ -285,8 +303,10 @@ Example:
 
 							*g:tagbar_autofocus*
 g:tagbar_autofocus~
+Default: 0
+
 If you set this option the cursor will move to the Tagbar window when it is
-opened. The default is to not move the cursor to the window.
+opened.
 
 Example:
 >
@@ -295,9 +315,10 @@ Example:
 
 							*g:tagbar_sort*
 g:tagbar_sort~
+Default: 1
+
 If this option is set the tags are sorted according to their name. If it is
-unset they are sorted according to their order in the source file. The default
-is to sort them by name.
+unset they are sorted according to their order in the source file.
 
 Example:
 >
@@ -306,9 +327,11 @@ Example:
 
 							*g:tagbar_compact*
 g:tagbar_compact~
+Default: 0
+
 Setting this option will result in Tagbar omitting the short help at the
 top of the window and the blank lines in between top-level scopes in order to
-save screen real estate. The default is to not use compact mode.
+save screen real estate.
 
 Example:
 >
@@ -317,13 +340,43 @@ Example:
 
 							*g:tagbar_expand*
 g:tagbar_expand~
+Default: 0
+
 If this option is set the Vim window will be expanded by the width of the
-Tagbar window if using a GUI version of Vim. The default is not to expand the
-window.
+Tagbar window if using a GUI version of Vim.
 
 Example:
 >
 	let g:tagbar_expand = 1
+<
+
+							*g:tagbar_foldlevel*
+g:tagbar_foldlevel~
+Default: 99
+
+The initial foldlevel for folds in the Tagbar window. Fold with a level higher
+than this number will be closed.
+
+Example:
+>
+	let g:tagbar_foldlevel = 2
+<
+
+							*g:tagbar_usearrows*
+g:tagbar_usearrows~
+{Windows only}
+Default: 0
+
+Tagbar can display nice Unicode arrows instead of +/- characters as fold icons.
+However, Windows doesn't seem to be able to substitute in characters from
+other fonts if the current font doesn't support them. This means that you have
+to use a font that supports those arrows. Unfortunately there is no way to
+detect whether specific characters are supported in the current font. So if
+your font supports those arrows you have to set this option to make it work.
+
+Example:
+>
+	let g:tagbar_usearrows = 1
 <
 
 ==============================================================================
@@ -344,14 +397,18 @@ kinds:      A list of the "language kinds" that should be listed in Tagbar,
             Use the command >
                 ctags --list-kinds={language name}
 <           to get a list of the kinds ctags supports for a given language. An
-            entry in this list is a string with two parts separated by a
-            colon: the first part is the one-character abbreviation that ctags
-            uses, and the second part is an arbitrary string that will be used
-            in Tagbar as the header for the tags of this kind that are not
-            listed under a specific scope. For example, the string >
-                "f:functions"
+            entry in this list is a string with two or three parts separated
+            by a colon: the first part is the one-character abbreviation that
+            ctags uses, and the second part is an arbitrary string that will
+            be used in Tagbar as the header for the tags of this kind that are
+            not listed under a specific scope. The optional third part
+            determines whether tags of this kind should be folded by default,
+            with 1 meaning they should be folded and 0 they should not. If
+            this part is omitted the tags will not be folded by default. For
+            example, the string >
+                "f:functions:1"
 <           would list all the function definitions in a file under the header
-            "functions".
+            "functions" and fold them.
 sro:        The scope resolution operator. For example, in C++ it is "::" and
             in Java it is ".". When in doubt run ctags as shown above and look
             at the output.
@@ -424,8 +481,8 @@ used in Tagbar.
 	let g:tagbar_type_cpp = {
 	    \ 'ctagstype' : 'c++',
 	    \ 'kinds'     : [
-	        \ 'd:macros',
-	        \ 'p:prototypes',
+	        \ 'd:macros:1',
+	        \ 'p:prototypes:1',
 	        \ 'g:enums',
 	        \ 'e:enumerators',
 	        \ 't:typedefs',
@@ -467,7 +524,7 @@ the order of enums and typedefs, you would do it like this:
 >
 	let g:tagbar_type_cpp = {
 	    \ 'kinds' : [
-	        \ 'd:macros',
+	        \ 'd:macros:1',
 	        \ 'g:enums',
 	        \ 't:typedefs',
 	        \ 'e:enumerators',
@@ -542,8 +599,8 @@ Now we have to create the Tagbar language definition in our vimrc:
 	        \ 's:sections',
 	        \ 'g:graphics',
 	        \ 'l:labels',
-	        \ 'r:refs',
-	        \ 'p:pagerefs'
+	        \ 'r:refs:1',
+	        \ 'p:pagerefs:1'
 	    \ ],
 	    \ 'sort'    : 0,
 	    \ 'deffile' : expand('<sfile>:p:h:h') . '/ctags/latex.cnf'
