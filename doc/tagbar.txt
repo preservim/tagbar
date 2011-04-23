@@ -18,6 +18,7 @@ Contents					*tagbar* *tagbar-contents*
 	      Key mappings .................. |tagbar-keys|
 	 5. Configuration ................... |tagbar-configuration|
 	      Highlight colours ............. |tagbar-highlight|
+	      Automatically opening Tagbar .. |tagbar-autoopen|
 	 6. Extending Tagbar ................ |tagbar-extend|
 	 7. Bugs and limitations ............ |tagbar-bugs|
 	 8. History ......................... |tagbar-history|
@@ -425,6 +426,24 @@ your vimrc:
 	highlight TagbarScope guifg=Green ctermfg=Green
 <
 See |:highlight| for more information.
+
+------------------------------------------------------------------------------
+AUTOMATICALLY OPENING TAGBAR				*tagbar-autoopen*
+
+If you want Tagbar to open automatically, for example on Vim startup or for
+specific filetypes, there are various ways to do it. For example, to always
+open Tagbar on Vim startup you can put this into your vimrc file:
+>
+    autocmd VimEnter * nested TagbarOpen
+<
+If you want to have it start for specific filetypes put
+>
+    TagbarOpen
+<
+into a corresponding filetype plugin (see |filetype-plugin|).
+
+Check out |autocmd.txt| if you want it to automatically open in more
+complicated cases.
 
 ==============================================================================
 6. Extending Tagbar					*tagbar-extend*
