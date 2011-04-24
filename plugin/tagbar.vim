@@ -830,7 +830,9 @@ function! s:CreateAutocommands()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
         autocmd BufEnter,CursorHold * call
-                    \ s:AutoUpdate(fnamemodify(bufname('%'), ':p'))
+                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
+        autocmd BufDelete * call
+                    \ s:CleanupFileinfo(fnamemodify(expand('<afile>'), ':p'))
     augroup END
 
     let s:autocommands_done = 1
@@ -1202,6 +1204,7 @@ function! s:known_files.get(fname) dict
 endfunction
 
 " s:known_files.put() {{{3
+" Optional second argument is the filename
 function! s:known_files.put(fileinfo, ...) dict
     if a:0 == 1
         let self._files[a:1] = a:fileinfo
@@ -1214,6 +1217,13 @@ endfunction
 " s:known_files.has() {{{3
 function! s:known_files.has(fname) dict
     return has_key(self._files, a:fname)
+endfunction
+
+" s:known_files.rm() {{{2
+function! s:known_files.rm(fname) dict
+    if s:known_files.has(a:fname)
+        call remove(self._files, a:fname)
+    endif
 endfunction
 
 " Window management {{{1
@@ -2324,6 +2334,11 @@ function! s:CleanUp()
     unlet s:is_maximized
     unlet s:compare_typeinfo
     unlet s:short_help
+endfunction
+
+" s:CleanupFileinfo() {{{2
+function! s:CleanupFileinfo(fname)
+    call s:known_files.rm(a:fname)
 endfunction
 
 " s:QuitIfOnlyWindow() {{{2
