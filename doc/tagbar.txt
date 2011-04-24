@@ -230,6 +230,10 @@ COMMANDS						*tagbar-commands*
     foldlevel of tags in other files remains unaffected. Works in the same way
     as 'foldlevel'.
 
+:TagbarShowTag
+    Open the parent folds of the current tag in the file window as much as
+    needed for the tag to be visible in the Tagbar window.
+
 ------------------------------------------------------------------------------
 KEY MAPPINGS						*tagbar-keys*
 
@@ -381,6 +385,21 @@ your font supports those arrows you have to set this option to make it work.
 Example:
 >
 	let g:tagbar_usearrows = 1
+<
+
+							*g:tagbar_autoshowtag*
+g:tagbar_autoshowtag~
+Default: 0
+
+If this variable is set and the current tag is inside of a closed fold then
+the folds will be opened as much as needed for the tag to be visible so it can
+be highlighted. If it is not set then the folds won't be opened and the parent
+tag will be highlighted instead. You can use the TagbarShowTag command to open
+the folds manually.
+
+Example:
+>
+	let g:tagbar_autoshowtag = 1
 <
 
 ------------------------------------------------------------------------------

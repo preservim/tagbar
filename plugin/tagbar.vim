@@ -85,6 +85,9 @@ if !exists('g:tagbar_usearrows')
     let g:tagbar_usearrows = 0
 endif
 
+if !exists('g:tagbar_autoshowtag')
+    let g:tagbar_autoshowtag = 0
+endif
 
 if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
  \ (empty(&termencoding) || &termencoding == 'utf-8')
@@ -971,6 +974,16 @@ endfunction
 " s:BaseTag.setFolded() {{{3
 function! s:BaseTag.setFolded(folded) dict
     let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = a:folded
+endfunction
+
+" s:BaseTag.openParents() {{{3
+function! s:BaseTag.openParents() dict
+    let parent = self.parent
+
+    while !empty(parent)
+        call parent.openFold()
+        let parent = parent.parent
+    endwhile
 endfunction
 
 " Normal tag {{{2
@@ -2058,24 +2071,12 @@ endfunction
 " User actions {{{1
 " s:HighlightTag() {{{2
 function! s:HighlightTag()
-    let fileinfo = s:known_files.getCurrent()
-
-    let curline = line('.')
-
     let tagline = 0
 
-    " If a tag appears in a file more than once (for example namespaces in
-    " C++) only one of them has a 'tline' entry and can thus be highlighted.
-    " The only way to solve this would be to go over the whole tag list again,
-    " making everything slower. Since this should be a rare occurence and
-    " highlighting isn't /that/ important ignore it for now.
-    for line in range(curline, 1, -1)
-        if has_key(fileinfo.fline, line)
-            let tag     = fileinfo.fline[line]
-            let tagline = tag.tline
-            break
-        endif
-    endfor
+    let tag = s:GetNearbyTag()
+    if !empty(tag)
+        let tagline = tag.tline
+    endif
 
     let eventignore_save = &eventignore
     set eventignore=all
@@ -2092,6 +2093,10 @@ function! s:HighlightTag()
         let &eventignore = eventignore_save
         redraw
         return
+    endif
+
+    if g:tagbar_autoshowtag
+        call s:OpenParents(tag)
     endif
 
     " Check whether the tag is inside a closed fold and highlight the parent
@@ -2325,6 +2330,21 @@ function! s:SetFoldLevelRecursive(fileinfo, tags, level)
     endfor
 endfunction
 
+" s:OpenParents() {{{2
+function! s:OpenParents(...)
+    let tagline = 0
+
+    if a:0 == 1
+        let tag = a:1
+    else
+        let tag = s:GetNearbyTag()
+    endif
+
+    call tag.openParents()
+
+    call s:RenderKeepView()
+endfunction
+
 " Helper functions {{{1
 " s:CleanUp() {{{2
 function! s:CleanUp()
@@ -2452,6 +2472,29 @@ function! s:GetTagInfo(linenr, ignorepseudo)
     return taginfo
 endfunction
 
+" s:GetNearbyTag() {{{2
+" Get the tag info for a file near the cursor in the current file
+function! s:GetNearbyTag()
+    let fileinfo = s:known_files.getCurrent()
+
+    let curline = line('.')
+    let tag = {}
+
+    " If a tag appears in a file more than once (for example namespaces in
+    " C++) only one of them has a 'tline' entry and can thus be highlighted.
+    " The only way to solve this would be to go over the whole tag list again,
+    " making everything slower. Since this should be a rare occurence and
+    " highlighting isn't /that/ important ignore it for now.
+    for line in range(curline, 1, -1)
+        if has_key(fileinfo.fline, line)
+            let tag = fileinfo.fline[line]
+            break
+        endif
+    endfor
+
+    return tag
+endfunction
+
 " s:CheckMouseClick() {{{2
 function! s:CheckMouseClick()
     let line   = getline('.')
@@ -2497,6 +2540,7 @@ command! -nargs=0 TagbarOpen          call s:OpenWindow(0)
 command! -nargs=0 TagbarOpenAutoClose call s:OpenWindow(1)
 command! -nargs=0 TagbarClose         call s:CloseWindow()
 command! -nargs=1 TagbarSetFoldlevel  call s:SetFoldLevel(<args>)
+command! -nargs=0 TagbarShowTag       call s:OpenParents()
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
