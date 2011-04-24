@@ -249,6 +249,8 @@ o/za          Toggle the fold under the cursor or the current one if there is
               no fold under the cursor.
 */zR          Open all folds by setting foldlevel to 99.
 =/zM          Close all folds by setting foldlevel to 0.
+<C-N>         Go to the next top-level tag.
+<C-P>         Go to the previous top-level tag.
 s             Toggle sort order between name and file order.
 x             Toggle zooming the window.
 q             Close the Tagbar window.

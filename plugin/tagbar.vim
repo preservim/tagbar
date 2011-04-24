@@ -810,6 +810,11 @@ function! s:MapKeys()
     nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0)<CR>
     nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0)<CR>
 
+    nnoremap <script> <silent> <buffer> <C-N>
+                                        \ :call <SID>GotoNextToplevelTag(1)<CR>
+    nnoremap <script> <silent> <buffer> <C-P>
+                                        \ :call <SID>GotoNextToplevelTag(-1)<CR>
+
     nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
     nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
     nnoremap <script> <silent> <buffer> q    :close<CR>
@@ -2160,6 +2165,36 @@ function! s:ToggleHelp()
     redraw
 endfunction
 
+" s:GotoNextToplevelTag() {{{2
+function! s:GotoNextToplevelTag(direction)
+    let curlinenr = line('.')
+    let newlinenr = line('.')
+
+    if a:direction == 1
+        let range = range(line('.') + 1, line('$'))
+    else
+        let range = range(line('.') - 1, 1, -1)
+    endif
+
+    for tmplinenr in range
+        let taginfo = s:GetTagInfo(tmplinenr, 0)
+
+        if empty(taginfo)
+            continue
+        elseif empty(taginfo.parent)
+            let newlinenr = tmplinenr
+            break
+        endif
+    endfor
+
+    if curlinenr != newlinenr
+        execute newlinenr
+        call winline()
+    endif
+
+    redraw
+endfunction
+
 " Folding {{{1
 " s:OpenFold() {{{2
 function! s:OpenFold()
@@ -2395,8 +2430,7 @@ function! s:GetTagInfo(linenr, ignorepseudo)
     let taginfo = fileinfo.tline[a:linenr]
 
     " Check if the current tag is not a pseudo-tag
-    if !has_key(taginfo, 'numtags') &&
-     \ (a:ignorepseudo && taginfo.fields.line == 0)
+    if a:ignorepseudo && taginfo.isPseudoTag()
         return {}
     endif
 
