@@ -11,6 +11,7 @@ Contents					*tagbar* *tagbar-contents*
 	 1. Intro ........................... |tagbar-intro|
 	      Pseudo-tags ................... |tagbar-pseudotags|
 	      Supported features ............ |tagbar-features|
+	      Other ctags-compatible programs |tagbar-other|
 	 2. Requirements .................... |tagbar-requirements|
 	 3. Installation .................... |tagbar-installation|
 	 4. Usage ........................... |tagbar-usage|
@@ -102,6 +103,16 @@ The following features are supported by Tagbar:
     Tex, Vera, Verilog, VHDL, Vim and YACC.
   - Can be extended to support arbitrary new types.
 
+------------------------------------------------------------------------------
+OTHER CTAGS-COMPATIBLE PROGRAMS				*tagbar-other*
+
+Tagbar theoretically also supports filetype-specific programs that can output
+tag information that is compatible with ctags. However due to potential
+incompatibilities this may not always completely work. Tagbar has been tested
+with doctorjs/jsctags and will use that if present, other programs require
+some configuration (see |tagbar-extend|). If a program does not work even with
+correct configuration please contact me.
+
 ==============================================================================
 2. Requirements						*tagbar-requirements*
 
@@ -119,8 +130,8 @@ The following requirements have to be met in order to be able to use tagbar:
     Tagbar will work on any platform that ctags runs on -- this includes
     UNIX derivatives, Mac OS X and Windows. Note that other versions like
     GNU ctags will not work.
-    Tagbar generates the tag information by itself and doesn't need already
-    existing tag files.
+    Tagbar generates the tag information by itself and doesn't need (or use)
+    already existing tag files.
   - File type detection must be turned on in vim. This can be done with the
     following command in your vimrc:
 >
@@ -499,8 +510,8 @@ kinds:      A list of the "language kinds" that should be listed in Tagbar,
 <           would list all the function definitions in a file under the header
             "functions" and fold them.
 sro:        The scope resolution operator. For example, in C++ it is "::" and
-            in Java it is ".". When in doubt run ctags as shown above and look
-            at the output.
+            in Java it is ".". If in doubt run ctags as shown above and check
+            the output.
 kind2scope: A dictionary describing the mapping of tag kinds (in their
             one-character representation) to the scopes their children will
             appear in, for example classes, structs etc.
@@ -549,8 +560,16 @@ deffile:    The path to a file with additional ctags definitions (see the
 <           Then the "deffile" entry would look like this to allow for the
             plugin to be installed in an arbitray location (for example
             with pathogen): >
+
                 'deffile' : expand('<sfile>:p:h:h') . '/ctags/mylang.cnf'
 <
+ctagsbin:  The path to a filetype-specific ctags-compatible program like
+{optional} jsctags. Set it in the same way as |g:tagbar_ctags_bin|. jsctags is
+           used automatically if found in your $PATH and does not have to be
+           set in that case.
+ctagsargs: The arguments to be passed to the filetype-specific ctags program
+{optional} (without the filename). Not used for the normal ctags program.
+
 
 You then have to assign this dictionary to a variable with the name
 >
