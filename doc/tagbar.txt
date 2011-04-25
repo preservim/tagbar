@@ -240,7 +240,9 @@ KEY MAPPINGS						*tagbar-keys*
 These mappings are valid in the Tagbar window:
 
 <F1>          Display key mapping help.
-<CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags.
+<CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags
+              or generic headers.
+p             Jump to the tag under the cursor, but stay in the Tagbar window.
 <LeftMouse>   When on a fold icon, open or close the fold depending on the
               current state.
 <2-LeftMouse> Same as <CR>.

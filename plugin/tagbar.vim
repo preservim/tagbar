@@ -23,6 +23,8 @@ if &cp || exists('g:loaded_tagbar')
 endif
 
 " Initialization {{{1
+
+" Basic init {{{2
 if !exists('g:tagbar_ctags_bin')
     if executable('ctags-exuberant')
         let g:tagbar_ctags_bin = 'ctags-exuberant'
@@ -790,9 +792,10 @@ endfunction
 
 " s:MapKeys() {{{2
 function! s:MapKeys()
-    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag()<CR>
+    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
-                                              \ :call <SID>JumpToTag()<CR>
+                                              \ :call <SID>JumpToTag(0)<CR>
+    nnoremap <script> <silent> <buffer> p       :call <SID>JumpToTag(1)<CR>
     nnoremap <script> <silent> <buffer> <LeftRelease>
                 \ <LeftRelease>:call <SID>CheckMouseClick()<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
@@ -2121,7 +2124,7 @@ function! s:HighlightTag()
 endfunction
 
 " s:JumpToTag() {{{2
-function! s:JumpToTag()
+function! s:JumpToTag(stay_in_tagbar)
     let taginfo = s:GetTagInfo(line('.'), 1)
 
     let autoclose = w:autoclose
@@ -2130,6 +2133,7 @@ function! s:JumpToTag()
         return
     endif
 
+    let tagbarwinnr = winnr()
     execute 'wincmd p'
 
     " Mark current position so it can be jumped back to
@@ -2149,7 +2153,10 @@ function! s:JumpToTag()
 
     redraw
 
-    if g:tagbar_autoclose || autoclose
+    if a:stay_in_tagbar
+        call s:HighlightTag()
+        execute tagbarwinnr . 'wincmd w'
+    elseif g:tagbar_autoclose || autoclose
         call s:CloseWindow()
     else
         call s:HighlightTag()
