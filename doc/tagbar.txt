@@ -566,9 +566,13 @@ deffile:    The path to a file with additional ctags definitions (see the
 ctagsbin:  The path to a filetype-specific ctags-compatible program like
 {optional} jsctags. Set it in the same way as |g:tagbar_ctags_bin|. jsctags is
            used automatically if found in your $PATH and does not have to be
-           set in that case.
+           set in that case. If it is not in your path you have to provide the
+           complete configuration and use the "replace" key (see the
+           Tagbar source code for the suggested configuration).
 ctagsargs: The arguments to be passed to the filetype-specific ctags program
-{optional} (without the filename). Not used for the normal ctags program.
+{optional} (without the filename). Make sure you set an option that makes the
+           program output its data on stdout. Not used for the normal ctags
+           program.
 
 
 You then have to assign this dictionary to a variable with the name
