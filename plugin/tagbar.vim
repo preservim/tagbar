@@ -900,9 +900,11 @@ function! s:BaseTag.getPrototype() dict
 endfunction
 
 " s:BaseTag._getPrefix() {{{3
-function! s:BaseTag._getPrefix(fileinfo, typeinfo) dict
+function! s:BaseTag._getPrefix() dict
+    let fileinfo = self.fileinfo
+
     if has_key(self, 'children') && !empty(self.children)
-        if a:fileinfo.tagfolds[self.fields.kind][self.fullpath]
+        if fileinfo.tagfolds[self.fields.kind][self.fullpath]
             let prefix = s:icon_closed
         else
             let prefix = s:icon_open
@@ -1025,16 +1027,19 @@ function! s:NormalTag.isNormalTag() dict
 endfunction
 
 " s:NormalTag.str() {{{3
-function! s:NormalTag.str(fileinfo, typeinfo) dict
+function! s:NormalTag.str() dict
+    let fileinfo = self.fileinfo
+    let typeinfo = s:known_types[fileinfo.ftype]
+
     let suffix = get(self.fields, 'signature', '')
     if has_key(self.fields, 'type')
         let suffix .= ' : ' . self.fields.type
-    elseif has_key(a:typeinfo, 'kind2scope') &&
-         \ has_key(a:typeinfo.kind2scope, self.fields.kind)
-        let suffix .= ' : ' . a:typeinfo.kind2scope[self.fields.kind]
+    elseif has_key(typeinfo, 'kind2scope') &&
+         \ has_key(typeinfo.kind2scope, self.fields.kind)
+        let suffix .= ' : ' . typeinfo.kind2scope[self.fields.kind]
     endif
 
-    return self._getPrefix(a:fileinfo, a:typeinfo) . self.name . suffix . "\n"
+    return self._getPrefix() . self.name . suffix . "\n"
 endfunction
 
 " s:NormalTag.getPrototype() {{{3
@@ -1060,13 +1065,16 @@ function! s:PseudoTag.isPseudoTag() dict
 endfunction
 
 " s:PseudoTag.str() {{{3
-function! s:PseudoTag.str(fileinfo, typeinfo) dict
+function! s:PseudoTag.str() dict
+    let fileinfo = self.fileinfo
+    let typeinfo = s:known_types[fileinfo.ftype]
+
     let suffix = get(self.fields, 'signature', '')
-    if has_key(a:typeinfo.kind2scope, self.fields.kind)
-        let suffix .= ' : ' . a:typeinfo.kind2scope[self.fields.kind]
+    if has_key(typeinfo.kind2scope, self.fields.kind)
+        let suffix .= ' : ' . typeinfo.kind2scope[self.fields.kind]
     endif
 
-    return self._getPrefix(a:fileinfo, a:typeinfo) . self.name . '*' . suffix
+    return self._getPrefix() . self.name . '*' . suffix
 endfunction
 
 " Kind header {{{2
@@ -1255,7 +1263,7 @@ function! s:known_files.has(fname) dict
     return has_key(self._files, a:fname)
 endfunction
 
-" s:known_files.rm() {{{2
+" s:known_files.rm() {{{3
 function! s:known_files.rm(fname) dict
     if s:known_files.has(a:fname)
         call remove(self._files, a:fname)
@@ -1967,9 +1975,9 @@ function! s:PrintKinds(typeinfo, fileinfo)
             " Scoped tags
             for tag in curtags
                 if g:tagbar_compact && first_tag && s:short_help
-                    silent 0put =tag.str(a:fileinfo, a:typeinfo)
+                    silent 0put =tag.str()
                 else
-                    silent  put =tag.str(a:fileinfo, a:typeinfo)
+                    silent  put =tag.str()
                 endif
 
                 " Save the current tagbar line in the tag for easy
@@ -2012,7 +2020,7 @@ function! s:PrintKinds(typeinfo, fileinfo)
 
             if !kindtag.isFolded()
                 for tag in curtags
-                    let str = tag.str(a:fileinfo, a:typeinfo)
+                    let str = tag.str()
                     silent put ='  ' . str
 
                     " Save the current tagbar line in the tag for easy
@@ -2036,7 +2044,7 @@ endfunction
 " s:PrintTag() {{{2
 function! s:PrintTag(tag, depth, fileinfo, typeinfo)
     " Print tag indented according to depth
-    silent put =repeat(' ', a:depth * 2) . a:tag.str(a:fileinfo, a:typeinfo)
+    silent put =repeat(' ', a:depth * 2) . a:tag.str()
 
     " Save the current tagbar line in the tag for easy
     " highlighting access
