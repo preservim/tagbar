@@ -430,8 +430,8 @@ TagbarKind
 TagbarScope
     Tags that define a scope like classes, structs etc.
 
-TagbarScopeType
-    The type of a scope after the colon, for example "class", "struct" etc.
+TagbarType
+    The type of a tag or scope if available.
 
 TagbarSignature
     Function signatures.

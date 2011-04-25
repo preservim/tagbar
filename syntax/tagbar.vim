@@ -40,14 +40,14 @@ else
 endif
 
 syntax match TagbarComment   '^".*'
-syntax match TagbarScopeType ' : \zs.*'
+syntax match TagbarType      ' : \zs.*'
 syntax match TagbarSignature '(.*)'
 syntax match TagbarPseudoID  '\*\ze :'
 
 highlight default link TagbarComment   Comment
 highlight default link TagbarKind      Identifier
 highlight default link TagbarScope     Title
-highlight default link TagbarScopeType Type
+highlight default link TagbarType      Type
 highlight default link TagbarSignature SpecialKey
 highlight default link TagbarPseudoID  NonText
 highlight default link TagbarFoldIcon  Statement
