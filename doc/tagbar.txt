@@ -781,7 +781,7 @@ files.
 2.0 (2011-04-26)
     - Folding now works correctly. Folds will be preserved when leaving the
       Tagbar window and when switching between files. Also tag types can be
-      configured to be folded by default, which is usefult for things like
+      configured to be folded by default, which is useful for things like
       includes and imports.
     - DoctorJS/jsctags and other compatible programs are now supported.
     - All of the highlight groups can now be overridden.
