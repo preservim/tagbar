@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	1.5
+Version:	2.0
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -777,6 +777,18 @@ files.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+2.0 (2011-04-26)
+    - Folding now works correctly. Folds will be preserved when leaving the
+      Tagbar window and when switching between files. Also tag types can be
+      configured to be folded by default, which is usefult for things like
+      includes and imports.
+    - DoctorJS/jsctags and other compatible programs are now supported.
+    - All of the highlight groups can now be overridden.
+    - Added keybinding to quickly jump to next/previous top-level tag.
+    - Added Taglist's "p" keybinding for jumping to a tag without leaving the
+      Tagbar window.
+    - Several bugfixes and other small improvements.
 
 1.5 (2011-03-06)
     - Type definitions can now include a path to a file with the ctags
