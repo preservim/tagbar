@@ -3,7 +3,7 @@
 " Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
 " Website:     http://majutsushi.github.com/tagbar/
-" Version:     2.0
+" Version:     2.0.1
 
 if exists("b:current_syntax")
   finish

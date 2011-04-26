@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	2.0
+Version:	2.0.1
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -779,6 +779,9 @@ files.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+2.0.1 (2011-04-26)
+    - Fix sorting bug when 'ignorecase' is set
 
 2.0 (2011-04-26)
     - Folding now works correctly. Folds will be preserved when leaving the
