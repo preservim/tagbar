@@ -339,7 +339,9 @@ g:tagbar_sort~
 Default: 1
 
 If this option is set the tags are sorted according to their name. If it is
-unset they are sorted according to their order in the source file.
+unset they are sorted according to their order in the source file. Note that
+in the second case Pseudo-tags are always sorted before normal tags of the
+same kind since they don't have a real position in the file.
 
 Example:
 >

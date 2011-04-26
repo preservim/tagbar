@@ -1575,7 +1575,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
     let pattern = join(basic_info[2:], "\t")
     let start   = 2 " skip the slash and the ^
     let end     = strlen(pattern) - 1
-    if pattern[end - 1] == '$'
+    if pattern[end - 1] ==# '$'
         let end -= 1
         let dollar = '\$'
     else
@@ -1650,9 +1650,9 @@ function! s:AddScopedTags(tags, processedtags, parent, depth,
         " or at least a proper grandchild with pseudo-tags in between. If it
         " is a direct child also check for matching scope.
         let is_cur_tag .= ' &&
-        \ (v:val.path == curpath ||
+        \ (v:val.path ==# curpath ||
          \ match(v:val.path, ''\V\^\C'' . curpath . a:typeinfo.sro) == 0) &&
-        \ (v:val.path == curpath ? (v:val.scope == pscope) : 1)'
+        \ (v:val.path ==# curpath ? (v:val.scope ==# pscope) : 1)'
     endif
 
     let curtags = filter(copy(a:tags), is_cur_tag)
@@ -1732,7 +1732,7 @@ function! s:ProcessPseudoTag(curtags, tag, parent, typeinfo, fileinfo)
     let pseudotag.children = [a:tag]
 
     " get all the other (direct) children of the current pseudo-tag
-    let ispseudochild = 'v:val.path == a:tag.path && v:val.scope == a:tag.scope'
+    let ispseudochild = 'v:val.path ==# a:tag.path && v:val.scope ==# a:tag.scope'
     let pseudochildren = filter(copy(a:curtags), ispseudochild)
     if !empty(pseudochildren)
         call filter(a:curtags, '!(' . ispseudochild . ')')
@@ -1819,27 +1819,27 @@ endfunction
 function! s:CompareByKind(tag1, tag2)
     let typeinfo = s:compare_typeinfo
 
-    if typeinfo.kinddict[a:tag1.fields.kind] <
+    if typeinfo.kinddict[a:tag1.fields.kind] <#
      \ typeinfo.kinddict[a:tag2.fields.kind]
         return -1
-    elseif typeinfo.kinddict[a:tag1.fields.kind] >
+    elseif typeinfo.kinddict[a:tag1.fields.kind] >#
          \ typeinfo.kinddict[a:tag2.fields.kind]
         return 1
     else
         " Ignore '~' prefix for C++ destructors to sort them directly under
         " the constructors
-        if a:tag1.name[0] == '~'
+        if a:tag1.name[0] ==# '~'
             let name1 = a:tag1.name[1:]
         else
             let name1 = a:tag1.name
         endif
-        if a:tag2.name[0] == '~'
+        if a:tag2.name[0] ==# '~'
             let name2 = a:tag2.name[1:]
         else
             let name2 = a:tag2.name
         endif
 
-        if name1 <= name2
+        if name1 <=# name2
             return -1
         else
             return 1
@@ -1902,7 +1902,7 @@ function! s:RenderContent(...)
     endif
 
     if !empty(s:known_files.getCurrent()) &&
-     \ fileinfo.fpath == s:known_files.getCurrent().fpath
+     \ fileinfo.fpath ==# s:known_files.getCurrent().fpath
         " We're redisplaying the same file, so save the view
         let saveline = line('.')
         let savecol  = col('.')
@@ -1935,7 +1935,7 @@ function! s:RenderContent(...)
     setlocal nomodifiable
 
     if !empty(s:known_files.getCurrent()) &&
-     \ fileinfo.fpath == s:known_files.getCurrent().fpath
+     \ fileinfo.fpath ==# s:known_files.getCurrent().fpath
         let scrolloff_save = &scrolloff
         set scrolloff=0
 
