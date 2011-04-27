@@ -2177,7 +2177,30 @@ function! s:JumpToTag(stay_in_tagbar)
     endif
 
     let tagbarwinnr = winnr()
+
+    " This elaborate construct will try to switch to the correct
+    " buffer/window; if the buffer isn't currently shown in a window it will
+    " open it in the first window with a non-special buffer in it
     execute 'wincmd p'
+    let filebufnr = bufnr(taginfo.fileinfo.fpath)
+    if bufnr('%') != filebufnr
+        let filewinnr = bufwinnr(filebufnr)
+        if filewinnr != -1
+            execute filewinnr . 'wincmd w'
+        else
+            for i in range(1, winnr('$'))
+                execute i . 'wincmd w'
+                if &buftype == ''
+                    execute 'buffer ' . filebufnr
+                    break
+                endif
+            endfor
+        endif
+        " To make ctrl-w_p work we switch between the Tagbar window and the
+        " correct window once
+        execute tagbarwinnr . 'wincmd w'
+        execute 'wincmd p'
+    endif
 
     " Mark current position so it can be jumped back to
     mark '
