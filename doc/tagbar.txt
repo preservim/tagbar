@@ -417,6 +417,21 @@ Example:
 	let g:tagbar_autoshowtag = 1
 <
 
+							*g:tagbar_systemenc*
+g:tagbar_systemenc~
+Default: value of 'encoding'
+
+This variable is for cases where the character encoding of your operating
+system is different from the one set in Vim, i.e. the 'encoding' option. For
+example, if you use a Simplified Chinese Windows version that has a system
+encoding of "cp936", and you have set 'encoding' to "utf-8", then you would
+have to set this variable to "cp936".
+
+Example:
+>
+	let g:tagbar_systemenc = 'cp936'
+<
+
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS					*tagbar-highlight*
 

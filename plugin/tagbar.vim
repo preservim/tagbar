@@ -91,6 +91,10 @@ if !exists('g:tagbar_autoshowtag')
     let g:tagbar_autoshowtag = 0
 endif
 
+if !exists('g:tagbar_systemenc')
+    let g:tagbar_systemenc = &encoding
+endif
+
 if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
  \ (empty(&termencoding) || &termencoding == 'utf-8')
     let s:icon_closed = '▶'
@@ -1464,15 +1468,34 @@ function! s:ProcessFile(fname, ftype)
         let ctags_bin = g:tagbar_ctags_bin
     endif
 
+    " shellescape() doesn't seem to work on windows for calling a program, so
+    " use the 8.3 form instead
     if has('win32') || has('win64')
         let ctags_bin = fnamemodify(ctags_bin, ':8')
     else
         let ctags_bin = shellescape(ctags_bin)
     endif
+
     let ctags_cmd = ctags_bin . ctags_args . shellescape(a:fname)
+
+    " Needed for cases where 'encoding' is different from the system's
+    " encoding
+    if g:tagbar_systemenc != &encoding
+        let ctags_cmd = iconv(ctags_cmd, &encoding, g:tagbar_systemenc)
+    elseif $LANG != ''
+        let ctags_cmd = iconv(ctags_cmd, &encoding, $LANG)
+    endif
+
+    if ctags_cmd == ''
+        echoerr 'Tagbar: Encoding conversion failed!'
+              \ 'Please make sure your system is set up correctly'
+              \ 'and that Vim is compiled with the "iconv" feature.'
+        return
+    endif
+
     let ctags_output = system(ctags_cmd)
 
-    if v:shell_error
+    if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
         echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
         echomsg 'Executed command: "' . ctags_cmd . '"'
         if !empty(ctags_output)
