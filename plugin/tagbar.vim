@@ -2476,7 +2476,7 @@ endfunction
 function! s:AutoUpdate(fname)
     " Don't do anything if tagbar is not open or if we're in the tagbar window
     let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr == -1 || &filetype == 'tagbar'
+    if tagbarwinnr == -1 || &filetype == 'tagbar' || &filetype == ''
         return
     endif
 
