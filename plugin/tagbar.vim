@@ -2481,12 +2481,12 @@ endfunction
 function! s:AutoUpdate(fname)
     " Don't do anything if tagbar is not open or if we're in the tagbar window
     let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr == -1 || &filetype == 'tagbar' || &filetype == ''
+    if tagbarwinnr == -1 || &filetype == 'tagbar'
         return
     endif
 
     " Only consider the main filetype in cases like 'python.django'
-    let ftype = split(&filetype, '\.')[0]
+    let ftype = get(split(&filetype, '\.'), 0, '')
 
     " Don't do anything if the file isn't supported
     if !s:IsValidFile(a:fname, ftype)
