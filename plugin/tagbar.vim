@@ -1301,6 +1301,31 @@ function! s:OpenWindow(autoclose)
         return
     endif
 
+    " Test whether the ctags binary is actually Exuberant Ctags and not GNU
+    " ctags
+    let ctags_test_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--version')
+    if ctags_test_cmd == ''
+        return
+    endif
+
+    let ctags_test_output = system(ctags_test_cmd)
+
+    if v:shell_error || ctags_test_output !~# 'Exuberant Ctags'
+        echoerr 'Tagbar: Error when executing ctags,'
+              \ 'binary doesn''t seem to be Exuberant Ctags!'
+              \ 'GNU ctags will NOT WORK.'
+              \ 'Please download Exuberant Ctags from ctags.sourceforge.net'
+              \ 'and add it to your $PATH or set g:tagbar_ctags_bin.'
+        echomsg 'Executed command: "' . ctags_test_cmd . '"'
+        if !empty(ctags_test_output)
+            echomsg 'Command output:'
+            for line in split(ctags_test_output, '\n')
+                echomsg line
+            endfor
+        endif
+        return
+    endif
+
     " Expand the Vim window to accomodate for the Tagbar window if requested
     if g:tagbar_expand && !s:window_expanded && has('gui_running')
         let &columns += g:tagbar_width + 1
@@ -1468,28 +1493,8 @@ function! s:ProcessFile(fname, ftype)
         let ctags_bin = g:tagbar_ctags_bin
     endif
 
-    " shellescape() doesn't seem to work on windows for calling a program, so
-    " use the 8.3 form instead
-    if has('win32') || has('win64')
-        let ctags_bin = fnamemodify(ctags_bin, ':8')
-    else
-        let ctags_bin = shellescape(ctags_bin)
-    endif
-
-    let ctags_cmd = ctags_bin . ctags_args . shellescape(a:fname)
-
-    " Needed for cases where 'encoding' is different from the system's
-    " encoding
-    if g:tagbar_systemenc != &encoding
-        let ctags_cmd = iconv(ctags_cmd, &encoding, g:tagbar_systemenc)
-    elseif $LANG != ''
-        let ctags_cmd = iconv(ctags_cmd, &encoding, $LANG)
-    endif
-
+    let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args, a:fname)
     if ctags_cmd == ''
-        echoerr 'Tagbar: Encoding conversion failed!'
-              \ 'Please make sure your system is set up correctly'
-              \ 'and that Vim is compiled with the "iconv" feature.'
         return
     endif
 
@@ -2534,6 +2539,42 @@ function! s:IsValidFile(fname, ftype)
     endif
 
     return 1
+endfunction
+
+" s:EscapeCtagsCmd() {{{2
+function! s:EscapeCtagsCmd(ctags_bin, args, ...)
+    if a:0 == 1
+        let fname = shellescape(a:1)
+    else
+        let fname = ''
+    endif
+
+    " shellescape() doesn't seem to work on windows for calling a program, so
+    " use the 8.3 form instead
+    if has('win32') || has('win64')
+        let ctags_bin = fnamemodify(a:ctags_bin, ':8')
+    else
+        let ctags_bin = shellescape(a:ctags_bin)
+    endif
+
+    let ctags_cmd = ctags_bin . ' ' . a:args . ' ' . fname
+
+    " Needed for cases where 'encoding' is different from the system's
+    " encoding
+    if g:tagbar_systemenc != &encoding
+        let ctags_cmd = iconv(ctags_cmd, &encoding, g:tagbar_systemenc)
+    elseif $LANG != ''
+        let ctags_cmd = iconv(ctags_cmd, &encoding, $LANG)
+    endif
+
+    if ctags_cmd == ''
+        echoerr 'Tagbar: Encoding conversion failed!'
+              \ 'Please make sure your system is set up correctly'
+              \ 'and that Vim is compiled with the "iconv" feature.'
+        return
+    endif
+
+    return ctags_cmd
 endfunction
 
 " s:GetTagInfo() {{{2
