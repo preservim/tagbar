@@ -113,6 +113,12 @@ with doctorjs/jsctags and will use that if present, other programs require
 some configuration (see |tagbar-extend|). If a program does not work even with
 correct configuration please contact me.
 
+Note: jsctags has to be newer than 2011-01-06 since it needs the "-f" option
+to work. Also, the output of jsctags seems to be a bit unreliable at the
+moment (especially regarding line numbers), so if you notice some strange
+behaviour with it please run it manually in a terminal to check whether the
+bug is in jsctags or Tagbar.
+
 ==============================================================================
 2. Requirements						*tagbar-requirements*
 
