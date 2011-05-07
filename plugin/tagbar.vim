@@ -51,6 +51,16 @@ else
     endif
 endif
 
+redir => s:ftype_out
+silent filetype
+redir END
+if s:ftype_out !~# 'detection:ON'
+    echomsg 'Tagbar: Filetype detection is turned off, skipping plugin'
+    unlet s:ftype_out
+    finish
+endif
+unlet s:ftype_out
+
 let g:loaded_tagbar = 1
 
 if !exists('g:tagbar_left')
