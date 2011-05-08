@@ -1471,59 +1471,14 @@ function! s:ProcessFile(fname, ftype)
         return
     endif
 
-    let typeinfo = s:known_types[a:ftype]
+    let ctags_output = s:ExecuteCtags(a:fname, a:ftype)
 
-    if has_key(typeinfo, 'ctagsargs')
-        let ctags_args = ' ' . typeinfo.ctagsargs . ' '
-    else
-        let ctags_args  = ' -f - '
-        let ctags_args .= ' --format=2 '
-        let ctags_args .= ' --excmd=pattern '
-        let ctags_args .= ' --fields=nksSa '
-        let ctags_args .= ' --extra= '
-        let ctags_args .= ' --sort=yes '
-
-        " Include extra type definitions
-        if has_key(typeinfo, 'deffile')
-            let ctags_args .= ' --options=' . typeinfo.deffile . ' '
-        endif
-
-        let ctags_type = typeinfo.ctagstype
-
-        let ctags_kinds = ''
-        for kind in typeinfo.kinds
-            let ctags_kinds .= kind.short
-        endfor
-
-        let ctags_args .= ' --language-force=' . ctags_type .
-                        \ ' --' . ctags_type . '-kinds=' . ctags_kinds . ' '
-    endif
-
-    if has_key(typeinfo, 'ctagsbin')
-        let ctags_bin = expand(typeinfo.ctagsbin)
-    else
-        let ctags_bin = g:tagbar_ctags_bin
-    endif
-
-    let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args, a:fname)
-    if ctags_cmd == ''
-        return
-    endif
-
-    let ctags_output = system(ctags_cmd)
-
-    if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
-        echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
-        echomsg 'Executed command: "' . ctags_cmd . '"'
-        if !empty(ctags_output)
-            echomsg 'Command output:'
-            for line in split(ctags_output, '\n')
-                echomsg line
-            endfor
-        endif
+    if ctags_output == -1
         " put an empty entry into known_files so the error message is only
         " shown once
         call s:known_files.put({}, a:fname)
+        return
+    elseif ctags_output == ''
         return
     endif
 
@@ -1535,6 +1490,8 @@ function! s:ProcessFile(fname, ftype)
     else
         let fileinfo = s:FileInfo.New(a:fname, a:ftype)
     endif
+
+    let typeinfo = s:known_types[a:ftype]
 
     " Parse the ctags output lines
     let rawtaglist = split(ctags_output, '\n\+')
@@ -1597,6 +1554,64 @@ function! s:ProcessFile(fname, ftype)
     call fileinfo.sortTags()
 
     call s:known_files.put(fileinfo)
+endfunction
+
+" s:ExecuteCtags() {{{2
+function! s:ExecuteCtags(fname, ftype)
+    let typeinfo = s:known_types[a:ftype]
+
+    if has_key(typeinfo, 'ctagsargs')
+        let ctags_args = ' ' . typeinfo.ctagsargs . ' '
+    else
+        let ctags_args  = ' -f - '
+        let ctags_args .= ' --format=2 '
+        let ctags_args .= ' --excmd=pattern '
+        let ctags_args .= ' --fields=nksSa '
+        let ctags_args .= ' --extra= '
+        let ctags_args .= ' --sort=yes '
+
+        " Include extra type definitions
+        if has_key(typeinfo, 'deffile')
+            let ctags_args .= ' --options=' . typeinfo.deffile . ' '
+        endif
+
+        let ctags_type = typeinfo.ctagstype
+
+        let ctags_kinds = ''
+        for kind in typeinfo.kinds
+            let ctags_kinds .= kind.short
+        endfor
+
+        let ctags_args .= ' --language-force=' . ctags_type .
+                        \ ' --' . ctags_type . '-kinds=' . ctags_kinds . ' '
+    endif
+
+    if has_key(typeinfo, 'ctagsbin')
+        let ctags_bin = expand(typeinfo.ctagsbin)
+    else
+        let ctags_bin = g:tagbar_ctags_bin
+    endif
+
+    let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args, a:fname)
+    if ctags_cmd == ''
+        return ''
+    endif
+
+    let ctags_output = system(ctags_cmd)
+
+    if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
+        echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
+        echomsg 'Executed command: "' . ctags_cmd . '"'
+        if !empty(ctags_output)
+            echomsg 'Command output:'
+            for line in split(ctags_output, '\n')
+                echomsg line
+            endfor
+        endif
+        return -1
+    endif
+
+    return ctags_output
 endfunction
 
 " s:ParseTagline() {{{2
