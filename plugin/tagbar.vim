@@ -1314,24 +1314,23 @@ function! s:OpenWindow(autoclose)
     endif
 
     " Test whether the ctags binary is actually Exuberant Ctags and not GNU
-    " ctags
-    let ctags_test_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--version')
-    if ctags_test_cmd == ''
+    " ctags (or something else)
+    let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--version')
+    if ctags_cmd == ''
         return
     endif
+    let ctags_output = s:ExecuteCtags(ctags_cmd)
 
-    let ctags_test_output = system(ctags_test_cmd)
-
-    if v:shell_error || ctags_test_output !~# 'Exuberant Ctags'
-        echoerr 'Tagbar: Error when executing ctags,'
-              \ 'binary doesn''t seem to be Exuberant Ctags!'
-              \ 'GNU ctags will NOT WORK.'
+    if v:shell_error || ctags_output !~# 'Exuberant Ctags'
+        echoerr 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
+        echomsg 'GNU ctags will NOT WORK.'
               \ 'Please download Exuberant Ctags from ctags.sourceforge.net'
-              \ 'and add it to your $PATH or set g:tagbar_ctags_bin.'
-        echomsg 'Executed command: "' . ctags_test_cmd . '"'
-        if !empty(ctags_test_output)
+              \ 'and install it in a directory in your $PATH'
+              \ 'or set g:tagbar_ctags_bin.'
+        echomsg 'Executed command: "' . ctags_cmd . '"'
+        if !empty(ctags_output)
             echomsg 'Command output:'
-            for line in split(ctags_test_output, '\n')
+            for line in split(ctags_output, '\n')
                 echomsg line
             endfor
         endif
@@ -1471,7 +1470,7 @@ function! s:ProcessFile(fname, ftype)
         return
     endif
 
-    let ctags_output = s:ExecuteCtags(a:fname, a:ftype)
+    let ctags_output = s:ExecuteCtagsOnFile(a:fname, a:ftype)
 
     if ctags_output == -1
         " put an empty entry into known_files so the error message is only
@@ -1556,8 +1555,8 @@ function! s:ProcessFile(fname, ftype)
     call s:known_files.put(fileinfo)
 endfunction
 
-" s:ExecuteCtags() {{{2
-function! s:ExecuteCtags(fname, ftype)
+" s:ExecuteCtagsOnFile() {{{2
+function! s:ExecuteCtagsOnFile(fname, ftype)
     let typeinfo = s:known_types[a:ftype]
 
     if has_key(typeinfo, 'ctagsargs')
@@ -1597,7 +1596,7 @@ function! s:ExecuteCtags(fname, ftype)
         return ''
     endif
 
-    let ctags_output = system(ctags_cmd)
+    let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
         echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
@@ -2569,22 +2568,26 @@ function! s:IsValidFile(fname, ftype)
 endfunction
 
 " s:EscapeCtagsCmd() {{{2
+" Assemble the ctags command line in a way that all problematic characters are
+" properly escaped and converted to the system's encoding
+" Optional third parameter is a file name to run ctags on
 function! s:EscapeCtagsCmd(ctags_bin, args, ...)
+    if exists('+shellslash')
+        let shellslash_save = &shellslash
+        set noshellslash
+    endif
+
     if a:0 == 1
         let fname = shellescape(a:1)
     else
         let fname = ''
     endif
 
-    " shellescape() doesn't seem to work on windows for calling a program, so
-    " use the 8.3 form instead
-    if has('win32') || has('win64')
-        let ctags_bin = fnamemodify(a:ctags_bin, ':8')
-    else
-        let ctags_bin = shellescape(a:ctags_bin)
-    endif
+    let ctags_cmd = shellescape(a:ctags_bin) . ' ' . a:args . ' ' . fname
 
-    let ctags_cmd = ctags_bin . ' ' . a:args . ' ' . fname
+    if exists('+shellslash')
+        let &shellslash = shellslash_save
+    endif
 
     " Needed for cases where 'encoding' is different from the system's
     " encoding
@@ -2602,6 +2605,37 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...)
     endif
 
     return ctags_cmd
+endfunction
+
+" s:ExecuteCtags() {{{2
+" Execute ctags with necessary shell settings
+" Partially based on the discussion at
+" http://vim.1045645.n5.nabble.com/bad-default-shellxquote-in-Widows-td1208284.html
+function! s:ExecuteCtags(ctags_cmd)
+    if exists('+shellslash')
+        let shellslash_save = &shellslash
+        set noshellslash
+    endif
+
+    if &shell =~ 'cmd\.exe'
+        let shellxquote_save = &shellxquote
+        set shellxquote=\"
+        let shellcmdflag_save = &shellcmdflag
+        set shellcmdflag=/s\ /c
+    endif
+
+    let ctags_output = system(a:ctags_cmd)
+
+    if &shell =~ 'cmd\.exe'
+        let &shellxquote  = shellxquote_save
+        let &shellcmdflag = shellcmdflag_save
+    endif
+
+    if exists('+shellslash')
+        let &shellslash = shellslash_save
+    endif
+
+    return ctags_output
 endfunction
 
 " s:GetTagInfo() {{{2
