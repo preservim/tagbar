@@ -858,7 +858,7 @@ function! s:MapKeys()
 
     nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
     nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
-    nnoremap <script> <silent> <buffer> q    :close<CR>
+    nnoremap <script> <silent> <buffer> q    :call <SID>CloseWindow()<CR>
     nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
 endfunction
 
