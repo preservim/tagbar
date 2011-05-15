@@ -507,7 +507,9 @@ complicated cases.
 
 Tagbar has a flexible mechanism for extending the existing file type (i.e.
 language) definitions. This can be used both to change the settings of the
-existing types and to add completely new types.
+existing types and to add completely new types. A complete configuration
+consists of a type definition for Tagbar in your |vimrc| and optionally a
+language definition for ctags in case you want to add a new language.
 
 Every type definition in Tagbar is a dictionary with the following keys:
 
@@ -598,12 +600,13 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
            program.
 
 
-You then have to assign this dictionary to a variable with the name
+You then have to assign this dictionary to a variable in your vimrc with the
+name
 >
 	g:tagbar_type_{vim filetype}
 <
 For example, for C++ the name would be "g:tagbar_type_cpp". If you don't know
-the vim file type run the following command:
+the vim file type then run the following command:
 >
 	:set filetype?
 <
