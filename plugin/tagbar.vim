@@ -1378,6 +1378,11 @@ function! s:OpenWindow(autoclose)
     endif
 
     setlocal nofoldenable
+    " Reset fold settings in case a plugin set them globally to something
+    " expensive. Apparently 'foldexpr' gets executed even if 'foldenable' is
+    " off, and then for every appended line (like with :put).
+    setlocal foldmethod&
+    setlocal foldexpr&
 
     setlocal statusline=%!TagbarGenerateStatusline()
 
