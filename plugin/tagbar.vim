@@ -25,6 +25,12 @@ endif
 " Initialization {{{1
 
 " Basic init {{{2
+
+if v:version < 700
+    echomsg 'Tagbar: Vim version is too old, Tagbar requires at least 7.0'
+    finish
+endif
+
 if !exists('g:tagbar_ctags_bin')
     if executable('ctags-exuberant')
         let g:tagbar_ctags_bin = 'ctags-exuberant'
