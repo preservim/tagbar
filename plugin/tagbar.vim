@@ -2629,7 +2629,6 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...)
         echoerr 'Tagbar: Encoding conversion failed!'
               \ 'Please make sure your system is set up correctly'
               \ 'and that Vim is compiled with the "iconv" feature.'
-        return
     endif
 
     return ctags_cmd
