@@ -910,10 +910,31 @@ function! s:CheckForExCtags()
             endfor
         endif
         return 0
+    elseif !s:CheckExCtagsVersion(ctags_output)
+        echoerr 'Tagbar: Exuberant Ctags is too old!'
+        echomsg 'You need at least version 5.5 for Tagbar to work.'
+              \ 'Please download a newer version from ctags.sourceforge.net.'
+        echomsg 'Executed command: "' . ctags_cmd . '"'
+        if !empty(ctags_output)
+            echomsg 'Command output:'
+            for line in split(ctags_output, '\n')
+                echomsg line
+            endfor
+        endif
+        return 0
     else
         let s:checked_ctags = 1
         return 1
     endif
+endfunction
+
+" s:CheckExCtagsVersion() {{{2
+function! s:CheckExCtagsVersion(output)
+    let matchlist = matchlist(a:output, '\vExuberant Ctags (\d+)\.(\d+)')
+    let major     = matchlist[1]
+    let minor     = matchlist[2]
+
+    return major >= 6 || (major == 5 && minor >= 5)
 endfunction
 
 " Prototypes {{{1
