@@ -136,6 +136,8 @@ let s:access_symbols = {
     \ 'private'   : '-'
 \ }
 
+autocmd SessionLoadPost * nested call s:RestoreSession()
+
 " s:InitTypes() {{{2
 function! s:InitTypes()
     let s:known_types = {}
@@ -831,6 +833,42 @@ function! s:GetUserTypeDefs()
     return defdict
 endfunction
 
+" s:RestoreSession() {{{2
+" Properly restore Tagbar after a session got loaded
+function! s:RestoreSession()
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1
+        " Tagbar wasn't open in the saved session, nothing to do
+        return
+    else
+        let in_tagbar = 1
+        if winnr() != tagbarwinnr
+            execute tagbarwinnr . 'wincmd w'
+            let in_tagbar = 0
+        endif
+    endif
+
+    if !s:type_init_done
+        call s:InitTypes()
+    endif
+
+    if !s:checked_ctags
+        if !s:CheckForExCtags()
+            return
+        endif
+    endif
+
+    call s:InitWindow(g:tagbar_autoclose)
+
+    " Leave the Tagbar window and come back so the update event gets triggered
+    execute 'wincmd p'
+    execute tagbarwinnr . 'wincmd w'
+
+    if !in_tagbar
+        execute 'wincmd p'
+    endif
+endfunction
+
 " s:MapKeys() {{{2
 function! s:MapKeys()
     nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
@@ -1359,10 +1397,6 @@ endfunction
 
 " s:OpenWindow() {{{2
 function! s:OpenWindow(autoclose)
-    if !s:type_init_done
-        call s:InitTypes()
-    endif
-
     " If the tagbar window is already open jump to it
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr != -1
@@ -1370,6 +1404,10 @@ function! s:OpenWindow(autoclose)
             execute tagbarwinnr . 'wincmd w'
         endif
         return
+    endif
+
+    if !s:type_init_done
+        call s:InitTypes()
     endif
 
     if !s:checked_ctags
@@ -1387,6 +1425,20 @@ function! s:OpenWindow(autoclose)
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
+    call s:InitWindow(a:autoclose)
+
+    execute 'wincmd p'
+
+    " Jump back to the tagbar window if autoclose or autofocus is set. Can't
+    " just stay in it since it wouldn't trigger the update event
+    if g:tagbar_autoclose || a:autoclose || g:tagbar_autofocus
+        let tagbarwinnr = bufwinnr('__Tagbar__')
+        execute tagbarwinnr . 'wincmd w'
+    endif
+endfunction
+
+" s:InitWindow() {{{2
+function! s:InitWindow(autoclose)
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
     setlocal bufhidden=hide
@@ -1412,10 +1464,6 @@ function! s:OpenWindow(autoclose)
     setlocal foldexpr&
 
     setlocal statusline=%!TagbarGenerateStatusline()
-
-    " Variable for saving the current file for functions that are called from
-    " the tagbar window
-    let s:current_file = ''
 
     " Script-local variable needed since compare functions can't
     " take extra arguments
@@ -1443,15 +1491,6 @@ function! s:OpenWindow(autoclose)
     endif
 
     let &cpoptions = cpoptions_save
-
-    execute 'wincmd p'
-
-    " Jump back to the tagbar window if autoclose or autofocus is set. Can't
-    " just stay in it since it wouldn't trigger the update event
-    if g:tagbar_autoclose || a:autoclose || g:tagbar_autofocus
-        let tagbarwinnr = bufwinnr('__Tagbar__')
-        execute tagbarwinnr . 'wincmd w'
-    endif
 endfunction
 
 " s:CloseWindow() {{{2
@@ -2526,7 +2565,6 @@ endfunction
 function! s:CleanUp()
     silent autocmd! TagbarAutoCmds
 
-    unlet s:current_file
     unlet s:is_maximized
     unlet s:compare_typeinfo
     unlet s:short_help
