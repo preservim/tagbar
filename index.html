@@ -77,6 +77,32 @@
             <h2>Download</h2>
             <h3>Stable releases</h3>
 
+            <p>2.1 (2011-05-29)
+            <a href="http://github.com/majutsushi/tagbar/zipball/v2.1">zip</a>
+            <a href="http://github.com/majutsushi/tagbar/tarball/v2.1">tar</a>
+            <ul>
+                <li>Make Tagbar work in (hopefully) all cases under
+                Windows</li>
+                <li> Handle cases where 'encoding' is different from system
+                encoding, for example on a Chinese Windows with 'encoding' set
+                to "utf-8" (see manual for details in case it doesn't work
+                out-of-the-box)</li>
+                <li> Fixed a bug with the handling of subtypes like
+                "python.django" </li>
+                <li> If a session got saved with Tagbar open it now gets
+                restored properly </li>
+                <li> Locally reset foldmethod/foldexpr in case foldexpr got
+                set to something expensive globally </li>
+                <li> Tagbar now tries hard to go to the correct window when
+                jumping to a tag </li>
+                <li> Explain some possible issues with the current jsctags
+                version in the manual </li>
+                <li> Explicitly check for some possible configuration problems
+                to be able to give better feedback </li>
+                <li> A few other small fixes </li>
+            </ul>
+            </p>
+
             <p>2.0.1 (2011-04-26)
             <a href="http://github.com/majutsushi/tagbar/zipball/v2.0.1">zip</a>
             <a href="http://github.com/majutsushi/tagbar/tarball/v2.0.1">tar</a>
