@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	2.0.1
+Version:	2.1
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -803,6 +803,22 @@ files.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+2.1 (2011-05-29)
+    - Make Tagbar work in (hopefully) all cases under Windows
+    - Handle cases where 'encoding' is different from system encoding, for
+      example on a Chinese Windows with 'encoding' set to "utf-8" (see manual
+      for details in case it doesn't work out-of-the-box)
+    - Fixed a bug with the handling of subtypes like "python.django"
+    - If a session got saved with Tagbar open it now gets restored properly
+    - Locally reset foldmethod/foldexpr in case foldexpr got set to something
+      expensive globally
+    - Tagbar now tries hard to go to the correct window when jumping to a tag
+    - Explain some possible issues with the current jsctags version in the
+      manual
+    - Explicitly check for some possible configuration problems to be able to
+      give better feedback
+    - A few other small fixes
 
 2.0.1 (2011-04-26)
     - Fix sorting bug when 'ignorecase' is set
