@@ -57,6 +57,7 @@ else
     endif
 endif
 
+
 redir => s:ftype_out
 silent filetype
 redir END
@@ -115,6 +116,10 @@ endif
 
 if !exists('g:tagbar_systemenc')
     let g:tagbar_systemenc = &encoding
+endif
+
+if !exists('g:tagbar_ctags_use_tagfiles')
+    let g:tagbar_ctags_use_tagfiles = 0
 endif
 
 if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
@@ -1686,7 +1691,14 @@ function! s:ExecuteCtagsOnFile(fname, ftype)
         let ctags_bin = g:tagbar_ctags_bin
     endif
 
-    let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args, a:fname)
+    let tagfiles_file=getcwd() . '/tag_files'
+    if g:tagbar_ctags_use_tagfiles && filereadable(tagfiles_file)
+        let ctags_args .= ' -L ' . tagfiles_file . ' '
+        let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args)
+    else
+        let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args, a:fname)
+    endif
+
     if ctags_cmd == ''
         return ''
     endif
