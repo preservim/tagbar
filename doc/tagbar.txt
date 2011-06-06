@@ -262,7 +262,8 @@ These mappings are valid in the Tagbar window:
 p             Jump to the tag under the cursor, but stay in the Tagbar window.
 <LeftMouse>   When on a fold icon, open or close the fold depending on the
               current state.
-<2-LeftMouse> Same as <CR>.
+<2-LeftMouse> Same as <CR>. See |g:tagbar_singleclick| if you want to use a
+              single- instead of a double-click.
 <Space>       Display the prototype of the current tag (i.e. the line defining
               it) in the command line.
 +/zo          Open the fold under the cursor.
@@ -377,6 +378,18 @@ Tagbar window if using a GUI version of Vim.
 Example:
 >
 	let g:tagbar_expand = 1
+<
+
+							*g:tagbar_singleclick*
+g:tagbar_singleclick~
+Default: 0
+
+If this option is set then a single- instead of a double-click is used to jump
+to the tag definition.
+
+Example:
+>
+	let g:tagbar_singleclick = 1
 <
 
 							*g:tagbar_foldlevel*

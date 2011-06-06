@@ -97,6 +97,10 @@ if !exists('g:tagbar_expand')
     let g:tagbar_expand = 0
 endif
 
+if !exists('g:tagbar_singleclick')
+    let g:tagbar_singleclick = 0
+endif
+
 if !exists('g:tagbar_foldlevel')
     let g:tagbar_foldlevel = 99
 endif
@@ -2788,6 +2792,8 @@ function! s:CheckMouseClick()
         call s:CloseFold()
     elseif (match(line, s:icon_closed . '[-+ ]') + 1) == curcol
         call s:OpenFold()
+    elseif g:tagbar_singleclick
+        call s:JumpToTag(0)
     endif
 endfunction
 
