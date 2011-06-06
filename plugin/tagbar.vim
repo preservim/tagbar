@@ -875,12 +875,18 @@ endfunction
 
 " s:MapKeys() {{{2
 function! s:MapKeys()
-    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
     nnoremap <script> <silent> <buffer> <2-LeftMouse>
                                               \ :call <SID>JumpToTag(0)<CR>
-    nnoremap <script> <silent> <buffer> p       :call <SID>JumpToTag(1)<CR>
     nnoremap <script> <silent> <buffer> <LeftRelease>
-                \ <LeftRelease>:call <SID>CheckMouseClick()<CR>
+                                 \ <LeftRelease>:call <SID>CheckMouseClick()<CR>
+
+    inoremap <script> <silent> <buffer> <2-LeftMouse>
+                                              \ <C-o>:call <SID>JumpToTag(0)<CR>
+    inoremap <script> <silent> <buffer> <LeftRelease>
+                            \ <LeftRelease><C-o>:call <SID>CheckMouseClick()<CR>
+
+    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
+    nnoremap <script> <silent> <buffer> p       :call <SID>JumpToTag(1)<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
 
     nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
