@@ -18,6 +18,10 @@
 "              use of this software.
 " ============================================================================
 
+if has('multi_byte')
+    scriptencoding utf-8
+endif
+
 if &cp || exists('g:loaded_tagbar')
     finish
 endif
