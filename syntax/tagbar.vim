@@ -5,6 +5,10 @@
 " Website:     http://majutsushi.github.com/tagbar/
 " Version:     2.1
 
+if has('multi_byte')
+    scriptencoding utf-8
+endif
+
 if exists("b:current_syntax")
   finish
 endif
