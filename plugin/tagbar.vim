@@ -1772,7 +1772,13 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
     let taginfo.fileinfo = a:fileinfo
 
     " Needed for folding
-    call taginfo.initFoldState()
+    try
+        call taginfo.initFoldState()
+    catch /^Vim(\a\+):E716:/ " 'Key not present in Dictionary'
+        " The tag has a 'kind' that doesn't exist in the type definition
+        echoerr 'Your ctags and Tagbar configurations are out of sync!'
+              \ 'Please read '':help tagbar-extend''.'
+    endtry
 
     return taginfo
 endfunction
