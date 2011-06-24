@@ -21,7 +21,7 @@ Contents					*tagbar* *tagbar-contents*
 	      Highlight colours ............. |tagbar-highlight|
 	      Automatically opening Tagbar .. |tagbar-autoopen|
 	 6. Extending Tagbar ................ |tagbar-extend|
-	 7. Bugs and limitations ............ |tagbar-bugs|
+	 7. Troubleshooting & Known issues .. |tagbar-issues|
 	 8. History ......................... |tagbar-history|
 	 9. Todo ............................ |tagbar-todo|
 	10. Credits ......................... |tagbar-credits|
@@ -113,11 +113,7 @@ with doctorjs/jsctags and will use that if present, other programs require
 some configuration (see |tagbar-extend|). If a program does not work even with
 correct configuration please contact me.
 
-Note: jsctags has to be newer than 2011-01-06 since it needs the "-f" option
-to work. Also, the output of jsctags seems to be a bit unreliable at the
-moment (especially regarding line numbers), so if you notice some strange
-behaviour with it please run it manually in a terminal to check whether the
-bug is in jsctags or Tagbar.
+Note: Please check |tagbar-issues| for some possible issues with jsctags.
 
 ==============================================================================
 2. Requirements						*tagbar-requirements*
@@ -548,7 +544,7 @@ kinds:      A list of the "language kinds" that should be listed in Tagbar,
 <           would list all the function definitions in a file under the header
             "functions" and fold them.
 sro:        The scope resolution operator. For example, in C++ it is "::" and
-            in Java it is ".". If in doubt run ctags as shown above and check
+            in Java it is ".". If in doubt run ctags as shown below and check
             the output.
 kind2scope: A dictionary describing the mapping of tag kinds (in their
             one-character representation) to the scopes their children will
@@ -565,8 +561,8 @@ kind2scope: A dictionary describing the mapping of tag kinds (in their
                 private:
                     int var;
                 };
-<           We then run ctags in the followin way: >
-                ctags -f - --format=2 --excmd=pattern --fields=nksazSmt --extra= test.cpp
+<           We then run ctags in the following way: >
+                ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt test.cpp
 <           Then the output for the variable "var" would look like this: >
                 var	tmp.cpp /^    int var;$/;"	kind:m	line:11	class:Foo	access:private
 <           This shows that the scope name for an entry in a C++ class is
@@ -627,7 +623,8 @@ and vim will display the file type of the current buffer.
 
 Example: C++~
 Here is a complete example that shows the default configuration for C++ as
-used in Tagbar.
+used in Tagbar. This is just for illustration purposes since user
+configurations will usually be less complicated.
 >
 	let g:tagbar_type_cpp = {
 	    \ 'ctagstype' : 'c++',
@@ -689,7 +686,7 @@ the order of enums and typedefs, you would do it like this:
 	    \ ]
 	\ }
 <
-Compare with the complete example above to see the exact change.
+Compare with the complete example above to see the difference.
 
 Adding a definition for a new language/file type~
 In order to be able to add a new language to Tagbar you first have to create a
@@ -769,14 +766,32 @@ Tagbar should now be able to show the sections and other tags from LaTeX
 files.
 
 ==============================================================================
-7. Bugs and limitations					*tagbar-bugs*
+7. Troubleshooting & Known issues			*tagbar-issues*
+
+As a general rule, if the tag information displayed by Tagbar is wrong (for
+example, a method doesn't show up or is in the wrong place) you should first
+try running ctags manually to see whether ctags reports the wrong information
+or whether that information is correct and Tagbar does something wrong. To run
+ctags manually execute the following command in a terminal:
+>
+	ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt myfile
+<
+If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
+value here instead of simply "ctags".
+
+
+  - jsctags has to be newer than 2011-01-06 since it needs the "-f" option to
+    work. Also, the output of jsctags seems to be a bit unreliable at the
+    moment (especially regarding line numbers), so if you notice some strange
+    behaviour with it please run it manually in a terminal to check whether
+    the bug is in jsctags or Tagbar.
 
   - Nested pseudo-tags cannot be properly parsed since only the direct parent
     scope of a tag gets assigned a type, the type of the grandparents is not
     reported by ctags (assuming the grandparents don't have direct, real
     children).
 
-    For example, if we have a C++ with the following content:
+    For example, if we have a C++ file with the following content:
 >
         foo::Bar::init()
         {
