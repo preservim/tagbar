@@ -2854,12 +2854,8 @@ function! tagbar#ToggleWindow()
     call s:ToggleWindow()
 endfunction
 
-function! tagbar#OpenWindow()
-    call s:OpenWindow(0)
-endfunction
-
-function! tagbar#OpenWindow()
-    call s:OpenWindow(1)
+function! tagbar#OpenWindow(...)
+    call s:OpenWindow(a:1)
 endfunction
 
 function! tagbar#CloseWindow()
