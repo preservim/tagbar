@@ -5,9 +5,7 @@
 " Website:     http://majutsushi.github.com/tagbar/
 " Version:     2.1
 
-if has('multi_byte')
-    scriptencoding utf-8
-endif
+scriptencoding utf-8
 
 if exists("b:current_syntax")
   finish
@@ -62,3 +60,5 @@ highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
 highlight default TagbarAccessPrivate   guifg=Red   ctermfg=Red
 
 let b:current_syntax = "tagbar"
+
+" vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
