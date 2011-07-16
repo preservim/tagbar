@@ -1380,8 +1380,13 @@ function! s:OpenWindow(autoclose)
         let s:window_expanded = 1
     endif
 
+    let eventignore_save = &eventignore
+    set eventignore=all
+
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
+
+    let &eventignore = eventignore_save
 
     call s:InitWindow(a:autoclose)
 
@@ -2284,6 +2289,9 @@ function! s:JumpToTag(stay_in_tagbar)
 
     let tagbarwinnr = winnr()
 
+    let eventignore_save = &eventignore
+    set eventignore=all
+
     " This elaborate construct will try to switch to the correct
     " buffer/window; if the buffer isn't currently shown in a window it will
     " open it in the first window with a non-special buffer in it
@@ -2341,6 +2349,8 @@ function! s:JumpToTag(stay_in_tagbar)
     endif
 
     redraw
+
+    let &eventignore = eventignore_save
 
     if a:stay_in_tagbar
         call s:HighlightTag()
