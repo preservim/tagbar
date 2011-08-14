@@ -2341,6 +2341,14 @@ function! s:JumpToTag(stay_in_tagbar)
         endwhile
     endif
 
+    " If the tag is on a different line after unsaved changes update the tag
+    " and file infos/objects
+    let curline = line('.')
+    if taginfo.fields.line != curline
+        let taginfo.fields.line = curline
+        let taginfo.fileinfo.fline[curline] = taginfo
+    endif
+
     " Center the tag in the window
     normal! z.
 
