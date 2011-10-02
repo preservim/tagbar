@@ -36,6 +36,12 @@ if !exists('g:tagbar_ctags_bin')
         let g:tagbar_ctags_bin = 'exuberant-ctags'
     elseif executable('exctags')
         let g:tagbar_ctags_bin = 'exctags'
+    elseif has('macunix') && executable('/usr/local/bin/ctags')
+        " Homebrew default location
+        let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
+    elseif has('macunix') && executable('/opt/local/bin/ctags')
+        " Macports default location
+        let g:tagbar_ctags_bin = '/opt/local/bin/ctags'
     elseif executable('ctags')
         let g:tagbar_ctags_bin = 'ctags'
     elseif executable('ctags.exe')
