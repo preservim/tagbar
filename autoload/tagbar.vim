@@ -90,6 +90,8 @@ let s:access_symbols = {
 
 let g:loaded_tagbar = 1
 
+let s:last_highlight_tline = 0
+
 " s:InitTypes() {{{2
 function! s:InitTypes()
     let s:known_types = {}
@@ -2059,6 +2061,9 @@ function! s:RenderContent(...)
         " window by jumping to the top after drawing
         execute 1
         call winline()
+
+        " Invalidate highlight cache from old file
+        let s:last_highlight_tline = 0
     endif
 
     let &lazyredraw  = lazyredraw_save
@@ -2233,6 +2238,15 @@ function! s:HighlightTag()
     let tag = s:GetNearbyTag()
     if !empty(tag)
         let tagline = tag.tline
+    endif
+
+    " Don't highlight the tag again if it's the same one as last time.
+    " This prevents the Tagbar window from jumping back after scrolling with
+    " the mouse.
+    if tagline == s:last_highlight_tline
+        return
+    else
+        let s:last_highlight_tline = tagline
     endif
 
     let eventignore_save = &eventignore
