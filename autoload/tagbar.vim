@@ -1477,6 +1477,7 @@ function! s:CloseWindow()
         if winbufnr(2) != -1
             " Other windows are open, only close the tagbar one
             close
+            wincmd p
         endif
     else
         " Go to the tagbar window, close it and then come back to the
