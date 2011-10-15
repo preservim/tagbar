@@ -53,7 +53,14 @@ if !exists('g:tagbar_ctags_bin')
         finish
     endif
 else
+    " reset 'wildignore' temporarily in case *.exe is included in it
+    let wildignore_save = &wildignore
+    set wildignore&
+
     let g:tagbar_ctags_bin = expand(g:tagbar_ctags_bin)
+
+    let &wildignore = wildignore_save
+
     if !executable(g:tagbar_ctags_bin)
         echomsg 'Tagbar: Exuberant ctags not found in specified place,'
               \ 'skipping plugin'
@@ -1647,7 +1654,11 @@ function! s:ExecuteCtagsOnFile(fname, ftype)
     endif
 
     if has_key(typeinfo, 'ctagsbin')
+        " reset 'wildignore' temporarily in case *.exe is included in it
+        let wildignore_save = &wildignore
+        set wildignore&
         let ctags_bin = expand(typeinfo.ctagsbin)
+        let &wildignore = wildignore_save
     else
         let ctags_bin = g:tagbar_ctags_bin
     endif
