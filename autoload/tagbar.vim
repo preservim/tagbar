@@ -1439,6 +1439,7 @@ function! s:InitWindow(autoclose)
     endif
 
     setlocal nofoldenable
+    setlocal foldcolumn=0
     " Reset fold settings in case a plugin set them globally to something
     " expensive. Apparently 'foldexpr' gets executed even if 'foldenable' is
     " off, and then for every appended line (like with :put).
