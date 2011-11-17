@@ -887,6 +887,10 @@ function! s:CreateAutocommands()
         autocmd BufUnload  __Tagbar__ call s:CleanUp()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
+        autocmd BufWritePost *
+            \ if line('$') < g:tagbar_updateonsave_maxlines |
+                \ call s:AutoUpdate(fnamemodify(expand('<afile>'), ':p')) |
+            \ endif
         autocmd BufEnter,CursorHold * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
         autocmd BufDelete * call

@@ -432,6 +432,22 @@ Example:
 	let g:tagbar_autoshowtag = 1
 <
 
+						*g:tagbar_updateonsave_maxlines*
+g:tagbar_updateonsave_maxlines~
+Default: 5000
+
+If the current file has fewer lines than the value of this variable, Tagbar
+will update immediately after saving the file. If it is longer then the update
+will only happen on the |CursorHold| event and when switching buffers (or
+windows). This is to prevent the time it takes to save a large file from
+becoming annoying in case you have a slow computer. If you have a fast
+computer you can set it to a higher value.
+
+Example:
+>
+	let g:tagbar_updateonsave_maxlines = 10000
+<
+
 							*g:tagbar_systemenc*
 g:tagbar_systemenc~
 Default: value of 'encoding'
