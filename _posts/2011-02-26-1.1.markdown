@@ -1,0 +1,6 @@
+---
+title: 1.1
+---
+
+-   Don't lose syntax highlighting when ':syntax enable' is called
+-   Allow expanding the Vim window when Tagbar is opened

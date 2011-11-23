@@ -1,0 +1,14 @@
+---
+title: 2.0
+---
+
+-   Folding now works correctly. Folds will be preserved when leaving the
+    Tagbar window and when switching between files. Also tag types can be
+    configured to be folded by default, which is useful for things like
+    includes and imports.
+-   DoctorJS/jsctags and other compatible programs are now supported.
+-   All of the highlight groups can now be overridden.
+-   Added keybinding to quickly jump to next/previous top-level tag.
+-   Added Taglist's "p" keybinding for jumping to a tag without leaving the
+    Tagbar window.
+-   Several bugfixes and other small improvements.

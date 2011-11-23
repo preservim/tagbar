@@ -1,0 +1,18 @@
+---
+title: 2.1
+---
+
+-   Make Tagbar work in (hopefully) all cases under Windows
+-   Handle cases where 'encoding' is different from system encoding, for
+    example on a Chinese Windows with 'encoding' set to "utf-8" (see manual
+    for details in case it doesn't work out-of-the-box)
+-   Fixed a bug with the handling of subtypes like "python.django"
+-   If a session got saved with Tagbar open it now gets restored properly
+-   Locally reset foldmethod/foldexpr in case foldexpr got set to something
+    expensive globally
+-   Tagbar now tries hard to go to the correct window when jumping to a tag
+-   Explain some possible issues with the current jsctags version in the
+    manual
+-   Explicitly check for some possible configuration problems to be able to
+    give better feedback
+-   A few other small fixes

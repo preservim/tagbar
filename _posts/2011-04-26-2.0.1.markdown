@@ -1,0 +1,5 @@
+---
+title: 2.0.1
+---
+
+-   Fixed sorting bug when 'ignorecase' is set

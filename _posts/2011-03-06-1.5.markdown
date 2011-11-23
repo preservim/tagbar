@@ -1,0 +1,14 @@
+---
+title: 1.5
+---
+
+-   Type definitions can now include a path to a file with the ctags
+    definition. This is especially useful for ftplugins that can now ship with
+    a complete ctags and Tagbar configuration without requiring user
+    intervention. Thanks to Jan Christoph Ebersbach for the suggestion.
+-   Added autofocus setting by Taybin Rutkin. This will put the cursor in the
+    Tagbar window when it is opened.
+-   The "scopes" field is no longer needed in type definitions, the
+    information is already there in "scope2kind". Existing definitions will be
+    ignored.
+-   Some fixes and improvements related to redrawing and window switching.

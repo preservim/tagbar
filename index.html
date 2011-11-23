@@ -1,194 +1,77 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset='utf-8'>
+---
+layout: default
+title: Tagbar, the Vim class outline viewer
+---
 
-        <title>Tagbar, the Vim class outline viewer</title>
+<a href="http://github.com/majutsushi/tagbar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
-        <style type="text/css">
-            body {
-                margin-top: 1.0em;
-                background-color: #333333;
-                font-family: "Helvetica,Arial,FreeSans";
-                color: #ffffff;
-            }
-            #container {
-                margin: 0 auto;
-                width: 700px;
-            }
-            h1 { font-size: 3.8em; color: #cccccc; margin-bottom: 3px; }
-            h1 .small { font-size: 0.4em; }
-            h1 a { text-decoration: none }
-            h2 { font-size: 1.5em; color: #cccccc; }
-            h3 { text-align: left; color: #cccccc; }
-            a { color: #cccccc; }
-            .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-            .download { float: right; }
-            pre { background: #000; color: #fff; padding: 15px;}
-            hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-            .footer { text-align:center; padding-top:30px; font-style: italic; }
-        </style>
-    </head>
+<div id="container">
 
-    <body>
-        <a href="http://github.com/majutsushi/tagbar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+    <h1><a href="http://github.com/majutsushi/tagbar">Tagbar</a>
+        <span class="small">by <a href="http://github.com/majutsushi">Jan Larres</a></span></h1>
 
-        <div id="container">
+    <div class="description">
+        Vim plugin that displays tags in a window, ordered by class etc.
+    </div>
 
-            <h1><a href="http://github.com/majutsushi/tagbar">Tagbar</a>
-                <span class="small">by <a href="http://github.com/majutsushi">Jan Larres</a></span></h1>
+    <p>Tagbar is a vim plugin for browsing the tags of source code
+    files. It provides a sidebar that displays the ctags-generated
+    tags of the current file, ordered by their scope. This means that
+    for example methods in C++ are displayed under the class they are
+    defined in.</p>
 
-            <div class="description">
-                Vim plugin that displays tags in a window, ordered by class etc.
-            </div>
+    <h2>Dependencies</h2>
+    <p><a href="http://www.vim.org/">Vim 7.0</a><br/>
+    <a href="http://ctags.sourceforge.net/">Exuberant ctags 5.5</a></p>
 
-            <p>Tagbar is a vim plugin for browsing the tags of source code
-            files. It provides a sidebar that displays the ctags-generated
-            tags of the current file, ordered by their scope. This means that
-            for example methods in C++ are displayed under the class they are
-            defined in.</p>
+    <h2>Install</h2>
+    <p>Extract the archive or clone the repository into a directory in
+    your 'runtimepath' or use <a href="http://www.vim.org/scripts/script.php?script_id=2332">pathogen</a>.
+    Don't forget to run :helptags if you don't use pathogen.<br/><br/>
+    If the ctags executable is not installed in one of the directories
+    in your $PATH environment variable you have to set the
+    g:tagbar_ctags_bin variable, see the documentation for more info.</p>
 
-            <h2>Dependencies</h2>
-            <p><a href="http://www.vim.org/">Vim 7.0</a><br/>
-            <a href="http://ctags.sourceforge.net/">Exuberant ctags 5.5</a></p>
+    <h2>Screenshots</h2>
+    <a href="tagbar1.png"><img src="tagbar1_t.png"/></a>
+    <a href="tagbar2.png"><img src="tagbar2_t.png"/></a>
+    <a href="tagbar3.png"><img src="tagbar3_t.png"/></a>
 
-            <h2>Install</h2>
-            <p>Extract the archive or clone the repository into a directory in
-            your 'runtimepath' or use <a href="http://www.vim.org/scripts/script.php?script_id=2332">pathogen</a>.
-            Don't forget to run :helptags if you don't use pathogen.<br/><br/>
-            If the ctags executable is not installed in one of the directories
-            in your $PATH environment variable you have to set the
-            g:tagbar_ctags_bin variable, see the documentation for more info.</p>
+    <h2>License</h2>
+    <p>Vim license</p>
 
-            <h2>Screenshots</h2>
-            <a href="tagbar1.png"><img src="tagbar1_t.png"/></a>
-            <a href="tagbar2.png"><img src="tagbar2_t.png"/></a>
-            <a href="tagbar3.png"><img src="tagbar3_t.png"/></a>
+    <h2>Authors</h2>
+    <p>Jan Larres (jan@majutsushi.net)</p>
 
-            <h2>License</h2>
-            <p>Vim license</p>
+<!--    <h2>Contact</h2>-->
+<!--    <p> (jan@majutsushi.net)<br/>      </p>-->
 
-            <h2>Authors</h2>
-            <p>Jan Larres (jan@majutsushi.net)</p>
+    <h2>Download</h2>
+    <h3>Stable releases</h3>
 
-<!--            <h2>Contact</h2>-->
-<!--            <p> (jan@majutsushi.net)<br/>      </p>-->
+    {% for post in site.posts %}
 
-            <h2>Download</h2>
-            <h3>Stable releases</h3>
+    {{ post.title }} ({{ post.date | date:"%Y-%m-%d" }})
+    <a href="http://github.com/majutsushi/tagbar/zipball/v{{ post.title }}">zip</a>
+    <a href="http://github.com/majutsushi/tagbar/tarball/v{{ post.title }}">tar</a>
 
-            <p>2.1 (2011-05-29)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v2.1">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v2.1">tar</a>
-            <ul>
-                <li>Make Tagbar work in (hopefully) all cases under
-                Windows</li>
-                <li> Handle cases where 'encoding' is different from system
-                encoding, for example on a Chinese Windows with 'encoding' set
-                to "utf-8" (see manual for details in case it doesn't work
-                out-of-the-box)</li>
-                <li> Fixed a bug with the handling of subtypes like
-                "python.django" </li>
-                <li> If a session got saved with Tagbar open it now gets
-                restored properly </li>
-                <li> Locally reset foldmethod/foldexpr in case foldexpr got
-                set to something expensive globally </li>
-                <li> Tagbar now tries hard to go to the correct window when
-                jumping to a tag </li>
-                <li> Explain some possible issues with the current jsctags
-                version in the manual </li>
-                <li> Explicitly check for some possible configuration problems
-                to be able to give better feedback </li>
-                <li> A few other small fixes </li>
-            </ul>
-            </p>
+        {{ post.content }}
 
-            <p>2.0.1 (2011-04-26)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v2.0.1">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v2.0.1">tar</a>
-            <ul>
-                <li>Fixed sorting bug when 'ignorecase' is set</li>
-            </ul>
-            </p>
+    {% endfor %}
 
-            <p>2.0 (2011-04-26)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v2.0">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v2.0">tar</a>
-            <ul>
-                <li>Folding now works correctly. Folds will be preserved when
-                leaving the Tagbar window and when switching between files.
-                Also tag types can be configured to be folded by default,
-                which is useful for things like includes and imports.</li>
-                <li> DoctorJS/jsctags and other compatible programs are now
-                supported. </li>
-                <li> All of the highlight groups can now be overridden. </li>
-                <li> Added keybinding to quickly jump to next/previous
-                top-level tag. </li>
-                <li> Added Taglist's "p" keybinding for jumping to a tag
-                without leaving the Tagbar window. </li>
-                <li> Several bugfixes and other small improvements. </li>
-            </ul>
-            </p>
+    <h3>Latest source</h3>
+    <p>
+    Download as:
+    <a href="http://github.com/majutsushi/tagbar/zipball/master">zip</a>
+    <a href="http://github.com/majutsushi/tagbar/tarball/master">tar</a>
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+    by running:
+        <pre>$ git clone git://github.com/majutsushi/tagbar</pre>
+    </p>
 
-            <p>1.5 (2011-03-06)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v1.5">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v1.5">tar</a>
-            <ul>
-                <li>Type definitions can now include a path to a file with the
-                ctags definition. This is especially useful for ftplugins that can now ship
-                with a complete ctags and Tagbar configuration without requiring user
-                intervention. Thanks to Jan Christoph Ebersbach for the suggestion.</li>
-                <li>Added autofocus setting by Taybin Rutkin. This will put the
-                cursor in the Tagbar window when it is opened.</li>
-                <li>The "scopes" field is no longer needed in type definitions,
-                the information is already there in "scope2kind". Existing definitions will be
-                ignored.</li>
-                <li>Some fixes and improvements related to redrawing and window
-                switching.</li>
-            </ul>
-            </p>
+    <div class="footer">
+        get the source code on GitHub : <a href="http://github.com/majutsushi/tagbar">majutsushi/tagbar</a>
+    </div>
 
-            <p>1.2 (2011-02-28)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v1.2">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v1.2">tar</a>
-            <ul>
-                <li>Fix typo in Ruby definition</li>
-            </ul>
-            </p>
-
-            <p>1.1 (2011-02-26)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v1.1">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v1.1">tar</a>
-            <ul>
-                <li>Don't lose syntax highlighting when ':syntax enable' is called</li>
-                <li>Allow expanding the Vim window when Tagbar is opened</li>
-            </ul>
-            </p>
-
-            <p>1.0 (2011-02-23)
-            <a href="http://github.com/majutsushi/tagbar/zipball/v1.0">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/v1.0">tar</a>
-            <ul>
-                <li>Initial release</li>
-            </ul>
-            </p>
-
-            <h3>Latest source</h3>
-            <p>
-            Download as:
-            <a href="http://github.com/majutsushi/tagbar/zipball/master">zip</a>
-            <a href="http://github.com/majutsushi/tagbar/tarball/master">tar</a>
-            </p>
-            <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-            by running:
-                <pre>$ git clone git://github.com/majutsushi/tagbar</pre>
-            </p>
-
-            <div class="footer">
-                get the source code on GitHub : <a href="http://github.com/majutsushi/tagbar">majutsushi/tagbar</a>
-            </div>
-
-        </div>
-
-    </body>
-</html>
+</div>
