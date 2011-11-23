@@ -891,7 +891,7 @@ function! s:CreateAutocommands()
             \ if line('$') < g:tagbar_updateonsave_maxlines |
                 \ call s:AutoUpdate(fnamemodify(expand('<afile>'), ':p')) |
             \ endif
-        autocmd BufEnter,CursorHold * call
+        autocmd BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
         autocmd BufDelete * call
                     \ s:CleanupFileinfo(fnamemodify(expand('<afile>'), ':p'))
