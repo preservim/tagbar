@@ -225,9 +225,22 @@ displayed when the cursor stays on a tag for 'updatetime' milliseconds.
 ------------------------------------------------------------------------------
 COMMANDS						*tagbar-commands*
 
-:TagbarOpen
-    Open the Tagbar if it is closed. In case it is already open jump to it.
+:TagbarOpen [{flags}]
+    Open the Tagbar window if it is closed.
 
+    Additional behaviour can be specified with the optional {flags} argument.
+    It is a string which can contain these character flags:
+    'f'   Jump to Tagbar window when opening (just as if |g:tagbar_autofocus|
+          were set to 1)
+    'j'   Jump to Tagbar window if already open
+    'c'   Close Tagbar on tag selection (just as if |g:tagbar_autoclose| were
+          set to 1, but doesn't imply 'f')
+
+    For example, the following command would always jump to the Tagbar window,
+    opening it first if necessary, but keep it open after selecting a tag
+    (unless |g:tagbar_autoclose| is set): >
+        :TagbarOpen fj
+<
 :TagbarClose
     Close the Tagbar window if it is open.
 
@@ -235,11 +248,11 @@ COMMANDS						*tagbar-commands*
     Open the Tagbar window if it is closed or close it if it is open.
 
 :TagbarOpenAutoClose
-    Open the Tagbar window and close it on tag selection, regardless of the
-    setting of |g:tagbar_autoclose|. If it was already open jump to it.
+    Open the Tagbar window, jump to it and close it on tag selection. This is
+    an alias for ":TagbarOpen fc".
 
-:TagbarSetFoldlevel [number]
-    Set the foldlevel of the tags of the current file to [number]. The
+:TagbarSetFoldlevel {number}
+    Set the foldlevel of the tags of the current file to {number}. The
     foldlevel of tags in other files remains unaffected. Works in the same way
     as 'foldlevel'.
 
@@ -250,7 +263,7 @@ COMMANDS						*tagbar-commands*
 ------------------------------------------------------------------------------
 KEY MAPPINGS						*tagbar-keys*
 
-These mappings are valid in the Tagbar window:
+The following mappings are valid in the Tagbar window:
 
 <F1>          Display key mapping help.
 <CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags
@@ -318,7 +331,7 @@ g:tagbar_autoclose~
 Default: 0
 
 If you set this option the Tagbar window will automatically close when you
-jump to a tag.
+jump to a tag. This implies |g:tagbar_autofocus|.
 
 Example:
 >
