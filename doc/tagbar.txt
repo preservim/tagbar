@@ -943,13 +943,13 @@ software.
 
 The folding technique was inspired by NERDTree by Martin Grenfell.
 
-Taybin Rutkin:
-  - Contributed tagbar_autofocus option
-Seth Milliken:
-  - Contributed folding keybindings that resemble the built-in ones
-
-Thanks to the following people for feature suggestions etc: Jan Christoph
-Ebersbach, pielgrzym
+Thanks to the following people for code contributions, feature suggestions etc:
+Jan Christoph Ebersbach
+Leandro Freitas
+Seth Milliken
+Kien N
+pielgrzym
+Taybin Rutkin
 
 ==============================================================================
  vim: tw=78 ts=8 sw=8 sts=8 noet ft=help
