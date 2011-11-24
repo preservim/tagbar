@@ -488,6 +488,9 @@ TagbarComment
 TagbarKind
     The header of generic "kinds" like "functions" and "variables".
 
+TagbarNestedKind
+    The "kind" headers in square brackets inside of scopes.
+
 TagbarScope
     Tags that define a scope like classes, structs etc.
 

@@ -1078,6 +1078,7 @@ function! s:BaseTag.closeFold() dict
     elseif self.isFoldable() && !self.isFolded()
         " Tag is parent of a scope and is not folded
         let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = 1
+        let newline = self.tline
     elseif !empty(self.parent)
         " Tag is normal child, so close parent
         let parent = self.parent
@@ -2139,9 +2140,22 @@ function! s:PrintKinds(typeinfo, fileinfo)
                 let tag.tline                 = curline
                 let a:fileinfo.tline[curline] = tag
 
+                " Print children
                 if tag.isFoldable() && !tag.isFolded()
-                    for childtag in tag.children
-                        call s:PrintTag(childtag, 1, a:fileinfo, a:typeinfo)
+                    for ckind in a:typeinfo.kinds
+                        let childtags = filter(copy(tag.children),
+                                          \ 'v:val.fields.kind ==# ckind.short')
+                        if len(childtags) > 0
+                            " Print 'kind' header of following children
+                            if !has_key(a:typeinfo.kind2scope, ckind.short)
+                                silent put ='    [' . ckind.long . ']'
+                                let a:fileinfo.tline[line('.')] = tag
+                            endif
+                            for childtag in childtags
+                                call s:PrintTag(childtag, 1,
+                                              \ a:fileinfo, a:typeinfo)
+                            endfor
+                        endif
                     endfor
                 endif
 
@@ -2207,8 +2221,21 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
 
     " Recursively print children
     if a:tag.isFoldable() && !a:tag.isFolded()
-        for childtag in a:tag.children
-            call s:PrintTag(childtag, a:depth + 1, a:fileinfo, a:typeinfo)
+        for ckind in a:typeinfo.kinds
+            let childtags = filter(copy(a:tag.children),
+                                 \ 'v:val.fields.kind ==# ckind.short')
+            if len(childtags) > 0
+                " Print 'kind' header of following children
+                if !has_key(a:typeinfo.kind2scope, ckind.short)
+                    silent put ='    ' . repeat(' ', a:depth * 2) .
+                              \ '[' . ckind.long . ']'
+                    let a:fileinfo.tline[line('.')] = a:tag
+                endif
+                for childtag in childtags
+                    call s:PrintTag(childtag, a:depth + 1,
+                                  \ a:fileinfo, a:typeinfo)
+                endfor
+            endif
         endfor
     endif
 endfunction

@@ -41,19 +41,21 @@ else
     syntax match TagbarAccessPrivate   '\([-+ ]\)\@<=-\([^-+# ]\)\@='
 endif
 
-syntax match TagbarComment   '^".*'
-syntax match TagbarType      ' : \zs.*'
-syntax match TagbarSignature '(.*)'
-syntax match TagbarPseudoID  '\*\ze :'
+syntax match TagbarNestedKind '^\s\+\[[^]]\+\]$'
+syntax match TagbarComment    '^".*'
+syntax match TagbarType       ' : \zs.*'
+syntax match TagbarSignature  '(.*)'
+syntax match TagbarPseudoID   '\*\ze :'
 
-highlight default link TagbarComment   Comment
-highlight default link TagbarKind      Identifier
-highlight default link TagbarScope     Title
-highlight default link TagbarType      Type
-highlight default link TagbarSignature SpecialKey
-highlight default link TagbarPseudoID  NonText
-highlight default link TagbarFoldIcon  Statement
-highlight default link TagbarHighlight Search
+highlight default link TagbarComment    Comment
+highlight default link TagbarKind       Identifier
+highlight default link TagbarNestedKind TagbarKind
+highlight default link TagbarScope      Title
+highlight default link TagbarType       Type
+highlight default link TagbarSignature  SpecialKey
+highlight default link TagbarPseudoID   NonText
+highlight default link TagbarFoldIcon   Statement
+highlight default link TagbarHighlight  Search
 
 highlight default TagbarAccessPublic    guifg=Green ctermfg=Green
 highlight default TagbarAccessProtected guifg=Blue  ctermfg=Blue
