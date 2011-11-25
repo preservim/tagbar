@@ -1461,7 +1461,12 @@ function! s:InitWindow(autoclose)
     setlocal foldmethod&
     setlocal foldexpr&
 
-    setlocal statusline=%!TagbarGenerateStatusline()
+    " Earlier versions have a bug in local, evaluated statuslines
+    if v:version > 701 || (v:version == 701 && has('patch097'))
+        setlocal statusline=%!TagbarGenerateStatusline()
+    else
+        setlocal statusline=Tagbar
+    endif
 
     " Script-local variable needed since compare functions can't
     " take extra arguments
