@@ -14,23 +14,41 @@ title: Tagbar, the Vim class outline viewer
         Vim plugin that displays tags in a window, ordered by class etc.
     </div>
 
-    <p>Tagbar is a vim plugin for browsing the tags of source code
-    files. It provides a sidebar that displays the ctags-generated
-    tags of the current file, ordered by their scope. This means that
-    for example methods in C++ are displayed under the class they are
-    defined in.</p>
+    <p>
+        Tagbar is a vim plugin for browsing the tags of source code files. It
+        provides a sidebar that displays the ctags-generated tags of the
+        current file, ordered by their scope. This means that for example
+        methods in C++ are displayed under the class they are defined in.
+    </p>
 
     <h2>Dependencies</h2>
     <p><a href="http://www.vim.org/">Vim 7.0</a><br/>
     <a href="http://ctags.sourceforge.net/">Exuberant ctags 5.5</a></p>
 
     <h2>Install</h2>
-    <p>Extract the archive or clone the repository into a directory in
-    your 'runtimepath' or use <a href="http://www.vim.org/scripts/script.php?script_id=2332">pathogen</a>.
-    Don't forget to run :helptags if you don't use pathogen.<br/><br/>
-    If the ctags executable is not installed in one of the directories
-    in your $PATH environment variable you have to set the
-    g:tagbar_ctags_bin variable, see the documentation for more info.</p>
+    <p>
+        Extract the archive or clone the repository into a directory in your
+        'runtimepath' or use
+        <a href="http://www.vim.org/scripts/script.php?script_id=2332">pathogen</a>.
+        Don't forget to run :helptags if you don't use pathogen.
+    </p>
+
+    <p>
+        If the ctags executable is not installed in one of the directories in
+        your $PATH environment variable you have to set the
+        g:tagbar_ctags_bin variable, see the documentation for more info.
+    </p>
+
+    <h2>Quickstart</h2>
+    <p>
+        Put something like the following into your ~/.vimrc:
+
+        <pre>nmap &lt;F8&gt; :TagbarToggle&lt;CR&gt;</pre>
+
+        Then the F8 key will toggle the Tagbar window. You can of course use
+        any shortcut you want. For more flexible ways to open and close the
+        window (and the rest of the functionality) see the documentation.
+    </p>
 
     <h2>Screenshots</h2>
     <a href="tagbar1.png"><img src="tagbar1_t.png"/></a>
@@ -43,15 +61,12 @@ title: Tagbar, the Vim class outline viewer
     <h2>Authors</h2>
     <p>Jan Larres (jan@majutsushi.net)</p>
 
-<!--    <h2>Contact</h2>-->
-<!--    <p> (jan@majutsushi.net)<br/>      </p>-->
-
     <h2>Download</h2>
     <h3>Stable releases</h3>
 
     {% for post in site.posts %}
 
-    {{ post.title }} ({{ post.date | date:"%Y-%m-%d" }})
+    <span style="font-weight:bold">{{ post.title }}</span> ({{ post.date | date:"%Y-%m-%d" }})
     <a href="http://github.com/majutsushi/tagbar/zipball/v{{ post.title }}">zip</a>
     <a href="http://github.com/majutsushi/tagbar/tarball/v{{ post.title }}">tar</a>
 
@@ -61,12 +76,14 @@ title: Tagbar, the Vim class outline viewer
 
     <h3>Latest source</h3>
     <p>
-    Download as:
-    <a href="http://github.com/majutsushi/tagbar/zipball/master">zip</a>
-    <a href="http://github.com/majutsushi/tagbar/tarball/master">tar</a>
+        Download as:
+        <a href="http://github.com/majutsushi/tagbar/zipball/master">zip</a>
+        <a href="http://github.com/majutsushi/tagbar/tarball/master">tar</a>
     </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-    by running:
+    <p>
+        You can also clone the project with <a href="http://git-scm.com">Git</a>
+        by running:
+
         <pre>$ git clone git://github.com/majutsushi/tagbar</pre>
     </p>
 
