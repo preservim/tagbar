@@ -952,11 +952,11 @@ function! s:CheckExCtagsVersion(output)
 endfunction
 
 " Prototypes {{{1
-" Base tag {{{2
-let s:BaseTag = {}
+" Normal tag {{{2
+let s:NormalTag = {}
 
-" s:BaseTag._init() {{{3
-function! s:BaseTag._init(name) dict
+" s:NormalTag._init() {{{3
+function! s:NormalTag._init(name) dict
     let self.name        = a:name
     let self.fields      = {}
     let self.fields.line = 0
@@ -968,28 +968,37 @@ function! s:BaseTag._init(name) dict
     let self.fileinfo    = {}
 endfunction
 
-" s:BaseTag.isNormalTag() {{{3
-function! s:BaseTag.isNormalTag() dict
+" s:NormalTag.New() {{{3
+function! s:NormalTag.New(name) dict
+    let newobj = copy(self)
+
+    call newobj._init(a:name)
+
+    return newobj
+endfunction
+
+" s:NormalTag.isNormalTag() {{{3
+function! s:NormalTag.isNormalTag() dict
+    return 1
+endfunction
+
+" s:NormalTag.isPseudoTag() {{{3
+function! s:NormalTag.isPseudoTag() dict
     return 0
 endfunction
 
-" s:BaseTag.isPseudoTag() {{{3
-function! s:BaseTag.isPseudoTag() dict
+" s:NormalTag.isKindheader() {{{3
+function! s:NormalTag.isKindheader() dict
     return 0
 endfunction
 
-" s:BaseTag.isKindheader() {{{3
-function! s:BaseTag.isKindheader() dict
-    return 0
+" s:NormalTag.getPrototype() {{{3
+function! s:NormalTag.getPrototype() dict
+    return self.prototype
 endfunction
 
-" s:BaseTag.getPrototype() {{{3
-function! s:BaseTag.getPrototype() dict
-    return ''
-endfunction
-
-" s:BaseTag._getPrefix() {{{3
-function! s:BaseTag._getPrefix() dict
+" s:NormalTag._getPrefix() {{{3
+function! s:NormalTag._getPrefix() dict
     let fileinfo = self.fileinfo
 
     if has_key(self, 'children') && !empty(self.children)
@@ -1010,8 +1019,8 @@ function! s:BaseTag._getPrefix() dict
     return prefix
 endfunction
 
-" s:BaseTag.initFoldState() {{{3
-function! s:BaseTag.initFoldState() dict
+" s:NormalTag.initFoldState() {{{3
+function! s:NormalTag.initFoldState() dict
     let fileinfo = self.fileinfo
 
     if s:known_files.has(fileinfo.fpath) &&
@@ -1028,8 +1037,8 @@ function! s:BaseTag.initFoldState() dict
     endif
 endfunction
 
-" s:BaseTag.getClosedParentTline() {{{3
-function! s:BaseTag.getClosedParentTline() dict
+" s:NormalTag.getClosedParentTline() {{{3
+function! s:NormalTag.getClosedParentTline() dict
     let tagline = self.tline
     let fileinfo = self.fileinfo
 
@@ -1045,25 +1054,25 @@ function! s:BaseTag.getClosedParentTline() dict
     return tagline
 endfunction
 
-" s:BaseTag.isFoldable() {{{3
-function! s:BaseTag.isFoldable() dict
+" s:NormalTag.isFoldable() {{{3
+function! s:NormalTag.isFoldable() dict
     return has_key(self, 'children') && !empty(self.children)
 endfunction
 
-" s:BaseTag.isFolded() {{{3
-function! s:BaseTag.isFolded() dict
+" s:NormalTag.isFolded() {{{3
+function! s:NormalTag.isFolded() dict
     return self.fileinfo.tagfolds[self.fields.kind][self.fullpath]
 endfunction
 
-" s:BaseTag.openFold() {{{3
-function! s:BaseTag.openFold() dict
+" s:NormalTag.openFold() {{{3
+function! s:NormalTag.openFold() dict
     if self.isFoldable()
         let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = 0
     endif
 endfunction
 
-" s:BaseTag.closeFold() {{{3
-function! s:BaseTag.closeFold() dict
+" s:NormalTag.closeFold() {{{3
+function! s:NormalTag.closeFold() dict
     let newline = line('.')
 
     if !empty(self.parent) && self.parent.isKindheader()
@@ -1084,36 +1093,19 @@ function! s:BaseTag.closeFold() dict
     return newline
 endfunction
 
-" s:BaseTag.setFolded() {{{3
-function! s:BaseTag.setFolded(folded) dict
+" s:NormalTag.setFolded() {{{3
+function! s:NormalTag.setFolded(folded) dict
     let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = a:folded
 endfunction
 
-" s:BaseTag.openParents() {{{3
-function! s:BaseTag.openParents() dict
+" s:NormalTag.openParents() {{{3
+function! s:NormalTag.openParents() dict
     let parent = self.parent
 
     while !empty(parent)
         call parent.openFold()
         let parent = parent.parent
     endwhile
-endfunction
-
-" Normal tag {{{2
-let s:NormalTag = copy(s:BaseTag)
-
-" s:NormalTag.New() {{{3
-function! s:NormalTag.New(name) dict
-    let newobj = copy(self)
-
-    call newobj._init(a:name)
-
-    return newobj
-endfunction
-
-" s:NormalTag.isNormalTag() {{{3
-function! s:NormalTag.isNormalTag() dict
-    return 1
 endfunction
 
 " s:NormalTag.str() {{{3
@@ -1132,13 +1124,21 @@ function! s:NormalTag.str() dict
     return self._getPrefix() . self.name . suffix . "\n"
 endfunction
 
-" s:NormalTag.getPrototype() {{{3
-function! s:NormalTag.getPrototype() dict
-    return self.prototype
-endfunction
-
 " Pseudo tag {{{2
-let s:PseudoTag = copy(s:BaseTag)
+let s:PseudoTag = {}
+
+" s:PseudoTag._init() {{{3
+function! s:PseudoTag._init(name) dict
+    let self.name        = a:name
+    let self.fields      = {}
+    let self.fields.line = 0
+    let self.path        = ''
+    let self.fullpath    = a:name
+    let self.depth       = 0
+    let self.parent      = {}
+    let self.tline       = -1
+    let self.fileinfo    = {}
+endfunction
 
 " s:PseudoTag.New() {{{3
 function! s:PseudoTag.New(name) dict
@@ -1149,9 +1149,135 @@ function! s:PseudoTag.New(name) dict
     return newobj
 endfunction
 
+" s:PseudoTag.isNormalTag() {{{3
+function! s:PseudoTag.isNormalTag() dict
+    return 0
+endfunction
+
 " s:PseudoTag.isPseudoTag() {{{3
 function! s:PseudoTag.isPseudoTag() dict
     return 1
+endfunction
+
+" s:PseudoTag.isKindheader() {{{3
+function! s:PseudoTag.isKindheader() dict
+    return 0
+endfunction
+
+" s:PseudoTag.getPrototype() {{{3
+function! s:PseudoTag.getPrototype() dict
+    return ''
+endfunction
+
+" s:PseudoTag._getPrefix() {{{3
+function! s:PseudoTag._getPrefix() dict
+    let fileinfo = self.fileinfo
+
+    if has_key(self, 'children') && !empty(self.children)
+        if fileinfo.tagfolds[self.fields.kind][self.fullpath]
+            let prefix = s:icon_closed
+        else
+            let prefix = s:icon_open
+        endif
+    else
+        let prefix = ' '
+    endif
+    if has_key(self.fields, 'access')
+        let prefix .= get(s:access_symbols, self.fields.access, ' ')
+    else
+        let prefix .= ' '
+    endif
+
+    return prefix
+endfunction
+
+" s:PseudoTag.initFoldState() {{{3
+function! s:PseudoTag.initFoldState() dict
+    let fileinfo = self.fileinfo
+
+    if s:known_files.has(fileinfo.fpath) &&
+     \ has_key(fileinfo._tagfolds_old[self.fields.kind], self.fullpath)
+        " The file has been updated and the tag was there before, so copy its
+        " old fold state
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] =
+                    \ fileinfo._tagfolds_old[self.fields.kind][self.fullpath]
+    elseif self.depth >= fileinfo.foldlevel
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] = 1
+    else
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] =
+                    \ fileinfo.kindfolds[self.fields.kind]
+    endif
+endfunction
+
+" s:PseudoTag.getClosedParentTline() {{{3
+function! s:PseudoTag.getClosedParentTline() dict
+    let tagline = self.tline
+    let fileinfo = self.fileinfo
+
+    let parent = self.parent
+    while !empty(parent)
+        if parent.isFolded()
+            let tagline = parent.tline
+            break
+        endif
+        let parent = parent.parent
+    endwhile
+
+    return tagline
+endfunction
+
+" s:PseudoTag.isFoldable() {{{3
+function! s:PseudoTag.isFoldable() dict
+    return has_key(self, 'children') && !empty(self.children)
+endfunction
+
+" s:PseudoTag.isFolded() {{{3
+function! s:PseudoTag.isFolded() dict
+    return self.fileinfo.tagfolds[self.fields.kind][self.fullpath]
+endfunction
+
+" s:PseudoTag.openFold() {{{3
+function! s:PseudoTag.openFold() dict
+    if self.isFoldable()
+        let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = 0
+    endif
+endfunction
+
+" s:PseudoTag.closeFold() {{{3
+function! s:PseudoTag.closeFold() dict
+    let newline = line('.')
+
+    if !empty(self.parent) && self.parent.isKindheader()
+        " Tag is child of generic 'kind'
+        call self.parent.closeFold()
+        let newline = self.parent.tline
+    elseif self.isFoldable() && !self.isFolded()
+        " Tag is parent of a scope and is not folded
+        let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = 1
+        let newline = self.tline
+    elseif !empty(self.parent)
+        " Tag is normal child, so close parent
+        let parent = self.parent
+        let self.fileinfo.tagfolds[parent.fields.kind][parent.fullpath] = 1
+        let newline = parent.tline
+    endif
+
+    return newline
+endfunction
+
+" s:PseudoTag.setFolded() {{{3
+function! s:PseudoTag.setFolded(folded) dict
+    let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = a:folded
+endfunction
+
+" s:PseudoTag.openParents() {{{3
+function! s:PseudoTag.openParents() dict
+    let parent = self.parent
+
+    while !empty(parent)
+        call parent.openFold()
+        let parent = parent.parent
+    endwhile
 endfunction
 
 " s:PseudoTag.str() {{{3
@@ -1168,7 +1294,20 @@ function! s:PseudoTag.str() dict
 endfunction
 
 " Kind header {{{2
-let s:KindheaderTag = copy(s:BaseTag)
+let s:KindheaderTag = {}
+
+" s:KindheaderTag._init() {{{3
+function! s:KindheaderTag._init(name) dict
+    let self.name        = a:name
+    let self.fields      = {}
+    let self.fields.line = 0
+    let self.path        = ''
+    let self.fullpath    = a:name
+    let self.depth       = 0
+    let self.parent      = {}
+    let self.tline       = -1
+    let self.fileinfo    = {}
+endfunction
 
 " s:KindheaderTag.New() {{{3
 function! s:KindheaderTag.New(name) dict
@@ -1177,6 +1316,16 @@ function! s:KindheaderTag.New(name) dict
     call newobj._init(a:name)
 
     return newobj
+endfunction
+
+" s:KindheaderTag.isNormalTag() {{{3
+function! s:KindheaderTag.isNormalTag() dict
+    return 0
+endfunction
+
+" s:KindheaderTag.isPseudoTag() {{{3
+function! s:KindheaderTag.isPseudoTag() dict
+    return 0
 endfunction
 
 " s:KindheaderTag.isKindheader() {{{3
@@ -1188,6 +1337,63 @@ endfunction
 function! s:KindheaderTag.getPrototype() dict
     return self.name . ': ' .
          \ self.numtags . ' ' . (self.numtags > 1 ? 'tags' : 'tag')
+endfunction
+
+" s:KindheaderTag._getPrefix() {{{3
+function! s:KindheaderTag._getPrefix() dict
+    let fileinfo = self.fileinfo
+
+    if has_key(self, 'children') && !empty(self.children)
+        if fileinfo.tagfolds[self.fields.kind][self.fullpath]
+            let prefix = s:icon_closed
+        else
+            let prefix = s:icon_open
+        endif
+    else
+        let prefix = ' '
+    endif
+    if has_key(self.fields, 'access')
+        let prefix .= get(s:access_symbols, self.fields.access, ' ')
+    else
+        let prefix .= ' '
+    endif
+
+    return prefix
+endfunction
+
+" s:KindheaderTag.initFoldState() {{{3
+function! s:KindheaderTag.initFoldState() dict
+    let fileinfo = self.fileinfo
+
+    if s:known_files.has(fileinfo.fpath) &&
+     \ has_key(fileinfo._tagfolds_old[self.fields.kind], self.fullpath)
+        " The file has been updated and the tag was there before, so copy its
+        " old fold state
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] =
+                    \ fileinfo._tagfolds_old[self.fields.kind][self.fullpath]
+    elseif self.depth >= fileinfo.foldlevel
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] = 1
+    else
+        let fileinfo.tagfolds[self.fields.kind][self.fullpath] =
+                    \ fileinfo.kindfolds[self.fields.kind]
+    endif
+endfunction
+
+" s:KindheaderTag.getClosedParentTline() {{{3
+function! s:KindheaderTag.getClosedParentTline() dict
+    let tagline = self.tline
+    let fileinfo = self.fileinfo
+
+    let parent = self.parent
+    while !empty(parent)
+        if parent.isFolded()
+            let tagline = parent.tline
+            break
+        endif
+        let parent = parent.parent
+    endwhile
+
+    return tagline
 endfunction
 
 " s:KindheaderTag.isFoldable() {{{3
@@ -1209,6 +1415,21 @@ endfunction
 function! s:KindheaderTag.closeFold() dict
     let self.fileinfo.kindfolds[self.short] = 1
     return line('.')
+endfunction
+
+" s:KindheaderTag.setFolded() {{{3
+function! s:KindheaderTag.setFolded(folded) dict
+    let self.fileinfo.tagfolds[self.fields.kind][self.fullpath] = a:folded
+endfunction
+
+" s:KindheaderTag.openParents() {{{3
+function! s:KindheaderTag.openParents() dict
+    let parent = self.parent
+
+    while !empty(parent)
+        call parent.openFold()
+        let parent = parent.parent
+    endwhile
 endfunction
 
 " s:KindheaderTag.toggleFold() {{{3
@@ -1456,12 +1677,7 @@ function! s:InitWindow(autoclose)
     setlocal foldmethod&
     setlocal foldexpr&
 
-    " Earlier versions have a bug in local, evaluated statuslines
-    if v:version > 701 || (v:version == 701 && has('patch097'))
-        setlocal statusline=%!TagbarGenerateStatusline()
-    else
-        setlocal statusline=Tagbar
-    endif
+    setlocal statusline=Tagbar
 
     " Script-local variable needed since compare functions can't
     " take extra arguments

@@ -33,15 +33,6 @@ if v:version < 700
     finish
 endif
 
-if v:version == 700 && !has('patch167')
-    echohl WarningMsg
-    echomsg 'Tagbar: Vim versions lower than 7.0.167 have a bug'
-          \ 'that prevents this version of Tagbar from working.'
-          \ 'Please use the alternate version posted on the website.'
-    echohl None
-    finish
-endif
-
 if !exists('g:tagbar_left')
     let g:tagbar_left = 0
 endif
