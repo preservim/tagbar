@@ -4,7 +4,7 @@
 " Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
 " Website:     http://majutsushi.github.com/tagbar/
-" Version:     2.1
+" Version:     2.2
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by
 "              Yegappan Lakshmanan and uses a small amount of code from it.
 "
@@ -23,11 +23,6 @@ scriptencoding utf-8
 " Initialization {{{1
 
 " Basic init {{{2
-
-if v:version < 700
-    echomsg 'Tagbar: Vim version is too old, Tagbar requires at least 7.0'
-    finish
-endif
 
 if !exists('g:tagbar_ctags_bin')
     if executable('ctags-exuberant')

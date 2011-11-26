@@ -4,7 +4,7 @@
 " Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
 " Website:     http://majutsushi.github.com/tagbar/
-" Version:     2.1
+" Version:     2.2
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by
 "              Yegappan Lakshmanan and uses a small amount of code from it.
 "
@@ -25,6 +25,22 @@ if &cp || exists('g:loaded_tagbar')
 endif
 
 " Basic init {{{1
+
+if v:version < 700
+    echohl WarningMsg
+    echomsg 'Tagbar: Vim version is too old, Tagbar requires at least 7.0'
+    echohl None
+    finish
+endif
+
+if v:version == 700 && !has('patch167')
+    echohl WarningMsg
+    echomsg 'Tagbar: Vim versions lower than 7.0.167 have a bug'
+          \ 'that prevents this version of Tagbar from working.'
+          \ 'Please use the alternate version posted on the website.'
+    echohl None
+    finish
+endif
 
 if !exists('g:tagbar_left')
     let g:tagbar_left = 0
