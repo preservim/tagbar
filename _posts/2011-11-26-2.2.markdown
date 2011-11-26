@@ -1,0 +1,19 @@
+---
+title: 2.2
+---
+
+- Small incompatible change: TagbarOpen now doesn't jump to the Tagbar window
+  anymore if it is already open. Use "TagbarOpen j" instead or see its
+  documentation for more options.
+- Tags inside of scopes now have a header displaying their "kind".
+- The Tagbar contents are now immediately updated on save for files smaller
+  than a configurable size.
+- Tagbar can now be configured to jump to a tag with only a single-click
+  instead of a double-click.
+- Most of the script has been moved to the autoload directory, so Vim startup
+  should be faster (thanks to Kien N).
+- Jumping to tags should work most of the time even if the file has been
+  modified and not saved.
+- If Ctags has been installed into the default location using Homebrew or
+  MacPorts it should now be found automatically.
+- Several bugfixes.
