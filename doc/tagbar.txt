@@ -260,6 +260,14 @@ COMMANDS						*tagbar-commands*
     Open the parent folds of the current tag in the file window as much as
     needed for the tag to be visible in the Tagbar window.
 
+:TagbarDebug [logfile]
+    Start debug mode. This will write debug messages to file [logfile] while
+    using Tagbar. If no argument is given "tagbardebug.log" in the current
+    directory is used. Note: an existing file will be overwritten!
+
+:TagbarDebugEnd
+    End debug mode, debug messages will no longer be written to the logfile.
+
 ------------------------------------------------------------------------------
 KEY MAPPINGS						*tagbar-keys*
 
@@ -820,6 +828,12 @@ ctags manually execute the following command in a terminal:
 <
 If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
 value here instead of simply "ctags".
+
+If Tagbar doesn't seem to work at all, but you don't get any error messages,
+you can use Tagbar's debug mode to try to find the source of the problem (see
+|tagbar-commands| on how to invoke it). In that case you should especially pay
+attention to the reported file type and the ctags command line in the log
+file.
 
 
   - jsctags has to be newer than 2011-01-06 since it needs the "-f" option to
