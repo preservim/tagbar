@@ -1601,6 +1601,11 @@ function! s:ProcessFile(fname, ftype)
     call s:LogDebugMessage('Parsing ctags output')
     let rawtaglist = split(ctags_output, '\n\+')
     for line in rawtaglist
+        " skip comments
+        if line =~# '^!_TAG_'
+            continue
+        endif
+
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
             let taginfo = s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
