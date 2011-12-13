@@ -1774,7 +1774,9 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
         let delimit             = stridx(field, ':')
         let key                 = strpart(field, 0, delimit)
         let val                 = strpart(field, delimit + 1)
-        let taginfo.fields[key] = val
+        if len(val) > 0
+            let taginfo.fields[key] = val
+        endif
     endfor
     " Needed for jsctags
     if has_key(taginfo.fields, 'lineno')
