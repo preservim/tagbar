@@ -418,7 +418,8 @@ function! s:InitTypes()
     " Alternatively jsctags/doctorjs will be used if available.
     let type_javascript = {}
     let type_javascript.ctagstype = 'javascript'
-    if executable('jsctags')
+    let jsctags = s:CheckFTCtags('jsctags', 'javascript')
+    if jsctags != ''
         let type_javascript.kinds = [
             \ {'short' : 'v', 'long' : 'variables', 'fold' : 0},
             \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
@@ -431,7 +432,7 @@ function! s:InitTypes()
         let type_javascript.scope2kind = {
             \ 'namespace' : 'v'
         \ }
-        let type_javascript.ctagsbin   = 'jsctags'
+        let type_javascript.ctagsbin   = jsctags
         let type_javascript.ctagsargs  = '-f -'
     else
         let type_javascript.kinds = [
@@ -785,18 +786,20 @@ function! s:GetUserTypeDefs()
     " generate the other one
     " Also, transform the 'kind' definitions into dictionary format
     for def in values(defdict)
-        let kinds = def.kinds
-        let def.kinds = []
-        for kind in kinds
-            let kindlist = split(kind, ':')
-            let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
-            if len(kindlist) == 3
-                let kinddict.fold = kindlist[2]
-            else
-                let kinddict.fold = 0
-            endif
-            call add(def.kinds, kinddict)
-        endfor
+        if has_key(def, 'kinds')
+            let kinds = def.kinds
+            let def.kinds = []
+            for kind in kinds
+                let kindlist = split(kind, ':')
+                let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
+                if len(kindlist) == 3
+                    let kinddict.fold = kindlist[2]
+                else
+                    let kinddict.fold = 0
+                endif
+                call add(def.kinds, kinddict)
+            endfor
+        endif
 
         if has_key(def, 'kind2scope') && !has_key(def, 'scope2kind')
             let def.scope2kind = {}
@@ -970,6 +973,24 @@ function! s:CheckExCtagsVersion(output)
     let minor     = matchlist[2]
 
     return major >= 6 || (major == 5 && minor >= 5)
+endfunction
+
+" s:CheckFTCtags() {{{2
+function! s:CheckFTCtags(bin, ftype)
+    if executable(a:bin)
+        return a:bin
+    endif
+
+    if exists('g:tagbar_type_' . a:ftype)
+        execute 'let userdef = ' . 'g:tagbar_type_' . a:ftype
+        if has_key(userdef, 'ctagsbin')
+            return userdef.ctagsbin
+        else
+            return ''
+        endif
+    endif
+
+    return ''
 endfunction
 
 " Prototypes {{{1
