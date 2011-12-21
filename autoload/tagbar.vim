@@ -102,6 +102,19 @@ let s:last_highlight_tline = 0
 let s:debug = 0
 let s:debug_file = ''
 
+" s:Init() {{{2
+function! s:Init()
+    if !s:type_init_done
+        call s:InitTypes()
+    endif
+
+    if !s:checked_ctags
+        if !s:CheckForExCtags()
+            return
+        endif
+    endif
+endfunction
+
 " s:InitTypes() {{{2
 function! s:InitTypes()
     call s:LogDebugMessage('Initializing types')
@@ -818,15 +831,7 @@ function! s:RestoreSession()
         endif
     endif
 
-    if !s:type_init_done
-        call s:InitTypes()
-    endif
-
-    if !s:checked_ctags
-        if !s:CheckForExCtags()
-            return
-        endif
-    endif
+    call s:Init()
 
     call s:InitWindow(g:tagbar_autoclose)
 
@@ -1407,15 +1412,7 @@ function! s:OpenWindow(flags)
         return
     endif
 
-    if !s:type_init_done
-        call s:InitTypes()
-    endif
-
-    if !s:checked_ctags
-        if !s:CheckForExCtags()
-            return
-        endif
-    endif
+    call s:Init()
 
     " Expand the Vim window to accomodate for the Tagbar window if requested
     if g:tagbar_expand && !s:window_expanded && has('gui_running')
