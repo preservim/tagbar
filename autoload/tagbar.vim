@@ -1390,7 +1390,7 @@ function! s:ToggleWindow()
         return
     endif
 
-    call s:OpenWindow(0)
+    call s:OpenWindow('')
 endfunction
 
 " s:OpenWindow() {{{2
@@ -2935,6 +2935,38 @@ function! s:CheckMouseClick()
     endif
 endfunction
 
+" s:DetermineFiletype() {{{2
+function! s:DetectFiletype(bufnr)
+    " Filetype has already been detected for loaded buffers, but not
+    " necessarily for unloaded ones
+    let ftype = getbufvar(a:bufnr, '&filetype')
+
+    if bufloaded(a:bufnr)
+        return ftype
+    endif
+
+    if ftype != ''
+        return ftype
+    endif
+
+    " Unloaded buffer with non-detected filetype, need to detect filetype
+    " manually
+    let bufname = bufname(a:bufnr)
+
+    let eventignore_save = &eventignore
+    set eventignore=FileType
+    let filetype_save = &filetype
+
+    exe 'doautocmd filetypedetect BufRead ' . bufname
+    let ftype = &filetype
+
+    let &filetype = filetype_save
+    let &eventignore = eventignore_save
+
+    return ftype
+endfunction
+
+
 " TagbarBalloonExpr() {{{2
 function! TagbarBalloonExpr()
     let taginfo = s:GetTagInfo(v:beval_lnum, 1)
@@ -3033,6 +3065,22 @@ endfunction
 
 function! tagbar#RestoreSession()
     call s:RestoreSession()
+endfunction
+
+" Automatically open Tagbar if one of the open buffers contains a supported
+" file
+function! tagbar#autoopen()
+    call s:Init()
+
+    for bufnr in range(1, bufnr('$'))
+        if buflisted(bufnr)
+            let ftype = s:DetectFiletype(bufnr)
+            if s:IsValidFile(bufname(bufnr), ftype)
+                call s:OpenWindow('')
+                return
+            endif
+        endif
+    endfor
 endfunction
 
 " Modeline {{{1
