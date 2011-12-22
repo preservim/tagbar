@@ -78,8 +78,13 @@ if !exists('g:tagbar_foldlevel')
     let g:tagbar_foldlevel = 99
 endif
 
-if !exists('g:tagbar_usearrows')
-    let g:tagbar_usearrows = 0
+if !exists('g:tagbar_iconchars')
+    if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
+     \ (empty(&termencoding) || &termencoding == 'utf-8')
+        let g:tagbar_iconchars = ['▶', '▼']
+    else
+        let g:tagbar_iconchars = ['+', '-']
+    endif
 endif
 
 if !exists('g:tagbar_autoshowtag')

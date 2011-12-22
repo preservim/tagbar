@@ -11,35 +11,32 @@ if exists("b:current_syntax")
   finish
 endif
 
-if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
- \ (empty(&termencoding) || &termencoding == 'utf-8')
-    syntax match TagbarKind  '\([▶▼] \)\@<=[^-+: ]\+[^:]\+$'
-    syntax match TagbarScope '\([▶▼][-+# ]\)\@<=[^*]\+\(\*\?\(([^)]\+)\)\? :\)\@='
-
-    syntax match TagbarFoldIcon '[▶▼]\([-+# ]\)\@='
-
-    syntax match TagbarAccessPublic    '\([▶▼ ]\)\@<=+\([^-+# ]\)\@='
-    syntax match TagbarAccessProtected '\([▶▼ ]\)\@<=#\([^-+# ]\)\@='
-    syntax match TagbarAccessPrivate   '\([▶▼ ]\)\@<=-\([^-+# ]\)\@='
-elseif has('multi_byte') && (has('win32') || has('win64')) && g:tagbar_usearrows
-    syntax match TagbarKind  '\([▷◢] \)\@<=[^-+: ]\+[^:]\+$'
-    syntax match TagbarScope '\([▷◢][-+# ]\)\@<=[^*]\+\(\*\?\(([^)]\+)\)\? :\)\@='
-
-    syntax match TagbarFoldIcon '[▷◢]\([-+# ]\)\@='
-
-    syntax match TagbarAccessPublic    '\([▷◢ ]\)\@<=+\([^-+# ]\)\@='
-    syntax match TagbarAccessProtected '\([▷◢ ]\)\@<=#\([^-+# ]\)\@='
-    syntax match TagbarAccessPrivate   '\([▷◢ ]\)\@<=-\([^-+# ]\)\@='
-else
-    syntax match TagbarKind  '\([-+] \)\@<=[^-+: ]\+[^:]\+$'
-    syntax match TagbarScope '\([-+][-+# ]\)\@<=[^*]\+\(\*\?\(([^)]\+)\)\? :\)\@='
-
-    syntax match TagbarFoldIcon '[-+]\([-+# ]\)\@='
-
-    syntax match TagbarAccessPublic    '\([-+ ]\)\@<=+\([^-+# ]\)\@='
-    syntax match TagbarAccessProtected '\([-+ ]\)\@<=#\([^-+# ]\)\@='
-    syntax match TagbarAccessPrivate   '\([-+ ]\)\@<=-\([^-+# ]\)\@='
+let s:ic = g:tagbar_iconchars[0]
+if s:ic =~ '[]^\\-]'
+    let s:ic = '\' . s:ic
 endif
+let s:io = g:tagbar_iconchars[1]
+if s:io =~ '[]^\\-]'
+    let s:io = '\' . s:io
+endif
+
+let s:pattern = '\([' . s:ic . s:io . '] \)\@<=[^-+: ]\+[^:]\+$'
+execute "syntax match TagbarKind '" . s:pattern . "'"
+
+let s:pattern = '\([' . s:ic . s:io . '][-+# ]\)\@<=[^*]\+\(\*\?\(([^)]\+)\)\? :\)\@='
+execute "syntax match TagbarScope '" . s:pattern . "'"
+
+let s:pattern = '[' . s:ic . s:io . ']\([-+# ]\)\@='
+execute "syntax match TagbarFoldIcon '" . s:pattern . "'"
+
+let s:pattern = '\([' . s:ic . s:io . ' ]\)\@<=+\([^-+# ]\)\@='
+execute "syntax match TagbarAccessPublic '" . s:pattern . "'"
+let s:pattern = '\([' . s:ic . s:io . ' ]\)\@<=#\([^-+# ]\)\@='
+execute "syntax match TagbarAccessProtected '" . s:pattern . "'"
+let s:pattern = '\([' . s:ic . s:io . ' ]\)\@<=-\([^-+# ]\)\@='
+execute "syntax match TagbarAccessPrivate '" . s:pattern . "'"
+
+unlet s:pattern
 
 syntax match TagbarNestedKind '^\s\+\[[^]]\+\]$'
 syntax match TagbarComment    '^".*'

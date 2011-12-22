@@ -421,21 +421,22 @@ Example:
 	let g:tagbar_foldlevel = 2
 <
 
-							*g:tagbar_usearrows*
-g:tagbar_usearrows~
-{Windows only}
-Default: 0
+							*g:tagbar_iconchars*
+g:tagbar_iconchars~
 
-Tagbar can display nice Unicode arrows instead of +/- characters as fold icons.
-However, Windows doesn't seem to be able to substitute in characters from
-other fonts if the current font doesn't support them. This means that you have
-to use a font that supports those arrows. Unfortunately there is no way to
-detect whether specific characters are supported in the current font. So if
-your font supports those arrows you have to set this option to make it work.
+Since the display of the icons used to indicate open or closed folds depends
+on the actual font used, different characters may be optimal for different
+fonts. With this variable you can set the icons to characters of your liking.
+The first character in the list specifies the icon to use for a closed fold,
+and the second one for an open fold.
 
-Example:
+Examples (don't worry if some the characters aren't displayed correctly, just
+choose other characters in that case):
 >
-	let g:tagbar_usearrows = 1
+	let g:tagbar_iconchars = ['▶', '▼']  (default on Linux and Mac OS X)
+	let g:tagbar_iconchars = ['▾', '▸']
+	let g:tagbar_iconchars = ['▷', '◢']
+	let g:tagbar_iconchars = ['+', '-']  (default on Windows)
 <
 
 							*g:tagbar_autoshowtag*
