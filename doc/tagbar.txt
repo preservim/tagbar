@@ -574,15 +574,11 @@ existing types and to add completely new types. A complete configuration
 consists of a type definition for Tagbar in your |vimrc| and optionally a
 language definition for ctags in case you want to add a new language.
 
-Before writing your own extension try googling for already existing ones. For
-example, here is one for Scala:
-http://latestbuild.net/scala-ctags-and-vim-tagbar
-Since those aren't "canonical" configurations and are somewhat subjective they
-probably won't be included in Tagbar, but it is easy enough to just copy&paste
-them into your own setup. Note that you don't have to modify Tagbar directly
-like the article suggests, you can just put the configuration into your
-|vimrc| (see below for more details).
-
+Before writing your own extension have a look at the wiki
+(https://github.com/majutsushi/tagbar/wiki/Support-for-additional-filetypes)
+or try googling for existing ones. If you do end up creating your own
+extension please consider adding it to the wiki so that others will be able to
+use it, too.
 
 Every type definition in Tagbar is a dictionary with the following keys:
 
