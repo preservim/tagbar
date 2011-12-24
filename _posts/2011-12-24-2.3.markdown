@@ -1,0 +1,12 @@
+---
+title: 2.3
+---
+
+- Add a convenience function that allows more flexible ways to automatically
+  open Tagbar.
+- Replace option tagbar_usearrows with tagbar_iconchars to allow custom
+  characters to be specified. This helps with fonts that don't display the
+  default characters properly.
+- Remove the need to provide the complete jsctags configuration if jsctags is
+  not found in $PATH, now only the concrete path has to be specified.
+- Add debugging functionality.
