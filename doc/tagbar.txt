@@ -3,7 +3,7 @@
 Author:		Jan Larres <jan@majutsushi.net>
 Licence:	Vim licence, see |license|
 Homepage:	http://majutsushi.github.com/tagbar/
-Version:	2.2
+Version:	2.3
 
 ==============================================================================
 Contents					*tagbar* *tagbar-contents*
@@ -897,6 +897,16 @@ file.
 
 ==============================================================================
 8. History						*tagbar-history*
+
+2.3 (2011-12-24)
+    - Add a convenience function that allows more flexible ways to
+      automatically open Tagbar.
+    - Replace option tagbar_usearrows with tagbar_iconchars to allow custom
+      characters to be specified. This helps with fonts that don't display the
+      default characters properly.
+    - Remove the need to provide the complete jsctags configuration if jsctags
+      is not found in $PATH, now only the concrete path has to be specified.
+    - Add debugging functionality.
 
 2.2 (2011-11-26)
     - Small incompatible change: TagbarOpen now doesn't jump to the Tagbar
