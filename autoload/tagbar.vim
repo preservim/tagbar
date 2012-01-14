@@ -3081,11 +3081,13 @@ endfunction
 
 " Automatically open Tagbar if one of the open buffers contains a supported
 " file
-function! tagbar#autoopen()
+function! tagbar#autoopen(...)
+    let always = a:0 > 0 ? a:1 : 1
+
     call s:Init()
 
     for bufnr in range(1, bufnr('$'))
-        if buflisted(bufnr)
+        if buflisted(bufnr) && (always || bufwinnr(bufnr) != -1)
             let ftype = s:DetectFiletype(bufnr)
             if s:IsValidFile(bufname(bufnr), ftype)
                 call s:OpenWindow('')

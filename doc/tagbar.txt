@@ -540,7 +540,11 @@ AUTOMATICALLY OPENING TAGBAR				*tagbar-autoopen*
 Since there are several different situations in which you might want to open
 Tagbar automatically there is no single option to enable automatic opening.
 Instead, autocommands can be used together with a convenience function that
-opens Tagbar only if a supported file is open(ed).
+opens Tagbar only if a supported file is open(ed). It has a boolean parameter
+that specifies whether Tagbar should be opened if any loaded buffer is
+supported (in case the parameter is set to true) or only if a supported
+file/buffer is currently being shown in a window. This can be useful if you
+use multiple tabs and don't edit supported files in all of them.
 
 If you want to open Tagbar automatically on Vim startup no matter what put
 this into your vimrc:
@@ -550,15 +554,20 @@ this into your vimrc:
 If you want to open it only if you're opening Vim with a supported file/files
 use this instead:
 >
-    autocmd VimEnter * nested :call tagbar#autoopen()
+    autocmd VimEnter * nested :call tagbar#autoopen(1)
 <
 For opening Tagbar also if you open a supported file in an already running
 Vim:
 >
-    autocmd FileType * nested :call tagbar#autoopen()
+    autocmd FileType * nested :call tagbar#autoopen(0)
 <
-And if you only want to open Tagbar only for specific filetypes, not for all
-of the supported ones:
+If you use multiple tabs and want Tagbar to also open in the current tab when
+you switch to an already loaded, supported buffer:
+>
+    autocmd BufEnter * nested :call tagbar#autoopen(0)
+<
+And if you want to open Tagbar only for specific filetypes, not for all of the
+supported ones:
 >
     autocmd FileType c,cpp nested :TagbarOpen
 <
