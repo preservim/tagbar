@@ -2711,13 +2711,14 @@ endfunction
 
 " s:QuitIfOnlyWindow() {{{2
 function! s:QuitIfOnlyWindow()
-    " Before quitting Vim, delete the tagbar buffer so that
-    " the '0 mark is correctly set to the previous buffer.
+    " Check if there is more than window
     if winbufnr(2) == -1
         " Check if there is more than one tab page
         if tabpagenr('$') == 1
+            " Before quitting Vim, delete the tagbar buffer so that
+            " the '0 mark is correctly set to the previous buffer.
             bdelete
-            quit
+            quitall
         else
             close
         endif
