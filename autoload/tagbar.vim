@@ -2424,8 +2424,9 @@ function! s:JumpToTag(stay_in_tagbar)
 
     let tagbarwinnr = winnr()
 
+    " Ignore BufEnter to prevent MiniBufExplorer from interfering
     let eventignore_save = &eventignore
-    set eventignore=all
+    set eventignore=BufEnter
 
     " This elaborate construct will try to switch to the correct
     " buffer/window; if the buffer isn't currently shown in a window it will
