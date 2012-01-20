@@ -1527,9 +1527,25 @@ function! s:CloseWindow()
 
     if winnr() == tagbarwinnr
         if winbufnr(2) != -1
+            let filebufnr = bufnr(s:known_files.getCurrent().fpath)
+
+            " Ignore BufEnter to prevent MiniBufExplorer from interfering
+            let eventignore_save = &eventignore
+            set eventignore=BufEnter
+
             " Other windows are open, only close the tagbar one
             close
+
+            " Try to jump to the correct window after closing
             wincmd p
+            if bufnr('%') != filebufnr
+                let filewinnr = bufwinnr(filebufnr)
+                if filewinnr != -1
+                    execute filewinnr . 'wincmd w'
+                endif
+            endif
+
+            let &eventignore = eventignore_save
         endif
     else
         " Go to the tagbar window, close it and then come back to the
