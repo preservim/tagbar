@@ -1617,6 +1617,9 @@ function! s:ProcessFile(fname, ftype)
         return
     elseif ctags_output == ''
         call s:LogDebugMessage('Ctags output empty')
+        " No need to go through the tag processing if there are no tags, and
+        " preserving the old fold state also isn't necessary
+        call s:known_files.put(s:FileInfo.New(a:fname, a:ftype), a:fname)
         return
     endif
 
