@@ -1396,6 +1396,8 @@ endfunction
 " Window management {{{1
 " s:ToggleWindow() {{{2
 function! s:ToggleWindow()
+    call s:LogDebugMessage('ToggleWindow called')
+
     let tagbarwinnr = bufwinnr("__Tagbar__")
     if tagbarwinnr != -1
         call s:CloseWindow()
@@ -1403,10 +1405,14 @@ function! s:ToggleWindow()
     endif
 
     call s:OpenWindow('')
+
+    call s:LogDebugMessage('ToggleWindow finished')
 endfunction
 
 " s:OpenWindow() {{{2
 function! s:OpenWindow(flags)
+    call s:LogDebugMessage("OpenWindow called with flags: '" . a:flags . "'")
+
     let autofocus = a:flags =~# 'f'
     let jump      = a:flags =~# 'j'
     let autoclose = a:flags =~# 'c'
@@ -1449,10 +1455,14 @@ function! s:OpenWindow(flags)
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
     endif
+
+    call s:LogDebugMessage('OpenWindow finished')
 endfunction
 
 " s:InitWindow() {{{2
 function! s:InitWindow(autoclose)
+    call s:LogDebugMessage('InitWindow called with autoclose: ' . a:autoclose)
+
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
     setlocal bufhidden=hide
@@ -1513,10 +1523,14 @@ function! s:InitWindow(autoclose)
     endif
 
     let &cpoptions = cpoptions_save
+
+    call s:LogDebugMessage('InitWindow finished')
 endfunction
 
 " s:CloseWindow() {{{2
 function! s:CloseWindow()
+    call s:LogDebugMessage('CloseWindow called')
+
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr == -1
         return
@@ -1567,6 +1581,8 @@ function! s:CloseWindow()
             let s:window_expanded = 0
         endif
     endif
+
+    call s:LogDebugMessage('CloseWindow finished')
 endfunction
 
 " s:ZoomWindow() {{{2
