@@ -1540,17 +1540,23 @@ function! s:CloseWindow()
 
     if winnr() == tagbarwinnr
         if winbufnr(2) != -1
-            let filebufnr = bufnr(s:known_files.getCurrent().fpath)
-
             " Other windows are open, only close the tagbar one
+
+            let curfile = s:known_files.getCurrent()
+
             call s:winexec('close')
 
             " Try to jump to the correct window after closing
             call s:winexec('wincmd p')
-            if bufnr('%') != filebufnr
-                let filewinnr = bufwinnr(filebufnr)
-                if filewinnr != -1
-                    call s:winexec(filewinnr . 'wincmd w')
+
+            if !empty(curfile)
+                let filebufnr = bufnr(curfile.fpath)
+
+                if bufnr('%') != filebufnr
+                    let filewinnr = bufwinnr(filebufnr)
+                    if filewinnr != -1
+                        call s:winexec(filewinnr . 'wincmd w')
+                    endif
                 endif
             endif
         endif
