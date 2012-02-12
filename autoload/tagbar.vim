@@ -57,8 +57,9 @@ else
     let &wildignore = wildignore_save
 
     if !executable(g:tagbar_ctags_bin)
-        echomsg 'Tagbar: Exuberant ctags not found in specified place,'
-              \ 'skipping plugin'
+        echomsg "Tagbar: Exuberant ctags not found at " .
+              \ "'" . g:tagbar_ctags_bin . "', " .
+              \ "skipping plugin"
         finish
     endif
 endif
