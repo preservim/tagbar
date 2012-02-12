@@ -664,6 +664,46 @@ function! s:InitTypes()
         \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0}
     \ ]
     let s:known_types.tex = type_tex
+    " Vala {{{3
+    " Vala is supported by the ctags fork provided by Anjuta, so only add the
+    " type if the fork is used to prevent error messages otherwise
+    if has_key(s:ctags_types, 'vala') || executable('anjuta-tags')
+        let type_vala = {}
+        let type_vala.ctagstype = 'vala'
+        let type_vala.kinds     = [
+            \ {'short' : 'e', 'long' : 'Enumerations',       'fold' : 0},
+            \ {'short' : 'v', 'long' : 'Enumeration values', 'fold' : 0},
+            \ {'short' : 's', 'long' : 'Structures',         'fold' : 0},
+            \ {'short' : 'i', 'long' : 'Interfaces',         'fold' : 0},
+            \ {'short' : 'd', 'long' : 'Delegates',          'fold' : 0},
+            \ {'short' : 'c', 'long' : 'Classes',            'fold' : 0},
+            \ {'short' : 'p', 'long' : 'Properties',         'fold' : 0},
+            \ {'short' : 'f', 'long' : 'Fields',             'fold' : 0},
+            \ {'short' : 'm', 'long' : 'Methods',            'fold' : 0},
+            \ {'short' : 'E', 'long' : 'Error domains',      'fold' : 0},
+            \ {'short' : 'r', 'long' : 'Error codes',        'fold' : 0},
+            \ {'short' : 'S', 'long' : 'Signals',            'fold' : 0}
+        \ ]
+        let type_vala.sro = '.'
+        " 'enum' doesn't seem to be used as a scope, but it can't hurt to have
+        " it here
+        let type_vala.kind2scope = {
+            \ 's' : 'struct',
+            \ 'i' : 'interface',
+            \ 'c' : 'class',
+            \ 'e' : 'enum'
+        \ }
+        let type_vala.scope2kind = {
+            \ 'struct'    : 's',
+            \ 'interface' : 'i',
+            \ 'class'     : 'c',
+            \ 'enum'      : 'e'
+        \ }
+        let s:known_types.vala = type_vala
+    endif
+    if !has_key(s:ctags_types, 'vala') && executable('anjuta-tags')
+        let s:known_types.vala.ctagsbin = 'anjuta-tags'
+    endif
     " Vera {{{3
     " Why are variables 'virtual'?
     let type_vera = {}
