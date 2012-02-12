@@ -77,10 +77,13 @@ unlet s:ftype_out
 let s:icon_closed = g:tagbar_iconchars[0]
 let s:icon_open   = g:tagbar_iconchars[1]
 
-let s:type_init_done    = 0
-let s:autocommands_done = 0
-let s:checked_ctags     = 0
-let s:window_expanded   = 0
+let s:type_init_done      = 0
+let s:autocommands_done   = 0
+let s:checked_ctags       = 0
+let s:checked_ctags_types = 0
+let s:ctags_types         = {}
+let s:window_expanded     = 0
+
 
 let s:access_symbols = {
     \ 'public'    : '+',
@@ -96,15 +99,21 @@ let s:debug_file = ''
 
 " s:Init() {{{2
 function! s:Init()
+    if !s:checked_ctags
+        if !s:CheckForExCtags()
+            return 0
+        endif
+    endif
+
+    if !s:checked_ctags_types
+        call s:GetSupportedFiletypes()
+    endif
+
     if !s:type_init_done
         call s:InitTypes()
     endif
 
-    if !s:checked_ctags
-        if !s:CheckForExCtags()
-            return
-        endif
-    endif
+    return 1
 endfunction
 
 " s:InitTypes() {{{2
@@ -985,6 +994,32 @@ function! s:CheckFTCtags(bin, ftype)
     return ''
 endfunction
 
+" s:GetSupportedFiletypes() {{{2
+function! s:GetSupportedFiletypes()
+    call s:LogDebugMessage('Getting filetypes sypported by Exuberant Ctags')
+
+    let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--list-languages')
+    if ctags_cmd == ''
+        return
+    endif
+
+    let ctags_output = s:ExecuteCtags(ctags_cmd)
+
+    if v:shell_error
+        " this shouldn't happen as potential problems would have already been
+        " caught by the previous ctags checking
+        return
+    endif
+
+    let types = split(ctags_output, '\n\+')
+
+    for type in types
+        let s:ctags_types[tolower(type)] = 1
+    endfor
+
+    let s:checked_ctags_types = 1
+endfunction
+
 " Prototypes {{{1
 " Base tag {{{2
 let s:BaseTag = {}
@@ -1433,7 +1468,9 @@ function! s:OpenWindow(flags)
         return
     endif
 
-    call s:Init()
+    if !s:Init()
+        return 0
+    endif
 
     " Expand the Vim window to accomodate for the Tagbar window if requested
     if g:tagbar_expand && !s:window_expanded && has('gui_running')
