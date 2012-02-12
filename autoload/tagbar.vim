@@ -25,25 +25,23 @@ scriptencoding utf-8
 " Basic init {{{2
 
 if !exists('g:tagbar_ctags_bin')
-    if executable('ctags-exuberant')
-        let g:tagbar_ctags_bin = 'ctags-exuberant'
-    elseif executable('exuberant-ctags')
-        let g:tagbar_ctags_bin = 'exuberant-ctags'
-    elseif executable('exctags')
-        let g:tagbar_ctags_bin = 'exctags'
-    elseif has('macunix') && executable('/usr/local/bin/ctags')
-        " Homebrew default location
-        let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
-    elseif has('macunix') && executable('/opt/local/bin/ctags')
-        " Macports default location
-        let g:tagbar_ctags_bin = '/opt/local/bin/ctags'
-    elseif executable('ctags')
-        let g:tagbar_ctags_bin = 'ctags'
-    elseif executable('ctags.exe')
-        let g:tagbar_ctags_bin = 'ctags.exe'
-    elseif executable('tags')
-        let g:tagbar_ctags_bin = 'tags'
-    else
+    let ctagsbins  = []
+    let ctagsbins += ['ctags-exuberant'] " Debian
+    let ctagsbins += ['exuberant-ctags']
+    let ctagsbins += ['exctags'] " FreeBSD, NetBSD
+    let ctagsbins += ['/usr/local/bin/ctags'] " Homebrew
+    let ctagsbins += ['/opt/local/bin/ctags'] " Macports
+    let ctagsbins += ['ectags'] " OpenBSD
+    let ctagsbins += ['ctags']
+    let ctagsbins += ['ctags.exe']
+    let ctagsbins += ['tags']
+    for ctags in ctagsbins
+        if executable(ctags)
+            let g:tagbar_ctags_bin = ctags
+            break
+        endif
+    endfor
+    if !exists('g:tagbar_ctags_bin')
         echomsg 'Tagbar: Exuberant ctags not found, skipping plugin'
         finish
     endif
