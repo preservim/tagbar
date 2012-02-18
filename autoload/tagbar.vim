@@ -2522,7 +2522,7 @@ function! s:JumpToTag(stay_in_tagbar)
 
     let autoclose = w:autoclose
 
-    if empty(taginfo) || has_key(taginfo, 'numtags')
+    if empty(taginfo) || taginfo.isKindheader()
         return
     endif
 
