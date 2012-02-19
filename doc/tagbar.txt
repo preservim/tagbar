@@ -656,6 +656,13 @@ scope2kind: The opposite of the above, mapping scopes to the kinds of their
             but in some cases it can be different, for example when more than
             one kind maps to the same scope. If it is the exact inverse for
             your language you only need to specify one of the two keys.
+manualscope:Languages like LaTeX where support is added to ctags with regexes
+            (see below) do not support scopes.  manualscope allows you to fake
+            scopes by specifing that certian kinds always appear as children
+            of other kinds.  For example, if ctags marks sections as kind
+            's:sections' and marks subsections as 't:subsections', then:  
+                manualscope: { 't' : 's' }
+            will make subsections appear below sections.
 replace:    If you set this entry to 1 your definition will completely replace
 {optional}  an existing default definition. This is useful if you want to
             disable scopes for a file type for some reason. Note that in this
@@ -807,10 +814,10 @@ by the "deffile" definition entry:
 	--regex-latex=/^\\chapter[[:space:]]*\*[[:space:]]*\{([^}]+)\}/CHAP \1/s,chapter/
 	--regex-latex=/^\\section[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\. \2/s,section/
 	--regex-latex=/^\\section[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\. \1/s,section/
-	--regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/s,subsection/
-	--regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/s,subsection/
-	--regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/s,subsubsection/
-	--regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/s,subsubsection/
+	--regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/t,subsection/
+	--regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/t,subsection/
+	--regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/t,subsubsection/
+	--regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/t,subsubsection/
 	--regex-latex=/^\\includegraphics[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
 	--regex-latex=/^\\lstinputlisting[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
 	--regex-latex=/\\label[[:space:]]*\{([^}]+)\}/\1/l,label/
@@ -829,11 +836,15 @@ Now we have to create the Tagbar language definition in our vimrc:
 	    \ 'ctagstype' : 'latex',
 	    \ 'kinds'     : [
 	        \ 's:sections',
+                \ 't:subsections',
 	        \ 'g:graphics',
 	        \ 'l:labels',
 	        \ 'r:refs:1',
 	        \ 'p:pagerefs:1'
 	    \ ],
+            \ 'manualscope' : {
+            \     't' : 's'
+            \ },
 	    \ 'sort'    : 0,
 	    \ 'deffile' : expand('<sfile>:p:h:h') . '/ctags/latex.cnf'
 	\ }
@@ -845,6 +856,10 @@ Sort has been disabled for LaTeX so that the sections appear in their correct
 order. They unfortunately can't be shown nested with their correct scopes
 since as already mentioned the regular expression approach doesn't support
 that.
+
+The above only puts subsections and subsubsections below sections.  You can
+edit the ctag kinds in the regex expressions and expand the manualscope entry
+to your taste depending on how deep you would like the tags to nest.
 
 Tagbar should now be able to show the sections and other tags from LaTeX
 files.
