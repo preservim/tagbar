@@ -1733,6 +1733,34 @@ function! s:ProcessFile(fname, ftype)
         endif
     endfor
 
+    " Manually scoped tags
+    if has_key(typeinfo, 'manualscope')
+        call s:LogDebugMessage('Manual scoped tags')
+
+        "Sort the tags by line number
+        let sortedtags = copy(fileinfo.tags)
+        call sort(sortedtags, "s:CompareLine")
+
+        let previouskind = {}
+        for ctag in sortedtags
+            if has_key(typeinfo.manualscope, ctag.fields.kind) &&
+             \ has_key(previouskind, typeinfo.manualscope[ctag.fields.kind])
+
+                let p = previouskind[typeinfo.manualscope[ctag.fields.kind]]
+                call s:LogDebugMessage('Setting manual scope for ' . ctag.name . ' to ' . p.name)
+                let ctag.parent = p
+                if !has_key(p, "manualscopechildren")
+                    let p.manualscopechildren = []
+                endif
+                call add(p.manualscopechildren, ctag)
+            endif
+
+            let previouskind[ctag.fields.kind] = ctag
+        endfor
+
+        call filter(fileinfo.tags, 'empty(v:val.parent)')
+    endif
+
     " Process scoped tags
     let processedtags = []
     if has_key(typeinfo, 'kind2scope')
@@ -1789,6 +1817,19 @@ function! s:ProcessFile(fname, ftype)
     call fileinfo.sortTags()
 
     call s:known_files.put(fileinfo)
+endfunction
+
+" s:CompareLine {{{2
+function! s:CompareLine(x,y)
+    let l1 = str2nr(a:x.fields.line)
+    let l2 = str2nr(a:y.fields.line)
+    if l1 > l2
+        return 1
+    elseif l1 < l2
+        return -1
+    else
+        return 0
+    endif
 endfunction
 
 " s:ExecuteCtagsOnFile() {{{2
@@ -2354,15 +2395,7 @@ function! s:PrintKinds(typeinfo, fileinfo)
 
             if !kindtag.isFolded()
                 for tag in curtags
-                    let str = tag.str()
-                    silent put ='  ' . str
-
-                    " Save the current tagbar line in the tag for easy
-                    " highlighting access
-                    let curline                   = line('.')
-                    let tag.tline                 = curline
-                    let a:fileinfo.tline[curline] = tag
-                    let tag.depth                 = 1
+                    call s:PrintTagWithManualChildren(tag, 1, a:fileinfo)
                 endfor
             endif
 
@@ -2403,6 +2436,24 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
                                   \ a:fileinfo, a:typeinfo)
                 endfor
             endif
+        endfor
+    endif
+endfunction
+
+" s:PrintTagWithManualChildren() {{{2
+function! s:PrintTagWithManualChildren(tag, depth, fileinfo)
+    silent put =repeat(' ', a:depth * 2) . a:tag.str()
+
+    " Save the current tagbar line in the tag for easy
+    " highlighting access
+    let curline                   = line('.')
+    let a:tag.tline               = curline
+    let a:fileinfo.tline[curline] = a:tag
+    let a:tag.depth               = a:depth
+
+    if has_key(a:tag, 'manualscopechildren')
+        for childtag in a:tag.manualscopechildren
+            call s:PrintTagWithManualChildren(childtag, a:depth + 1, a:fileinfo)
         endfor
     endif
 endfunction
