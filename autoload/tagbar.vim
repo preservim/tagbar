@@ -779,51 +779,43 @@ function! s:InitTypes()
     let s:known_types.yacc = type_yacc
     " }}}3
 
-    let user_defs = s:GetUserTypeDefs()
-    for [key, value] in items(user_defs)
-        if !has_key(s:known_types, key) ||
-         \ (has_key(value, 'replace') && value.replace)
-            let s:known_types[key] = value
-        else
-            call extend(s:known_types[key], value)
-        endif
-    endfor
+    call s:LoadUserTypeDefs()
 
-    " Create a dictionary of the kind order for fast
-    " access in sorting functions
     for type in values(s:known_types)
-        let i = 0
-        let type.kinddict = {}
-        for kind in type.kinds
-            let type.kinddict[kind.short] = i
-            let i += 1
-        endfor
+        call s:CreateTypeKinddict(type)
     endfor
 
     let s:type_init_done = 1
 endfunction
 
-" s:GetUserTypeDefs() {{{2
-function! s:GetUserTypeDefs()
-    call s:LogDebugMessage('Initializing user types')
+" s:LoadUserTypeDefs() {{{2
+function! s:LoadUserTypeDefs(...)
+    if a:0 > 0
+        let type = a:1
 
-    redir => defs
-    silent execute 'let g:'
-    redir END
+        call s:LogDebugMessage("Initializing user type '" . type . "'")
 
-    let deflist = split(defs, '\n')
-    call map(deflist, 'substitute(v:val, ''^\S\+\zs.*'', "", "")')
-    call filter(deflist, 'v:val =~ "^tagbar_type_"')
+        let defdict = {}
+        let defdict[type] = g:tagbar_type_{type}
+    else
+        call s:LogDebugMessage('Initializing user types')
 
-    let defdict = {}
-    for defstr in deflist
-        let type = substitute(defstr, '^tagbar_type_', '', '')
-        execute 'let defdict["' . type . '"] = g:' . defstr
-    endfor
+        redir => defs
+        silent execute 'let g:'
+        redir END
 
-    " If the user only specified one of kind2scope and scope2kind use it to
-    " generate the other one
-    " Also, transform the 'kind' definitions into dictionary format
+        let deflist = split(defs, '\n')
+        call map(deflist, 'substitute(v:val, ''^\S\+\zs.*'', "", "")')
+        call filter(deflist, 'v:val =~ "^tagbar_type_"')
+
+        let defdict = {}
+        for defstr in deflist
+            let type = substitute(defstr, '^tagbar_type_', '', '')
+            let defdict[type] = g:{defstr}
+        endfor
+    endif
+
+    " Transform the 'kind' definitions into dictionary format
     for def in values(defdict)
         if has_key(def, 'kinds')
             let kinds = def.kinds
@@ -840,6 +832,8 @@ function! s:GetUserTypeDefs()
             endfor
         endif
 
+        " If the user only specified one of kind2scope and scope2kind use it
+        " to generate the other one
         if has_key(def, 'kind2scope') && !has_key(def, 'scope2kind')
             let def.scope2kind = {}
             for [key, value] in items(def.kind2scope)
@@ -852,8 +846,32 @@ function! s:GetUserTypeDefs()
             endfor
         endif
     endfor
+    unlet! key value
 
-    return defdict
+    for [key, value] in items(defdict)
+        if !has_key(s:known_types, key) ||
+         \ (has_key(value, 'replace') && value.replace)
+            let s:known_types[key] = value
+        else
+            call extend(s:known_types[key], value)
+        endif
+    endfor
+
+    if a:0 > 0
+        call s:CreateTypeKinddict(s:known_types[type])
+    endif
+endfunction
+
+" s:CreateTypeKinddict() {{{2
+function! s:CreateTypeKinddict(type)
+    " Create a dictionary of the kind order for fast access in sorting
+    " functions
+    let i = 0
+    let a:type.kinddict = {}
+    for kind in a:type.kinds
+        let a:type.kinddict[kind.short] = i
+        let i += 1
+    endfor
 endfunction
 
 " s:RestoreSession() {{{2
@@ -2888,6 +2906,8 @@ endfunction
 
 " s:IsValidFile() {{{2
 function! s:IsValidFile(fname, ftype)
+    call s:LogDebugMessage('Checking if file is valid: ' . a:fname)
+
     if a:fname == '' || a:ftype == ''
         call s:LogDebugMessage('Empty filename or type')
         return 0
@@ -2899,8 +2919,14 @@ function! s:IsValidFile(fname, ftype)
     endif
 
     if !has_key(s:known_types, a:ftype)
-        call s:LogDebugMessage('Unsupported filetype: ' . a:ftype)
-        return 0
+        if exists('g:tagbar_type_' . a:ftype)
+            " Filetype definition must have been specified in an 'ftplugin'
+            " file, so load it now
+            call s:LoadUserTypeDefs(a:ftype)
+        else
+            call s:LogDebugMessage('Unsupported filetype: ' . a:ftype)
+            return 0
+        endif
     endif
 
     return 1
