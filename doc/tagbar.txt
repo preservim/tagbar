@@ -581,8 +581,8 @@ Tagbar has a flexible mechanism for extending the existing file type (i.e.
 language) definitions. This can be used both to change the settings of the
 existing types and to add completely new types. For Tagbar to support a
 filetype two things are needed: a program that generates the tag information,
-usually Exuberant Ctags, and a Tagbar type definition in your |vimrc| that
-tells Tagbar how to interpret the generated tags.
+usually Exuberant Ctags, and a Tagbar type definition in your |vimrc| or an
+|ftplugin| that tells Tagbar how to interpret the generated tags.
 
 There are two ways to generate the tag information for new filetypes: add a
 definition to Exuberant Ctags or create a specialized program for your
