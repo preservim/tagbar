@@ -965,7 +965,7 @@ function! s:CreateAutocommands()
             \ endif
         autocmd BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
-        autocmd BufDelete * call
+        autocmd BufDelete,BufUnload,BufWipeout * call
                     \ s:CleanupFileinfo(fnamemodify(expand('<afile>'), ':p'))
     augroup END
 
