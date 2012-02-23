@@ -1521,6 +1521,7 @@ function! s:OpenWindow(flags)
                 let w:autoclose = autoclose
             endif
         endif
+        call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
         return
     endif
 
@@ -3110,6 +3111,8 @@ endfunction
 
 " s:winexec() {{{2
 function! s:winexec(cmd)
+    call s:LogDebugMessage("Executing without autocommands: " . a:cmd)
+
     let eventignore_save = &eventignore
     set eventignore=BufEnter
 
@@ -3221,6 +3224,7 @@ endfunction
 " Automatically open Tagbar if one of the open buffers contains a supported
 " file
 function! tagbar#autoopen(...)
+    call s:LogDebugMessage('tagbar#autoopen called on ' . bufname('%'))
     let always = a:0 > 0 ? a:1 : 1
 
     call s:Init()
@@ -3230,10 +3234,15 @@ function! tagbar#autoopen(...)
             let ftype = s:DetectFiletype(bufnr)
             if s:IsValidFile(bufname(bufnr), ftype)
                 call s:OpenWindow('')
+                call s:LogDebugMessage('tagbar#autoopen finished ' .
+                                     \ 'after finding valid file')
                 return
             endif
         endif
     endfor
+
+    call s:LogDebugMessage('tagbar#autoopen finished ' .
+                         \ 'without finding valid file')
 endfunction
 
 " Modeline {{{1
