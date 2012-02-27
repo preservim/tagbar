@@ -966,7 +966,7 @@ function! s:CreateAutocommands()
         autocmd BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
         autocmd BufDelete,BufUnload,BufWipeout * call
-                    \ s:CleanupFileinfo(fnamemodify(expand('<afile>'), ':p'))
+                    \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
 
         autocmd VimEnter * call s:CorrectFocusOnStartup()
     augroup END
@@ -2918,11 +2918,6 @@ function! s:CleanUp()
     unlet s:is_maximized
     unlet s:compare_typeinfo
     unlet s:short_help
-endfunction
-
-" s:CleanupFileinfo() {{{2
-function! s:CleanupFileinfo(fname)
-    call s:known_files.rm(a:fname)
 endfunction
 
 " s:DetectFiletype() {{{2
