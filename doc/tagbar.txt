@@ -556,6 +556,9 @@ use this instead:
 >
     autocmd VimEnter * nested :call tagbar#autoopen(1)
 <
+The above is exactly what the Taglist plugin does if you set the
+Tlist_Auto_Open option, in case you want to emulate this behaviour.
+
 For opening Tagbar also if you open a supported file in an already running
 Vim:
 >
