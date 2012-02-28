@@ -2860,6 +2860,8 @@ function! s:AutoUpdate(fname)
         return
     endif
 
+    let updated = 0
+
     " Process the file if it's unknown or the information is outdated
     " Also test for entries that exist but are empty, which will be the case
     " if there was an error during the ctags execution
@@ -2867,10 +2869,12 @@ function! s:AutoUpdate(fname)
         if s:known_files.get(a:fname).mtime != getftime(a:fname)
             call s:LogDebugMessage('File data outdated, updating ' . a:fname)
             call s:ProcessFile(a:fname, sftype)
+            let updated = 1
         endif
     elseif !s:known_files.has(a:fname)
         call s:LogDebugMessage('New file, processing ' . a:fname)
         call s:ProcessFile(a:fname, sftype)
+        let updated = 1
     endif
 
     let fileinfo = s:known_files.get(a:fname)
@@ -2882,8 +2886,11 @@ function! s:AutoUpdate(fname)
         return
     endif
 
-    " Display the tagbar content
-    call s:RenderContent(fileinfo)
+    " Display the tagbar content if the tags have been updated or a different
+    " file is being displayed
+    if updated || a:fname != s:known_files.getCurrent().fpath
+        call s:RenderContent(fileinfo)
+    endif
 
     " Call setCurrent after rendering so RenderContent can check whether the
     " same file is redisplayed
