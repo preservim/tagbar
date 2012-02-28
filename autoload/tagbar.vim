@@ -111,6 +111,10 @@ function! s:Init()
         call s:InitTypes()
     endif
 
+    if !s:autocommands_done
+        call s:CreateAutocommands()
+    endif
+
     return 1
 endfunction
 
@@ -956,7 +960,6 @@ function! s:CreateAutocommands()
     augroup TagbarAutoCmds
         autocmd!
         autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
-        autocmd BufUnload  __Tagbar__ call s:CleanUp()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
         autocmd BufWritePost *
@@ -1257,6 +1260,26 @@ function! s:NormalTag.str() dict
     endif
 
     return self._getPrefix() . self.name . suffix . "\n"
+endfunction
+
+" s:NormalTag.strshort() {{{3
+function! s:NormalTag.strshort(longsig) dict
+    let str = ''
+    if has_key(self.fields, 'access')
+        let str .= get(s:access_symbols, self.fields.access, '')
+    endif
+
+    let str .= self.name
+
+    if has_key(self.fields, 'signature')
+        if a:longsig
+            let str .= self.fields.signature
+        else
+            let str .= '()'
+        endif
+    endif
+
+    return str
 endfunction
 
 " s:NormalTag.getPrototype() {{{3
@@ -1585,6 +1608,7 @@ function! s:InitWindow(autoclose)
 
     let s:is_maximized = 0
     let s:short_help   = 1
+    let s:new_window   = 1
 
     let w:autoclose = a:autoclose
 
@@ -1598,10 +1622,6 @@ function! s:InitWindow(autoclose)
 
     if !hasmapto('JumpToTag', 'n')
         call s:MapKeys()
-    endif
-
-    if !s:autocommands_done
-        call s:CreateAutocommands()
     endif
 
     let &cpoptions = cpoptions_save
@@ -2212,6 +2232,7 @@ endfunction
 " s:RenderContent() {{{2
 function! s:RenderContent(...)
     call s:LogDebugMessage('RenderContent called')
+    let s:new_window = 0
 
     if a:0 == 1
         let fileinfo = a:1
@@ -2521,6 +2542,9 @@ function! s:HighlightTag()
     endif
 
     let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1
+        return
+    endif
     let prevwinnr   = winnr()
     call s:winexec(tagbarwinnr . 'wincmd w')
 
@@ -2842,9 +2866,8 @@ function! s:AutoUpdate(fname)
     let bufnr = bufnr(a:fname)
     let ftype = getbufvar(bufnr, '&filetype')
 
-    " Don't do anything if tagbar is not open or if we're in the tagbar window
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr == -1 || ftype == 'tagbar'
+    " Don't do anything if we're in the tagbar window
+    if ftype == 'tagbar'
         call s:LogDebugMessage('Tagbar window not open or in Tagbar window')
         return
     endif
@@ -2888,7 +2911,8 @@ function! s:AutoUpdate(fname)
 
     " Display the tagbar content if the tags have been updated or a different
     " file is being displayed
-    if updated || a:fname != s:known_files.getCurrent().fpath
+    if bufwinnr('__Tagbar__') != -1 &&
+     \ (s:new_window || updated || a:fname != s:known_files.getCurrent().fpath)
         call s:RenderContent(fileinfo)
     endif
 
@@ -2915,15 +2939,6 @@ function! s:CheckMouseClick()
     elseif g:tagbar_singleclick
         call s:JumpToTag(0)
     endif
-endfunction
-
-" s:CleanUp() {{{2
-function! s:CleanUp()
-    silent autocmd! TagbarAutoCmds
-
-    unlet s:is_maximized
-    unlet s:compare_typeinfo
-    unlet s:short_help
 endfunction
 
 " s:DetectFiletype() {{{2
@@ -3037,6 +3052,9 @@ endfunction
 " Get the tag info for a file near the cursor in the current file
 function! s:GetNearbyTag()
     let fileinfo = s:known_files.getCurrent()
+    if empty(fileinfo)
+        return
+    endif
 
     let curline = line('.')
     let tag = {}
@@ -3267,6 +3285,24 @@ function! tagbar#autoopen(...)
     call s:LogDebugMessage('tagbar#autoopen finished ' .
                          \ 'without finding valid file')
 endfunction
+
+function! tagbar#currenttag(fmt, default, ...)
+    let longsig = a:0 > 0 ? a:1 : 0
+
+    if !s:Init()
+        return ''
+    endif
+
+    let tag = s:GetNearbyTag()
+
+    if !empty(tag)
+        return printf(a:fmt, tag.strshort(longsig))
+    else
+        return a:default
+    endif
+endfunction
+
+TagbarDebug
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1

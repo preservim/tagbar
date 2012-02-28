@@ -20,6 +20,7 @@ Contents					*tagbar* *tagbar-contents*
 	 5. Configuration ................... |tagbar-configuration|
 	      Highlight colours ............. |tagbar-highlight|
 	      Automatically opening Tagbar .. |tagbar-autoopen|
+	      Show current tag in statusline  |tagbar-statusline|
 	 6. Extending Tagbar ................ |tagbar-extend|
 	 7. Troubleshooting & Known issues .. |tagbar-issues|
 	 8. History ......................... |tagbar-history|
@@ -576,6 +577,30 @@ supported ones:
 <
 Check out |autocmd.txt| if you want it to open automatically in more
 complicated cases.
+
+------------------------------------------------------------------------------
+SHOWING THE CURRENT TAG IN THE STATUSLINE		*tagbar-statusline*
+
+You can show the current tag in the 'statusline', or in any other place that
+you want to, by calling the tagbar#currenttag() function. The current tag is
+exactly the same as would be highlighted in the Tagbar window if it is open.
+It is defined as the nearest tag upwards in the file starting from the cursor
+position. This means that for example in a function it should usually be the
+name of the function.
+
+The function has the following signature:
+
+tagbar#currenttag({format}, {default} [, {longsig}])
+    {format} is a |printf()|-compatible format string where "%s" will be
+    replaced by the name of the tag. {default} will be displayed instead of
+    the format string if no tag can be found. If the optional argument
+    {longsig} is given and is non-zero then functions will have their complete
+    signature shown, otherwise only "()" will be appended so they can be more
+    easily distinguished from other tags.
+
+    For example, if you put the following into your statusline: >
+        %{tagbar#currenttag('[%s] ', '')}
+<   then the function "myfunc" will be show as "[myfunc()] ".
 
 ==============================================================================
 6. Extending Tagbar					*tagbar-extend*
