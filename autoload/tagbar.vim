@@ -1082,6 +1082,15 @@ endfunction
 " Base tag {{{2
 let s:BaseTag = {}
 
+" s:BaseTag.New() {{{3
+function! s:BaseTag.New(name) dict
+    let newobj = copy(self)
+
+    call newobj._init(a:name)
+
+    return newobj
+endfunction
+
 " s:BaseTag._init() {{{3
 function! s:BaseTag._init(name) dict
     let self.name        = a:name
@@ -1229,15 +1238,6 @@ endfunction
 " Normal tag {{{2
 let s:NormalTag = copy(s:BaseTag)
 
-" s:NormalTag.New() {{{3
-function! s:NormalTag.New(name) dict
-    let newobj = copy(self)
-
-    call newobj._init(a:name)
-
-    return newobj
-endfunction
-
 " s:NormalTag.isNormalTag() {{{3
 function! s:NormalTag.isNormalTag() dict
     return 1
@@ -1267,15 +1267,6 @@ endfunction
 " Pseudo tag {{{2
 let s:PseudoTag = copy(s:BaseTag)
 
-" s:PseudoTag.New() {{{3
-function! s:PseudoTag.New(name) dict
-    let newobj = copy(self)
-
-    call newobj._init(a:name)
-
-    return newobj
-endfunction
-
 " s:PseudoTag.isPseudoTag() {{{3
 function! s:PseudoTag.isPseudoTag() dict
     return 1
@@ -1296,15 +1287,6 @@ endfunction
 
 " Kind header {{{2
 let s:KindheaderTag = copy(s:BaseTag)
-
-" s:KindheaderTag.New() {{{3
-function! s:KindheaderTag.New(name) dict
-    let newobj = copy(self)
-
-    call newobj._init(a:name)
-
-    return newobj
-endfunction
 
 " s:KindheaderTag.isKindheader() {{{3
 function! s:KindheaderTag.isKindheader() dict
@@ -2354,9 +2336,17 @@ function! s:PrintKinds(typeinfo, fileinfo)
                         let childtags = filter(copy(tag.children),
                                           \ 'v:val.fields.kind ==# ckind.short')
                         if len(childtags) > 0
-                            " Print 'kind' header of following children
+                            " Print 'kind' header of following children, but
+                            " only if they are not scope-defining tags (since
+                            " those already have an identifier)
                             if !has_key(a:typeinfo.kind2scope, ckind.short)
                                 silent put ='    [' . ckind.long . ']'
+                                " Add basic tag to allow folding when on the
+                                " header line
+                                let headertag = s:BaseTag.New(ckind.long)
+                                let headertag.parent = tag
+                                let headertag.fileinfo = tag.fileinfo
+                                let a:fileinfo.tline[line('.')] = headertag
                             endif
                             for childtag in childtags
                                 call s:PrintTag(childtag, 1,
@@ -2438,6 +2428,11 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo)
                 if !has_key(a:typeinfo.kind2scope, ckind.short)
                     silent put ='    ' . repeat(' ', a:depth * 2) .
                               \ '[' . ckind.long . ']'
+                    " Add basic tag to allow folding when on the header line
+                    let headertag = s:BaseTag.New(ckind.long)
+                    let headertag.parent = a:tag
+                    let headertag.fileinfo = a:tag.fileinfo
+                    let a:fileinfo.tline[line('.')] = headertag
                 endif
                 for childtag in childtags
                     call s:PrintTag(childtag, a:depth + 1,
@@ -2567,7 +2562,7 @@ function! s:JumpToTag(stay_in_tagbar)
 
     let autoclose = w:autoclose
 
-    if empty(taginfo) || taginfo.isKindheader()
+    if empty(taginfo) || !taginfo.isNormalTag()
         return
     endif
 
