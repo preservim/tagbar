@@ -128,73 +128,73 @@ function! s:InitTypes()
     let type_ant = {}
     let type_ant.ctagstype = 'ant'
     let type_ant.kinds     = [
-        \ {'short' : 'p', 'long' : 'projects', 'fold' : 0},
-        \ {'short' : 't', 'long' : 'targets',  'fold' : 0}
+        \ {'short' : 'p', 'long' : 'projects', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'targets',  'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.ant = type_ant
     " Asm {{{3
     let type_asm = {}
     let type_asm.ctagstype = 'asm'
     let type_asm.kinds     = [
-        \ {'short' : 'm', 'long' : 'macros',  'fold' : 0},
-        \ {'short' : 't', 'long' : 'types',   'fold' : 0},
-        \ {'short' : 'd', 'long' : 'defines', 'fold' : 0},
-        \ {'short' : 'l', 'long' : 'labels',  'fold' : 0}
+        \ {'short' : 'm', 'long' : 'macros',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'types',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'defines', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'labels',  'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.asm = type_asm
     " ASP {{{3
     let type_aspvbs = {}
     let type_aspvbs.ctagstype = 'asp'
     let type_aspvbs.kinds     = [
-        \ {'short' : 'd', 'long' : 'constants',   'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0},
-        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0}
+        \ {'short' : 'd', 'long' : 'constants',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.aspvbs = type_aspvbs
     " Awk {{{3
     let type_awk = {}
     let type_awk.ctagstype = 'awk'
     let type_awk.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.awk = type_awk
     " Basic {{{3
     let type_basic = {}
     let type_basic.ctagstype = 'basic'
     let type_basic.kinds     = [
-        \ {'short' : 'c', 'long' : 'constants',    'fold' : 0},
-        \ {'short' : 'g', 'long' : 'enumerations', 'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',    'fold' : 0},
-        \ {'short' : 'l', 'long' : 'labels',       'fold' : 0},
-        \ {'short' : 't', 'long' : 'types',        'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',    'fold' : 0}
+        \ {'short' : 'c', 'long' : 'constants',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'enumerations', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'labels',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'types',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',    'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.basic = type_basic
     " BETA {{{3
     let type_beta = {}
     let type_beta.ctagstype = 'beta'
     let type_beta.kinds     = [
-        \ {'short' : 'f', 'long' : 'fragments', 'fold' : 0},
-        \ {'short' : 's', 'long' : 'slots',     'fold' : 0},
-        \ {'short' : 'v', 'long' : 'patterns',  'fold' : 0}
+        \ {'short' : 'f', 'long' : 'fragments', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'slots',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'patterns',  'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.beta = type_beta
     " C {{{3
     let type_c = {}
     let type_c.ctagstype = 'c'
     let type_c.kinds     = [
-        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
-        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1},
-        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
-        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
-        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0},
-        \ {'short' : 's', 'long' : 'structs',     'fold' : 0},
-        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0},
-        \ {'short' : 'm', 'long' : 'members',     'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0}
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1}
     \ ]
     let type_c.sro        = '::'
     let type_c.kind2scope = {
@@ -212,18 +212,18 @@ function! s:InitTypes()
     let type_cpp = {}
     let type_cpp.ctagstype = 'c++'
     let type_cpp.kinds     = [
-        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
-        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1},
-        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
-        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
-        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0},
-        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
-        \ {'short' : 's', 'long' : 'structs',     'fold' : 0},
-        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0},
-        \ {'short' : 'm', 'long' : 'members',     'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0}
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0}
     \ ]
     let type_cpp.sro        = '::'
     let type_cpp.kind2scope = {
@@ -245,18 +245,18 @@ function! s:InitTypes()
     let type_cs = {}
     let type_cs.ctagstype = 'c#'
     let type_cs.kinds     = [
-        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
-        \ {'short' : 'f', 'long' : 'fields',      'fold' : 0},
-        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
-        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
-        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0},
-        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0},
-        \ {'short' : 'i', 'long' : 'interfaces',  'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
-        \ {'short' : 's', 'long' : 'structs',     'fold' : 0},
-        \ {'short' : 'E', 'long' : 'events',      'fold' : 0},
-        \ {'short' : 'm', 'long' : 'methods',     'fold' : 0},
-        \ {'short' : 'p', 'long' : 'properties',  'fold' : 0}
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'fields',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'interfaces',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'E', 'long' : 'events',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'methods',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'properties',  'fold' : 0, 'stl' : 1}
     \ ]
     let type_cs.sro        = '.'
     let type_cs.kind2scope = {
@@ -278,28 +278,28 @@ function! s:InitTypes()
     let type_cobol = {}
     let type_cobol.ctagstype = 'cobol'
     let type_cobol.kinds     = [
-        \ {'short' : 'd', 'long' : 'data items',        'fold' : 0},
-        \ {'short' : 'f', 'long' : 'file descriptions', 'fold' : 0},
-        \ {'short' : 'g', 'long' : 'group items',       'fold' : 0},
-        \ {'short' : 'p', 'long' : 'paragraphs',        'fold' : 0},
-        \ {'short' : 'P', 'long' : 'program ids',       'fold' : 0},
-        \ {'short' : 's', 'long' : 'sections',          'fold' : 0}
+        \ {'short' : 'd', 'long' : 'data items',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'file descriptions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'group items',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'paragraphs',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'P', 'long' : 'program ids',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sections',          'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.cobol = type_cobol
     " DOS Batch {{{3
     let type_dosbatch = {}
     let type_dosbatch.ctagstype = 'dosbatch'
     let type_dosbatch.kinds     = [
-        \ {'short' : 'l', 'long' : 'labels',    'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0}
+        \ {'short' : 'l', 'long' : 'labels',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.dosbatch = type_dosbatch
     " Eiffel {{{3
     let type_eiffel = {}
     let type_eiffel.ctagstype = 'eiffel'
     let type_eiffel.kinds     = [
-        \ {'short' : 'c', 'long' : 'classes',  'fold' : 0},
-        \ {'short' : 'f', 'long' : 'features', 'fold' : 0}
+        \ {'short' : 'c', 'long' : 'classes',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'features', 'fold' : 0, 'stl' : 1}
     \ ]
     let type_eiffel.sro        = '.' " Not sure, is nesting even possible?
     let type_eiffel.kind2scope = {
@@ -315,10 +315,10 @@ function! s:InitTypes()
     let type_erlang = {}
     let type_erlang.ctagstype = 'erlang'
     let type_erlang.kinds     = [
-        \ {'short' : 'm', 'long' : 'modules',            'fold' : 0},
-        \ {'short' : 'd', 'long' : 'macro definitions',  'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0},
-        \ {'short' : 'r', 'long' : 'record definitions', 'fold' : 0}
+        \ {'short' : 'm', 'long' : 'modules',            'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'macro definitions',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'record definitions', 'fold' : 0, 'stl' : 1}
     \ ]
     let type_erlang.sro        = '.' " Not sure, is nesting even possible?
     let type_erlang.kind2scope = {
@@ -336,12 +336,12 @@ function! s:InitTypes()
     let type_mxml = {}
     let type_mxml.ctagstype = 'flex'
     let type_mxml.kinds     = [
-        \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',          'fold' : 0},
-        \ {'short' : 'm', 'long' : 'methods',          'fold' : 0},
-        \ {'short' : 'p', 'long' : 'properties',       'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',        'fold' : 0},
-        \ {'short' : 'x', 'long' : 'mxtags',           'fold' : 0}
+        \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'methods',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'properties',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'x', 'long' : 'mxtags',           'fold' : 0, 'stl' : 0}
     \ ]
     let type_mxml.sro        = '.'
     let type_mxml.kind2scope = {
@@ -355,18 +355,19 @@ function! s:InitTypes()
     let type_fortran = {}
     let type_fortran.ctagstype = 'fortran'
     let type_fortran.kinds     = [
-        \ {'short' : 'm', 'long' : 'modules',                      'fold' : 0},
-        \ {'short' : 'p', 'long' : 'programs',                     'fold' : 0},
-        \ {'short' : 'k', 'long' : 'components',                   'fold' : 0},
-        \ {'short' : 't', 'long' : 'derived types and structures', 'fold' : 0},
-        \ {'short' : 'c', 'long' : 'common blocks',                'fold' : 0},
-        \ {'short' : 'b', 'long' : 'block data',                   'fold' : 0},
-        \ {'short' : 'e', 'long' : 'entry points',                 'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',                    'fold' : 0},
-        \ {'short' : 's', 'long' : 'subroutines',                  'fold' : 0},
-        \ {'short' : 'l', 'long' : 'labels',                       'fold' : 0},
-        \ {'short' : 'n', 'long' : 'namelists',                    'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',                    'fold' : 0}
+        \ {'short' : 'm', 'long' : 'modules',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'programs',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'k', 'long' : 'components', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'derived types and structures', 'fold' : 0,
+         \ 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'common blocks', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'block data',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'e', 'long' : 'entry points',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'subroutines',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'labels',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'namelists',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',     'fold' : 0, 'stl' : 0}
     \ ]
     let type_fortran.sro        = '.' " Not sure, is nesting even possible?
     let type_fortran.kind2scope = {
@@ -386,21 +387,21 @@ function! s:InitTypes()
     let type_html = {}
     let type_html.ctagstype = 'html'
     let type_html.kinds     = [
-        \ {'short' : 'f', 'long' : 'JavaScript funtions', 'fold' : 0},
-        \ {'short' : 'a', 'long' : 'named anchors',       'fold' : 0}
+        \ {'short' : 'f', 'long' : 'JavaScript funtions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'named anchors',       'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.html = type_html
     " Java {{{3
     let type_java = {}
     let type_java.ctagstype = 'java'
     let type_java.kinds     = [
-        \ {'short' : 'p', 'long' : 'packages',       'fold' : 1},
-        \ {'short' : 'f', 'long' : 'fields',         'fold' : 0},
-        \ {'short' : 'g', 'long' : 'enum types',     'fold' : 0},
-        \ {'short' : 'e', 'long' : 'enum constants', 'fold' : 0},
-        \ {'short' : 'i', 'long' : 'interfaces',     'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',        'fold' : 0},
-        \ {'short' : 'm', 'long' : 'methods',        'fold' : 0}
+        \ {'short' : 'p', 'long' : 'packages',       'fold' : 1, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'fields',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enum types',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enum constants', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'interfaces',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'methods',        'fold' : 0, 'stl' : 1}
     \ ]
     let type_java.sro        = '.'
     let type_java.kind2scope = {
@@ -424,8 +425,8 @@ function! s:InitTypes()
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
     if jsctags != ''
         let type_javascript.kinds = [
-            \ {'short' : 'v', 'long' : 'variables', 'fold' : 0},
-            \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
+            \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0},
+            \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
         \ ]
         let type_javascript.sro        = '.'
         let type_javascript.kind2scope = {
@@ -439,11 +440,11 @@ function! s:InitTypes()
         let type_javascript.ctagsargs  = '-f -'
     else
         let type_javascript.kinds = [
-            \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0},
-            \ {'short' : 'c', 'long' : 'classes',          'fold' : 0},
-            \ {'short' : 'p', 'long' : 'properties',       'fold' : 0},
-            \ {'short' : 'm', 'long' : 'methods',          'fold' : 0},
-            \ {'short' : 'f', 'long' : 'functions',        'fold' : 0}
+            \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0, 'stl' : 0},
+            \ {'short' : 'c', 'long' : 'classes',          'fold' : 0, 'stl' : 1},
+            \ {'short' : 'p', 'long' : 'properties',       'fold' : 0, 'stl' : 0},
+            \ {'short' : 'm', 'long' : 'methods',          'fold' : 0, 'stl' : 1},
+            \ {'short' : 'f', 'long' : 'functions',        'fold' : 0, 'stl' : 1}
         \ ]
     endif
     let s:known_types.javascript = type_javascript
@@ -451,43 +452,43 @@ function! s:InitTypes()
     let type_lisp = {}
     let type_lisp.ctagstype = 'lisp'
     let type_lisp.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.lisp = type_lisp
     " Lua {{{3
     let type_lua = {}
     let type_lua.ctagstype = 'lua'
     let type_lua.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.lua = type_lua
     " Make {{{3
     let type_make = {}
     let type_make.ctagstype = 'make'
     let type_make.kinds     = [
-        \ {'short' : 'm', 'long' : 'macros', 'fold' : 0}
+        \ {'short' : 'm', 'long' : 'macros', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.make = type_make
     " Matlab {{{3
     let type_matlab = {}
     let type_matlab.ctagstype = 'matlab'
     let type_matlab.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.matlab = type_matlab
     " Ocaml {{{3
     let type_ocaml = {}
     let type_ocaml.ctagstype = 'ocaml'
     let type_ocaml.kinds     = [
-        \ {'short' : 'M', 'long' : 'modules or functors', 'fold' : 0},
-        \ {'short' : 'v', 'long' : 'global variables',    'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',             'fold' : 0},
-        \ {'short' : 'C', 'long' : 'constructors',        'fold' : 0},
-        \ {'short' : 'm', 'long' : 'methods',             'fold' : 0},
-        \ {'short' : 'e', 'long' : 'exceptions',          'fold' : 0},
-        \ {'short' : 't', 'long' : 'type names',          'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',           'fold' : 0},
-        \ {'short' : 'r', 'long' : 'structure fields',    'fold' : 0}
+        \ {'short' : 'M', 'long' : 'modules or functors', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'global variables',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'C', 'long' : 'constructors',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'methods',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'exceptions',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'type names',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'structure fields',    'fold' : 0, 'stl' : 0}
     \ ]
     let type_ocaml.sro        = '.' " Not sure, is nesting even possible?
     let type_ocaml.kind2scope = {
@@ -505,42 +506,42 @@ function! s:InitTypes()
     let type_pascal = {}
     let type_pascal.ctagstype = 'pascal'
     let type_pascal.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0},
-        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.pascal = type_pascal
     " Perl {{{3
     let type_perl = {}
     let type_perl.ctagstype = 'perl'
     let type_perl.kinds     = [
-        \ {'short' : 'p', 'long' : 'packages',    'fold' : 1},
-        \ {'short' : 'c', 'long' : 'constants',   'fold' : 0},
-        \ {'short' : 'f', 'long' : 'formats',     'fold' : 0},
-        \ {'short' : 'l', 'long' : 'labels',      'fold' : 0},
-        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0}
+        \ {'short' : 'p', 'long' : 'packages',    'fold' : 1, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'constants',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'formats',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'l', 'long' : 'labels',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.perl = type_perl
     " PHP {{{3
     let type_php = {}
     let type_php.ctagstype = 'php'
     let type_php.kinds     = [
-        \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',              'fold' : 0},
-        \ {'short' : 'd', 'long' : 'constant definitions', 'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',            'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',            'fold' : 0},
-        \ {'short' : 'j', 'long' : 'javascript functions', 'fold' : 0}
+        \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'constant definitions', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',            'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',            'fold' : 0, 'stl' : 0},
+        \ {'short' : 'j', 'long' : 'javascript functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.php = type_php
     " Python {{{3
     let type_python = {}
     let type_python.ctagstype = 'python'
     let type_python.kinds     = [
-        \ {'short' : 'i', 'long' : 'imports',   'fold' : 1},
-        \ {'short' : 'c', 'long' : 'classes',   'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0},
-        \ {'short' : 'm', 'long' : 'members',   'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0}
+        \ {'short' : 'i', 'long' : 'imports',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0}
     \ ]
     let type_python.sro        = '.'
     let type_python.kind2scope = {
@@ -557,17 +558,17 @@ function! s:InitTypes()
     let type_rexx = {}
     let type_rexx.ctagstype = 'rexx'
     let type_rexx.kinds     = [
-        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0}
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.rexx = type_rexx
     " Ruby {{{3
     let type_ruby = {}
     let type_ruby.ctagstype = 'ruby'
     let type_ruby.kinds     = [
-        \ {'short' : 'm', 'long' : 'modules',           'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',           'fold' : 0},
-        \ {'short' : 'f', 'long' : 'methods',           'fold' : 0},
-        \ {'short' : 'F', 'long' : 'singleton methods', 'fold' : 0}
+        \ {'short' : 'm', 'long' : 'modules',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'methods',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'F', 'long' : 'singleton methods', 'fold' : 0, 'stl' : 1}
     \ ]
     let type_ruby.sro        = '.'
     let type_ruby.kind2scope = {
@@ -582,15 +583,15 @@ function! s:InitTypes()
     let type_scheme = {}
     let type_scheme.ctagstype = 'scheme'
     let type_scheme.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0},
-        \ {'short' : 's', 'long' : 'sets',      'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sets',      'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.scheme = type_scheme
     " Shell script {{{3
     let type_sh = {}
     let type_sh.ctagstype = 'sh'
     let type_sh.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.sh = type_sh
     let s:known_types.csh = type_sh
@@ -599,21 +600,21 @@ function! s:InitTypes()
     let type_slang = {}
     let type_slang.ctagstype = 'slang'
     let type_slang.kinds     = [
-        \ {'short' : 'n', 'long' : 'namespaces', 'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0}
+        \ {'short' : 'n', 'long' : 'namespaces', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.slang = type_slang
     " SML {{{3
     let type_sml = {}
     let type_sml.ctagstype = 'sml'
     let type_sml.kinds     = [
-        \ {'short' : 'e', 'long' : 'exception declarations', 'fold' : 0},
-        \ {'short' : 'f', 'long' : 'function definitions',   'fold' : 0},
-        \ {'short' : 'c', 'long' : 'functor definitions',    'fold' : 0},
-        \ {'short' : 's', 'long' : 'signature declarations', 'fold' : 0},
-        \ {'short' : 'r', 'long' : 'structure declarations', 'fold' : 0},
-        \ {'short' : 't', 'long' : 'type definitions',       'fold' : 0},
-        \ {'short' : 'v', 'long' : 'value bindings',         'fold' : 0}
+        \ {'short' : 'e', 'long' : 'exception declarations', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'function definitions',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'functor definitions',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'signature declarations', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'r', 'long' : 'structure declarations', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'type definitions',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'value bindings',         'fold' : 0, 'stl' : 0}
     \ ]
     let s:known_types.sml = type_sml
     " SQL {{{3
@@ -623,47 +624,47 @@ function! s:InitTypes()
     let type_sql = {}
     let type_sql.ctagstype = 'sql'
     let type_sql.kinds     = [
-        \ {'short' : 'P', 'long' : 'packages',               'fold' : 1},
-        \ {'short' : 'c', 'long' : 'cursors',                'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',              'fold' : 0},
-        \ {'short' : 'F', 'long' : 'record fields',          'fold' : 0},
-        \ {'short' : 'L', 'long' : 'block label',            'fold' : 0},
-        \ {'short' : 'p', 'long' : 'procedures',             'fold' : 0},
-        \ {'short' : 's', 'long' : 'subtypes',               'fold' : 0},
-        \ {'short' : 't', 'long' : 'tables',                 'fold' : 0},
-        \ {'short' : 'T', 'long' : 'triggers',               'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',              'fold' : 0},
-        \ {'short' : 'i', 'long' : 'indexes',                'fold' : 0},
-        \ {'short' : 'e', 'long' : 'events',                 'fold' : 0},
-        \ {'short' : 'U', 'long' : 'publications',           'fold' : 0},
-        \ {'short' : 'R', 'long' : 'services',               'fold' : 0},
-        \ {'short' : 'D', 'long' : 'domains',                'fold' : 0},
-        \ {'short' : 'V', 'long' : 'views',                  'fold' : 0},
-        \ {'short' : 'n', 'long' : 'synonyms',               'fold' : 0},
-        \ {'short' : 'x', 'long' : 'MobiLink Table Scripts', 'fold' : 0},
-        \ {'short' : 'y', 'long' : 'MobiLink Conn Scripts',  'fold' : 0}
+        \ {'short' : 'P', 'long' : 'packages',               'fold' : 1, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'cursors',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'F', 'long' : 'record fields',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'L', 'long' : 'block label',            'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'procedures',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'subtypes',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'tables',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'triggers',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'indexes',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'events',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'U', 'long' : 'publications',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'R', 'long' : 'services',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'D', 'long' : 'domains',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'V', 'long' : 'views',                  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'synonyms',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'x', 'long' : 'MobiLink Table Scripts', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'y', 'long' : 'MobiLink Conn Scripts',  'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.sql = type_sql
     " Tcl {{{3
     let type_tcl = {}
     let type_tcl.ctagstype = 'tcl'
     let type_tcl.kinds     = [
-        \ {'short' : 'c', 'long' : 'classes',    'fold' : 0},
-        \ {'short' : 'm', 'long' : 'methods',    'fold' : 0},
-        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0}
+        \ {'short' : 'c', 'long' : 'classes',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'methods',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.tcl = type_tcl
     " LaTeX {{{3
     let type_tex = {}
     let type_tex.ctagstype = 'tex'
     let type_tex.kinds     = [
-        \ {'short' : 'p', 'long' : 'parts',          'fold' : 0},
-        \ {'short' : 'c', 'long' : 'chapters',       'fold' : 0},
-        \ {'short' : 's', 'long' : 'sections',       'fold' : 0},
-        \ {'short' : 'u', 'long' : 'subsections',    'fold' : 0},
-        \ {'short' : 'b', 'long' : 'subsubsections', 'fold' : 0},
-        \ {'short' : 'P', 'long' : 'paragraphs',     'fold' : 0},
-        \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0}
+        \ {'short' : 'p', 'long' : 'parts',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'chapters',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sections',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'subsections',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'subsubsections', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'P', 'long' : 'paragraphs',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0, 'stl' : 0}
     \ ]
     let s:known_types.tex = type_tex
     " Vala {{{3
@@ -673,18 +674,18 @@ function! s:InitTypes()
         let type_vala = {}
         let type_vala.ctagstype = 'vala'
         let type_vala.kinds     = [
-            \ {'short' : 'e', 'long' : 'Enumerations',       'fold' : 0},
-            \ {'short' : 'v', 'long' : 'Enumeration values', 'fold' : 0},
-            \ {'short' : 's', 'long' : 'Structures',         'fold' : 0},
-            \ {'short' : 'i', 'long' : 'Interfaces',         'fold' : 0},
-            \ {'short' : 'd', 'long' : 'Delegates',          'fold' : 0},
-            \ {'short' : 'c', 'long' : 'Classes',            'fold' : 0},
-            \ {'short' : 'p', 'long' : 'Properties',         'fold' : 0},
-            \ {'short' : 'f', 'long' : 'Fields',             'fold' : 0},
-            \ {'short' : 'm', 'long' : 'Methods',            'fold' : 0},
-            \ {'short' : 'E', 'long' : 'Error domains',      'fold' : 0},
-            \ {'short' : 'r', 'long' : 'Error codes',        'fold' : 0},
-            \ {'short' : 'S', 'long' : 'Signals',            'fold' : 0}
+            \ {'short' : 'e', 'long' : 'Enumerations',       'fold' : 0, 'stl' : 1},
+            \ {'short' : 'v', 'long' : 'Enumeration values', 'fold' : 0, 'stl' : 0},
+            \ {'short' : 's', 'long' : 'Structures',         'fold' : 0, 'stl' : 1},
+            \ {'short' : 'i', 'long' : 'Interfaces',         'fold' : 0, 'stl' : 1},
+            \ {'short' : 'd', 'long' : 'Delegates',          'fold' : 0, 'stl' : 1},
+            \ {'short' : 'c', 'long' : 'Classes',            'fold' : 0, 'stl' : 1},
+            \ {'short' : 'p', 'long' : 'Properties',         'fold' : 0, 'stl' : 0},
+            \ {'short' : 'f', 'long' : 'Fields',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'm', 'long' : 'Methods',            'fold' : 0, 'stl' : 1},
+            \ {'short' : 'E', 'long' : 'Error domains',      'fold' : 0, 'stl' : 1},
+            \ {'short' : 'r', 'long' : 'Error codes',        'fold' : 0, 'stl' : 1},
+            \ {'short' : 'S', 'long' : 'Signals',            'fold' : 0, 'stl' : 1}
         \ ]
         let type_vala.sro = '.'
         " 'enum' doesn't seem to be used as a scope, but it can't hurt to have
@@ -711,16 +712,16 @@ function! s:InitTypes()
     let type_vera = {}
     let type_vera.ctagstype = 'vera'
     let type_vera.kinds     = [
-        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1},
-        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0},
-        \ {'short' : 'T', 'long' : 'typedefs',    'fold' : 0},
-        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0},
-        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0},
-        \ {'short' : 'm', 'long' : 'members',     'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0},
-        \ {'short' : 't', 'long' : 'tasks',       'fold' : 0},
-        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0},
-        \ {'short' : 'p', 'long' : 'programs',    'fold' : 0}
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'tasks',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'programs',    'fold' : 0, 'stl' : 1}
     \ ]
     let type_vera.sro        = '.' " Nesting doesn't seem to be possible
     let type_vera.kind2scope = {
@@ -738,14 +739,14 @@ function! s:InitTypes()
     let type_verilog = {}
     let type_verilog.ctagstype = 'verilog'
     let type_verilog.kinds     = [
-        \ {'short' : 'c', 'long' : 'constants',           'fold' : 0},
-        \ {'short' : 'e', 'long' : 'events',              'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',           'fold' : 0},
-        \ {'short' : 'm', 'long' : 'modules',             'fold' : 0},
-        \ {'short' : 'n', 'long' : 'net data types',      'fold' : 0},
-        \ {'short' : 'p', 'long' : 'ports',               'fold' : 0},
-        \ {'short' : 'r', 'long' : 'register data types', 'fold' : 0},
-        \ {'short' : 't', 'long' : 'tasks',               'fold' : 0}
+        \ {'short' : 'c', 'long' : 'constants',           'fold' : 0, 'stl' : 0},
+        \ {'short' : 'e', 'long' : 'events',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'modules',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'net data types',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'ports',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'register data types', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'tasks',               'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.verilog = type_verilog
     " VHDL {{{3
@@ -753,32 +754,32 @@ function! s:InitTypes()
     let type_vhdl = {}
     let type_vhdl.ctagstype = 'vhdl'
     let type_vhdl.kinds     = [
-        \ {'short' : 'P', 'long' : 'packages',   'fold' : 1},
-        \ {'short' : 'c', 'long' : 'constants',  'fold' : 0},
-        \ {'short' : 't', 'long' : 'types',      'fold' : 0},
-        \ {'short' : 'T', 'long' : 'subtypes',   'fold' : 0},
-        \ {'short' : 'r', 'long' : 'records',    'fold' : 0},
-        \ {'short' : 'e', 'long' : 'entities',   'fold' : 0},
-        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0},
-        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0}
+        \ {'short' : 'P', 'long' : 'packages',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'constants',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'types',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'subtypes',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'records',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'entities',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.vhdl = type_vhdl
     " Vim {{{3
     let type_vim = {}
     let type_vim.ctagstype = 'vim'
     let type_vim.kinds     = [
-        \ {'short' : 'v', 'long' : 'variables',          'fold' : 1},
-        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0},
-        \ {'short' : 'a', 'long' : 'autocommand groups', 'fold' : 1},
-        \ {'short' : 'c', 'long' : 'commands',           'fold' : 0},
-        \ {'short' : 'm', 'long' : 'maps',               'fold' : 1}
+        \ {'short' : 'v', 'long' : 'variables',          'fold' : 1, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'autocommand groups', 'fold' : 1, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'commands',           'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'maps',               'fold' : 1, 'stl' : 0}
     \ ]
     let s:known_types.vim = type_vim
     " YACC {{{3
     let type_yacc = {}
     let type_yacc.ctagstype = 'yacc'
     let type_yacc.kinds     = [
-        \ {'short' : 'l', 'long' : 'labels', 'fold' : 0}
+        \ {'short' : 'l', 'long' : 'labels', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.yacc = type_yacc
     " }}}3
@@ -827,10 +828,15 @@ function! s:LoadUserTypeDefs(...)
             for kind in kinds
                 let kindlist = split(kind, ':')
                 let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
-                if len(kindlist) == 3
+                if len(kindlist) == 4
                     let kinddict.fold = kindlist[2]
+                    let kinddict.stl  = kindlist[3]
+                elseif len(kindlist) == 3
+                    let kinddict.fold = kindlist[2]
+                    let kinddict.stl  = 1
                 else
                     let kinddict.fold = 0
+                    let kinddict.stl  = 1
                 endif
                 call add(def.kinds, kinddict)
             endfor
@@ -3056,6 +3062,7 @@ function! s:GetNearbyTag()
         return
     endif
 
+    let typeinfo = s:known_types[fileinfo.ftype]
     let curline = line('.')
     let tag = {}
 
@@ -3067,7 +3074,10 @@ function! s:GetNearbyTag()
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let tag = fileinfo.fline[line]
-            break
+            let kindidx = typeinfo.kinddict[tag.fields.kind]
+            if typeinfo.kinds[kindidx].stl
+                break
+            endif
         endif
     endfor
 

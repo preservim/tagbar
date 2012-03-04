@@ -207,7 +207,7 @@ order. Sorting them by name simply displays the tags in their alphabetical
 order under their corresponding scope. Sorting by file order means that the
 tags keep the order they have in the source file, but are still associated
 with the correct scope. You can change the sort order by pressing the "s" key
-in the Tagbar window. The current sort order is displayed in the statusbar of
+in the Tagbar window. The current sort order is displayed in the statusline of
 the Tagbar window.
 
 Folding~
@@ -642,18 +642,26 @@ kinds:      A list of the "language kinds" that should be listed in Tagbar,
             Use the command >
                 ctags --list-kinds={language name}
 <           to get a list of the kinds ctags supports for a given language. An
-            entry in this list is a string with two or three parts separated
-            by a colon: the first part is the one-character abbreviation that
-            ctags uses, and the second part is an arbitrary string that will
-            be used in Tagbar as the header for the tags of this kind that are
-            not listed under a specific scope. The optional third part
-            determines whether tags of this kind should be folded by default,
-            with 1 meaning they should be folded and 0 they should not. If
-            this part is omitted the tags will not be folded by default. For
-            example, the string >
+            entry in this list is a colon-separated string with the following
+            syntax: >
+                {short}:{long}[:{fold}[:{stl}]]
+<           {short} is the one-character abbreviation that ctags uses, and
+            {long} is an arbitrary string that will be used in Tagbar as the
+            header for the the tags of this kind that are not listed under a
+            specific scope. {fold} determines whether tags of this kind should
+            be folded by default, with 1 meaning they should be folded and 0
+            they should not. If this part is omitted the tags will not be
+            folded by default. {stl} is used by the tagbar#currenttag()
+            function (see |tagbar-statusline|) to decide whether tags of this
+            kind should be shown in the statusline or not, with 1 meaning they
+            will be shown and 0 meaning they will be ignored. Omitting this
+            part means that the tags will be shown. Note that you have to
+            specify {fold} too if you want to specify {stl}.
+            For example, the string >
                 "f:functions:1"
 <           would list all the function definitions in a file under the header
-            "functions" and fold them.
+            "functions", fold them, and implicitly show them in the statusline
+            if tagbar#currenttag() is used.
 sro:        The scope resolution operator. For example, in C++ it is "::" and
             in Java it is ".". If in doubt run ctags as shown below and check
             the output.
@@ -741,18 +749,18 @@ configurations will usually be less complicated.
 	let g:tagbar_type_cpp = {
 	    \ 'ctagstype' : 'c++',
 	    \ 'kinds'     : [
-	        \ 'd:macros:1',
-	        \ 'p:prototypes:1',
+	        \ 'd:macros:1:0',
+	        \ 'p:prototypes:1:0',
 	        \ 'g:enums',
-	        \ 'e:enumerators',
-	        \ 't:typedefs',
+	        \ 'e:enumerators:0:0',
+	        \ 't:typedefs:0:0',
 	        \ 'n:namespaces',
 	        \ 'c:classes',
 	        \ 's:structs',
 	        \ 'u:unions',
 	        \ 'f:functions',
-	        \ 'm:members',
-	        \ 'v:variables'
+	        \ 'm:members:0:0',
+	        \ 'v:variables:0:0'
 	    \ ],
 	    \ 'sro'        : '::',
 	    \ 'kind2scope' : {
@@ -779,22 +787,23 @@ If you want to change an existing definition you only need to specify the
 parts that you want to change. It probably only makes sense to change "kinds"
 and/or "scopes", which would be the case if you wanted to exclude certain
 kinds from appearing in Tagbar or if you want to change their order. As an
-example, if you didn't want Tagbar to show prototypes for C++ files and switch
-the order of enums and typedefs, you would do it like this:
+example, if you didn't want Tagbar to show prototypes for C++ files, switch
+the order of enums and typedefs, and show macros in the statusline, you would
+do it like this:
 >
 	let g:tagbar_type_cpp = {
 	    \ 'kinds' : [
 	        \ 'd:macros:1',
 	        \ 'g:enums',
-	        \ 't:typedefs',
-	        \ 'e:enumerators',
+	        \ 't:typedefs:0:0',
+	        \ 'e:enumerators:0:0',
 	        \ 'n:namespaces',
 	        \ 'c:classes',
 	        \ 's:structs',
 	        \ 'u:unions',
 	        \ 'f:functions',
-	        \ 'm:members',
-	        \ 'v:variables'
+	        \ 'm:members:0:0',
+	        \ 'v:variables:0:0'
 	    \ ]
 	\ }
 <
@@ -857,10 +866,10 @@ Now we have to create the Tagbar language definition in our vimrc:
 	    \ 'ctagstype' : 'latex',
 	    \ 'kinds'     : [
 	        \ 's:sections',
-	        \ 'g:graphics',
+	        \ 'g:graphics:0:0',
 	        \ 'l:labels',
-	        \ 'r:refs:1',
-	        \ 'p:pagerefs:1'
+	        \ 'r:refs:1:0',
+	        \ 'p:pagerefs:1:0'
 	    \ ],
 	    \ 'sort'    : 0,
 	    \ 'deffile' : expand('<sfile>:p:h:h') . '/ctags/latex.cnf'
