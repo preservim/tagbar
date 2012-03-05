@@ -1270,12 +1270,7 @@ endfunction
 
 " s:NormalTag.strshort() {{{3
 function! s:NormalTag.strshort(longsig) dict
-    let str = ''
-    if has_key(self.fields, 'access')
-        let str .= get(s:access_symbols, self.fields.access, '')
-    endif
-
-    let str .= self.name
+    let str = self.name
 
     if has_key(self.fields, 'signature')
         if a:longsig
