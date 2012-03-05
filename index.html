@@ -84,9 +84,9 @@ nmap <F8> :TagbarToggle<CR>
     <p>Jan Larres (jan@majutsushi.net)</p>
 
     <h2>Download</h2>
-    <h3>Stable releases</h3>
+    <h3>Latest stable release</h3>
 
-    {% for post in site.posts %}
+    {% for post in site.posts limit:1 %}
 
     <span style="font-weight:bold">{{ post.title }}</span> ({{ post.date | date:"%Y-%m-%d" }})
     <a href="http://github.com/majutsushi/tagbar/zipball/v{{ post.title }}">zip</a>
@@ -95,6 +95,8 @@ nmap <F8> :TagbarToggle<CR>
         {{ post.content }}
 
     {% endfor %}
+
+    <a href="archive.html">Old releases</a>
 
     <h3>Latest source</h3>
     <p>
