@@ -805,19 +805,7 @@ function! s:LoadUserTypeDefs(...)
     else
         call s:LogDebugMessage('Initializing user types')
 
-        redir => defs
-        silent execute 'let g:'
-        redir END
-
-        let deflist = split(defs, '\n')
-        call map(deflist, 'substitute(v:val, ''^\S\+\zs.*'', "", "")')
-        call filter(deflist, 'v:val =~ "^tagbar_type_"')
-
-        let defdict = {}
-        for defstr in deflist
-            let type = substitute(defstr, '^tagbar_type_', '', '')
-            let defdict[type] = g:{defstr}
-        endfor
+        let defdict = tagbar#getusertypes()
     endif
 
     " Transform the 'kind' definitions into dictionary format
@@ -3265,6 +3253,25 @@ endfunction
 
 function! tagbar#RestoreSession()
     call s:RestoreSession()
+endfunction
+
+" tagbar#getusertypes() {{{2
+function! tagbar#getusertypes()
+    redir => defs
+    silent execute 'let g:'
+    redir END
+
+    let deflist = split(defs, '\n')
+    call map(deflist, 'substitute(v:val, ''^\S\+\zs.*'', "", "")')
+    call filter(deflist, 'v:val =~ "^tagbar_type_"')
+
+    let defdict = {}
+    for defstr in deflist
+        let type = substitute(defstr, '^tagbar_type_', '', '')
+        let defdict[type] = g:{defstr}
+    endfor
+
+    return defdict
 endfunction
 
 " Automatically open Tagbar if one of the open buffers contains a supported
