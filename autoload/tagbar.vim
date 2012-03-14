@@ -2659,8 +2659,9 @@ function! s:JumpToTag(stay_in_tagbar)
         let taginfo.fileinfo.fline[curline] = taginfo
     endif
 
-    " Center the tag in the window
+    " Center the tag in the window and jump to the correct column if available
     normal! z.
+    call cursor(taginfo.fields.line, get(taginfo.fields, 'column', 1))
 
     if foldclosed('.') != -1
         .foldopen!
