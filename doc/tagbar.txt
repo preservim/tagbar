@@ -252,10 +252,12 @@ COMMANDS                                                     *tagbar-commands*
     Open the Tagbar window, jump to it and close it on tag selection. This is
     an alias for ":TagbarOpen fc".
 
-:TagbarSetFoldlevel {number}
+:TagbarSetFoldlevel[!] {number}
     Set the foldlevel of the tags of the current file to {number}. The
     foldlevel of tags in other files remains unaffected. Works in the same way
-    as 'foldlevel'.
+    as 'foldlevel'. Folds that are specified to be closed by default in the
+    type configuration will not be opened, use a "!" to force applying the new
+    foldlevel to those folds as well.
 
 :TagbarShowTag
     Open the parent folds of the current tag in the file window as much as

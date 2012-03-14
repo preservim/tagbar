@@ -928,12 +928,12 @@ function! s:MapKeys()
     nnoremap <script> <silent> <buffer> o        :call <SID>ToggleFold()<CR>
     nnoremap <script> <silent> <buffer> za       :call <SID>ToggleFold()<CR>
 
-    nnoremap <script> <silent> <buffer> *    :call <SID>SetFoldLevel(99)<CR>
+    nnoremap <script> <silent> <buffer> *    :call <SID>SetFoldLevel(99, 1)<CR>
     nnoremap <script> <silent> <buffer> <kMultiply>
-                                           \ :call <SID>SetFoldLevel(99)<CR>
-    nnoremap <script> <silent> <buffer> zR   :call <SID>SetFoldLevel(99)<CR>
-    nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0)<CR>
-    nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0)<CR>
+                                           \ :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> zR   :call <SID>SetFoldLevel(99, 1)<CR>
+    nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0, 1)<CR>
+    nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0, 1)<CR>
 
     nnoremap <script> <silent> <buffer> <C-N>
                                         \ :call <SID>GotoNextToplevelTag(1)<CR>
@@ -2805,7 +2805,7 @@ function! s:ToggleFold()
 endfunction
 
 " s:SetFoldLevel() {{{2
-function! s:SetFoldLevel(level)
+function! s:SetFoldLevel(level, force)
     if a:level < 0
         echoerr 'Foldlevel can''t be negative'
         return
@@ -2827,7 +2827,9 @@ function! s:SetFoldLevel(level)
         endfor
     else
         for kind in typeinfo.kinds
-            call fileinfo.openKindFold(kind)
+            if a:force || !kind.fold
+                call fileinfo.openKindFold(kind)
+            endif
         endfor
     endif
 
@@ -3254,8 +3256,8 @@ function! tagbar#CloseWindow()
     call s:CloseWindow()
 endfunction
 
-function! tagbar#SetFoldLevel(...)
-    call s:SetFoldLevel(a:1)
+function! tagbar#SetFoldLevel(level, force)
+    call s:SetFoldLevel(a:level, a:force)
 endfunction
 
 function! tagbar#OpenParents()
