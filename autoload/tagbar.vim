@@ -125,7 +125,7 @@ function! s:InitTypes()
     let s:known_types = {}
 
     " Ant {{{3
-    let type_ant = {}
+    let type_ant = s:TypeInfo.New()
     let type_ant.ctagstype = 'ant'
     let type_ant.kinds     = [
         \ {'short' : 'p', 'long' : 'projects', 'fold' : 0, 'stl' : 1},
@@ -133,7 +133,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.ant = type_ant
     " Asm {{{3
-    let type_asm = {}
+    let type_asm = s:TypeInfo.New()
     let type_asm.ctagstype = 'asm'
     let type_asm.kinds     = [
         \ {'short' : 'm', 'long' : 'macros',  'fold' : 0, 'stl' : 1},
@@ -143,7 +143,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.asm = type_asm
     " ASP {{{3
-    let type_aspvbs = {}
+    let type_aspvbs = s:TypeInfo.New()
     let type_aspvbs.ctagstype = 'asp'
     let type_aspvbs.kinds     = [
         \ {'short' : 'd', 'long' : 'constants',   'fold' : 0, 'stl' : 1},
@@ -154,14 +154,14 @@ function! s:InitTypes()
     \ ]
     let s:known_types.aspvbs = type_aspvbs
     " Awk {{{3
-    let type_awk = {}
+    let type_awk = s:TypeInfo.New()
     let type_awk.ctagstype = 'awk'
     let type_awk.kinds     = [
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.awk = type_awk
     " Basic {{{3
-    let type_basic = {}
+    let type_basic = s:TypeInfo.New()
     let type_basic.ctagstype = 'basic'
     let type_basic.kinds     = [
         \ {'short' : 'c', 'long' : 'constants',    'fold' : 0, 'stl' : 1},
@@ -173,7 +173,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.basic = type_basic
     " BETA {{{3
-    let type_beta = {}
+    let type_beta = s:TypeInfo.New()
     let type_beta.ctagstype = 'beta'
     let type_beta.kinds     = [
         \ {'short' : 'f', 'long' : 'fragments', 'fold' : 0, 'stl' : 1},
@@ -182,7 +182,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.beta = type_beta
     " C {{{3
-    let type_c = {}
+    let type_c = s:TypeInfo.New()
     let type_c.ctagstype = 'c'
     let type_c.kinds     = [
         \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
@@ -209,7 +209,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.c = type_c
     " C++ {{{3
-    let type_cpp = {}
+    let type_cpp = s:TypeInfo.New()
     let type_cpp.ctagstype = 'c++'
     let type_cpp.kinds     = [
         \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
@@ -242,7 +242,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.cpp = type_cpp
     " C# {{{3
-    let type_cs = {}
+    let type_cs = s:TypeInfo.New()
     let type_cs.ctagstype = 'c#'
     let type_cs.kinds     = [
         \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
@@ -275,7 +275,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.cs = type_cs
     " COBOL {{{3
-    let type_cobol = {}
+    let type_cobol = s:TypeInfo.New()
     let type_cobol.ctagstype = 'cobol'
     let type_cobol.kinds     = [
         \ {'short' : 'd', 'long' : 'data items',        'fold' : 0, 'stl' : 1},
@@ -287,7 +287,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.cobol = type_cobol
     " DOS Batch {{{3
-    let type_dosbatch = {}
+    let type_dosbatch = s:TypeInfo.New()
     let type_dosbatch.ctagstype = 'dosbatch'
     let type_dosbatch.kinds     = [
         \ {'short' : 'l', 'long' : 'labels',    'fold' : 0, 'stl' : 1},
@@ -295,7 +295,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.dosbatch = type_dosbatch
     " Eiffel {{{3
-    let type_eiffel = {}
+    let type_eiffel = s:TypeInfo.New()
     let type_eiffel.ctagstype = 'eiffel'
     let type_eiffel.kinds     = [
         \ {'short' : 'c', 'long' : 'classes',  'fold' : 0, 'stl' : 1},
@@ -312,7 +312,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.eiffel = type_eiffel
     " Erlang {{{3
-    let type_erlang = {}
+    let type_erlang = s:TypeInfo.New()
     let type_erlang.ctagstype = 'erlang'
     let type_erlang.kinds     = [
         \ {'short' : 'm', 'long' : 'modules',            'fold' : 0, 'stl' : 1},
@@ -333,7 +333,7 @@ function! s:InitTypes()
     " guesses and probably requires
     " http://www.vim.org/scripts/script.php?script_id=2909
     " Improvements welcome!
-    let type_mxml = {}
+    let type_mxml = s:TypeInfo.New()
     let type_mxml.ctagstype = 'flex'
     let type_mxml.kinds     = [
         \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0, 'stl' : 0},
@@ -352,7 +352,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.mxml = type_mxml
     " Fortran {{{3
-    let type_fortran = {}
+    let type_fortran = s:TypeInfo.New()
     let type_fortran.ctagstype = 'fortran'
     let type_fortran.kinds     = [
         \ {'short' : 'm', 'long' : 'modules',    'fold' : 0, 'stl' : 1},
@@ -384,7 +384,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.fortran = type_fortran
     " HTML {{{3
-    let type_html = {}
+    let type_html = s:TypeInfo.New()
     let type_html.ctagstype = 'html'
     let type_html.kinds     = [
         \ {'short' : 'f', 'long' : 'JavaScript funtions', 'fold' : 0, 'stl' : 1},
@@ -392,7 +392,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.html = type_html
     " Java {{{3
-    let type_java = {}
+    let type_java = s:TypeInfo.New()
     let type_java.ctagstype = 'java'
     let type_java.kinds     = [
         \ {'short' : 'p', 'long' : 'packages',       'fold' : 1, 'stl' : 0},
@@ -420,7 +420,7 @@ function! s:InitTypes()
     " properly generate the information for them, instead it simply uses the
     " complete name. So ctags has to be fixed before I can do anything here.
     " Alternatively jsctags/doctorjs will be used if available.
-    let type_javascript = {}
+    let type_javascript = s:TypeInfo.New()
     let type_javascript.ctagstype = 'javascript'
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
     if jsctags != ''
@@ -449,35 +449,35 @@ function! s:InitTypes()
     endif
     let s:known_types.javascript = type_javascript
     " Lisp {{{3
-    let type_lisp = {}
+    let type_lisp = s:TypeInfo.New()
     let type_lisp.ctagstype = 'lisp'
     let type_lisp.kinds     = [
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.lisp = type_lisp
     " Lua {{{3
-    let type_lua = {}
+    let type_lua = s:TypeInfo.New()
     let type_lua.ctagstype = 'lua'
     let type_lua.kinds     = [
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.lua = type_lua
     " Make {{{3
-    let type_make = {}
+    let type_make = s:TypeInfo.New()
     let type_make.ctagstype = 'make'
     let type_make.kinds     = [
         \ {'short' : 'm', 'long' : 'macros', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.make = type_make
     " Matlab {{{3
-    let type_matlab = {}
+    let type_matlab = s:TypeInfo.New()
     let type_matlab.ctagstype = 'matlab'
     let type_matlab.kinds     = [
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.matlab = type_matlab
     " Ocaml {{{3
-    let type_ocaml = {}
+    let type_ocaml = s:TypeInfo.New()
     let type_ocaml.ctagstype = 'ocaml'
     let type_ocaml.kinds     = [
         \ {'short' : 'M', 'long' : 'modules or functors', 'fold' : 0, 'stl' : 1},
@@ -503,7 +503,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.ocaml = type_ocaml
     " Pascal {{{3
-    let type_pascal = {}
+    let type_pascal = s:TypeInfo.New()
     let type_pascal.ctagstype = 'pascal'
     let type_pascal.kinds     = [
         \ {'short' : 'f', 'long' : 'functions',  'fold' : 0, 'stl' : 1},
@@ -511,7 +511,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.pascal = type_pascal
     " Perl {{{3
-    let type_perl = {}
+    let type_perl = s:TypeInfo.New()
     let type_perl.ctagstype = 'perl'
     let type_perl.kinds     = [
         \ {'short' : 'p', 'long' : 'packages',    'fold' : 1, 'stl' : 0},
@@ -522,7 +522,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.perl = type_perl
     " PHP {{{3
-    let type_php = {}
+    let type_php = s:TypeInfo.New()
     let type_php.ctagstype = 'php'
     let type_php.kinds     = [
         \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0, 'stl' : 1},
@@ -534,7 +534,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.php = type_php
     " Python {{{3
-    let type_python = {}
+    let type_python = s:TypeInfo.New()
     let type_python.ctagstype = 'python'
     let type_python.kinds     = [
         \ {'short' : 'i', 'long' : 'imports',   'fold' : 1, 'stl' : 0},
@@ -555,14 +555,14 @@ function! s:InitTypes()
     \ }
     let s:known_types.python = type_python
     " REXX {{{3
-    let type_rexx = {}
+    let type_rexx = s:TypeInfo.New()
     let type_rexx.ctagstype = 'rexx'
     let type_rexx.kinds     = [
         \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.rexx = type_rexx
     " Ruby {{{3
-    let type_ruby = {}
+    let type_ruby = s:TypeInfo.New()
     let type_ruby.ctagstype = 'ruby'
     let type_ruby.kinds     = [
         \ {'short' : 'm', 'long' : 'modules',           'fold' : 0, 'stl' : 1},
@@ -580,7 +580,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.ruby = type_ruby
     " Scheme {{{3
-    let type_scheme = {}
+    let type_scheme = s:TypeInfo.New()
     let type_scheme.ctagstype = 'scheme'
     let type_scheme.kinds     = [
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1},
@@ -588,7 +588,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.scheme = type_scheme
     " Shell script {{{3
-    let type_sh = {}
+    let type_sh = s:TypeInfo.New()
     let type_sh.ctagstype = 'sh'
     let type_sh.kinds     = [
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
@@ -597,7 +597,7 @@ function! s:InitTypes()
     let s:known_types.csh = type_sh
     let s:known_types.zsh = type_sh
     " SLang {{{3
-    let type_slang = {}
+    let type_slang = s:TypeInfo.New()
     let type_slang.ctagstype = 'slang'
     let type_slang.kinds     = [
         \ {'short' : 'n', 'long' : 'namespaces', 'fold' : 0, 'stl' : 1},
@@ -605,7 +605,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.slang = type_slang
     " SML {{{3
-    let type_sml = {}
+    let type_sml = s:TypeInfo.New()
     let type_sml.ctagstype = 'sml'
     let type_sml.kinds     = [
         \ {'short' : 'e', 'long' : 'exception declarations', 'fold' : 0, 'stl' : 0},
@@ -621,7 +621,7 @@ function! s:InitTypes()
     " The SQL ctags parser seems to be buggy for me, so this just uses the
     " normal kinds even though scopes should be available. Improvements
     " welcome!
-    let type_sql = {}
+    let type_sql = s:TypeInfo.New()
     let type_sql.ctagstype = 'sql'
     let type_sql.kinds     = [
         \ {'short' : 'P', 'long' : 'packages',               'fold' : 1, 'stl' : 1},
@@ -646,7 +646,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.sql = type_sql
     " Tcl {{{3
-    let type_tcl = {}
+    let type_tcl = s:TypeInfo.New()
     let type_tcl.ctagstype = 'tcl'
     let type_tcl.kinds     = [
         \ {'short' : 'c', 'long' : 'classes',    'fold' : 0, 'stl' : 1},
@@ -655,7 +655,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.tcl = type_tcl
     " LaTeX {{{3
-    let type_tex = {}
+    let type_tex = s:TypeInfo.New()
     let type_tex.ctagstype = 'tex'
     let type_tex.kinds     = [
         \ {'short' : 'p', 'long' : 'parts',          'fold' : 0, 'stl' : 1},
@@ -671,7 +671,7 @@ function! s:InitTypes()
     " Vala is supported by the ctags fork provided by Anjuta, so only add the
     " type if the fork is used to prevent error messages otherwise
     if has_key(s:ctags_types, 'vala') || executable('anjuta-tags')
-        let type_vala = {}
+        let type_vala = s:TypeInfo.New()
         let type_vala.ctagstype = 'vala'
         let type_vala.kinds     = [
             \ {'short' : 'e', 'long' : 'Enumerations',       'fold' : 0, 'stl' : 1},
@@ -709,7 +709,7 @@ function! s:InitTypes()
     endif
     " Vera {{{3
     " Why are variables 'virtual'?
-    let type_vera = {}
+    let type_vera = s:TypeInfo.New()
     let type_vera.ctagstype = 'vera'
     let type_vera.kinds     = [
         \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
@@ -736,7 +736,7 @@ function! s:InitTypes()
     \ }
     let s:known_types.vera = type_vera
     " Verilog {{{3
-    let type_verilog = {}
+    let type_verilog = s:TypeInfo.New()
     let type_verilog.ctagstype = 'verilog'
     let type_verilog.kinds     = [
         \ {'short' : 'c', 'long' : 'constants',           'fold' : 0, 'stl' : 0},
@@ -751,7 +751,7 @@ function! s:InitTypes()
     let s:known_types.verilog = type_verilog
     " VHDL {{{3
     " The VHDL ctags parser unfortunately doesn't generate proper scopes
-    let type_vhdl = {}
+    let type_vhdl = s:TypeInfo.New()
     let type_vhdl.ctagstype = 'vhdl'
     let type_vhdl.kinds     = [
         \ {'short' : 'P', 'long' : 'packages',   'fold' : 1, 'stl' : 0},
@@ -765,7 +765,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.vhdl = type_vhdl
     " Vim {{{3
-    let type_vim = {}
+    let type_vim = s:TypeInfo.New()
     let type_vim.ctagstype = 'vim'
     let type_vim.kinds     = [
         \ {'short' : 'v', 'long' : 'variables',          'fold' : 1, 'stl' : 0},
@@ -776,7 +776,7 @@ function! s:InitTypes()
     \ ]
     let s:known_types.vim = type_vim
     " YACC {{{3
-    let type_yacc = {}
+    let type_yacc = s:TypeInfo.New()
     let type_yacc.ctagstype = 'yacc'
     let type_yacc.kinds     = [
         \ {'short' : 'l', 'long' : 'labels', 'fold' : 0, 'stl' : 1}
@@ -849,7 +849,7 @@ function! s:LoadUserTypeDefs(...)
     for [key, value] in items(defdict)
         if !has_key(s:known_types, key) ||
          \ (has_key(value, 'replace') && value.replace)
-            let s:known_types[key] = value
+            let s:known_types[key] = s:TypeInfo.New(value)
         else
             call extend(s:known_types[key], value)
         endif
@@ -865,7 +865,6 @@ function! s:CreateTypeKinddict(type)
     " Create a dictionary of the kind order for fast access in sorting
     " functions
     let i = 0
-    let a:type.kinddict = {}
     for kind in a:type.kinds
         let a:type.kinddict[kind.short] = i
         let i += 1
@@ -1337,6 +1336,28 @@ function! s:KindheaderTag.toggleFold() dict
     let fileinfo = s:known_files.getCurrent()
 
     let fileinfo.kindfolds[self.short] = !fileinfo.kindfolds[self.short]
+endfunction
+
+" Type info {{{2
+let s:TypeInfo = {}
+
+" s:TypeInfo.New() {{{3
+function! s:TypeInfo.New(...) dict
+    let newobj = copy(self)
+
+    let newobj.kinddict = {}
+
+    if a:0 > 0
+        call extend(newobj, a:1)
+    endif
+
+    return newobj
+endfunction
+
+" s:TypeInfo.getKind() {{{3
+function! s:TypeInfo.getKind(kind) dict
+    let idx = self.kinddict[a:kind]
+    return self.kinds[idx]
 endfunction
 
 " File info {{{2
@@ -3057,8 +3078,7 @@ function! s:GetNearbyTag()
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let tag = fileinfo.fline[line]
-            let kindidx = typeinfo.kinddict[tag.fields.kind]
-            if typeinfo.kinds[kindidx].stl
+            if typeinfo.getKind(tag.fields.kind).stl
                 break
             endif
         endif
