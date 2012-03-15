@@ -1,31 +1,31 @@
-*tagbar.txt*	Display tags of a file ordered by scope
+*tagbar.txt*    Display tags of a file ordered by scope
 
-Author:		Jan Larres <jan@majutsushi.net>
-Licence:	Vim licence, see |license|
-Homepage:	http://majutsushi.github.com/tagbar/
-Version:	2.3
+Author:         Jan Larres <jan@majutsushi.net>
+Licence:        Vim licence, see |license|
+Homepage:       http://majutsushi.github.com/tagbar/
+Version:        2.3
 
 ==============================================================================
 Contents                                            *tagbar* *tagbar-contents*
 
-	 1. Intro ........................... |tagbar-intro|
-	      Pseudo-tags ................... |tagbar-pseudotags|
-	      Supported features ............ |tagbar-features|
-	      Other ctags-compatible programs |tagbar-other|
-	 2. Requirements .................... |tagbar-requirements|
-	 3. Installation .................... |tagbar-installation|
-	 4. Usage ........................... |tagbar-usage|
-	      Commands ...................... |tagbar-commands|
-	      Key mappings .................. |tagbar-keys|
-	 5. Configuration ................... |tagbar-configuration|
-	      Highlight colours ............. |tagbar-highlight|
-	      Automatically opening Tagbar .. |tagbar-autoopen|
-	      Show current tag in statusline  |tagbar-statusline|
-	 6. Extending Tagbar ................ |tagbar-extend|
-	 7. Troubleshooting & Known issues .. |tagbar-issues|
-	 8. History ......................... |tagbar-history|
-	 9. Todo ............................ |tagbar-todo|
-	10. Credits ......................... |tagbar-credits|
+         1. Intro ........................... |tagbar-intro|
+              Pseudo-tags ................... |tagbar-pseudotags|
+              Supported features ............ |tagbar-features|
+              Other ctags-compatible programs |tagbar-other|
+         2. Requirements .................... |tagbar-requirements|
+         3. Installation .................... |tagbar-installation|
+         4. Usage ........................... |tagbar-usage|
+              Commands ...................... |tagbar-commands|
+              Key mappings .................. |tagbar-keys|
+         5. Configuration ................... |tagbar-configuration|
+              Highlight colours ............. |tagbar-highlight|
+              Automatically opening Tagbar .. |tagbar-autoopen|
+              Show current tag in statusline  |tagbar-statusline|
+         6. Extending Tagbar ................ |tagbar-extend|
+         7. Troubleshooting & Known issues .. |tagbar-issues|
+         8. History ......................... |tagbar-history|
+         9. Todo ............................ |tagbar-todo|
+        10. Credits ......................... |tagbar-credits|
 
 ==============================================================================
 1. Intro                                                        *tagbar-intro*
@@ -37,27 +37,27 @@ the class they are defined in.
 
 Let's say we have the following code inside of a C++ file:
 >
-    namespace {
-        char a;
+        namespace {
+            char a;
 
-        class Foo
-        {
-        public:
-            Foo();
-            ~Foo();
-        private:
-            int var;
+            class Foo
+            {
+            public:
+                Foo();
+                ~Foo();
+            private:
+                int var;
+            };
         };
-    };
 <
 Then Tagbar would display the tag information like so:
 >
-    __anon1* : namespace
-      Foo : class
-       +Foo()
-       +~Foo()
-       -var
-      a
+        __anon1* : namespace
+          Foo : class
+           +Foo()
+           +~Foo()
+           -var
+          a
 <
 This example shows several important points. First, the tags are listed
 indented below the scope they are defined in. Second, the type of a scope is
@@ -148,13 +148,12 @@ The following requirements have to be met in order to be able to use tagbar:
 
 Use the normal Vimball install method for installing tagbar.vba:
 >
-	vim tagbar.vba
-	:so %
-	:q
+        vim tagbar.vba
+        :so %
+        :q
 <
 Alternatively you can clone the git repository and then add the path to
-'runtimepath' or use the pathogen plugin. Don't forget to run |:helptags| if
-you're not using pathogen.
+'runtimepath' or use the pathogen plugin. Don't forget to run |:helptags|.
 
 If the ctags executable is not installed in one of the directories in your
 $PATH environment variable you have to set the g:tagbar_ctags_bin variable,
@@ -187,7 +186,7 @@ closed. By default the window is opened on the right side, set the option
 It is probably a good idea to assign a key to these commands. For example, put
 this into your |vimrc|:
 >
-	nnoremap <silent> <F9> :TagbarToggle<CR>
+        nnoremap <silent> <F9> :TagbarToggle<CR>
 <
 You can then open and close Tagbar by simply pressing the <F9> key.
 
@@ -311,7 +310,7 @@ if it is not in one of the directories in your $PATH environment variable.
 
 Example:
 >
-	let g:tagbar_ctags_bin = 'C:\Ctags5.8\ctags.exe'
+        let g:tagbar_ctags_bin = 'C:\Ctags5.8\ctags.exe'
 <
 
                                                                *g:tagbar_left*
@@ -323,7 +322,7 @@ this option to open it on the left instead.
 
 Example:
 >
-	let g:tagbar_left = 1
+        let g:tagbar_left = 1
 <
 
                                                               *g:tagbar_width*
@@ -334,7 +333,7 @@ Width of the Tagbar window in characters.
 
 Example:
 >
-	let g:tagbar_width = 30
+        let g:tagbar_width = 30
 <
 
                                                           *g:tagbar_autoclose*
@@ -346,7 +345,7 @@ jump to a tag. This implies |g:tagbar_autofocus|.
 
 Example:
 >
-	let g:tagbar_autoclose = 1
+        let g:tagbar_autoclose = 1
 <
 
                                                           *g:tagbar_autofocus*
@@ -358,7 +357,7 @@ opened.
 
 Example:
 >
-	let g:tagbar_autofocus = 1
+        let g:tagbar_autofocus = 1
 <
 
                                                                *g:tagbar_sort*
@@ -372,7 +371,7 @@ same kind since they don't have a real position in the file.
 
 Example:
 >
-	let g:tagbar_sort = 0
+        let g:tagbar_sort = 0
 <
 
                                                             *g:tagbar_compact*
@@ -385,7 +384,7 @@ save screen real estate.
 
 Example:
 >
-	let g:tagbar_compact = 1
+        let g:tagbar_compact = 1
 <
 
                                                              *g:tagbar_expand*
@@ -397,7 +396,7 @@ Tagbar window if using a GUI version of Vim.
 
 Example:
 >
-	let g:tagbar_expand = 1
+        let g:tagbar_expand = 1
 <
 
                                                         *g:tagbar_singleclick*
@@ -409,7 +408,7 @@ to the tag definition.
 
 Example:
 >
-	let g:tagbar_singleclick = 1
+        let g:tagbar_singleclick = 1
 <
 
                                                           *g:tagbar_foldlevel*
@@ -421,7 +420,7 @@ than this number will be closed.
 
 Example:
 >
-	let g:tagbar_foldlevel = 2
+        let g:tagbar_foldlevel = 2
 <
 
                                                           *g:tagbar_iconchars*
@@ -436,10 +435,10 @@ and the second one for an open fold.
 Examples (don't worry if some the characters aren't displayed correctly, just
 choose other characters in that case):
 >
-	let g:tagbar_iconchars = ['▶', '▼']  (default on Linux and Mac OS X)
-	let g:tagbar_iconchars = ['▾', '▸']
-	let g:tagbar_iconchars = ['▷', '◢']
-	let g:tagbar_iconchars = ['+', '-']  (default on Windows)
+        let g:tagbar_iconchars = ['▶', '▼']  (default on Linux and Mac OS X)
+        let g:tagbar_iconchars = ['▾', '▸']
+        let g:tagbar_iconchars = ['▷', '◢']
+        let g:tagbar_iconchars = ['+', '-']  (default on Windows)
 <
 
                                                         *g:tagbar_autoshowtag*
@@ -454,7 +453,7 @@ the folds manually.
 
 Example:
 >
-	let g:tagbar_autoshowtag = 1
+        let g:tagbar_autoshowtag = 1
 <
 
                                               *g:tagbar_updateonsave_maxlines*
@@ -470,7 +469,7 @@ computer you can set it to a higher value.
 
 Example:
 >
-	let g:tagbar_updateonsave_maxlines = 10000
+        let g:tagbar_updateonsave_maxlines = 10000
 <
 
                                                           *g:tagbar_systemenc*
@@ -485,7 +484,7 @@ have to set this variable to "cp936".
 
 Example:
 >
-	let g:tagbar_systemenc = 'cp936'
+        let g:tagbar_systemenc = 'cp936'
 <
 
 ------------------------------------------------------------------------------
@@ -533,7 +532,7 @@ TagbarAccessPrivate
 If you want to change any of those colours put a line like the following in
 your vimrc:
 >
-	highlight TagbarScope guifg=Green ctermfg=Green
+        highlight TagbarScope guifg=Green ctermfg=Green
 <
 See |:highlight| for more information.
 
@@ -552,12 +551,12 @@ use multiple tabs and don't edit supported files in all of them.
 If you want to open Tagbar automatically on Vim startup no matter what put
 this into your vimrc:
 >
-    autocmd VimEnter * nested :TagbarOpen
+        autocmd VimEnter * nested :TagbarOpen
 <
 If you want to open it only if you're opening Vim with a supported file/files
 use this instead:
 >
-    autocmd VimEnter * nested :call tagbar#autoopen(1)
+        autocmd VimEnter * nested :call tagbar#autoopen(1)
 <
 The above is exactly what the Taglist plugin does if you set the
 Tlist_Auto_Open option, in case you want to emulate this behaviour.
@@ -565,17 +564,17 @@ Tlist_Auto_Open option, in case you want to emulate this behaviour.
 For opening Tagbar also if you open a supported file in an already running
 Vim:
 >
-    autocmd FileType * nested :call tagbar#autoopen(0)
+        autocmd FileType * nested :call tagbar#autoopen(0)
 <
 If you use multiple tabs and want Tagbar to also open in the current tab when
 you switch to an already loaded, supported buffer:
 >
-    autocmd BufEnter * nested :call tagbar#autoopen(0)
+        autocmd BufEnter * nested :call tagbar#autoopen(0)
 <
 And if you want to open Tagbar only for specific filetypes, not for all of the
 supported ones:
 >
-    autocmd FileType c,cpp nested :TagbarOpen
+        autocmd FileType c,cpp nested :TagbarOpen
 <
 Check out |autocmd.txt| if you want it to open automatically in more
 complicated cases.
@@ -734,12 +733,12 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
 You then have to assign this dictionary to a variable in your vimrc with the
 name
 >
-	g:tagbar_type_{vim filetype}
+        g:tagbar_type_{vim filetype}
 <
 For example, for C++ the name would be "g:tagbar_type_cpp". If you don't know
 the vim file type then run the following command:
 >
-	:set filetype?
+        :set filetype?
 <
 and vim will display the file type of the current buffer.
 
@@ -748,38 +747,38 @@ Here is a complete example that shows the default configuration for C++ as
 used in Tagbar. This is just for illustration purposes since user
 configurations will usually be less complicated.
 >
-	let g:tagbar_type_cpp = {
-	    \ 'ctagstype' : 'c++',
-	    \ 'kinds'     : [
-	        \ 'd:macros:1:0',
-	        \ 'p:prototypes:1:0',
-	        \ 'g:enums',
-	        \ 'e:enumerators:0:0',
-	        \ 't:typedefs:0:0',
-	        \ 'n:namespaces',
-	        \ 'c:classes',
-	        \ 's:structs',
-	        \ 'u:unions',
-	        \ 'f:functions',
-	        \ 'm:members:0:0',
-	        \ 'v:variables:0:0'
-	    \ ],
-	    \ 'sro'        : '::',
-	    \ 'kind2scope' : {
-	        \ 'g' : 'enum',
-	        \ 'n' : 'namespace',
-	        \ 'c' : 'class',
-	        \ 's' : 'struct',
-	        \ 'u' : 'union'
-	    \ },
-	    \ 'scope2kind' : {
-	        \ 'enum'      : 'g',
-	        \ 'namespace' : 'n',
-	        \ 'class'     : 'c',
-	        \ 'struct'    : 's',
-	        \ 'union'     : 'u'
-	    \ }
-	\ }
+        let g:tagbar_type_cpp = {
+            \ 'ctagstype' : 'c++',
+            \ 'kinds'     : [
+                \ 'd:macros:1:0',
+                \ 'p:prototypes:1:0',
+                \ 'g:enums',
+                \ 'e:enumerators:0:0',
+                \ 't:typedefs:0:0',
+                \ 'n:namespaces',
+                \ 'c:classes',
+                \ 's:structs',
+                \ 'u:unions',
+                \ 'f:functions',
+                \ 'm:members:0:0',
+                \ 'v:variables:0:0'
+            \ ],
+            \ 'sro'        : '::',
+            \ 'kind2scope' : {
+                \ 'g' : 'enum',
+                \ 'n' : 'namespace',
+                \ 'c' : 'class',
+                \ 's' : 'struct',
+                \ 'u' : 'union'
+            \ },
+            \ 'scope2kind' : {
+                \ 'enum'      : 'g',
+                \ 'namespace' : 'n',
+                \ 'class'     : 'c',
+                \ 'struct'    : 's',
+                \ 'union'     : 'u'
+            \ }
+        \ }
 <
 
 Which of the keys you have to specify depends on what you want to do.
@@ -793,21 +792,21 @@ example, if you didn't want Tagbar to show prototypes for C++ files, switch
 the order of enums and typedefs, and show macros in the statusline, you would
 do it like this:
 >
-	let g:tagbar_type_cpp = {
-	    \ 'kinds' : [
-	        \ 'd:macros:1',
-	        \ 'g:enums',
-	        \ 't:typedefs:0:0',
-	        \ 'e:enumerators:0:0',
-	        \ 'n:namespaces',
-	        \ 'c:classes',
-	        \ 's:structs',
-	        \ 'u:unions',
-	        \ 'f:functions',
-	        \ 'm:members:0:0',
-	        \ 'v:variables:0:0'
-	    \ ]
-	\ }
+        let g:tagbar_type_cpp = {
+            \ 'kinds' : [
+                \ 'd:macros:1',
+                \ 'g:enums',
+                \ 't:typedefs:0:0',
+                \ 'e:enumerators:0:0',
+                \ 'n:namespaces',
+                \ 'c:classes',
+                \ 's:structs',
+                \ 'u:unions',
+                \ 'f:functions',
+                \ 'm:members:0:0',
+                \ 'v:variables:0:0'
+            \ ]
+        \ }
 <
 Compare with the complete example above to see the difference.
 
@@ -833,28 +832,28 @@ Let's assume we want to add support for LaTeX to Tagbar using the regex
 approach. First we put the following text into ~/.ctags or a file pointed to
 by the "deffile" definition entry:
 >
-	--langdef=latex
-	--langmap=latex:.tex
-	--regex-latex=/^\\tableofcontents/TABLE OF CONTENTS/s,toc/
-	--regex-latex=/^\\frontmatter/FRONTMATTER/s,frontmatter/
-	--regex-latex=/^\\mainmatter/MAINMATTER/s,mainmatter/
-	--regex-latex=/^\\backmatter/BACKMATTER/s,backmatter/
-	--regex-latex=/^\\bibliography\{/BIBLIOGRAPHY/s,bibliography/
-	--regex-latex=/^\\part[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/PART \2/s,part/
-	--regex-latex=/^\\part[[:space:]]*\*[[:space:]]*\{([^}]+)\}/PART \1/s,part/
-	--regex-latex=/^\\chapter[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/CHAP \2/s,chapter/
-	--regex-latex=/^\\chapter[[:space:]]*\*[[:space:]]*\{([^}]+)\}/CHAP \1/s,chapter/
-	--regex-latex=/^\\section[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\. \2/s,section/
-	--regex-latex=/^\\section[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\. \1/s,section/
-	--regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/s,subsection/
-	--regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/s,subsection/
-	--regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/s,subsubsection/
-	--regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/s,subsubsection/
-	--regex-latex=/^\\includegraphics[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
-	--regex-latex=/^\\lstinputlisting[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
-	--regex-latex=/\\label[[:space:]]*\{([^}]+)\}/\1/l,label/
-	--regex-latex=/\\ref[[:space:]]*\{([^}]+)\}/\1/r,ref/
-	--regex-latex=/\\pageref[[:space:]]*\{([^}]+)\}/\1/p,pageref/
+        --langdef=latex
+        --langmap=latex:.tex
+        --regex-latex=/^\\tableofcontents/TABLE OF CONTENTS/s,toc/
+        --regex-latex=/^\\frontmatter/FRONTMATTER/s,frontmatter/
+        --regex-latex=/^\\mainmatter/MAINMATTER/s,mainmatter/
+        --regex-latex=/^\\backmatter/BACKMATTER/s,backmatter/
+        --regex-latex=/^\\bibliography\{/BIBLIOGRAPHY/s,bibliography/
+        --regex-latex=/^\\part[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/PART \2/s,part/
+        --regex-latex=/^\\part[[:space:]]*\*[[:space:]]*\{([^}]+)\}/PART \1/s,part/
+        --regex-latex=/^\\chapter[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/CHAP \2/s,chapter/
+        --regex-latex=/^\\chapter[[:space:]]*\*[[:space:]]*\{([^}]+)\}/CHAP \1/s,chapter/
+        --regex-latex=/^\\section[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\. \2/s,section/
+        --regex-latex=/^\\section[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\. \1/s,section/
+        --regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/s,subsection/
+        --regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/s,subsection/
+        --regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/s,subsubsection/
+        --regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/s,subsubsection/
+        --regex-latex=/^\\includegraphics[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
+        --regex-latex=/^\\lstinputlisting[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
+        --regex-latex=/\\label[[:space:]]*\{([^}]+)\}/\1/l,label/
+        --regex-latex=/\\ref[[:space:]]*\{([^}]+)\}/\1/r,ref/
+        --regex-latex=/\\pageref[[:space:]]*\{([^}]+)\}/\1/p,pageref/
 <
 This will create a new language definition with the name "latex" and associate
 it with files with the extension ".tex". It will also define the kinds "s" for
@@ -864,18 +863,18 @@ for more information about the exact syntax.
 
 Now we have to create the Tagbar language definition in our vimrc:
 >
-	let g:tagbar_type_tex = {
-	    \ 'ctagstype' : 'latex',
-	    \ 'kinds'     : [
-	        \ 's:sections',
-	        \ 'g:graphics:0:0',
-	        \ 'l:labels',
-	        \ 'r:refs:1:0',
-	        \ 'p:pagerefs:1:0'
-	    \ ],
-	    \ 'sort'    : 0,
-	    \ 'deffile' : expand('<sfile>:p:h:h') . '/ctags/latex.cnf'
-	\ }
+        let g:tagbar_type_tex = {
+            \ 'ctagstype' : 'latex',
+            \ 'kinds'     : [
+                \ 's:sections',
+                \ 'g:graphics:0:0',
+                \ 'l:labels',
+                \ 'r:refs:1:0',
+                \ 'p:pagerefs:1:0'
+            \ ],
+            \ 'sort'    : 0,
+            \ 'deffile' : expand('<sfile>:p:h:h') . '/ctags/latex.cnf'
+        \ }
 <
 The "deffile" field is of course only needed if the ctags definition actually
 is in that file and not in ~/.ctags.
@@ -897,7 +896,7 @@ try running ctags manually to see whether ctags reports the wrong information
 or whether that information is correct and Tagbar does something wrong. To run
 ctags manually execute the following command in a terminal:
 >
-	ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt myfile
+        ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt myfile
 <
 If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
 value here instead of simply "ctags".
@@ -1077,4 +1076,4 @@ Taybin Rutkin
 Ville Valkonen
 
 ==============================================================================
- vim: tw=78 ts=8 sw=8 sts=8 noet ft=help
+ vim: tw=78 ts=8 sw=4 sts=4 et ft=help
