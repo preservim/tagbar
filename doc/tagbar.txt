@@ -624,7 +624,8 @@ more detail below.
 Writing your own program is the approach used by for example jsctags and can
 be useful if your language can best be parsed by a program written in the
 language itself, or if you want to provide the program as part of a complete
-support package for the language.
+support package for the language. Some tips on how to write such a program are
+given at the end of this section.
 
 Before writing your own extension have a look at the wiki
 (https://github.com/majutsushi/tagbar/wiki/Support-for-additional-filetypes)
@@ -886,6 +887,34 @@ that.
 
 Tagbar should now be able to show the sections and other tags from LaTeX
 files.
+
+Writing your own tag-generating program~
+If you want to write your own program for generating tags then here are some
+imporant tips to get it to integrate well with Tagbar:
+
+  - Tagbar supports the same tag format as Vim itself. The format is described
+    in |tags-file-format|, the third format mentioned there is the relevant
+    one.
+  - Tagbar reads the tag information from a program's standard output
+    (stdout), it doesn't generate files and reads them in after that. So make
+    sure that your program has an option to output the tags on stdout.
+  - Some fields are supported for providing additional information about a
+    tag. One field is required: the "kind" field as a single letter without
+    a "kind:" fieldname. This field has to be the first one in the list. All
+    other fields need to have a fieldname in order to determine what they are.
+    The following fields are supported for all filetypes:
+
+        * line:      The line number of the tag
+        * column:    The column number of the tag
+        * signature: The signature of a function
+        * access:    Visibility/access information of a tag; the values
+                     "public", "protected" and "private" will be denoted with
+                     a special symbol in Tagbar
+
+    In addition fields that describe the surrounding scope of the tag are
+    supported if they are specified in the type configuration as explained at
+    the beginning of this section. For example, for a tag in class "Foo" this
+    could look like "class:Foo".
 
 ==============================================================================
 7. Troubleshooting & Known issues                              *tagbar-issues*
