@@ -894,7 +894,8 @@ imporant tips to get it to integrate well with Tagbar:
 
   - Tagbar supports the same tag format as Vim itself. The format is described
     in |tags-file-format|, the third format mentioned there is the relevant
-    one.
+    one. Note that the {tagaddress} part should be a search pattern since the
+    line number can be specified in a field (see below).
   - Tagbar reads the tag information from a program's standard output
     (stdout), it doesn't generate files and reads them in after that. So make
     sure that your program has an option to output the tags on stdout.
