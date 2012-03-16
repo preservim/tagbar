@@ -1089,15 +1089,16 @@ endfunction
 
 " s:BaseTag._init() {{{3
 function! s:BaseTag._init(name) dict
-    let self.name        = a:name
-    let self.fields      = {}
-    let self.fields.line = 0
-    let self.path        = ''
-    let self.fullpath    = a:name
-    let self.depth       = 0
-    let self.parent      = {}
-    let self.tline       = -1
-    let self.fileinfo    = {}
+    let self.name          = a:name
+    let self.fields        = {}
+    let self.fields.line   = 0
+    let self.fields.column = 1
+    let self.path          = ''
+    let self.fullpath      = a:name
+    let self.depth         = 0
+    let self.parent        = {}
+    let self.tline         = -1
+    let self.fileinfo      = {}
 endfunction
 
 " s:BaseTag.isNormalTag() {{{3
@@ -1943,9 +1944,9 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo)
     let taginfo.fields.kind = remove(fields, 0)
     for field in fields
         " can't use split() since the value can contain ':'
-        let delimit             = stridx(field, ':')
-        let key                 = strpart(field, 0, delimit)
-        let val                 = strpart(field, delimit + 1)
+        let delimit = stridx(field, ':')
+        let key     = strpart(field, 0, delimit)
+        let val     = strpart(field, delimit + 1)
         if len(val) > 0
             let taginfo.fields[key] = val
         endif
@@ -2661,7 +2662,7 @@ function! s:JumpToTag(stay_in_tagbar)
 
     " Center the tag in the window and jump to the correct column if available
     normal! z.
-    call cursor(taginfo.fields.line, get(taginfo.fields, 'column', 1))
+    call cursor(taginfo.fields.line, taginfo.fields.column)
 
     if foldclosed('.') != -1
         .foldopen!
