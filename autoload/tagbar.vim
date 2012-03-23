@@ -959,7 +959,7 @@ function! s:CreateAutocommands()
             \ if line('$') < g:tagbar_updateonsave_maxlines |
                 \ call s:AutoUpdate(fnamemodify(expand('<afile>'), ':p')) |
             \ endif
-        autocmd BufEnter,CursorHold,FileType * call
+        autocmd BufEnter,CursorHold,CursorMoved,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
         autocmd BufDelete,BufUnload,BufWipeout * call
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
