@@ -958,6 +958,8 @@ function! s:CreateAutocommands() abort
         autocmd!
         autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype(1)
+        autocmd WinEnter   __Tagbar__ call s:SetStatusLine('current')
+        autocmd WinLeave   __Tagbar__ call s:SetStatusLine('noncurrent')
 
         autocmd BufReadPost,BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
@@ -1700,6 +1702,7 @@ function! s:OpenWindow(flags) abort
     let eventignore_save = &eventignore
     set eventignore=all
 
+    call s:SetStatusLineOther('noncurrent')
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
@@ -1716,10 +1719,13 @@ function! s:OpenWindow(flags) abort
     endif
 
     call s:AutoUpdate(curfile, 0)
+    call s:SetStatusLine('current')
     call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
+        call s:SetStatusLine('noncurrent')
+        call s:SetStatusLineOther('current')
     endif
 
     call s:LogDebugMessage('OpenWindow finished')
@@ -1757,11 +1763,12 @@ function! s:InitWindow(autoclose) abort
     setlocal foldexpr&
 
     " Earlier versions have a bug in local, evaluated statuslines
-    if v:version > 701 || (v:version == 701 && has('patch097'))
-        setlocal statusline=%!TagbarGenerateStatusline()
-    else
-        setlocal statusline=Tagbar
-    endif
+    " if v:version > 701 || (v:version == 701 && has('patch097'))
+    "     setlocal statusline=%!TagbarGenerateStatusline()
+    " else
+    "     setlocal statusline=Tagbar
+    " endif
+    call s:SetStatusLine('current')
 
     let s:new_window = 1
 
@@ -1859,6 +1866,7 @@ function! s:CloseWindow() abort
         autocmd! TagbarAutoCmds
         let s:autocommands_done = 0
     endif
+    call s:SetStatusLineOther('current')
 
     call s:LogDebugMessage('CloseWindow finished')
 endfunction
@@ -2465,6 +2473,7 @@ function! s:ToggleSort() abort
     call fileinfo.sortTags()
 
     call s:RenderContent()
+    call s:SetStatusLine('current')
 
     execute curline
 endfunction
@@ -2857,6 +2866,8 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     let tagbarwinnr = winnr()
 
+    call s:SetStatusLine('noncurrent')
+
     call s:GotoPreviousWindow(taginfo.fileinfo)
 
     " Mark current position so it can be jumped back to
@@ -2900,15 +2911,16 @@ function! s:JumpToTag(stay_in_tagbar) abort
         .foldopen
     endif
 
-    redraw
-
     if a:stay_in_tagbar
         call s:HighlightTag(0)
         call s:winexec(tagbarwinnr . 'wincmd w')
+        call s:SetStatusLine('current')
+        redraw
     elseif g:tagbar_autoclose || autoclose
         call s:CloseWindow()
     else
         call s:HighlightTag(0)
+        call s:SetStatusLineOther('current')
     endif
 endfunction
 
@@ -3183,6 +3195,8 @@ function! s:AutoUpdate(fname, force) abort
         let s:nearby_disabled = 0
     endif
 
+    call s:SetStatusLine(bufwinnr('__Tagbar__' == winnr() ? 'current'
+                                                        \ : 'noncurrent'))
     call s:HighlightTag(0)
     call s:LogDebugMessage('AutoUpdate finished successfully')
 endfunction
@@ -3510,6 +3524,57 @@ function! s:IsValidFile(fname, ftype) abort
     return 1
 endfunction
 
+" s:SetStatusLine() {{{2
+function! s:SetStatusLine(current)
+    " Make sure we're actually in the Tagbar window
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1
+        return
+    endif
+    if tagbarwinnr != winnr()
+        let in_tagbar = 0
+        call s:winexec(tagbarwinnr . 'wincmd w')
+    else
+        let in_tagbar = 1
+    endif
+    let current = a:current == 'current' ? 1 : 0
+
+    if g:tagbar_sort
+        let sort = 'Name'
+    else
+        let sort = 'Order'
+    endif
+
+    if !empty(s:known_files.getCurrent())
+        let fname = fnamemodify(s:known_files.getCurrent().fpath, ':t')
+    else
+        let fname = ''
+    endif
+
+    if has_key(g:tagbar_statusfuncs, 'tagbar')
+        let args = [current, sort, fname]
+        let &l:statusline = call(g:tagbar_statusfuncs.tagbar, args)
+    else
+        let colour = current ? '%#StatusLine#' : '%#StatusLineNC#'
+        let text = colour . '[' . sort . '] ' . fname
+        let &l:statusline = text
+    endif
+
+    if !in_tagbar
+        call s:winexec('wincmd p')
+    endif
+endfunction
+
+" s:SetStatusLineOther() {{{2
+function! s:SetStatusLineOther(current)
+    let current = a:current == 'current' ? 1 : 0
+
+    if has_key(g:tagbar_statusfuncs, 'other')
+        let args = [current]
+        let &l:statusline = call(g:tagbar_statusfuncs.other, args)
+    endif
+endfunction
+
 " s:QuitIfOnlyWindow() {{{2
 function! s:QuitIfOnlyWindow() abort
     " Check if there is more than one window
@@ -3566,7 +3631,7 @@ function! s:winexec(cmd) abort
     call s:LogDebugMessage("Executing without autocommands: " . a:cmd)
 
     let eventignore_save = &eventignore
-    set eventignore=BufEnter
+    set eventignore=all
 
     execute a:cmd
 
