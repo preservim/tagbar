@@ -2538,7 +2538,7 @@ endfunction
 function! s:HighlightTag()
     let tagline = 0
 
-    let tag = s:GetNearbyTag()
+    let tag = s:GetNearbyTag(1)
     if !empty(tag)
         let tagline = tag.tline
     endif
@@ -2863,7 +2863,7 @@ function! s:OpenParents(...)
     if a:0 == 1
         let tag = a:1
     else
-        let tag = s:GetNearbyTag()
+        let tag = s:GetNearbyTag(1)
     endif
 
     call tag.openParents()
@@ -3064,7 +3064,7 @@ endfunction
 
 " s:GetNearbyTag() {{{2
 " Get the tag info for a file near the cursor in the current file
-function! s:GetNearbyTag()
+function! s:GetNearbyTag(all)
     let fileinfo = s:known_files.getCurrent()
     if empty(fileinfo)
         return
@@ -3082,7 +3082,7 @@ function! s:GetNearbyTag()
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let tag = fileinfo.fline[line]
-            if typeinfo.getKind(tag.fields.kind).stl
+            if a:all || typeinfo.getKind(tag.fields.kind).stl
                 break
             endif
         endif
@@ -3329,7 +3329,7 @@ function! tagbar#currenttag(fmt, default, ...)
         return ''
     endif
 
-    let tag = s:GetNearbyTag()
+    let tag = s:GetNearbyTag(0)
 
     if !empty(tag)
         return printf(a:fmt, tag.strshort(longsig))
