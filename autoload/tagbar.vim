@@ -658,14 +658,32 @@ function! s:InitTypes()
     let type_tex = s:TypeInfo.New()
     let type_tex.ctagstype = 'tex'
     let type_tex.kinds     = [
+        \ {'short' : 'i', 'long' : 'includes',       'fold' : 1, 'stl' : 0},
         \ {'short' : 'p', 'long' : 'parts',          'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'chapters',       'fold' : 0, 'stl' : 1},
         \ {'short' : 's', 'long' : 'sections',       'fold' : 0, 'stl' : 1},
         \ {'short' : 'u', 'long' : 'subsections',    'fold' : 0, 'stl' : 1},
         \ {'short' : 'b', 'long' : 'subsubsections', 'fold' : 0, 'stl' : 1},
         \ {'short' : 'P', 'long' : 'paragraphs',     'fold' : 0, 'stl' : 0},
-        \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0, 'stl' : 0}
+        \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 'l', 'long' : 'labels',         'fold' : 0, 'stl' : 0}
     \ ]
+    let type_tex.sro        = '""'
+    let type_tex.kind2scope = {
+        \ 'p' : 'part',
+        \ 'c' : 'chapter',
+        \ 's' : 'section',
+        \ 'u' : 'subsection',
+        \ 'b' : 'subsubsection'
+    \ }
+    let type_tex.scope2kind = {
+        \ 'part'          : 'p',
+        \ 'chapter'       : 'c',
+        \ 'section'       : 's',
+        \ 'subsection'    : 'u',
+        \ 'subsubsection' : 'b'
+    \ }
+    let type_tex.sort = 0
     let s:known_types.tex = type_tex
     " Vala {{{3
     " Vala is supported by the ctags fork provided by Anjuta, so only add the
