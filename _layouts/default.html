@@ -5,16 +5,22 @@
 
         <title>{{ page.title }}</title>
 
+        <!-- <link rel="stylesheet" href="/css/fonts.css" type="text/css" charset="utf-8" /> -->
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic|Ubuntu+Mono:400,700' rel='stylesheet' type='text/css'>
+
         <style type="text/css">
             body {
                 margin-top: 1.0em;
-                background-color: #333333;
-                font-family: "Helvetica,Arial,FreeSans";
-                color: #ffffff;
+                /* background-color: #1C1C1C; */
+                background-color: #202020;
+                font-size: 16px;
+                font-family: Ubuntu, Helvetica, Arial, FreeSans;
+                color: #F0E7D5;
+                /* color: #FFFFFF; */
             }
             #container {
                 margin: 0 auto;
-                width: 700px;
+                width: 650px;
             }
             h1 {
                 font-size: 3.8em;
@@ -23,13 +29,23 @@
                 text-shadow: #111111 3px 3px 1px;
             }
             h1 .small { font-size: 0.4em; }
-            h1 a { text-decoration: none }
+            h1 a { text-decoration: none; color: #F0E7D5 }
             h2 { font-size: 1.5em; color: #dddddd; text-shadow: #111111 1px 1px 1px; }
             h3 { text-align: left; color: #dddddd; }
-            a { color: #dddddd; }
+            a { color: #ffcc00; }
             .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
             .download { float: right; }
-            pre { background: #000; color: #fff; padding: 15px;}
+            pre {
+                background: #333333;
+                color: #ffffff;
+                padding: 8px 15px 8px 15px;
+                border-width: 1px;
+                border-color: #222222;
+                border-style: solid;
+                box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
+                font-family: "Ubuntu Mono", monospace;
+            }
+            code { font-family: "Ubuntu Mono", monospace; }
             hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
             .footer { text-align:center; padding-top:30px; font-style: italic; }
         </style>
