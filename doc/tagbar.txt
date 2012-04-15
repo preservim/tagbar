@@ -591,13 +591,17 @@ name of the function.
 
 The function has the following signature:
 
-tagbar#currenttag({format}, {default} [, {longsig}])
+tagbar#currenttag({format}, {default} [, {flags}])
     {format} is a |printf()|-compatible format string where "%s" will be
     replaced by the name of the tag. {default} will be displayed instead of
-    the format string if no tag can be found. If the optional argument
-    {longsig} is given and is non-zero then functions will have their complete
-    signature shown, otherwise only "()" will be appended so they can be more
-    easily distinguished from other tags.
+    the format string if no tag can be found.
+
+    The optional {flags} argument specifies some additional properties of the
+    displayed tags. It is a string which can contain these character flags:
+    'f'   Display the full hierarchy of the tag, not just the tag itself.
+    's'   If the tag is a function, the complete signature will be shown,
+          otherwise just "()" will be appended to distinguish functions from
+          other tags.
 
     For example, if you put the following into your statusline: >
         %{tagbar#currenttag('[%s] ', '')}
