@@ -909,6 +909,8 @@ function! s:RestoreSession()
         endif
     endif
 
+    let s:last_autofocus = 0
+
     call s:Init()
 
     call s:InitWindow(g:tagbar_autoclose)
