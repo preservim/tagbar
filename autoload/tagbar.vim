@@ -1555,6 +1555,7 @@ function! s:OpenWindow(flags)
     let autoclose = a:flags =~# 'c'
 
     let curfile = fnamemodify(bufname('%'), ':p')
+    let curline = line('.')
 
     " If the tagbar window is already open check jump flag
     " Also set the autoclose flag if requested
@@ -1594,6 +1595,7 @@ function! s:OpenWindow(flags)
     call s:InitWindow(autoclose)
 
     call s:AutoUpdate(curfile)
+    call s:HighlightTag(curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
@@ -2564,10 +2566,14 @@ endfunction
 
 " User actions {{{1
 " s:HighlightTag() {{{2
-function! s:HighlightTag()
+function! s:HighlightTag(...)
     let tagline = 0
 
-    let tag = s:GetNearbyTag(1)
+    if a:0 > 0
+        let tag = s:GetNearbyTag(1, a:1)
+    else
+        let tag = s:GetNearbyTag(1)
+    endif
     if !empty(tag)
         let tagline = tag.tline
     endif
@@ -2615,7 +2621,9 @@ function! s:HighlightTag()
     let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
     execute 'match TagbarHighlight ' . pattern
 
-    call s:winexec(prevwinnr . 'wincmd w')
+    if a:0 == 0 " no line explicitly given, so assume we were in the file window
+        call s:winexec(prevwinnr . 'wincmd w')
+    endif
 
     redraw
 endfunction
@@ -3093,14 +3101,18 @@ endfunction
 
 " s:GetNearbyTag() {{{2
 " Get the tag info for a file near the cursor in the current file
-function! s:GetNearbyTag(all)
+function! s:GetNearbyTag(all, ...)
     let fileinfo = s:known_files.getCurrent()
     if empty(fileinfo)
         return {}
     endif
 
     let typeinfo = fileinfo.typeinfo
-    let curline = line('.')
+    if a:0 > 0
+        let curline = a:1
+    else
+        let curline = line('.')
+    endif
     let tag = {}
 
     " If a tag appears in a file more than once (for example namespaces in
