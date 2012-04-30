@@ -3045,6 +3045,11 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...)
 
     let ctags_cmd = shellescape(a:ctags_bin) . ' ' . a:args . ' ' . fname
 
+    " Stupid cmd.exe quoting
+    if &shell =~ 'cmd\.exe'
+        let ctags_cmd = substitute(ctags_cmd, '\(&\|\^\)', '^\0', 'g')
+    endif
+
     if exists('+shellslash')
         let &shellslash = shellslash_save
     endif
