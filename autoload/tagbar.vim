@@ -1552,6 +1552,7 @@ function! s:OpenWindow(flags)
 
     let autofocus = a:flags =~# 'f'
     let jump      = a:flags =~# 'j'
+    let highlight = a:flags =~# 'h'
     let autoclose = a:flags =~# 'c'
 
     let curfile = fnamemodify(bufname('%'), ':p')
@@ -1566,6 +1567,9 @@ function! s:OpenWindow(flags)
             if autoclose
                 let w:autoclose = autoclose
             endif
+        endif
+        if highlight
+            call s:HighlightTag(curline)
         endif
         call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
         return
