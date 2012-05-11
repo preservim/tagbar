@@ -1567,9 +1567,9 @@ function! s:OpenWindow(flags)
             if autoclose
                 let w:autoclose = autoclose
             endif
-        endif
-        if highlight
-            call s:HighlightTag(curline)
+            if highlight
+                call s:HighlightTag(curline)
+            endif
         endif
         call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
         return
