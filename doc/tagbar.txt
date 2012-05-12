@@ -1102,6 +1102,7 @@ The folding technique was inspired by NERDTree by Martin Grenfell.
 
 Thanks to the following people for code contributions, feature suggestions etc:
 Jan Christoph Ebersbach
+Vadim Fint
 Leandro Freitas
 Seth Milliken
 Kien N

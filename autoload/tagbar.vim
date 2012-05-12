@@ -1566,6 +1566,7 @@ function! s:OpenWindow(flags)
             if autoclose
                 let w:autoclose = autoclose
             endif
+            call s:HighlightTag(1, curline)
         endif
         call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
         return
@@ -1595,7 +1596,7 @@ function! s:OpenWindow(flags)
     call s:InitWindow(autoclose)
 
     call s:AutoUpdate(curfile)
-    call s:HighlightTag(curline)
+    call s:HighlightTag(1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
@@ -2566,7 +2567,7 @@ endfunction
 
 " User actions {{{1
 " s:HighlightTag() {{{2
-function! s:HighlightTag(...)
+function! s:HighlightTag(openfolds, ...)
     let tagline = 0
 
     if a:0 > 0
@@ -2603,7 +2604,7 @@ function! s:HighlightTag(...)
         return
     endif
 
-    if g:tagbar_autoshowtag
+    if g:tagbar_autoshowtag || a:openfolds
         call s:OpenParents(tag)
     endif
 
@@ -2708,12 +2709,12 @@ function! s:JumpToTag(stay_in_tagbar)
     redraw
 
     if a:stay_in_tagbar
-        call s:HighlightTag()
+        call s:HighlightTag(0)
         call s:winexec(tagbarwinnr . 'wincmd w')
     elseif g:tagbar_autoclose || autoclose
         call s:CloseWindow()
     else
-        call s:HighlightTag()
+        call s:HighlightTag(0)
     endif
 endfunction
 
@@ -2974,7 +2975,7 @@ function! s:AutoUpdate(fname)
         call s:known_files.setCurrent(fileinfo)
     endif
 
-    call s:HighlightTag()
+    call s:HighlightTag(0)
     call s:LogDebugMessage('AutoUpdate finished successfully')
 endfunction
 
