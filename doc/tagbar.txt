@@ -262,6 +262,14 @@ COMMANDS                                                     *tagbar-commands*
     Open the parent folds of the current tag in the file window as much as
     needed for the tag to be visible in the Tagbar window.
 
+:TagbarGetTypeConfig {filetype}
+    Paste the Tagbar configuration of the vim filetype {filetype} at the
+    current cursor position (provided that filetype is supported by Tagbar)
+    for easy customization. The configuration will be ready to use as is but
+    will only contain the "kinds" entry as that is the only one that really
+    makes sense to customize. See |tagbar-extend| for more information about
+    type configurations.
+
 :TagbarDebug [logfile]
     Start debug mode. This will write debug messages to file [logfile] while
     using Tagbar. If no argument is given "tagbardebug.log" in the current
@@ -617,6 +625,10 @@ filetype two things are needed: a program that generates the tag information,
 usually Exuberant Ctags, and a Tagbar type definition in your |vimrc| or an
 |ftplugin| that tells Tagbar how to interpret the generated tags.
 
+Note: if you only want to customize an existing definition (like changing the
+order in which tag kinds are displayed) see "Changing an existing definition"
+below.
+
 There are two ways to generate the tag information for new filetypes: add a
 definition to Exuberant Ctags or create a specialized program for your
 language that generates ctags-compatible tag information (see
@@ -790,12 +802,17 @@ Which of the keys you have to specify depends on what you want to do.
 
 Changing an existing definition~
 If you want to change an existing definition you only need to specify the
-parts that you want to change. It probably only makes sense to change "kinds"
-and/or "scopes", which would be the case if you wanted to exclude certain
-kinds from appearing in Tagbar or if you want to change their order. As an
-example, if you didn't want Tagbar to show prototypes for C++ files, switch
-the order of enums and typedefs, and show macros in the statusline, you would
-do it like this:
+parts that you want to change. It probably only makes sense to change "kinds",
+which would be the case if you wanted to for example change the order of
+certain kinds, change their default fold state or exclude them from appearing
+in Tagbar. The easiest way to do that is to use the ":TagbarGetTypeConfig"
+command (see |tagbar-commands|), which will paste a ready-to-use configuration
+with the "kinds" entry for the specified type at the current cursor position.
+
+As an example, if you didn't want Tagbar to show prototypes for C++ files,
+switch the order of enums and typedefs, and show macros in the statusline, you
+would first run ":TagbarGetTypeConfig cpp" in your vimrc and then change the
+definition like this:
 >
         let g:tagbar_type_cpp = {
             \ 'kinds' : [

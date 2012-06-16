@@ -3398,5 +3398,42 @@ function! tagbar#currenttag(fmt, default, ...)
     endif
 endfunction
 
+" tagbar#gettypeconfig() {{{2
+function! tagbar#gettypeconfig(type)
+    if !s:Init()
+        return ''
+    endif
+
+    let typeinfo = get(s:known_types, a:type, {})
+
+    if empty(typeinfo)
+        echoerr 'Unknown type ' . a:type . '!'
+        return
+    endif
+
+    let output = "let g:tagbar_type_" . a:type . " = {\n"
+
+    let output .= "    \\ 'kinds' : [\n"
+    for kind in typeinfo.kinds
+        let output .= "        \\ '" . kind.short . ":" . kind.long
+        if kind.fold || !kind.stl
+            if kind.fold
+                let output .= ":1"
+            else
+                let output .= ":0"
+            endif
+        endif
+        if !kind.stl
+            let output .= ":0"
+        endif
+        let output .= "',\n"
+    endfor
+    let output .= "    \\ ],\n"
+
+    let output .= "\\ }"
+
+    silent put =output
+endfunction
+
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
