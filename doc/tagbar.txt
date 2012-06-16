@@ -214,6 +214,13 @@ The displayed scopes (and unscoped types) can be folded to hide uninteresting
 information. Mappings similar to Vim's built-in ones are provided. Folds can
 also be opened and closed by clicking on the fold icon with the mouse.
 
+Highlighting the current tag~
+When the Tagbar window is open the current tag will automatically be
+highlighted in it after a short pause if the cursor is not moving. The length
+of this pause is determined by the 'updatetime' option. If you want to make
+that pause shorter you can change the option, but don't set it too low or
+strange things will happen. This is unfortunately unavoidable.
+
 Displaying the prototype of a tag~
 Tagbar can display the prototype of a tag. More precisely it can display the
 line in which the tag is defined. This can be done by either pressing <Space>
