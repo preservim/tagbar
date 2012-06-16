@@ -225,7 +225,7 @@ displayed when the cursor stays on a tag for 'updatetime' milliseconds.
 ------------------------------------------------------------------------------
 COMMANDS                                                     *tagbar-commands*
 
-:TagbarOpen [{flags}]
+:TagbarOpen [{flags}]                                            *:TagbarOpen*
     Open the Tagbar window if it is closed.
 
     Additional behaviour can be specified with the optional {flags} argument.
@@ -241,28 +241,28 @@ COMMANDS                                                     *tagbar-commands*
     (unless |g:tagbar_autoclose| is set): >
         :TagbarOpen fj
 <
-:TagbarClose
+:TagbarClose                                                    *:TagbarClose*
     Close the Tagbar window if it is open.
 
-:TagbarToggle
+:TagbarToggle                                                  *:TagbarToggle*
     Open the Tagbar window if it is closed or close it if it is open.
 
-:TagbarOpenAutoClose
+:TagbarOpenAutoClose                                    *:TagbarOpenAutoClose*
     Open the Tagbar window, jump to it and close it on tag selection. This is
     an alias for ":TagbarOpen fc".
 
-:TagbarSetFoldlevel[!] {number}
+:TagbarSetFoldlevel[!] {number}                          *:TagbarSetFoldlevel*
     Set the foldlevel of the tags of the current file to {number}. The
     foldlevel of tags in other files remains unaffected. Works in the same way
     as 'foldlevel'. Folds that are specified to be closed by default in the
     type configuration will not be opened, use a "!" to force applying the new
     foldlevel to those folds as well.
 
-:TagbarShowTag
+:TagbarShowTag                                                *:TagbarShowTag*
     Open the parent folds of the current tag in the file window as much as
     needed for the tag to be visible in the Tagbar window.
 
-:TagbarGetTypeConfig {filetype}
+:TagbarGetTypeConfig {filetype}                         *:TagbarGetTypeConfig*
     Paste the Tagbar configuration of the vim filetype {filetype} at the
     current cursor position (provided that filetype is supported by Tagbar)
     for easy customization. The configuration will be ready to use as is but
@@ -270,12 +270,12 @@ COMMANDS                                                     *tagbar-commands*
     makes sense to customize. See |tagbar-extend| for more information about
     type configurations.
 
-:TagbarDebug [logfile]
+:TagbarDebug [logfile]                                          *:TagbarDebug*
     Start debug mode. This will write debug messages to file [logfile] while
     using Tagbar. If no argument is given "tagbardebug.log" in the current
     directory is used. Note: an existing file will be overwritten!
 
-:TagbarDebugEnd
+:TagbarDebugEnd                                              *:TagbarDebugEnd*
     End debug mode, debug messages will no longer be written to the logfile.
 
 ------------------------------------------------------------------------------
@@ -423,8 +423,8 @@ Example:
 g:tagbar_foldlevel~
 Default: 99
 
-The initial foldlevel for folds in the Tagbar window. Fold with a level higher
-than this number will be closed.
+The initial foldlevel for folds in the Tagbar window. Folds with a level
+higher than this number will be closed.
 
 Example:
 >
@@ -440,8 +440,8 @@ fonts. With this variable you can set the icons to characters of your liking.
 The first character in the list specifies the icon to use for a closed fold,
 and the second one for an open fold.
 
-Examples (don't worry if some the characters aren't displayed correctly, just
-choose other characters in that case):
+Examples (don't worry if some of the characters aren't displayed correctly,
+just choose other characters in that case):
 >
         let g:tagbar_iconchars = ['▶', '▼']  (default on Linux and Mac OS X)
         let g:tagbar_iconchars = ['▾', '▸']
@@ -456,8 +456,8 @@ Default: 0
 If this variable is set and the current tag is inside of a closed fold then
 the folds will be opened as much as needed for the tag to be visible so it can
 be highlighted. If it is not set then the folds won't be opened and the parent
-tag will be highlighted instead. You can use the TagbarShowTag command to open
-the folds manually.
+tag will be highlighted instead. You can use the |:TagbarShowTag| command to
+open the folds manually.
 
 Example:
 >
@@ -805,9 +805,9 @@ If you want to change an existing definition you only need to specify the
 parts that you want to change. It probably only makes sense to change "kinds",
 which would be the case if you wanted to for example change the order of
 certain kinds, change their default fold state or exclude them from appearing
-in Tagbar. The easiest way to do that is to use the ":TagbarGetTypeConfig"
-command (see |tagbar-commands|), which will paste a ready-to-use configuration
-with the "kinds" entry for the specified type at the current cursor position.
+in Tagbar. The easiest way to do that is to use the |:TagbarGetTypeConfig|
+command, which will paste a ready-to-use configuration with the "kinds" entry
+for the specified type at the current cursor position.
 
 As an example, if you didn't want Tagbar to show prototypes for C++ files,
 switch the order of enums and typedefs, and show macros in the statusline, you
