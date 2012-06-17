@@ -1,0 +1,11 @@
+---
+title: 2.4
+---
+
+- New function tagbar#currenttag() that reports the current tag, for example
+  for putting it into the statusline.
+- New command TagbarGetTypeConfig for easy customization of an existing type.
+- Type definitions now can be loaded from ftplugins.
+- The autoopen() function is now a bit more flexible.
+- Vala is now supported if Anjuta is installed.
+- Various other small improvements and bugfixes.
