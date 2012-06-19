@@ -22,6 +22,12 @@ scriptencoding utf-8
 
 " Initialization {{{1
 
+" If another plugin calls an autoloaded Tagbar function on startup before the
+" plugin/tagbar.vim file got loaded, load it explicitly
+if exists(':Tagbar') == 0
+    runtime plugin/tagbar.vim
+endif
+
 " Basic init {{{2
 
 if !exists('g:tagbar_ctags_bin')
