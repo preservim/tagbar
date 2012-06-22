@@ -2626,6 +2626,7 @@ function! s:HighlightTag(openfolds, ...)
 
     let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
     let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
+    call s:LogDebugMessage("Highlight pattern: '" . pattern . "'")
     execute 'match TagbarHighlight ' . pattern
 
     if a:0 == 0 " no line explicitly given, so assume we were in the file window
