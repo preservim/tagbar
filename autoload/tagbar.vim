@@ -1191,17 +1191,22 @@ endfunction
 
 " s:BaseTag.getClosedParentTline() {{{3
 function! s:BaseTag.getClosedParentTline() dict
-    let tagline = self.tline
+    let tagline  = self.tline
     let fileinfo = self.fileinfo
 
-    let parent = self.parent
-    while !empty(parent)
+    " Find the first closed parent, starting from the top of the hierarchy.
+    let parents   = []
+    let curparent = self.parent
+    while !empty(curparent)
+        call add(parents, curparent)
+        let curparent = curparent.parent
+    endwhile
+    for parent in reverse(parents)
         if parent.isFolded()
             let tagline = parent.tline
             break
         endif
-        let parent = parent.parent
-    endwhile
+    endfor
 
     return tagline
 endfunction
