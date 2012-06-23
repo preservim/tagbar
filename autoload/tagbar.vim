@@ -1620,13 +1620,14 @@ endfunction
 function! s:InitWindow(autoclose)
     call s:LogDebugMessage('InitWindow called with autoclose: ' . a:autoclose)
 
+    setlocal filetype=tagbar
+
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
     setlocal bufhidden=hide
     setlocal noswapfile
     setlocal nobuflisted
     setlocal nomodifiable
-    setlocal filetype=tagbar
     setlocal nolist
     setlocal nonumber
     setlocal nowrap
@@ -1634,6 +1635,7 @@ function! s:InitWindow(autoclose)
     setlocal textwidth=0
     setlocal nocursorline
     setlocal nocursorcolumn
+    setlocal nospell
 
     if exists('+relativenumber')
         setlocal norelativenumber
