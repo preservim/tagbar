@@ -340,9 +340,9 @@ function! s:InitTypes()
     " guesses and probably requires
     " http://www.vim.org/scripts/script.php?script_id=2909
     " Improvements welcome!
-    let type_mxml = s:TypeInfo.New()
-    let type_mxml.ctagstype = 'flex'
-    let type_mxml.kinds     = [
+    let type_as = s:TypeInfo.New()
+    let type_as.ctagstype = 'flex'
+    let type_as.kinds     = [
         \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0, 'stl' : 0},
         \ {'short' : 'c', 'long' : 'classes',          'fold' : 0, 'stl' : 1},
         \ {'short' : 'm', 'long' : 'methods',          'fold' : 0, 'stl' : 1},
@@ -350,14 +350,15 @@ function! s:InitTypes()
         \ {'short' : 'f', 'long' : 'functions',        'fold' : 0, 'stl' : 1},
         \ {'short' : 'x', 'long' : 'mxtags',           'fold' : 0, 'stl' : 0}
     \ ]
-    let type_mxml.sro        = '.'
-    let type_mxml.kind2scope = {
+    let type_as.sro        = '.'
+    let type_as.kind2scope = {
         \ 'c' : 'class'
     \ }
-    let type_mxml.scope2kind = {
+    let type_as.scope2kind = {
         \ 'class' : 'c'
     \ }
-    let s:known_types.mxml = type_mxml
+    let s:known_types.mxml = type_as
+    let s:known_types.actionscript = type_as
     " Fortran {{{3
     let type_fortran = s:TypeInfo.New()
     let type_fortran.ctagstype = 'fortran'
@@ -632,6 +633,7 @@ function! s:InitTypes()
     let type_sql.ctagstype = 'sql'
     let type_sql.kinds     = [
         \ {'short' : 'P', 'long' : 'packages',               'fold' : 1, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'prototypes',             'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'cursors',                'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',              'fold' : 0, 'stl' : 1},
         \ {'short' : 'F', 'long' : 'record fields',          'fold' : 0, 'stl' : 1},
@@ -649,7 +651,8 @@ function! s:InitTypes()
         \ {'short' : 'V', 'long' : 'views',                  'fold' : 0, 'stl' : 1},
         \ {'short' : 'n', 'long' : 'synonyms',               'fold' : 0, 'stl' : 1},
         \ {'short' : 'x', 'long' : 'MobiLink Table Scripts', 'fold' : 0, 'stl' : 1},
-        \ {'short' : 'y', 'long' : 'MobiLink Conn Scripts',  'fold' : 0, 'stl' : 1}
+        \ {'short' : 'y', 'long' : 'MobiLink Conn Scripts',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'z', 'long' : 'MobiLink Properties',    'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.sql = type_sql
     " Tcl {{{3
@@ -793,6 +796,7 @@ function! s:InitTypes()
     let type_vim = s:TypeInfo.New()
     let type_vim.ctagstype = 'vim'
     let type_vim.kinds     = [
+        \ {'short' : 'n', 'long' : 'vimball filenames',  'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'variables',          'fold' : 1, 'stl' : 0},
         \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
         \ {'short' : 'a', 'long' : 'autocommand groups', 'fold' : 1, 'stl' : 1},
