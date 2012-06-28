@@ -933,17 +933,21 @@ imporant tips to get it to integrate well with Tagbar:
     other fields need to have a fieldname in order to determine what they are.
     The following fields are supported for all filetypes:
 
-        * line:      The line number of the tag
-        * column:    The column number of the tag
-        * signature: The signature of a function
+        * line:      The line number of the tag.
+        * column:    The column number of the tag.
+        * signature: The signature of a function.
         * access:    Visibility/access information of a tag; the values
                      "public", "protected" and "private" will be denoted with
-                     a special symbol in Tagbar
+                     a special symbol in Tagbar.
 
     In addition fields that describe the surrounding scope of the tag are
     supported if they are specified in the type configuration as explained at
     the beginning of this section. For example, for a tag in class "Foo" this
     could look like "class:Foo".
+    Important: the value of such a scope-specifying field should be the entire
+    hierarchy of scopes that the tag is in, so if for example in C++ you have
+    a member in class "Foo" which is in namespace "Bar" then the scope field
+    should be "class:Bar::Foo".
 
 ==============================================================================
 7. Troubleshooting & Known issues                              *tagbar-issues*
