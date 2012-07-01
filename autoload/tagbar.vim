@@ -30,44 +30,6 @@ endif
 
 " Basic init {{{2
 
-if !exists('g:tagbar_ctags_bin')
-    let ctagsbins  = []
-    let ctagsbins += ['ctags-exuberant'] " Debian
-    let ctagsbins += ['exuberant-ctags']
-    let ctagsbins += ['exctags'] " FreeBSD, NetBSD
-    let ctagsbins += ['/usr/local/bin/ctags'] " Homebrew
-    let ctagsbins += ['/opt/local/bin/ctags'] " Macports
-    let ctagsbins += ['ectags'] " OpenBSD
-    let ctagsbins += ['ctags']
-    let ctagsbins += ['ctags.exe']
-    let ctagsbins += ['tags']
-    for ctags in ctagsbins
-        if executable(ctags)
-            let g:tagbar_ctags_bin = ctags
-            break
-        endif
-    endfor
-    if !exists('g:tagbar_ctags_bin')
-        echomsg 'Tagbar: Exuberant ctags not found, skipping plugin'
-        finish
-    endif
-else
-    " reset 'wildignore' temporarily in case *.exe is included in it
-    let wildignore_save = &wildignore
-    set wildignore&
-
-    let g:tagbar_ctags_bin = expand(g:tagbar_ctags_bin)
-
-    let &wildignore = wildignore_save
-
-    if !executable(g:tagbar_ctags_bin)
-        echomsg "Tagbar: Exuberant ctags not found at " .
-              \ "'" . g:tagbar_ctags_bin . "', " .
-              \ "skipping plugin"
-        finish
-    endif
-endif
-
 redir => s:ftype_out
 silent filetype
 redir END
@@ -1009,6 +971,53 @@ endfunction
 " (or something else)
 function! s:CheckForExCtags(silent)
     call s:LogDebugMessage('Checking for Exuberant Ctags')
+
+    if !exists('g:tagbar_ctags_bin')
+        let ctagsbins  = []
+        let ctagsbins += ['ctags-exuberant'] " Debian
+        let ctagsbins += ['exuberant-ctags']
+        let ctagsbins += ['exctags'] " FreeBSD, NetBSD
+        let ctagsbins += ['/usr/local/bin/ctags'] " Homebrew
+        let ctagsbins += ['/opt/local/bin/ctags'] " Macports
+        let ctagsbins += ['ectags'] " OpenBSD
+        let ctagsbins += ['ctags']
+        let ctagsbins += ['ctags.exe']
+        let ctagsbins += ['tags']
+        for ctags in ctagsbins
+            if executable(ctags)
+                let g:tagbar_ctags_bin = ctags
+                break
+            endif
+        endfor
+        if !exists('g:tagbar_ctags_bin')
+            if !a:silent
+                echoerr 'Tagbar: Exuberant ctags not found!'
+                echomsg 'Please download Exuberant Ctags from ctags.sourceforge.net'
+                      \ 'and install it in a directory in your $PATH'
+                      \ 'or set g:tagbar_ctags_bin.'
+            endif
+            let s:checked_ctags = 2
+            return 0
+        endif
+    else
+        " reset 'wildignore' temporarily in case *.exe is included in it
+        let wildignore_save = &wildignore
+        set wildignore&
+
+        let g:tagbar_ctags_bin = expand(g:tagbar_ctags_bin)
+
+        let &wildignore = wildignore_save
+
+        if !executable(g:tagbar_ctags_bin)
+            if !a:silent
+                echoerr "Tagbar: Exuberant ctags not found at " .
+                      \ "'" . g:tagbar_ctags_bin . "'!"
+                echomsg 'Please check your g:tagbar_ctags_bin setting.'
+            endif
+            let s:checked_ctags = 2
+            return 0
+        endif
+    endif
 
     let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--version')
     if ctags_cmd == ''
