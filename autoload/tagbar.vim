@@ -83,6 +83,7 @@ let s:icon_open   = g:tagbar_iconchars[1]
 
 let s:type_init_done      = 0
 let s:autocommands_done   = 0
+" 0: not checked yet; 1: checked and found; 2: checked and not found
 let s:checked_ctags       = 0
 let s:checked_ctags_types = 0
 let s:ctags_types         = {}
@@ -102,9 +103,11 @@ let s:debug = 0
 let s:debug_file = ''
 
 " s:Init() {{{2
-function! s:Init()
-    if !s:checked_ctags
-        if !s:CheckForExCtags()
+function! s:Init(silent)
+    if s:checked_ctags == 2 && a:silent
+        return 0
+    elseif s:checked_ctags != 1
+        if !s:CheckForExCtags(a:silent)
             return 0
         endif
     endif
@@ -921,7 +924,7 @@ function! s:RestoreSession()
 
     let s:last_autofocus = 0
 
-    call s:Init()
+    call s:Init(0)
 
     call s:InitWindow(g:tagbar_autoclose)
 
@@ -1004,41 +1007,48 @@ endfunction
 " s:CheckForExCtags() {{{2
 " Test whether the ctags binary is actually Exuberant Ctags and not GNU ctags
 " (or something else)
-function! s:CheckForExCtags()
+function! s:CheckForExCtags(silent)
     call s:LogDebugMessage('Checking for Exuberant Ctags')
 
     let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--version')
     if ctags_cmd == ''
-        return
+        let s:checked_ctags = 2
+        return 0
     endif
 
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if v:shell_error || ctags_output !~# 'Exuberant Ctags'
-        echoerr 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
-        echomsg 'GNU ctags will NOT WORK.'
-              \ 'Please download Exuberant Ctags from ctags.sourceforge.net'
-              \ 'and install it in a directory in your $PATH'
-              \ 'or set g:tagbar_ctags_bin.'
-        echomsg 'Executed command: "' . ctags_cmd . '"'
-        if !empty(ctags_output)
-            echomsg 'Command output:'
-            for line in split(ctags_output, '\n')
-                echomsg line
-            endfor
+        if !a:silent
+            echoerr 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
+            echomsg 'GNU ctags will NOT WORK.'
+                  \ 'Please download Exuberant Ctags from ctags.sourceforge.net'
+                  \ 'and install it in a directory in your $PATH'
+                  \ 'or set g:tagbar_ctags_bin.'
+            echomsg 'Executed command: "' . ctags_cmd . '"'
+            if !empty(ctags_output)
+                echomsg 'Command output:'
+                for line in split(ctags_output, '\n')
+                    echomsg line
+                endfor
+            endif
         endif
+        let s:checked_ctags = 2
         return 0
     elseif !s:CheckExCtagsVersion(ctags_output)
-        echoerr 'Tagbar: Exuberant Ctags is too old!'
-        echomsg 'You need at least version 5.5 for Tagbar to work.'
-              \ 'Please download a newer version from ctags.sourceforge.net.'
-        echomsg 'Executed command: "' . ctags_cmd . '"'
-        if !empty(ctags_output)
-            echomsg 'Command output:'
-            for line in split(ctags_output, '\n')
-                echomsg line
-            endfor
+        if !a:silent
+            echoerr 'Tagbar: Exuberant Ctags is too old!'
+            echomsg 'You need at least version 5.5 for Tagbar to work.'
+                \ 'Please download a newer version from ctags.sourceforge.net.'
+            echomsg 'Executed command: "' . ctags_cmd . '"'
+            if !empty(ctags_output)
+                echomsg 'Command output:'
+                for line in split(ctags_output, '\n')
+                    echomsg line
+                endfor
+            endif
         endif
+        let s:checked_ctags = 2
         return 0
     else
         let s:checked_ctags = 1
@@ -1590,7 +1600,7 @@ function! s:OpenWindow(flags)
     " This is only needed for the CorrectFocusOnStartup() function
     let s:last_autofocus = autofocus
 
-    if !s:Init()
+    if !s:Init(0)
         return 0
     endif
 
@@ -3374,7 +3384,7 @@ function! tagbar#autoopen(...)
     call s:LogDebugMessage('tagbar#autoopen called on ' . bufname('%'))
     let always = a:0 > 0 ? a:1 : 1
 
-    call s:Init()
+    call s:Init(0)
 
     for bufnr in range(1, bufnr('$'))
         if buflisted(bufnr) && (always || bufwinnr(bufnr) != -1)
@@ -3403,8 +3413,8 @@ function! tagbar#currenttag(fmt, default, ...)
         let fullpath = 0
     endif
 
-    if !s:Init()
-        return ''
+    if !s:Init(1)
+        return a:default
     endif
 
     let tag = s:GetNearbyTag(0)
@@ -3418,7 +3428,7 @@ endfunction
 
 " tagbar#gettypeconfig() {{{2
 function! tagbar#gettypeconfig(type)
-    if !s:Init()
+    if !s:Init(1)
         return ''
     endif
 
