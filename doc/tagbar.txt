@@ -3,7 +3,7 @@
 Author:         Jan Larres <jan@majutsushi.net>
 Licence:        Vim licence, see |license|
 Homepage:       http://majutsushi.github.com/tagbar/
-Version:        2.4
+Version:        2.4.1
 
 ==============================================================================
 Contents                                            *tagbar* *tagbar-contents*
@@ -1021,6 +1021,14 @@ file.
 
 ==============================================================================
 8. History                                                    *tagbar-history*
+
+2.4.1 (2012-07-16)
+    - Fixed some bugs related to the currenttag() function when it was called
+      before the rest of the plugin was loaded. Also fail silently in case
+      something goes wrong so the statusline doesn't get messed up.
+    - In certain cases highlighting tags in deeply nested folds could cause an
+      error message.
+    - Spellchecking is now correctly getting disabled in the Tagbar window.
 
 2.4 (2012-06-17)
     - New function tagbar#currenttag() that reports the current tag, for
