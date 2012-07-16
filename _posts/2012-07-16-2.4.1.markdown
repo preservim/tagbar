@@ -1,0 +1,10 @@
+---
+title: 2.4.1
+---
+
+- Fixed some bugs related to the currenttag() function when it was called
+  before the rest of the plugin was loaded. Also fail silently in case
+  something goes wrong so the statusline doesn't get messed up.
+- In certain cases highlighting tags in deeply nested folds could cause an
+  error message.
+- Spellchecking is now correctly getting disabled in the Tagbar window.
