@@ -3094,10 +3094,12 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
 
     " Needed for cases where 'encoding' is different from the system's
     " encoding
-    if g:tagbar_systemenc != &encoding
-        let ctags_cmd = iconv(ctags_cmd, &encoding, g:tagbar_systemenc)
-    elseif $LANG != ''
-        let ctags_cmd = iconv(ctags_cmd, &encoding, $LANG)
+    if has('multi_byte')
+        if g:tagbar_systemenc != &encoding
+            let ctags_cmd = iconv(ctags_cmd, &encoding, g:tagbar_systemenc)
+        elseif $LANG != ''
+            let ctags_cmd = iconv(ctags_cmd, &encoding, $LANG)
+        endif
     endif
 
     call s:LogDebugMessage('Escaped ctags command: ' . ctags_cmd)
@@ -3105,7 +3107,7 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     if ctags_cmd == ''
         echoerr 'Tagbar: Encoding conversion failed!'
               \ 'Please make sure your system is set up correctly'
-              \ 'and that Vim is compiled with the "iconv" feature.'
+              \ 'and that Vim is compiled with the "+iconv" feature.'
     endif
 
     return ctags_cmd
