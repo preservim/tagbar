@@ -921,7 +921,7 @@ files.
 Note: As of 2012-05-05 the ctags development version contains an improved
 LaTeX parser that works better than the example configuration presented here.
 So if you are using a development build newer than that or a stable version
-newer than 5.9 you should use the built-in support instead of this example.
+newer than 5.8 you should use the built-in support instead of this example.
 
 Writing your own tag-generating program~
 If you want to write your own program for generating tags then here are some
