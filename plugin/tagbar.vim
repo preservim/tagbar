@@ -91,10 +91,6 @@ if !exists('g:tagbar_autoshowtag')
     let g:tagbar_autoshowtag = 0
 endif
 
-if !exists('g:tagbar_updateonsave_maxlines')
-    let g:tagbar_updateonsave_maxlines = 5000
-endif
-
 if !exists('g:tagbar_systemenc')
     let g:tagbar_systemenc = &encoding
 endif

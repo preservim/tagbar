@@ -890,7 +890,7 @@ function! s:RestoreSession() abort
 
     call s:InitWindow(g:tagbar_autoclose)
 
-    call s:AutoUpdate(curfile)
+    call s:AutoUpdate(curfile, 0)
 
     if !in_tagbar
         call s:winexec('wincmd p')
@@ -951,12 +951,10 @@ function! s:CreateAutocommands() abort
         autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype()
 
-        autocmd BufWritePost *
-            \ if line('$') < g:tagbar_updateonsave_maxlines |
-                \ call s:AutoUpdate(fnamemodify(expand('<afile>'), ':p')) |
-            \ endif
+        autocmd BufWritePost * call
+                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
         autocmd BufEnter,CursorHold,FileType * call
-                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'))
+                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
         autocmd BufDelete,BufUnload,BufWipeout * call
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
 
@@ -1431,6 +1429,8 @@ function! s:FileInfo.New(fname, ftype) abort dict
     " The complete file path
     let newobj.fpath = a:fname
 
+    let newobj.bufnr = bufnr(a:fname)
+
     " File modification time
     let newobj.mtime = getftime(a:fname)
 
@@ -1629,7 +1629,7 @@ function! s:OpenWindow(flags) abort
 
     call s:InitWindow(autoclose)
 
-    call s:AutoUpdate(curfile)
+    call s:AutoUpdate(curfile, 0)
     call s:HighlightTag(1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
@@ -1809,22 +1809,6 @@ function! s:ProcessFile(fname, ftype) abort
         return
     endif
 
-    let ctags_output = s:ExecuteCtagsOnFile(a:fname, a:ftype)
-
-    if ctags_output == -1
-        call s:LogDebugMessage('Ctags error when processing file')
-        " put an empty entry into known_files so the error message is only
-        " shown once
-        call s:known_files.put({}, a:fname)
-        return
-    elseif ctags_output == ''
-        call s:LogDebugMessage('Ctags output empty')
-        " No need to go through the tag processing if there are no tags, and
-        " preserving the old fold state also isn't necessary
-        call s:known_files.put(s:FileInfo.New(a:fname, a:ftype), a:fname)
-        return
-    endif
-
     " If the file has only been updated preserve the fold states, otherwise
     " create a new entry
     if s:known_files.has(a:fname)
@@ -1832,6 +1816,29 @@ function! s:ProcessFile(fname, ftype) abort
         call fileinfo.reset()
     else
         let fileinfo = s:FileInfo.New(a:fname, a:ftype)
+    endif
+
+    let tempfile = tempname()
+
+    call writefile(getbufline(fileinfo.bufnr, 1, '$'), tempfile)
+    let fileinfo.mtime = getftime(tempfile)
+
+    let ctags_output = s:ExecuteCtagsOnFile(tempfile, a:ftype)
+
+    call delete(tempfile)
+
+    if ctags_output == -1
+        call s:LogDebugMessage('Ctags error when processing file')
+        " Put an empty entry into known_files so the error message is only
+        " shown once
+        call s:known_files.put({}, a:fname)
+        return
+    elseif ctags_output == ''
+        call s:LogDebugMessage('Ctags output empty')
+        " No need to go through the tag processing if there are no tags, and
+        " preserving the old fold state isn't necessary either
+        call s:known_files.put(s:FileInfo.New(a:fname, a:ftype), a:fname)
+        return
     endif
 
     let typeinfo = fileinfo.typeinfo
@@ -2948,7 +2955,7 @@ endfunction
 
 " Helper functions {{{1
 " s:AutoUpdate() {{{2
-function! s:AutoUpdate(fname) abort
+function! s:AutoUpdate(fname, force) abort
     call s:LogDebugMessage('AutoUpdate called on ' . a:fname)
 
     " Get the filetype of the file we're about to process
@@ -2974,14 +2981,22 @@ function! s:AutoUpdate(fname) abort
 
     let updated = 0
 
-    " Process the file if it's unknown or the information is outdated
+    " Process the file if it's unknown or the information is outdated.
     " Also test for entries that exist but are empty, which will be the case
-    " if there was an error during the ctags execution
+    " if there was an error during the ctags execution.
+    " Testing the mtime of the file is necessary in case it got changed
+    " outside of Vim, for example by checking out a different version from a
+    " VCS.
     if s:known_files.has(a:fname) && !empty(s:known_files.get(a:fname))
-        if s:known_files.get(a:fname).mtime != getftime(a:fname)
+        let curfile = s:known_files.get(a:fname)
+        " if a:force || getbufvar(curfile.bufnr, '&modified') ||
+        if a:force ||
+         \ (filereadable(a:fname) && getftime(a:fname) > curfile.mtime)
             call s:LogDebugMessage('File data outdated, updating ' . a:fname)
             call s:ProcessFile(a:fname, sftype)
             let updated = 1
+        else
+            call s:LogDebugMessage('File data seems up to date: ' . a:fname)
         endif
     elseif !s:known_files.has(a:fname)
         call s:LogDebugMessage('New file, processing ' . a:fname)
@@ -3006,7 +3021,7 @@ function! s:AutoUpdate(fname) abort
     endif
 
     " Call setCurrent after rendering so RenderContent can check whether the
-    " same file is redisplayed
+    " same file is being redisplayed
     if !empty(fileinfo)
         call s:LogDebugMessage('Setting current file to ' . a:fname)
         call s:known_files.setCurrent(fileinfo)
@@ -3219,7 +3234,7 @@ function! s:IsValidFile(fname, ftype) abort
         return 0
     endif
 
-    if !filereadable(a:fname)
+    if !filereadable(a:fname) && getbufvar(a:fname, 'netrw_tmpfile') == ''
         call s:LogDebugMessage('File not readable')
         return 0
     endif
