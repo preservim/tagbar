@@ -103,7 +103,7 @@ augroup END
 " Commands {{{1
 command! -nargs=0 TagbarToggle        call tagbar#ToggleWindow()
 command! -nargs=? TagbarOpen          call tagbar#OpenWindow(<f-args>)
-command! -nargs=0 TagbarOpenAutoClose call tagbar#OpenWindow('fc')
+command! -nargs=0 TagbarOpenAutoClose call tagbar#OpenWindow('fcj')
 command! -nargs=0 TagbarClose         call tagbar#CloseWindow()
 command! -nargs=1 -bang TagbarSetFoldlevel  call tagbar#SetFoldLevel(<args>, <bang>0)
 command! -nargs=0 TagbarShowTag       call tagbar#OpenParents()

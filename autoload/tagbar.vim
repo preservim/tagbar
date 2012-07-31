@@ -1597,9 +1597,6 @@ function! s:OpenWindow(flags) abort
     if tagbarwinnr != -1
         if winnr() != tagbarwinnr && jump
             call s:winexec(tagbarwinnr . 'wincmd w')
-            if autoclose
-                let w:autoclose = autoclose
-            endif
             call s:HighlightTag(1, curline)
         endif
         call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
