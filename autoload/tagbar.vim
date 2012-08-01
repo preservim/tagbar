@@ -1816,8 +1816,9 @@ function! s:ProcessFile(fname, ftype) abort
     endif
 
     let tempfile = tempname()
-    if fnamemodify(fileinfo.fpath, ':e') != ''
-        let tempfile .= '.' . fnamemodify(fileinfo.fpath, ':e')
+    let ext = fnamemodify(fileinfo.fpath, ':e')
+    if ext != ''
+        let tempfile .= '.' . ext
     endif
 
     call writefile(getbufline(fileinfo.bufnr, 1, '$'), tempfile)
