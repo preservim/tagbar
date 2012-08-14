@@ -3101,6 +3101,7 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
 
     " Stupid cmd.exe quoting
     if &shell =~ 'cmd\.exe'
+        let ctags_cmd = substitute(ctags_cmd, '"', '', 'g')
         let ctags_cmd = substitute(ctags_cmd, '\(&\|\^\)', '^\0', 'g')
     endif
 
