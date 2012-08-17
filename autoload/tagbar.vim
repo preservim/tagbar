@@ -2965,7 +2965,7 @@ function! s:AutoUpdate(fname, force) abort
 
     " Don't do anything if we're in the tagbar window
     if ftype == 'tagbar'
-        call s:LogDebugMessage('Tagbar window not open or in Tagbar window')
+        call s:LogDebugMessage('In Tagbar window, stopping processing')
         return
     endif
 
