@@ -3134,6 +3134,8 @@ endfunction
 " Partially based on the discussion at
 " http://vim.1045645.n5.nabble.com/bad-default-shellxquote-in-Widows-td1208284.html
 function! s:ExecuteCtags(ctags_cmd) abort
+    call s:LogDebugMessage('Executing ctags command: ' . a:ctags_cmd)
+
     if exists('+shellslash')
         let shellslash_save = &shellslash
         set noshellslash
