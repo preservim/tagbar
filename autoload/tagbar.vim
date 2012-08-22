@@ -1799,7 +1799,7 @@ endfunction
 " s:ProcessFile() {{{2
 " Execute ctags and put the information into a 'FileInfo' object
 function! s:ProcessFile(fname, ftype) abort
-    call s:LogDebugMessage('ProcessFile called on ' . a:fname)
+    call s:LogDebugMessage('ProcessFile called [' . a:fname . ']')
 
     if !s:IsValidFile(a:fname, a:ftype)
         call s:LogDebugMessage('Not a valid file, returning')
@@ -1921,7 +1921,7 @@ endfunction
 
 " s:ExecuteCtagsOnFile() {{{2
 function! s:ExecuteCtagsOnFile(fname, ftype) abort
-    call s:LogDebugMessage('ExecuteCtagsOnFile called on ' . a:fname)
+    call s:LogDebugMessage('ExecuteCtagsOnFile called [' . a:fname . ']')
 
     let typeinfo = s:known_types[a:ftype]
 
@@ -2345,7 +2345,7 @@ function! s:RenderContent(...) abort
     if !empty(s:known_files.getCurrent()) &&
      \ fileinfo.fpath ==# s:known_files.getCurrent().fpath
         " We're redisplaying the same file, so save the view
-        call s:LogDebugMessage('Redisplaying file' . fileinfo.fpath)
+        call s:LogDebugMessage('Redisplaying file [' . fileinfo.fpath . ']')
         let saveline = line('.')
         let savecol  = col('.')
         let topline  = line('w0')
@@ -2957,7 +2957,7 @@ endfunction
 " Helper functions {{{1
 " s:AutoUpdate() {{{2
 function! s:AutoUpdate(fname, force) abort
-    call s:LogDebugMessage('AutoUpdate called on ' . a:fname)
+    call s:LogDebugMessage('AutoUpdate called [' . a:fname . ']')
 
     " Get the filetype of the file we're about to process
     let bufnr = bufnr(a:fname)
@@ -2993,14 +2993,16 @@ function! s:AutoUpdate(fname, force) abort
         " if a:force || getbufvar(curfile.bufnr, '&modified') ||
         if a:force ||
          \ (filereadable(a:fname) && getftime(a:fname) > curfile.mtime)
-            call s:LogDebugMessage('File data outdated, updating ' . a:fname)
+            call s:LogDebugMessage('File data outdated, updating' .
+                                 \ ' [' .  a:fname . ']')
             call s:ProcessFile(a:fname, sftype)
             let updated = 1
         else
-            call s:LogDebugMessage('File data seems up to date: ' . a:fname)
+            call s:LogDebugMessage('File data seems up to date' .
+                                 \ ' [' . a:fname . ']')
         endif
     elseif !s:known_files.has(a:fname)
-        call s:LogDebugMessage('New file, processing ' . a:fname)
+        call s:LogDebugMessage('New file, processing [' . a:fname . ']')
         call s:ProcessFile(a:fname, sftype)
         let updated = 1
     endif
@@ -3010,7 +3012,8 @@ function! s:AutoUpdate(fname, force) abort
     " If we don't have an entry for the file by now something must have gone
     " wrong, so don't change the tagbar content
     if empty(fileinfo)
-        call s:LogDebugMessage('fileinfo empty after processing ' . a:fname)
+        call s:LogDebugMessage('fileinfo empty after processing' .
+                             \ ' [' . a:fname . ']')
         return
     endif
 
@@ -3024,7 +3027,7 @@ function! s:AutoUpdate(fname, force) abort
     " Call setCurrent after rendering so RenderContent can check whether the
     " same file is being redisplayed
     if !empty(fileinfo)
-        call s:LogDebugMessage('Setting current file to ' . a:fname)
+        call s:LogDebugMessage('Setting current file [' . a:fname . ']')
         call s:known_files.setCurrent(fileinfo)
     endif
 
@@ -3230,7 +3233,7 @@ endfunction
 
 " s:IsValidFile() {{{2
 function! s:IsValidFile(fname, ftype) abort
-    call s:LogDebugMessage('Checking if file is valid: ' . a:fname)
+    call s:LogDebugMessage('Checking if file is valid [' . a:fname . ']')
 
     if a:fname == '' || a:ftype == ''
         call s:LogDebugMessage('Empty filename or type')
@@ -3343,7 +3346,7 @@ endfunction
 " s:LogDebugMessage() {{{2
 function! s:LogDebugMessage(msg) abort
     if s:debug
-        exe 'redir >> ' . s:debug_file
+        execute 'redir >> ' . s:debug_file
         silent echon strftime('%H:%M:%S') . ': ' . a:msg . "\n"
         redir END
     endif
@@ -3410,7 +3413,7 @@ endfunction
 " Automatically open Tagbar if one of the open buffers contains a supported
 " file
 function! tagbar#autoopen(...) abort
-    call s:LogDebugMessage('tagbar#autoopen called on ' . bufname('%'))
+    call s:LogDebugMessage('tagbar#autoopen called [' . bufname('%') . ']')
     let always = a:0 > 0 ? a:1 : 1
 
     call s:Init(0)
@@ -3421,7 +3424,8 @@ function! tagbar#autoopen(...) abort
             if s:IsValidFile(bufname(bufnr), ftype)
                 call s:OpenWindow('')
                 call s:LogDebugMessage('tagbar#autoopen finished ' .
-                                     \ 'after finding valid file')
+                                     \ 'after finding valid file ' .
+                                     \ '[' . bufname(bufnr) . ']')
                 return
             endif
         endif
