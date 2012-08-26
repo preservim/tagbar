@@ -2060,7 +2060,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
 endfunction
 
 " s:GetPrototype() {{{2
-" Look for unbalanced opening parantheses and add lines until they are
+" Look for unbalanced opening parentheses and add lines until they are
 " balanced do get the complete prototype.
 function! s:GetPrototype(linenr) abort
     let line = getline(a:linenr)
