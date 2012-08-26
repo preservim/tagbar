@@ -223,11 +223,12 @@ strange things will happen. This is unfortunately unavoidable.
 
 Displaying the prototype of a tag~
 Tagbar can display the prototype of a tag. More precisely it can display the
-line in which the tag is defined. This can be done by either pressing <Space>
-when on a tag or hovering over a tag with the mouse. In the former case the
-prototype will be displayed in the command line |Command-line|, in the latter
-case it will be displayed in a pop-up window. The prototype will also be
-displayed when the cursor stays on a tag for 'updatetime' milliseconds.
+line(s) in which the tag is defined. This can be done by either pressing
+<Space> when on a tag or hovering over a tag with the mouse. In the former
+case the prototype will be displayed in the |Command-line|, in the latter case
+it will be displayed in a pop-up window. The prototype will also be displayed
+if the cursor stays on a tag for 'updatetime' milliseconds. In that case the
+prototype may be abbreviated in order to avoid |hit-enter| prompts.
 
 ------------------------------------------------------------------------------
 COMMANDS                                                     *tagbar-commands*

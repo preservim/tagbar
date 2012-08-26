@@ -913,7 +913,7 @@ function! s:MapKeys() abort
 
     nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
     nnoremap <script> <silent> <buffer> p       :call <SID>JumpToTag(1)<CR>
-    nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype()<CR>
+    nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype(1)<CR>
 
     nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
     nnoremap <script> <silent> <buffer> <kPlus>  :call <SID>OpenFold()<CR>
@@ -949,7 +949,7 @@ function! s:CreateAutocommands() abort
     augroup TagbarAutoCmds
         autocmd!
         autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
-        autocmd CursorHold __Tagbar__ call s:ShowPrototype()
+        autocmd CursorHold __Tagbar__ call s:ShowPrototype(0)
 
         autocmd BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
@@ -2060,27 +2060,26 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
 endfunction
 
 " s:GetPrototype() {{{2
-" Look for unbalanced opening parantheses and join lines until they are
+" Look for unbalanced opening parantheses and add lines until they are
 " balanced do get the complete prototype.
 function! s:GetPrototype(linenr) abort
     let line = getline(a:linenr)
-    let line = substitute(line, '^\s\+', '', '')
     let list = split(line, '\zs')
 
     let start = index(list, '(')
     if start == -1
-        return line
+        return substitute(line, '^\s\+', '', '')
     endif
 
     let opening = count(list, '(', 0, start)
     let closing = count(list, ')', 0, start)
     if closing >= opening
-        return line
+        return substitute(line, '^\s\+', '', '')
     endif
 
     let balance = opening - closing
 
-    let lines = [line]
+    let prototype = line
     let curlinenr = a:linenr
     while balance > 0
         let curlinenr += 1
@@ -2089,13 +2088,8 @@ function! s:GetPrototype(linenr) abort
         let opening += count(curlist, '(')
         let closing += count(curlist, ')')
         let balance = opening - closing
-        let lines += [curline]
+        let prototype .= "\n" . curline
     endwhile
-
-    let prototype = join(lines, ' ')
-    let prototype = substitute(prototype, '(\s\+', '(', 'g')
-    let prototype = substitute(prototype, '\s\+)', ')', 'g')
-    let prototype = substitute(prototype, '\s\+', ' ', 'g')
 
     return prototype
 endfunction
@@ -2804,14 +2798,30 @@ function! s:JumpToTag(stay_in_tagbar) abort
 endfunction
 
 " s:ShowPrototype() {{{2
-function! s:ShowPrototype() abort
+function! s:ShowPrototype(long) abort
     let taginfo = s:GetTagInfo(line('.'), 1)
 
     if empty(taginfo)
         return
     endif
 
-    echo taginfo.getPrototype()
+    let prototype = taginfo.getPrototype()
+
+    if !a:long
+        " join all lines
+        let prototype = substitute(prototype, '^\s\+', '', '')
+        let prototype = substitute(prototype, '\_s\+', ' ', 'g')
+        let prototype = substitute(prototype, '(\s\+', '(', 'g')
+        let prototype = substitute(prototype, '\s\+)', ')', 'g')
+        " Avoid hit-enter prompts
+        let maxlen = &columns - 12
+        if len(prototype) > maxlen
+            let prototype = prototype[:maxlen - 1 - 3]
+            let prototype .= '...'
+        endif
+    endif
+
+    echo prototype
 endfunction
 
 " s:ToggleHelp() {{{2
