@@ -2010,9 +2010,6 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     endif
     let pattern           = strpart(pattern, start, end - start)
     let taginfo.pattern   = '\V\^\C' . pattern . dollar
-    let prototype         = substitute(pattern,   '^[[:space:]]\+', '', '')
-    let prototype         = substitute(prototype, '[[:space:]]\+$', '', '')
-    let taginfo.prototype = prototype
 
     let fields = split(a:part2, '\t')
     let taginfo.fields.kind = remove(fields, 0)
@@ -2029,6 +2026,8 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     if has_key(taginfo.fields, 'lineno')
         let taginfo.fields.line = taginfo.fields.lineno
     endif
+
+    let taginfo.prototype = s:GetPrototype(taginfo.fields.line)
 
     " Make some information easier accessible
     if has_key(a:typeinfo, 'scope2kind')
@@ -2058,6 +2057,47 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     endtry
 
     return taginfo
+endfunction
+
+" s:GetPrototype() {{{2
+" Look for unbalanced opening parantheses and join lines until they are
+" balanced do get the complete prototype.
+function! s:GetPrototype(linenr) abort
+    let line = getline(a:linenr)
+    let line = substitute(line, '^\s\+', '', '')
+    let list = split(line, '\zs')
+
+    let start = index(list, '(')
+    if start == -1
+        return line
+    endif
+
+    let opening = count(list, '(', 0, start)
+    let closing = count(list, ')', 0, start)
+    if closing >= opening
+        return line
+    endif
+
+    let balance = opening - closing
+
+    let lines = [line]
+    let curlinenr = a:linenr
+    while balance > 0
+        let curlinenr += 1
+        let curline = getline(curlinenr)
+        let curlist = split(curline, '\zs')
+        let opening += count(curlist, '(')
+        let closing += count(curlist, ')')
+        let balance = opening - closing
+        let lines += [curline]
+    endwhile
+
+    let prototype = join(lines, ' ')
+    let prototype = substitute(prototype, '(\s\+', '(', 'g')
+    let prototype = substitute(prototype, '\s\+)', ')', 'g')
+    let prototype = substitute(prototype, '\s\+', ' ', 'g')
+
+    return prototype
 endfunction
 
 " s:AddScopedTags() {{{2
