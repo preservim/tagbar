@@ -613,7 +613,7 @@ tagbar#currenttag({format}, {default} [, {flags}])
           other tags.
 
     For example, if you put the following into your statusline: >
-        %{tagbar#currenttag('[%s] ', '')}
+        %{tagbar#currenttag('[%s] ','')}
 <   then the function "myfunc" will be show as "[myfunc()] ".
 
 ==============================================================================
