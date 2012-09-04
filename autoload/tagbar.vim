@@ -49,7 +49,15 @@ let s:autocommands_done   = 0
 let s:checked_ctags       = 0
 let s:checked_ctags_types = 0
 let s:ctags_types         = {}
-let s:window_expanded     = 0
+
+let s:new_window      = 1
+let s:is_maximized    = 0
+let s:short_help      = 1
+let s:window_expanded = 0
+
+" Script-local variable needed since compare functions can't
+" take extra arguments
+let s:compare_typeinfo = {}
 
 
 let s:access_symbols = {
@@ -1726,13 +1734,7 @@ function! s:InitWindow(autoclose) abort
         setlocal statusline=Tagbar
     endif
 
-    " Script-local variable needed since compare functions can't
-    " take extra arguments
-    let s:compare_typeinfo = {}
-
-    let s:is_maximized = 0
-    let s:short_help   = 1
-    let s:new_window   = 1
+    let s:new_window = 1
 
     let w:autoclose = a:autoclose
 
