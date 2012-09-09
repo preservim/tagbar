@@ -3489,11 +3489,13 @@ endfunction
 function! tagbar#currenttag(fmt, default, ...) abort
     if a:0 > 0
         " also test for non-zero value for backwards compatibility
-        let longsig  = a:1 =~# 's' || (type(a:1) == type(0) && a:1 != 0)
-        let fullpath = a:1 =~# 'f'
+        let longsig   = a:1 =~# 's' || (type(a:1) == type(0) && a:1 != 0)
+        let fullpath  = a:1 =~# 'f'
+        let prototype = a:1 =~# 'p'
     else
-        let longsig  = 0
-        let fullpath = 0
+        let longsig   = 0
+        let fullpath  = 0
+        let prototype = 0
     endif
 
     if !s:Init(1)
@@ -3503,7 +3505,11 @@ function! tagbar#currenttag(fmt, default, ...) abort
     let tag = s:GetNearbyTag(0)
 
     if !empty(tag)
-        return printf(a:fmt, tag.str(longsig, fullpath))
+        if prototype
+            return tag.getPrototype(1)
+        else
+            return printf(a:fmt, tag.str(longsig, fullpath))
+        endif
     else
         return a:default
     endif
