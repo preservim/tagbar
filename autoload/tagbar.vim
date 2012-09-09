@@ -92,7 +92,7 @@ function! s:Init(silent) abort
 
     if !s:autocommands_done
         call s:CreateAutocommands()
-        doautocmd CursorHold
+        call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
     endif
 
     return 1
