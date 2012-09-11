@@ -3154,7 +3154,12 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
 
     " Stupid cmd.exe quoting
     if &shell =~ 'cmd\.exe'
-        let ctags_cmd = substitute(ctags_cmd, '\(&\|\^\)', '^\0', 'g')
+        let reserved_chars = '&()@^'
+        " not allowed in filenames, but escape anyway just in case
+        let reserved_chars .= '<>|'
+        let pattern = join(split(reserved_chars, '\zs'), '\|')
+        let ctags_cmd = substitute(ctags_cmd, '\V\(' . pattern . '\)',
+                                 \ '^\0', 'g')
     endif
 
     if exists('+shellslash')
