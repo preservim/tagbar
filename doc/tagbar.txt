@@ -617,7 +617,7 @@ tagbar#currenttag({format}, {default} [, {flags}])
 
     For example, if you put the following into your statusline: >
         %{tagbar#currenttag('[%s] ','')}
-<   then the function "myfunc" will be show as "[myfunc()] ".
+<   then the function "myfunc" will be shown as "[myfunc()] ".
 
 ==============================================================================
 6. Extending Tagbar                                            *tagbar-extend*
