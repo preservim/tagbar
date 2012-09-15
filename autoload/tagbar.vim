@@ -1656,7 +1656,7 @@ function! s:OpenWindow(flags) abort
     if tagbarwinnr != -1
         if winnr() != tagbarwinnr && jump
             call s:winexec(tagbarwinnr . 'wincmd w')
-            call s:HighlightTag(1, curline)
+            call s:HighlightTag(1, 1, curline)
         endif
         call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
         return
@@ -1686,7 +1686,7 @@ function! s:OpenWindow(flags) abort
     call s:InitWindow(autoclose)
 
     call s:AutoUpdate(curfile, 0)
-    call s:HighlightTag(1, curline)
+    call s:HighlightTag(1, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
@@ -2664,8 +2664,10 @@ endfunction
 function! s:HighlightTag(openfolds, ...) abort
     let tagline = 0
 
-    if a:0 > 0
-        let tag = s:GetNearbyTag(1, a:1)
+    let force = a:0 > 0 ? a:1 : 0
+
+    if a:0 > 1
+        let tag = s:GetNearbyTag(1, a:2)
     else
         let tag = s:GetNearbyTag(1)
     endif
@@ -2676,7 +2678,7 @@ function! s:HighlightTag(openfolds, ...) abort
     " Don't highlight the tag again if it's the same one as last time.
     " This prevents the Tagbar window from jumping back after scrolling with
     " the mouse.
-    if tagline == s:last_highlight_tline
+    if !force && tagline == s:last_highlight_tline
         return
     else
         let s:last_highlight_tline = tagline
@@ -2686,7 +2688,7 @@ function! s:HighlightTag(openfolds, ...) abort
     if tagbarwinnr == -1
         return
     endif
-    let prevwinnr   = winnr()
+    let prevwinnr = winnr()
     call s:winexec(tagbarwinnr . 'wincmd w')
 
     match none
@@ -2717,7 +2719,7 @@ function! s:HighlightTag(openfolds, ...) abort
     call s:LogDebugMessage("Highlight pattern: '" . pattern . "'")
     execute 'match TagbarHighlight ' . pattern
 
-    if a:0 == 0 " no line explicitly given, so assume we were in the file window
+    if a:0 <= 1 " no line explicitly given, so assume we were in the file window
         call s:winexec(prevwinnr . 'wincmd w')
     endif
 
@@ -2999,9 +3001,10 @@ function! s:OpenParents(...) abort
         let tag = s:GetNearbyTag(1)
     endif
 
-    call tag.openParents()
-
-    call s:RenderKeepView()
+    if !empty(tag)
+        call tag.openParents()
+        call s:RenderKeepView()
+    endif
 endfunction
 
 " Helper functions {{{1
@@ -3427,8 +3430,15 @@ function! tagbar#SetFoldLevel(level, force) abort
     call s:SetFoldLevel(a:level, a:force)
 endfunction
 
-function! tagbar#OpenParents() abort
-    call s:OpenParents()
+function! tagbar#highlighttag(openfolds, force) abort
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1
+        echohl WarningMsg
+        echomsg "Warning: Can't highlight tag, Tagbar window not open"
+        echohl None
+        return
+    endif
+    call s:HighlightTag(a:openfolds, a:force)
 endfunction
 
 function! tagbar#StartDebug(...) abort
