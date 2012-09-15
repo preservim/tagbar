@@ -2064,13 +2064,16 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     let pattern         = strpart(pattern, start, end - start)
     let taginfo.pattern = '\V\^\C' . pattern . dollar
 
-    let fields = split(a:part2, '\t')
+    " When splitting fields make sure not to create empty keys or values in
+    " case a value illegally contains tabs
+    let fields = split(a:part2, '^\t\|\t\ze\w\+:')
     let taginfo.fields.kind = remove(fields, 0)
     for field in fields
         " can't use split() since the value can contain ':'
         let delimit = stridx(field, ':')
-        let key     = strpart(field, 0, delimit)
-        let val     = strpart(field, delimit + 1)
+        let key = strpart(field, 0, delimit)
+        " Remove all tabs that may illegally be in the value
+        let val = substitute(strpart(field, delimit + 1), '\t', '', 'g')
         if len(val) > 0
             let taginfo.fields[key] = val
         endif
