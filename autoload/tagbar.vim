@@ -2499,7 +2499,8 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
                             " only if they are not scope-defining tags (since
                             " those already have an identifier)
                             if !has_key(a:typeinfo.kind2scope, ckind.short)
-                                silent put ='    [' . ckind.long . ']'
+                                silent put =repeat(' ', g:tagbar_indent + 2) .
+                                                 \ '[' . ckind.long . ']'
                                 " Add basic tag to allow folding when on the
                                 " header line
                                 let headertag = s:BaseTag.New(ckind.long)
@@ -2544,7 +2545,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             if !kindtag.isFolded()
                 for tag in curtags
                     let str = tag.strfmt()
-                    silent put ='  ' . str
+                    silent put =repeat(' ', g:tagbar_indent) . str
 
                     " Save the current tagbar line in the tag for easy
                     " highlighting access
@@ -2567,7 +2568,7 @@ endfunction
 " s:PrintTag() {{{2
 function! s:PrintTag(tag, depth, fileinfo, typeinfo) abort
     " Print tag indented according to depth
-    silent put =repeat(' ', a:depth * 2) . a:tag.strfmt()
+    silent put =repeat(' ', a:depth * g:tagbar_indent) . a:tag.strfmt()
 
     " Save the current tagbar line in the tag for easy
     " highlighting access
@@ -2585,8 +2586,8 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo) abort
                 " are not scope-defining tags (since those already have an
                 " identifier)
                 if !has_key(a:typeinfo.kind2scope, ckind.short)
-                    silent put ='    ' . repeat(' ', a:depth * 2) .
-                              \ '[' . ckind.long . ']'
+                    silent put =repeat(' ', (a:depth + 1) * g:tagbar_indent + 2)
+                              \ . '[' . ckind.long . ']'
                     " Add basic tag to allow folding when on the header line
                     let headertag = s:BaseTag.New(ckind.long)
                     let headertag.parent = a:tag

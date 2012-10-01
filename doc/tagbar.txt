@@ -408,6 +408,18 @@ Example:
         let g:tagbar_compact = 1
 <
 
+                                                             *g:tagbar_indent*
+g:tagbar_indent~
+Default: 2
+
+The number of spaces by which each level is indented. This allows making the
+display more compact or more spacious.
+
+Example:
+>
+        let g:tagbar_indent = 1
+<
+
                                                              *g:tagbar_expand*
 g:tagbar_expand~
 Default: 0

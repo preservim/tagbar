@@ -66,6 +66,10 @@ if !exists('g:tagbar_compact')
     let g:tagbar_compact = 0
 endif
 
+if !exists('g:tagbar_indent')
+    let g:tagbar_indent = 2
+endif
+
 if !exists('g:tagbar_expand')
     let g:tagbar_expand = 0
 endif
