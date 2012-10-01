@@ -1712,8 +1712,6 @@ function! s:InitWindow(autoclose) abort
     setlocal nowrap
     setlocal winfixwidth
     setlocal textwidth=0
-    setlocal nocursorline
-    setlocal nocursorcolumn
     setlocal nospell
 
     if exists('+relativenumber')
