@@ -115,6 +115,7 @@ command! -nargs=? TagbarCurrentTag    echo tagbar#currenttag('%s', 'No current t
 command! -nargs=1 TagbarGetTypeConfig call tagbar#gettypeconfig(<f-args>)
 command! -nargs=? TagbarDebug         call tagbar#StartDebug(<f-args>)
 command! -nargs=0 TagbarDebugEnd      call tagbar#StopDebug()
+command! -nargs=0 TagbarTogglePause   call tagbar#PauseAutocommands()
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
