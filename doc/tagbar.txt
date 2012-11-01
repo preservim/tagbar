@@ -194,6 +194,13 @@ You can also use |:TagbarOpenAutoClose| to open the Tagbar window, jump to it
 and have it close automatically on tag selection regardless of the
 |g:tagbar_autoclose| setting.
 
+Pausing the Tagbar window~
+Use :TagbarTogglePause to toggle freezing the Tagbar window on its currently
+displayed file.  Freezing the window stops the Tagbar from changing when
+switching to a different source file.  All Tagbar functionality continues 
+to work as expected.  Unfreezing the window will cause it to load the current 
+source file.
+
 Jumping to tags~
 When you're inside the Tagbar window you can jump to the definition of a tag
 by moving the cursor to a tag and pressing <Enter> or double-clicking on it
@@ -259,6 +266,10 @@ COMMANDS                                                     *tagbar-commands*
 :TagbarOpenAutoClose                                    *:TagbarOpenAutoClose*
     Open the Tagbar window, jump to it and close it on tag selection. This is
     an alias for ":TagbarOpen fjc".
+
+:TagbarTogglePause                                        *:TagbarTogglePause*
+    Freezes/Unfreezes the Tagbar window.  Stops the contents of the window 
+    from changing when a different source file is selected.
 
 :TagbarSetFoldlevel[!] {number}                          *:TagbarSetFoldlevel*
     Set the foldlevel of the tags of the current file to {number}. The

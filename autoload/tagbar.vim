@@ -45,7 +45,7 @@ let s:icon_open   = g:tagbar_iconchars[1]
 
 let s:type_init_done      = 0
 let s:autocommands_done   = 0
-let s:autocommands_enable = 0
+let s:autocommands_enabled = 0
 " 0: not checked yet; 1: checked and found; 2: checked and not found
 let s:checked_ctags       = 0
 let s:checked_ctags_types = 0
@@ -972,15 +972,15 @@ function! s:CreateAutocommands() abort
     augroup END
 
     let s:autocommands_done = 1
-    let s:autocommands_enable = 1
+    let s:autocommands_enabled = 1
 endfunction
 
 " s:PauseAutocommands() {{{2
 " Toggle autocommands 
 function! s:PauseAutocommands() abort
-    if s:autocommands_enable == 1
+    if s:autocommands_enabled == 1
         autocmd! TagbarAutoCmds
-        let s:autocommands_enable = 0
+        let s:autocommands_enabled = 0
     else
         call s:CreateAutocommands()
         call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
