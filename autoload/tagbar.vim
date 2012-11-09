@@ -2411,7 +2411,14 @@ function! s:RenderContent(...) abort
         let in_tagbar = 1
     else
         let in_tagbar = 0
+        let currwinnr = winnr()
+
+        " Get the previous window number, so that we can reproduce
+        " the window entering history later. Do not run autocmd on
+        " this command, make sure nothing is interfering.
+        call s:winexec('noautocmd wincmd p')
         let prevwinnr = winnr()
+
         call s:winexec(tagbarwinnr . 'wincmd w')
     endif
 
@@ -2476,6 +2483,7 @@ function! s:RenderContent(...) abort
 
     if !in_tagbar
         call s:winexec(prevwinnr . 'wincmd w')
+        call s:winexec(currwinnr . 'wincmd w')
     endif
 endfunction
 
