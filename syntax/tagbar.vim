@@ -23,7 +23,7 @@ endif
 let s:pattern = '\([' . s:ic . s:io . '] \?\)\@<=[^-+: ]\+[^:]\+$'
 execute "syntax match TagbarKind '" . s:pattern . "'"
 
-let s:pattern = '\([' . s:ic . s:io . '][-+# ]\?\)\@<=[^*]\+\(\*\?\(([^)]\+)\)\? :\)\@='
+let s:pattern = '\([' . s:ic . s:io . '][-+# ]\?\)\@<=[^*(]\+\(\*\?\(([^)]\+)\)\? :\)\@='
 execute "syntax match TagbarScope '" . s:pattern . "'"
 
 let s:pattern = '[' . s:ic . s:io . ']\([-+# ]\?\)\@='
