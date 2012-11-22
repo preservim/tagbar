@@ -431,6 +431,18 @@ Example:
         let g:tagbar_indent = 1
 <
 
+                                                    *g:tagbar_show_visibility*
+g:tagbar_show_visibility~
+Default: 1
+
+Show the visibility symbols (public/protected/private) to the left of the tag
+name.
+
+Example:
+>
+        let g:tagbar_show_visibility = 0
+<
+
                                                              *g:tagbar_expand*
 g:tagbar_expand~
 Default: 0

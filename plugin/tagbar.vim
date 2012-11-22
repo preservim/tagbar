@@ -70,6 +70,10 @@ if !exists('g:tagbar_indent')
     let g:tagbar_indent = 2
 endif
 
+if !exists('g:tagbar_show_visibility')
+    let g:tagbar_show_visibility = 1
+endif
+
 if !exists('g:tagbar_expand')
     let g:tagbar_expand = 0
 endif
