@@ -61,7 +61,7 @@ let s:window_expanded = 0
 let s:compare_typeinfo = {}
 
 
-let s:access_symbols = {
+let s:visibility_symbols = {
     \ 'public'    : '+',
     \ 'protected' : '#',
     \ 'private'   : '-'
@@ -1207,8 +1207,9 @@ function! s:BaseTag._getPrefix() abort dict
     else
         let prefix = ' '
     endif
+    " Visibility is called 'access' in the ctags output
     if has_key(self.fields, 'access')
-        let prefix .= get(s:access_symbols, self.fields.access, ' ')
+        let prefix .= get(s:visibility_symbols, self.fields.access, ' ')
     else
         let prefix .= ' '
     endif

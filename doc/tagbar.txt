@@ -61,7 +61,7 @@ Then Tagbar would display the tag information like so:
 <
 This example shows several important points. First, the tags are listed
 indented below the scope they are defined in. Second, the type of a scope is
-listed after its name and a colon. Third, tags for which the access/visibility
+listed after its name and a colon. Third, tags for which the visibility
 information is known are prefixed with a symbol indicating that.
 
 ------------------------------------------------------------------------------
@@ -556,14 +556,14 @@ TagbarFoldIcon
 TagbarHighlight
     The colour that is used for automatically highlighting the current tag.
 
-TagbarAccessPublic
-    The "public" visibility/access symbol.
+TagbarVisibilityPublic
+    The "public" visibility symbol.
 
-TagbarAccessProtected
-    The "protected" visibility/access symbol.
+TagbarVisibilityProtected
+    The "protected" visibility symbol.
 
-TagbarAccessPrivate
-    The "private" visibility/access symbol.
+TagbarVisibilityPrivate
+    The "private" visibility symbol.
 
 If you want to change any of those colours put a line like the following in
 your vimrc:
@@ -965,9 +965,9 @@ imporant tips to get it to integrate well with Tagbar:
         * line:      The line number of the tag.
         * column:    The column number of the tag.
         * signature: The signature of a function.
-        * access:    Visibility/access information of a tag; the values
-                     "public", "protected" and "private" will be denoted with
-                     a special symbol in Tagbar.
+        * access:    Visibility information of a tag; the values "public",
+                     "protected" and "private" will be denoted with a special
+                     symbol in Tagbar.
 
     In addition fields that describe the surrounding scope of the tag are
     supported if they are specified in the type configuration as explained at
