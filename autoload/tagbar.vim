@@ -3328,7 +3328,7 @@ function! s:QuitIfOnlyWindow() abort
             " Before quitting Vim, delete the tagbar buffer so that
             " the '0 mark is correctly set to the previous buffer.
             bdelete
-            quitall
+            quit
         else
             close
         endif
