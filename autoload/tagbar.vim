@@ -1912,6 +1912,9 @@ function! s:ProcessFile(fname, ftype) abort
 
     let typeinfo = fileinfo.typeinfo
 
+    call s:LogDebugMessage('Filetype tag kinds: ' .
+                         \ string(keys(typeinfo.kinddict)))
+
     " Parse the ctags output lines
     call s:LogDebugMessage('Parsing ctags output')
     let rawtaglist = split(ctags_output, '\n\+')
@@ -2121,7 +2124,9 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         call taginfo.initFoldState()
     catch /^Vim(\a\+):E716:/ " 'Key not present in Dictionary'
         " The tag has a 'kind' that doesn't exist in the type definition
-        echoerr 'Your ctags and Tagbar configurations are out of sync!'
+        call s:LogDebugMessage('ERROR Unknown tag kind: ' . taginfo.fields.kind)
+        echoerr 'Unknown tag kind encountered: ' . taginfo.fields.kind
+              \ 'Your ctags and Tagbar configurations are out of sync!'
               \ 'Please read '':help tagbar-extend''.'
     endtry
 
