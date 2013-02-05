@@ -922,6 +922,7 @@ function! s:MapKeys() abort
                             \ <LeftRelease><C-o>:call <SID>CheckMouseClick()<CR>
 
     nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
+    nnoremap <script> <silent> <buffer> <C-j>   :call <SID>JumpToTag(0)<CR>
     nnoremap <script> <silent> <buffer> p       :call <SID>JumpToTag(1)<CR>
     nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype(0)<CR>
 
