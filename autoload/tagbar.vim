@@ -3377,7 +3377,7 @@ function! s:QuitIfOnlyWindow() abort
 endfunction
 
 " s:NextNormalWindow() {{{2
-function! s:NextNormalWindow()
+function! s:NextNormalWindow() abort
     for i in range(1, winnr('$'))
         let buf = winbufnr(i)
 
