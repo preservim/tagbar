@@ -3342,6 +3342,11 @@ function! s:IsValidFile(fname, ftype) abort
         return 0
     endif
 
+    if &previewwindow
+        call s:LogDebugMessage('In preview window')
+        return 0
+    endif
+
     if !has_key(s:known_types, a:ftype)
         if exists('g:tagbar_type_' . a:ftype)
             " Filetype definition must have been specified in an 'ftplugin'
