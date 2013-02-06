@@ -2416,7 +2416,7 @@ function! s:RenderContent(...) abort
         " Get the previous window number, so that we can reproduce
         " the window entering history later. Do not run autocmd on
         " this command, make sure nothing is interfering.
-        call s:winexec('wincmd p')
+        call s:winexec('noautocmd wincmd p')
         let pprevwinnr = winnr()
 
         call s:winexec(tagbarwinnr . 'wincmd w')
