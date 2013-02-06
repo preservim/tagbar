@@ -3358,7 +3358,7 @@ endfunction
 
 " s:QuitIfOnlyWindow() {{{2
 function! s:QuitIfOnlyWindow() abort
-    " Check if there is more than window
+    " Check if there is more than one window
     if s:NextNormalWindow() == -1
         " Check if there is more than one tab page
         if tabpagenr('$') == 1
@@ -3377,39 +3377,35 @@ function! s:QuitIfOnlyWindow() abort
 endfunction
 
 " s:NextNormalWindow() {{{2
-fun! s:NextNormalWindow()
-    let l:i = 1
-    while(l:i <= winnr('$'))
-        let l:buf = winbufnr(l:i)
+function! s:NextNormalWindow()
+    for i in range(1, winnr('$'))
+        let buf = winbufnr(i)
 
         " skip unlisted buffers
-        if buflisted(l:buf) == 0
-            let l:i = l:i + 1
+        if buflisted(buf) == 0
             continue
         endif
 
         " skip un-modifiable buffers
-        if getbufvar(l:buf, '&modifiable') != 1
-            let l:i = l:i + 1
+        if getbufvar(buf, '&modifiable') != 1
             continue
         endif
 
         " skip temporary buffers with buftype set
-        if empty(getbufvar(l:buf, "&buftype")) != 1
-            let l:i = l:i + 1
+        if getbufvar(buf, '&buftype') != ''
             continue
         endif
 
-        " skip current normal window
-        if l:i == winnr()
-            let l:i = l:i + 1
+        " skip current window
+        if i == winnr()
             continue
         endif
 
-        return l:i
-    endwhile
+        return i
+    endfor
+
     return -1
-endfun
+endfunction
 
 " s:winexec() {{{2
 function! s:winexec(cmd) abort
