@@ -2620,11 +2620,10 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo) abort
                 " are not scope-defining tags (since those already have an
                 " identifier)
                 if !has_key(a:typeinfo.kind2scope, ckind.short)
-                    let indent  = g:tagbar_indent
+                    let indent  = (a:depth + 1) * g:tagbar_indent
                     let indent += g:tagbar_show_visibility
                     let indent += 1 " fold symbol
-                    silent put =repeat(' ', (a:depth + 1) * indent)
-                              \ . '[' . ckind.long . ']'
+                    silent put =repeat(' ', indent) . '[' . ckind.long . ']'
                     " Add basic tag to allow folding when on the header line
                     let headertag = s:BaseTag.New(ckind.long)
                     let headertag.parent = a:tag
