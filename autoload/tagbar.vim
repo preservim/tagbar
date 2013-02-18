@@ -55,6 +55,7 @@ let s:new_window      = 1
 let s:is_maximized    = 0
 let s:short_help      = 1
 let s:window_expanded = 0
+let s:nearby_disabled = 0
 
 " Script-local variable needed since compare functions can't
 " take extra arguments
@@ -3068,7 +3069,7 @@ function! s:AutoUpdate(fname, force) abort
     " Don't do anything if the file isn't supported
     if !s:IsValidFile(a:fname, sftype)
         call s:LogDebugMessage('Not a valid file, stopping processing')
-        call s:known_files.setCurrent({})
+        let s:nearby_disabled = 1
         return
     endif
 
@@ -3113,7 +3114,8 @@ function! s:AutoUpdate(fname, force) abort
     " file is being displayed
     if bufwinnr('__Tagbar__') != -1 &&
      \ (s:new_window || updated ||
-      \ (!empty(s:known_files.getCurrent()) && a:fname != s:known_files.getCurrent().fpath))
+      \ (!empty(s:known_files.getCurrent()) &&
+       \ a:fname != s:known_files.getCurrent().fpath))
         call s:RenderContent(fileinfo)
     endif
 
@@ -3122,6 +3124,7 @@ function! s:AutoUpdate(fname, force) abort
     if !empty(fileinfo)
         call s:LogDebugMessage('Setting current file [' . a:fname . ']')
         call s:known_files.setCurrent(fileinfo)
+        let s:nearby_disabled = 0
     endif
 
     call s:HighlightTag(0)
@@ -3266,6 +3269,10 @@ endfunction
 " s:GetNearbyTag() {{{2
 " Get the tag info for a file near the cursor in the current file
 function! s:GetNearbyTag(all, ...) abort
+    if s:nearby_disabled
+        return {}
+    endif
+
     let fileinfo = s:known_files.getCurrent()
     if empty(fileinfo)
         return {}
