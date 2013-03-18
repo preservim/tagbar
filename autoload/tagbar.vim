@@ -54,8 +54,10 @@ let s:ctags_types         = {}
 let s:new_window      = 1
 let s:is_maximized    = 0
 let s:short_help      = 1
-let s:window_expanded = 0
 let s:nearby_disabled = 0
+
+let s:window_expanded = 0
+let s:window_pos = { 'x' : 0, 'y' : 0 }
 
 " Script-local variable needed since compare functions can't
 " take extra arguments
@@ -1690,6 +1692,8 @@ function! s:OpenWindow(flags) abort
 
     " Expand the Vim window to accomodate for the Tagbar window if requested
     if g:tagbar_expand && !s:window_expanded && has('gui_running')
+        let s:window_pos.x = getwinposx()
+        let s:window_pos.y = getwinposy()
         let &columns += g:tagbar_width + 1
         let s:window_expanded = 1
     endif
@@ -1831,6 +1835,7 @@ function! s:CloseWindow() abort
         if index(tablist, tagbarbufnr) == -1
             let &columns -= g:tagbar_width + 1
             let s:window_expanded = 0
+            execute 'winpos ' . s:window_pos.x . ' ' . s:window_pos.y
         endif
     endif
 
