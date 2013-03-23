@@ -635,7 +635,8 @@ you want to, by calling the tagbar#currenttag() function. The current tag is
 exactly the same as would be highlighted in the Tagbar window if it is open.
 It is defined as the nearest tag upwards in the file starting from the cursor
 position. This means that for example in a function it should usually be the
-name of the function.
+name of the function. You can define which tags will be shown in this manner,
+read |tagbar-extend| (especially the "kinds" entry) on how to do that.
 
 The function has the following signature:
 
@@ -657,6 +658,10 @@ tagbar#currenttag({format}, {default} [, {flags}])
     For example, if you put the following into your statusline: >
         %{tagbar#currenttag('[%s] ','')}
 <   then the function "myfunc" will be shown as "[myfunc()] ".
+
+Note that if there is an error when processing the current file no error
+message will be shown in order to not disrupt the statusline. If the function
+doesn't seem to work right open the Tagbar window to see any error messages.
 
 ==============================================================================
 6. Extending Tagbar                                            *tagbar-extend*
@@ -687,10 +692,9 @@ support package for the language. Some tips on how to write such a program are
 given at the end of this section.
 
 Before writing your own extension have a look at the wiki
-(https://github.com/majutsushi/tagbar/wiki/Support-for-additional-filetypes)
-or try googling for existing ones. If you do end up creating your own
-extension please consider adding it to the wiki so that others will be able to
-use it, too.
+(https://github.com/majutsushi/tagbar/wiki) or try googling for existing ones.
+If you do end up creating your own extension please consider adding it to the
+wiki so that others can benefit from it, too.
 
 Every type definition in Tagbar is a dictionary with the following keys:
 

@@ -1714,6 +1714,14 @@ function! s:OpenWindow(flags) abort
 
     call s:InitWindow(autoclose)
 
+    " If the current file exists, but is empty, it means that it had a
+    " processing error before opening the window, most likely due to a call to
+    " currenttag() in the statusline. Remove the entry so an error message
+    " will be shown if the processing still fails.
+    if empty(s:known_files.get(curfile))
+        call s:known_files.rm(curfile)
+    endif
+
     call s:AutoUpdate(curfile, 0)
     call s:HighlightTag(1, 1, curline)
 
@@ -2062,8 +2070,11 @@ function! s:ExecuteCtagsOnFile(fname, realfname, ftype) abort
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
-        if !s:known_files.has(a:realfname) ||
-         \ !empty(s:known_files.get(a:realfname))
+        " Only display an error message if the Tagbar window is open and we
+        " haven't seen the error before.
+        if bufwinnr("__Tagbar__") != -1 &&
+         \ (!s:known_files.has(a:realfname) ||
+         \ !empty(s:known_files.get(a:realfname)))
             echoerr 'Tagbar: Could not execute ctags for ' . a:fname . '!'
             echomsg 'Executed command: "' . ctags_cmd . '"'
             if !empty(ctags_output)
