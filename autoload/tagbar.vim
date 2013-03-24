@@ -1825,17 +1825,20 @@ function! s:CloseWindow() abort
             endif
         endif
     else
-        " Go to the tagbar window, close it and then come back to the
-        " original window
-        let curbufnr = bufnr('%')
+        " Go to the tagbar window, close it and then come back to the original
+        " window. Save a win-local variable in the original window so we can
+        " jump back to it even if the window number changed.
+        let w:tagbar_returnhere = 1
         call s:winexec(tagbarwinnr . 'wincmd w')
         close
-        " Need to jump back to the original window only if we are not
-        " already in that window
-        let winnum = bufwinnr(curbufnr)
-        if winnr() != winnum
-            call s:winexec(winnum . 'wincmd w')
-        endif
+
+        for window in range(1, winnr('$'))
+            call s:winexec(window . 'wincmd w')
+            if exists('w:tagbar_returnhere')
+                unlet w:tagbar_returnhere
+                break
+            endif
+        endfor
     endif
 
     " If the Vim window has been expanded, and Tagbar is not open in any other
@@ -2812,29 +2815,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     let tagbarwinnr = winnr()
 
-    " This elaborate construct will try to switch to the correct
-    " buffer/window; if the buffer isn't currently shown in a window it will
-    " open it in the first window with a non-special buffer in it
-    call s:winexec('wincmd p')
-    let filebufnr = bufnr(taginfo.fileinfo.fpath)
-    if bufnr('%') != filebufnr
-        let filewinnr = bufwinnr(filebufnr)
-        if filewinnr != -1
-            call s:winexec(filewinnr . 'wincmd w')
-        else
-            for i in range(1, winnr('$'))
-                call s:winexec(i . 'wincmd w')
-                if &buftype == ''
-                    execute 'buffer ' . filebufnr
-                    break
-                endif
-            endfor
-        endif
-        " To make ctrl-w_p work we switch between the Tagbar window and the
-        " correct window once
-        call s:winexec(tagbarwinnr . 'wincmd w')
-        call s:winexec('wincmd p')
-    endif
+    call s:GotoPreviousWindow(taginfo.fileinfo)
 
     " Mark current position so it can be jumped back to
     mark '
@@ -3367,6 +3348,38 @@ function! s:GetTagInfo(linenr, ignorepseudo) abort
     endif
 
     return taginfo
+endfunction
+
+" s:GotoPreviousWindow() {{{2
+" Try to switch to the previous buffer/window; if the buffer isn't currently
+" shown in a window Tagbar will open it in the first window that has a
+" non-special buffer in it.
+function! s:GotoPreviousWindow(fileinfo) abort
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+
+    call s:winexec('wincmd p')
+
+    let filebufnr = bufnr(a:fileinfo.fpath)
+    if bufnr('%') != filebufnr
+        let filewinnr = bufwinnr(filebufnr)
+        if filewinnr != -1
+            call s:winexec(filewinnr . 'wincmd w')
+        else
+            for i in range(1, winnr('$'))
+                call s:winexec(i . 'wincmd w')
+                if &buftype == ''
+                    execute 'buffer ' . filebufnr
+                    break
+                endif
+            endfor
+        endif
+        " To make ctrl-w_p work we switch between the Tagbar window and the
+        " correct window once
+        call s:winexec(tagbarwinnr . 'wincmd w')
+        call s:winexec('wincmd p')
+    endif
+
+    return winnr()
 endfunction
 
 " s:IsValidFile() {{{2
