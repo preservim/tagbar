@@ -1,0 +1,28 @@
+---
+title: 2.5
+---
+
+- New command :TagbarTogglePause to freeze Tagbar in its current state so you
+  can switch to other files while keeping the old information displayed for
+  reference. (Kian Ryan)
+- New command :TagbarCurrentTag which reports the same information as
+  currenttag().
+- New option tagbar_indent to configure the indentation depth of the tags.
+- New option tagbar_show_visibility to allow disabling the visibility symbols.
+- Files are now cached locally to avoid additional slowdowns for slow
+  connections. This also makes it possible to use Tagbar with files accessed
+  through Netrw.
+- Execute ctags again even if the previous run reported errors, in case it was
+  a parse error that has since been fixed. If the error persists, don't
+  display it again.
+- Improved window switching and Vim exit behaviours. (Techlive Zheng)
+- The currenttag() function now can show the prototype instead of the actual
+  tag, which can be useful in some cases where ctags doesn't report all the
+  interesting information.
+- The prototype shown in the tooltip or command line should now always be
+  complete, even if it is spread out over more than one line in the source
+  file.
+- The TagbarAccessPublic etc. highlight groups have been renamed to
+  TagbarVisibilityPublic etc. to keep them in line with standard terminology.
+  The old names are still supported.
+- Various smaller improvements and bugfixes.
