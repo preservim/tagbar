@@ -1,0 +1,7 @@
+all when a.jam ->
+	p,q,r.
+
+all -> a,b,c.
+
+all,b,c when a,b,c.
+

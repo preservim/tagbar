@@ -1,0 +1,6 @@
+interface arb {
+    input clk CLOCK ;
+    output reset PHOLD #1 ;
+    output [1:0] request PHOLD #1 ;
+    input [1:0] grant PSAMPLE #-1 ;
+} // end of interface arb

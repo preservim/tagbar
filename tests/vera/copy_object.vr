@@ -1,0 +1,29 @@
+class A{
+  integer j;
+  task new(){ 
+   j = 100;
+  }
+}
+
+class B {
+  integer i;
+  A a;
+  task new() {
+    i = 200;
+  }
+}
+
+program  copy_object {
+  B b1 = new(); // Create an object of class B
+  B b2; //Create a null variable of class B
+  b1.a = new; //Create an object of class A
+  b2 = new b1; // Create an object that is a copy of b1,
+  //but only copies the handle a, not the object referenced by a.
+  b2.i = 300; // i is changed in b2, but not b1
+  printf("i in b2 = %0d\n", b2.i);// i equals 10
+  printf("i in b1 = %0d\n", b1.i);// i equals 1
+  //where as:
+  b2.a.j = 400; // Change j in the object referenced
+  // by a. j is shared by both b1 and b2
+  printf("j is %0d in b1 and %0d in b2\n", b1.a.j, b2.a.j);
+}

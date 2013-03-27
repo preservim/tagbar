@@ -1,0 +1,8 @@
+Suffix .erl.jam ->
+	c:c($>).
+
+Suffix .tex.dvi ->
+	unix:cmd("latex $>.tex").
+
+Suffix .ehtml.html ->
+	ehtml:file("$>").

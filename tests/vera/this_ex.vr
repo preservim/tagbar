@@ -1,0 +1,14 @@
+class A {
+  integer i;
+
+  task set_i(integer value) {
+    this.i = value;
+  }
+}
+
+program this_ex {
+  A a = new();
+  printf("value of i is %0d\n",a.i);
+  a.set_i(100);
+  printf("value of i is %0d\n",a.i);
+ }

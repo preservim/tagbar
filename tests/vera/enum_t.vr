@@ -1,0 +1,13 @@
+enum pkt_size {NORMAL, RUNT, OVERSIZE};
+enum pkt_type {UNICAST=11,MULTICAST,BROADCAST};
+
+program enum_t {
+  pkt_size size = NORMAL;
+  pkt_type type = MULTICAST;
+  // Print the enum value
+  printf("Packet size is %d\n", size);
+  printf("Packet type is %d\n", type);
+  // Print the enum name
+  printf("Packet size is %s\n", size);
+  printf("Packet type is %s\n", type);
+}
