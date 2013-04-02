@@ -268,7 +268,7 @@ COMMANDS                                                     *tagbar-commands*
     an alias for ":TagbarOpen fjc".
 
 :TagbarTogglePause                                        *:TagbarTogglePause*
-    Freezes/Unfreezes the Tagbar window.  Stops the contents of the window 
+    Freezes/Unfreezes the Tagbar window.  Stops the contents of the window
     from changing when a different source file is selected.
 
 :TagbarSetFoldlevel[!] {number}                          *:TagbarSetFoldlevel*
@@ -792,6 +792,25 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
 {optional} (without the filename). Make sure you set an option that makes the
            program output its data on stdout. Not used for the normal ctags
            program.
+
+           The value of ctagsargs may be a |List| of strings (a string for
+           each argument), or a single string (|expr-string|) of all the
+           arguments.
+
+           When the value of ctagsargs is a list, tagbar.vim takes care of
+           escaping each argument in the list as required for the current
+           |'shell'| type.
+
+           When the value of ctagsargs is a string, it must be properly
+           escaped (if required by the current shell type). The reason
+           tagbar.vim does not attempt to escape the string in this case is
+           because if there is a space, it is ambiguous as to whether the
+           space is delimiting an argument or included in the argument. To
+           avoid this amiguity, tagbar.vim expects the string to be already
+           escaped as required.
+
+           If special escaping is required for different OS shell types or if
+           in doubt, then it is recommended to define ctagsargs with a List.
 
 
 You then have to assign this dictionary to a variable in your vimrc with the
