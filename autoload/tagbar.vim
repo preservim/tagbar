@@ -3596,21 +3596,15 @@ endfunction
 
 " tagbar#getusertypes() {{{2
 function! tagbar#getusertypes() abort
-    redir => defs
-    silent execute 'let g:'
-    redir END
+    let userdefs = filter(copy(g:), 'v:key =~ "^tagbar_type_"')
 
-    let deflist = split(defs, '\n')
-    call map(deflist, 'substitute(v:val, ''^\S\+\zs.*'', "", "")')
-    call filter(deflist, 'v:val =~ "^tagbar_type_"')
-
-    let defdict = {}
-    for defstr in deflist
-        let type = substitute(defstr, '^tagbar_type_', '', '')
-        let defdict[type] = g:{defstr}
+    let typedict = {}
+    for [key, val] in items(userdefs)
+        let type = substitute(key, '^tagbar_type_', '', '')
+        let typedict[type] = val
     endfor
 
-    return defdict
+    return typedict
 endfunction
 
 " tagbar#autoopen() {{{2
