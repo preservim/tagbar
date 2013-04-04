@@ -576,6 +576,7 @@ function! s:InitTypes() abort
         \ {'short' : 's', 'long' : 'sets',      'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.scheme = type_scheme
+    let s:known_types.racket = type_scheme
     " Shell script {{{3
     let type_sh = s:TypeInfo.New()
     let type_sh.ctagstype = 'sh'
