@@ -799,7 +799,7 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
 
            When the value of ctagsargs is a list, tagbar.vim takes care of
            escaping each argument in the list as required for the current
-           |'shell'| type.
+           'shell' type.
 
            When the value of ctagsargs is a string, it must be properly
            escaped (if required by the current shell type). The reason
