@@ -12,7 +12,7 @@ if exists("b:current_syntax")
 endif
 
 let s:ics= escape(join(g:tagbar_iconchars, ''), ']^\-')
-let s:pattern = '\(\S\@<![' . s:ics . '] \?\)\@<=[^-+: ]\+[^:]\+$'
+let s:pattern = '\(^[' . s:ics . '] \?\)\@<=[^-+: ]\+[^:]\+$'
 execute "syntax match TagbarKind '" . s:pattern . "'"
 
 let s:pattern = '\(\S\@<!' . s:ics . '][-+# ]\?\)\@<=[^*(]\+\(\*\?\(([^)]\+)\)\? :\)\@='
