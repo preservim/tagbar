@@ -8,14 +8,14 @@
 scriptencoding utf-8
 
 if exists("b:current_syntax")
-  finish
+    finish
 endif
 
-let s:ics= escape(join(g:tagbar_iconchars, ''), ']^\-')
+let s:ics = escape(join(g:tagbar_iconchars, ''), ']^\-')
 let s:pattern = '\(^[' . s:ics . '] \?\)\@<=[^-+: ]\+[^:]\+$'
 execute "syntax match TagbarKind '" . s:pattern . "'"
 
-let s:pattern = '\(\S\@<!' . s:ics . '][-+# ]\?\)\@<=[^*(]\+\(\*\?\(([^)]\+)\)\? :\)\@='
+let s:pattern = '\(\S\@<![' . s:ics . '][-+# ]\?\)\@<=[^*(]\+\(\*\?\(([^)]\+)\)\? :\)\@='
 execute "syntax match TagbarScope '" . s:pattern . "'"
 
 let s:pattern = '\S\@<![' . s:ics . ']\([-+# ]\?\)\@='
