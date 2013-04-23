@@ -980,6 +980,30 @@ LaTeX parser that works better than the example configuration presented here.
 So if you are using a development build newer than that or a stable version
 newer than 5.8 you should use the built-in support instead of this example.
 
+Project-specific configuration~
+
+In addition to the normal global configuration it is also possible to have
+project-specific settings. This is mostly useful for additional ctags options,
+like for example macros to ignore. Or maybe you want to do things like folding
+certain tag kinds in some projects.
+
+In order to use this feature you need to create User |autocommand|s in an
+augroup called "TagbarProjects" and have it create a buffer-local variable
+called "b:tagbar_type". This variable has to hold a type definition just like
+the normal ones described in this chapter. This definition will then be
+applied only to the files matched by the autocommand.
+
+Note that there can be multiple definitions of the augroup with their own
+autocommands (for example in separate project directories); they will get
+merged automatically by Vim.
+
+Example:
+>
+    augroup TagbarProjects
+        autocmd User ~/myproject/*.c let b:tagbar_type = {'deffile' : '~/myproject/ctags.cnf'}
+    augroup END
+<
+
 Writing your own tag-generating program~
 If you want to write your own program for generating tags then here are some
 imporant tips to get it to integrate well with Tagbar:

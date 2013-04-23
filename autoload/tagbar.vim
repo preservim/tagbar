@@ -819,47 +819,13 @@ function! s:LoadUserTypeDefs(...) abort
         let defdict = tagbar#getusertypes()
     endif
 
-    " Transform the 'kind' definitions into dictionary format
-    for def in values(defdict)
-        if has_key(def, 'kinds')
-            let kinds = def.kinds
-            let def.kinds = []
-            for kind in kinds
-                let kindlist = split(kind, ':')
-                let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
-                if len(kindlist) == 4
-                    let kinddict.fold = kindlist[2]
-                    let kinddict.stl  = kindlist[3]
-                elseif len(kindlist) == 3
-                    let kinddict.fold = kindlist[2]
-                    let kinddict.stl  = 1
-                else
-                    let kinddict.fold = 0
-                    let kinddict.stl  = 1
-                endif
-                call add(def.kinds, kinddict)
-            endfor
-        endif
-
-        " If the user only specified one of kind2scope and scope2kind use it
-        " to generate the other one
-        if has_key(def, 'kind2scope') && !has_key(def, 'scope2kind')
-            let def.scope2kind = {}
-            for [key, value] in items(def.kind2scope)
-                let def.scope2kind[value] = key
-            endfor
-        elseif has_key(def, 'scope2kind') && !has_key(def, 'kind2scope')
-            let def.kind2scope = {}
-            for [key, value] in items(def.scope2kind)
-                let def.kind2scope[value] = key
-            endfor
-        endif
+    let transformed = {}
+    for [type, def] in items(defdict)
+        let transformed[type] = s:TransformUserTypeDef(def)
     endfor
-    unlet! key value
 
-    for [key, value] in items(defdict)
-        if !has_key(s:known_types, key) ||
-         \ (has_key(value, 'replace') && value.replace)
+    for [key, value] in items(transformed)
+        if !has_key(s:known_types, key) || get(value, 'replace', 0)
             let s:known_types[key] = s:TypeInfo.New(value)
         else
             call extend(s:known_types[key], value)
@@ -871,7 +837,42 @@ function! s:LoadUserTypeDefs(...) abort
     endif
 endfunction
 
+" s:TransformUserTypeDef() {{{2
+" Transform the user definitions into the internal format
+function! s:TransformUserTypeDef(def) abort
+    let newdef = copy(a:def)
+
+    if has_key(a:def, 'kinds')
+        let newdef.kinds = []
+        let kinds = a:def.kinds
+        for kind in kinds
+            let kindlist = split(kind, ':')
+            let kinddict = {'short' : kindlist[0], 'long' : kindlist[1]}
+            let kinddict.fold = get(kindlist, 2, 0)
+            let kinddict.stl  = get(kindlist, 3, 1)
+            call add(newdef.kinds, kinddict)
+        endfor
+    endif
+
+    " If the user only specified one of kind2scope and scope2kind then use it
+    " to generate the respective other
+    if has_key(a:def, 'kind2scope') && !has_key(a:def, 'scope2kind')
+        let newdef.scope2kind = {}
+        for [key, value] in items(a:def.kind2scope)
+            let newdef.scope2kind[value] = key
+        endfor
+    elseif has_key(a:def, 'scope2kind') && !has_key(a:def, 'kind2scope')
+        let newdef.kind2scope = {}
+        for [key, value] in items(a:def.scope2kind)
+            let newdef.kind2scope[value] = key
+        endfor
+    endif
+
+    return newdef
+endfunction
+
 " s:CreateTypeKinddict() {{{2
+" TODO: make instance method
 function! s:CreateTypeKinddict(type) abort
     " Create a dictionary of the kind order for fast access in sorting
     " functions
@@ -968,7 +969,7 @@ function! s:CreateAutocommands() abort
         autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype(1)
 
-        autocmd BufReadPost,BufWritePost * call
+        autocmd BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
         autocmd BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
@@ -1507,7 +1508,7 @@ endfunction
 let s:FileInfo = {}
 
 " s:FileInfo.New() {{{3
-function! s:FileInfo.New(fname, ftype) abort dict
+function! s:FileInfo.New(fname, ftype, typeinfo) abort dict
     let newobj = copy(self)
 
     " The complete file path
@@ -1533,10 +1534,9 @@ function! s:FileInfo.New(fname, ftype) abort dict
 
     " Dictionary of the folding state of 'kind's, indexed by short name
     let newobj.kindfolds = {}
-    let typeinfo = s:known_types[a:ftype]
-    let newobj.typeinfo = typeinfo
+    let newobj.typeinfo = a:typeinfo
     " copy the default fold state from the type info
-    for kind in typeinfo.kinds
+    for kind in a:typeinfo.kinds
         let newobj.kindfolds[kind.short] =
                     \ g:tagbar_foldlevel == 0 ? 1 : kind.fold
     endfor
@@ -1544,7 +1544,7 @@ function! s:FileInfo.New(fname, ftype) abort dict
     " Dictionary of dictionaries of the folding state of individual tags,
     " indexed by kind and full path
     let newobj.tagfolds = {}
-    for kind in typeinfo.kinds
+    for kind in a:typeinfo.kinds
         let newobj.tagfolds[kind.short] = {}
     endfor
 
@@ -1566,8 +1566,7 @@ function! s:FileInfo.reset() abort dict
     let self._tagfolds_old = self.tagfolds
     let self.tagfolds = {}
 
-    let typeinfo = s:known_types[self.ftype]
-    for kind in typeinfo.kinds
+    for kind in self.typeinfo.kinds
         let self.tagfolds[kind.short] = {}
     endfor
 endfunction
@@ -1905,13 +1904,22 @@ function! s:ProcessFile(fname, ftype) abort
         return
     endif
 
+    let typeinfo = s:known_types[a:ftype]
+
     " If the file has only been updated preserve the fold states, otherwise
     " create a new entry
     if s:known_files.has(a:fname) && !empty(s:known_files.get(a:fname))
         let fileinfo = s:known_files.get(a:fname)
+        let typeinfo = fileinfo.typeinfo
         call fileinfo.reset()
     else
-        let fileinfo = s:FileInfo.New(a:fname, a:ftype)
+        silent! execute 'doautocmd <nomodeline> TagbarProjects User ' . a:fname
+        if exists('b:tagbar_type')
+            let typeinfo = extend(copy(typeinfo),
+                                \ s:TransformUserTypeDef(b:tagbar_type))
+            call s:CreateTypeKinddict(typeinfo)
+        endif
+        let fileinfo = s:FileInfo.New(a:fname, a:ftype, typeinfo)
     endif
 
     " Use a temporary files for ctags processing instead of the original one.
@@ -1926,7 +1934,7 @@ function! s:ProcessFile(fname, ftype) abort
     call writefile(getbufline(fileinfo.bufnr, 1, '$'), tempfile)
     let fileinfo.mtime = getftime(tempfile)
 
-    let ctags_output = s:ExecuteCtagsOnFile(tempfile, a:fname, a:ftype)
+    let ctags_output = s:ExecuteCtagsOnFile(tempfile, a:fname, typeinfo)
 
     call delete(tempfile)
 
@@ -1940,11 +1948,10 @@ function! s:ProcessFile(fname, ftype) abort
         call s:LogDebugMessage('Ctags output empty')
         " No need to go through the tag processing if there are no tags, and
         " preserving the old fold state isn't necessary either
-        call s:known_files.put(s:FileInfo.New(a:fname, a:ftype), a:fname)
+        call s:known_files.put(s:FileInfo.New(a:fname, a:ftype,
+                                            \ s:known_types[a:ftype]), a:fname)
         return
     endif
-
-    let typeinfo = fileinfo.typeinfo
 
     call s:LogDebugMessage('Filetype tag kinds: ' .
                          \ string(keys(typeinfo.kinddict)))
@@ -2025,17 +2032,15 @@ function! s:ProcessFile(fname, ftype) abort
 endfunction
 
 " s:ExecuteCtagsOnFile() {{{2
-function! s:ExecuteCtagsOnFile(fname, realfname, ftype) abort
+function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
     call s:LogDebugMessage('ExecuteCtagsOnFile called [' . a:fname . ']')
 
-    let typeinfo = s:known_types[a:ftype]
-
-    if has_key(typeinfo, 'ctagsargs') && type(typeinfo.ctagsargs)==type(' ')
-        "if ctagsargs is a string, prepend and append space seperators
-        let ctags_args = ' ' . typeinfo.ctagsargs . ' '
-    elseif has_key(typeinfo, 'ctagsargs') && type(typeinfo.ctagsargs)==type([])
-        let ctags_args = typeinfo.ctagsargs
-    "otherwise ctagsargs is not defined or not defined as a valid type
+    if has_key(a:typeinfo, 'ctagsargs') && type(a:typeinfo.ctagsargs) == type('')
+        " if ctagsargs is a string, prepend and append space separators
+        let ctags_args = ' ' . a:typeinfo.ctagsargs . ' '
+    elseif has_key(a:typeinfo, 'ctagsargs') && type(a:typeinfo.ctagsargs) == type([])
+        let ctags_args = a:typeinfo.ctagsargs
+    " otherwise ctagsargs is not defined or not defined as a valid type
     else
         "Prefer constructing ctags_args as a list rather than a string
         "See s:EscapeCtagsCmd() - It's a best practice to shellescape()
@@ -2053,14 +2058,14 @@ function! s:ExecuteCtagsOnFile(fname, realfname, ftype) abort
                           \ ]
 
         " Include extra type definitions
-        if has_key(typeinfo, 'deffile')
-            let ctags_args += ['--options=' . typeinfo.deffile]
+        if has_key(a:typeinfo, 'deffile')
+            let ctags_args += ['--options=' . a:typeinfo.deffile]
         endif
 
-        let ctags_type = typeinfo.ctagstype
+        let ctags_type = a:typeinfo.ctagstype
 
         let ctags_kinds = ''
-        for kind in typeinfo.kinds
+        for kind in a:typeinfo.kinds
             let ctags_kinds .= kind.short
         endfor
 
@@ -2068,11 +2073,11 @@ function! s:ExecuteCtagsOnFile(fname, realfname, ftype) abort
         let ctags_args += ['--' . ctags_type . '-kinds=' . ctags_kinds]
     endif
 
-    if has_key(typeinfo, 'ctagsbin')
+    if has_key(a:typeinfo, 'ctagsbin')
         " reset 'wildignore' temporarily in case *.exe is included in it
         let wildignore_save = &wildignore
         set wildignore&
-        let ctags_bin = expand(typeinfo.ctagsbin)
+        let ctags_bin = expand(a:typeinfo.ctagsbin)
         let &wildignore = wildignore_save
     else
         let ctags_bin = g:tagbar_ctags_bin
