@@ -797,8 +797,8 @@ function! s:InitTypes() abort
 
     call s:LoadUserTypeDefs()
 
-    for type in values(s:known_types)
-        call s:CreateTypeKinddict(type)
+    for typeinfo in values(s:known_types)
+        call typeinfo.createKinddict()
     endfor
 
     let s:type_init_done = 1
@@ -869,18 +869,6 @@ function! s:TransformUserTypeDef(def) abort
     endif
 
     return newdef
-endfunction
-
-" s:CreateTypeKinddict() {{{2
-" TODO: make instance method
-function! s:CreateTypeKinddict(type) abort
-    " Create a dictionary of the kind order for fast access in sorting
-    " functions
-    let i = 0
-    for kind in a:type.kinds
-        let a:type.kinddict[kind.short] = i
-        let i += 1
-    endfor
 endfunction
 
 " s:RestoreSession() {{{2
@@ -1504,6 +1492,16 @@ function! s:TypeInfo.getKind(kind) abort dict
     return self.kinds[idx]
 endfunction
 
+" s:TypeInfo.createKinddict() {{{3
+" Create a dictionary of the kind order for fast access in sorting functions
+function! s:TypeInfo.createKinddict() abort dict
+    let i = 0
+    for kind in self.kinds
+        let self.kinddict[kind.short] = i
+        let i += 1
+    endfor
+endfunction
+
 " File info {{{2
 let s:FileInfo = {}
 
@@ -1917,7 +1915,7 @@ function! s:ProcessFile(fname, ftype) abort
         if exists('b:tagbar_type')
             let typeinfo = extend(copy(typeinfo),
                                 \ s:TransformUserTypeDef(b:tagbar_type))
-            call s:CreateTypeKinddict(typeinfo)
+            call typeinfo.createKinddict()
         endif
         let fileinfo = s:FileInfo.New(a:fname, a:ftype, typeinfo)
     endif
