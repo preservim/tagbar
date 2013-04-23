@@ -983,7 +983,7 @@ function! s:CreateAutocommands() abort
 endfunction
 
 " s:PauseAutocommands() {{{2
-" Toggle autocommands 
+" Toggle autocommands
 function! s:PauseAutocommands() abort
     if s:autocommands_enabled == 1
         autocmd! TagbarAutoCmds
@@ -2030,19 +2030,31 @@ function! s:ExecuteCtagsOnFile(fname, realfname, ftype) abort
 
     let typeinfo = s:known_types[a:ftype]
 
-    if has_key(typeinfo, 'ctagsargs')
+    if has_key(typeinfo, 'ctagsargs') && type(typeinfo.ctagsargs)==type(' ')
+        "if ctagsargs is a string, prepend and append space seperators
         let ctags_args = ' ' . typeinfo.ctagsargs . ' '
+    elseif has_key(typeinfo, 'ctagsargs') && type(typeinfo.ctagsargs)==type([])
+        let ctags_args = typeinfo.ctagsargs
+    "otherwise ctagsargs is not defined or not defined as a valid type
     else
-        let ctags_args  = ' -f - '
-        let ctags_args .= ' --format=2 '
-        let ctags_args .= ' --excmd=pattern '
-        let ctags_args .= ' --fields=nksSa '
-        let ctags_args .= ' --extra= '
-        let ctags_args .= ' --sort=yes '
+        "Prefer constructing ctags_args as a list rather than a string
+        "See s:EscapeCtagsCmd() - It's a best practice to shellescape()
+        "each arg separately because in special cases where space is
+        "intended to be in an argument, spaces in a single ctag_args
+        "string would be ambiguous. Is the space an argument separator
+        "or to be included in the argument
+        let ctags_args  = [ '-f',
+                          \ '-',
+                          \ '--format=2',
+                          \ '--excmd=pattern',
+                          \ '--fields=nksSa',
+                          \ '--extra=',
+                          \ '--sort=yes'
+                          \ ]
 
         " Include extra type definitions
         if has_key(typeinfo, 'deffile')
-            let ctags_args .= ' --options=' . typeinfo.deffile . ' '
+            let ctags_args += ['--options=' . typeinfo.deffile]
         endif
 
         let ctags_type = typeinfo.ctagstype
@@ -2052,8 +2064,8 @@ function! s:ExecuteCtagsOnFile(fname, realfname, ftype) abort
             let ctags_kinds .= kind.short
         endfor
 
-        let ctags_args .= ' --language-force=' . ctags_type .
-                        \ ' --' . ctags_type . '-kinds=' . ctags_kinds . ' '
+        let ctags_args += ['--language-force=' . ctags_type]
+        let ctags_args += ['--' . ctags_type . '-kinds=' . ctags_kinds]
     endif
 
     if has_key(typeinfo, 'ctagsbin')
@@ -3195,32 +3207,79 @@ endfunction
 " Assemble the ctags command line in a way that all problematic characters are
 " properly escaped and converted to the system's encoding
 " Optional third parameter is a file name to run ctags on
+" Note: The second parameter (a:args) can be a list of args or
+"       a single string of the args.
+"       When a:args is a list, each argument in the list will be escaped for the
+"       current &shell type.
+"       When a:args is a string, all arguments should be escaped appropriately
+"       (if required). In most use cases no escaping is required so a string
+"       is acceptable. But in cases where arguments may need to be escaped
+"       differently for each &shell type, then pass a list of arguments.
 function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     call s:LogDebugMessage('EscapeCtagsCmd called')
     call s:LogDebugMessage('ctags_bin: ' . a:ctags_bin)
-    call s:LogDebugMessage('ctags_args: ' . a:args)
+    if type(a:args)==type('')
+        call s:LogDebugMessage('ctags_args (is a string): ' . a:args)
+    elseif type(a:args)==type([])
+        call s:LogDebugMessage('ctags_args (is a list): ' . string(a:args))
+    endif
 
     if exists('+shellslash')
         let shellslash_save = &shellslash
         set noshellslash
     endif
 
-    if a:0 == 1
-        let fname = shellescape(a:1)
+    "Set up 0th argument of ctags_cmd
+    "a:ctags_bin may have special characters that require escaping.
+    if &shell =~ 'cmd\.exe$' && a:ctags_bin !~ '\s'
+        "For windows cmd.exe, escaping the 0th argument can cause
+        "problems if it references a batch file and the batch file uses %~dp0.
+        "So for windows cmd.exe, only escape the 0th argument iff necessary.
+        "Only known necessary case is when ctags_bin executable filename has
+        "whitespace character(s).
+
+        "  Example: If 0th argument is wrapped in double quotes AND it is not
+        "  an absolute path to ctags_bin, but rather an executable in %PATH%,
+        "  then %~dp0 resolves to the current working directory rather than
+        "  the batch file's directory. Batch files like this generally exepect
+        "  and depend on %~dp0 to resolve the batch file's directory.
+        "  Note: Documentation such as `help cmd.exe` and
+        "  http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/cmd.mspx?mfr=true
+        "  suggest other special characters that require escaping for command
+        "  line completion.  But tagbar.vim does not use the command line
+        "  completion feature of cmd.exe and testing shows that the only special
+        "  character that needs to be escaped for tagbar.vim is <space> for
+        "  windows cmd.exe.
+        let ctags_cmd = a:ctags_bin
     else
-        let fname = ''
+        let ctags_cmd = shellescape(a:ctags_bin)
     endif
 
-    let ctags_cmd = shellescape(a:ctags_bin) . ' ' . a:args . ' ' . fname
+    "Add additional arguments to ctags_cmd
+    if type(a:args)==type('')
+        "When a:args is a string, append the arguments
+        "Note: In this case, do not attempt to shell escape a:args string.
+        "This function expects the string to already be escaped properly for
+        "the shell type. Why not escape? Because it could be ambiguous about
+        "whether a space is an argument separator or included in the argument.
+        "Since escaping rules vary from shell to shell, it is better to pass a
+        "list of arguments to a:args. With a list, each argument is clearly
+        "separated, so shellescape() can calculate the appropriate escaping
+        "for each argument for the current &shell.
+        let ctags_cmd .= ' ' . a:args
+    elseif type(a:args)==type([])
+        "When a:args is a list, shellescape() each argument and append ctags_cmd
+        "Note: It's a better practice to shellescape() each argument separately so that
+        "spaces used as a separator between arguments can be distinguished with
+        "spaces used inside a single argument.
+        for arg in a:args
+            let ctags_cmd .= ' ' . shellescape(arg)
+        endfor
+    endif
 
-    " Stupid cmd.exe quoting
-    if &shell =~ 'cmd\.exe'
-        let reserved_chars = '&()@^'
-        " not allowed in filenames, but escape anyway just in case
-        let reserved_chars .= '<>|'
-        let pattern = join(split(reserved_chars, '\zs'), '\|')
-        let ctags_cmd = substitute(ctags_cmd, '\V\(' . pattern . '\)',
-                                 \ '^\0', 'g')
+    "if a filename was specified, add filename as final argument to ctags_cmd.
+    if a:0 == 1
+        let ctags_cmd .= ' ' . shellescape(a:1)
     endif
 
     if exists('+shellslash')
@@ -3589,7 +3648,7 @@ function! tagbar#RestoreSession() abort
 endfunction
 
 function! tagbar#PauseAutocommands() abort
-    call s:PauseAutocommands() 
+    call s:PauseAutocommands()
 endfunction
 
 " }}}2
