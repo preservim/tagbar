@@ -1,4 +1,0 @@
-CHAP Plodenie	nonascii.tex	/^\\chapter{Plodenie}$/;"	s	line:8
-CHAP Klíčenie	nonascii.tex	/^\\chapter{Klíčenie}$/;"	s	line:12
-CHAP Zrenie	nonascii.tex	/^\\chapter{Zrenie}$/;"	s	line:16
-CHAP Žatva	nonascii.tex	/^\\chapter{Žatva}$/;"	s	line:20

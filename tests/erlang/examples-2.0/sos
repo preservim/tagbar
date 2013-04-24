@@ -1,2 +1,0 @@
-#!/bin/sh
-erl -boot /home/joe/erl/example_programs-2.0/examples-2.0/sos  -environment `printenv` -load $1

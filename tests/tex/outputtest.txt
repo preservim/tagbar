@@ -1,6 +1,0 @@
-
-ctags-exuberant: Warning: Unsupported parameter 'l' for --tex-kinds option
-Kl     enie	/tmp/vPIhyz9/3.tex	/^\\chapter{Klíčenie}$/;"	c	line:12
-Plodenie	/tmp/vPIhyz9/3.tex	/^\\chapter{Plodenie}$/;"	c	line:8
-Zrenie	/tmp/vPIhyz9/3.tex	/^\\chapter{Zrenie}$/;"	c	line:16
-atva	/tmp/vPIhyz9/3.tex	/^\\chapter{Žatva}$/;"	c	line:20

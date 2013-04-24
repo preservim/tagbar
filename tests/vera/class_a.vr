@@ -1,6 +1,0 @@
-// Below code can be in another file
-class A {
-  task print () {
-    printf("I am in seprate file\n");
-  }
-}
