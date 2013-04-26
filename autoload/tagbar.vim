@@ -833,7 +833,7 @@ function! s:LoadUserTypeDefs(...) abort
     endfor
 
     if a:0 > 0
-        call s:CreateTypeKinddict(s:known_types[type])
+        call s:known_types[type].createKinddict()
     endif
 endfunction
 
