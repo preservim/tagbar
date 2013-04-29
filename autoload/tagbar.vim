@@ -2057,7 +2057,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
 
         " Include extra type definitions
         if has_key(a:typeinfo, 'deffile')
-            let ctags_args += ['--options=' . a:typeinfo.deffile]
+            let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
         endif
 
         let ctags_type = a:typeinfo.ctagstype
