@@ -1911,11 +1911,13 @@ function! s:ProcessFile(fname, ftype) abort
         let typeinfo = fileinfo.typeinfo
         call fileinfo.reset()
     else
-        silent! execute 'doautocmd <nomodeline> TagbarProjects User ' . a:fname
-        if exists('b:tagbar_type')
-            let typeinfo = extend(copy(typeinfo),
-                                \ s:TransformUserTypeDef(b:tagbar_type))
-            call typeinfo.createKinddict()
+        if exists('#TagbarProjects#User')
+            execute 'doautocmd <nomodeline> TagbarProjects User ' . a:fname
+            if exists('b:tagbar_type')
+                let typeinfo = extend(copy(typeinfo),
+                                    \ s:TransformUserTypeDef(b:tagbar_type))
+                call typeinfo.createKinddict()
+            endif
         endif
         let fileinfo = s:FileInfo.New(a:fname, a:ftype, typeinfo)
     endif
