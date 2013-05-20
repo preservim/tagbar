@@ -53,6 +53,7 @@ let s:ctags_types         = {}
 
 let s:new_window      = 1
 let s:is_maximized    = 0
+let s:winrestcmd      = ''
 let s:short_help      = 1
 let s:nearby_disabled = 0
 
@@ -1867,8 +1868,10 @@ endfunction
 function! s:ZoomWindow() abort
     if s:is_maximized
         execute 'vert resize ' . g:tagbar_width
+        execute s:winrestcmd
         let s:is_maximized = 0
     else
+        let s:winrestcmd = winrestcmd()
         vert resize
         let s:is_maximized = 1
     endif
