@@ -3750,6 +3750,17 @@ function! tagbar#currenttag(fmt, default, ...) abort
     endif
 endfunction
 
+" tagbar#currentfile() {{{2
+function! tagbar#currentfile() abort
+    let filename = ''
+
+    if !empty(s:known_files.getCurrent())
+        let filename = fnamemodify(s:known_files.getCurrent().fpath, ':t')
+    endif
+
+    return filename
+endfunction
+
 " tagbar#gettypeconfig() {{{2
 function! tagbar#gettypeconfig(type) abort
     if !s:Init(1)
