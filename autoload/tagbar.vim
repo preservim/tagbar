@@ -1679,7 +1679,7 @@ function! s:OpenWindow(flags) abort
     if tagbarwinnr != -1
         if winnr() != tagbarwinnr && jump
             call s:winexec(tagbarwinnr . 'wincmd w')
-            call s:HighlightTag(1, 1, curline)
+            call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
         endif
         call s:LogDebugMessage("OpenWindow finished, Tagbar already open")
         return
@@ -1722,7 +1722,7 @@ function! s:OpenWindow(flags) abort
     endif
 
     call s:AutoUpdate(curfile, 0)
-    call s:HighlightTag(1, 1, curline)
+    call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
@@ -2820,7 +2820,7 @@ function! s:HighlightTag(openfolds, ...) abort
         return
     endif
 
-    if g:tagbar_autoshowtag || a:openfolds
+    if g:tagbar_autoshowtag == 1 || a:openfolds
         call s:OpenParents(tag)
     endif
 
