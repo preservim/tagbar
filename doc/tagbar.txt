@@ -261,7 +261,8 @@ COMMANDS                                                     *tagbar-commands*
     Close the Tagbar window if it is open.
 
 :TagbarToggle                                                  *:TagbarToggle*
-    Open the Tagbar window if it is closed or close it if it is open.
+:Tagbar
+    Open the Tagbar window if it is closed, or close it if it is open.
 
 :TagbarOpenAutoClose                                    *:TagbarOpenAutoClose*
     Open the Tagbar window, jump to it and close it on tag selection. This is
