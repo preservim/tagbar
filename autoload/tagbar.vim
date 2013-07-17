@@ -1579,13 +1579,7 @@ endfunction
 
 " s:FileInfo.sortTags() {{{3
 function! s:FileInfo.sortTags() abort dict
-    if has_key(s:compare_typeinfo, 'sort')
-        if s:compare_typeinfo.sort
-            call s:SortTags(self.tags, 's:CompareByKind')
-        else
-            call s:SortTags(self.tags, 's:CompareByLine')
-        endif
-    elseif g:tagbar_sort
+    if get(s:compare_typeinfo, 'sort', g:tagbar_sort)
         call s:SortTags(self.tags, 's:CompareByKind')
     else
         call s:SortTags(self.tags, 's:CompareByLine')
