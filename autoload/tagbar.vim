@@ -3581,7 +3581,7 @@ endfunction
 
 " TagbarGenerateStatusline() {{{2
 function! TagbarGenerateStatusline() abort
-    if g:tagbar_sort
+    if get(s:compare_typeinfo, 'sort', g:tagbar_sort)
         let text = '[Name]'
     else
         let text = '[Order]'
