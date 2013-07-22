@@ -493,7 +493,7 @@ Examples (don't worry if some of the characters aren't displayed correctly,
 just choose other characters in that case):
 >
         let g:tagbar_iconchars = ['▶', '▼']  (default on Linux and Mac OS X)
-        let g:tagbar_iconchars = ['▾', '▸']
+        let g:tagbar_iconchars = ['▸', '▾']
         let g:tagbar_iconchars = ['▷', '◢']
         let g:tagbar_iconchars = ['+', '-']  (default on Windows)
 <
