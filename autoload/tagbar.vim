@@ -372,6 +372,17 @@ function! s:InitTypes() abort
         \ 'subroutine' : 's'
     \ }
     let s:known_types.fortran = type_fortran
+    " Go {{{3
+    let type_go = s:TypeInfo.New()
+    let type_go.ctagstype = 'Go'
+    let type_go.kinds     = [
+        \ {'short' : 'p', 'long' : 'package',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'type',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'const',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 1}
+    \ ]
+    let s:known_types.go = type_go
     " HTML {{{3
     let type_html = s:TypeInfo.New()
     let type_html.ctagstype = 'html'
