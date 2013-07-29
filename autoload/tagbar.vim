@@ -43,9 +43,10 @@ unlet s:ftype_out
 let s:icon_closed = g:tagbar_iconchars[0]
 let s:icon_open   = g:tagbar_iconchars[1]
 
-let s:type_init_done      = 0
-let s:autocommands_done   = 0
-let s:autocommands_enabled = 0
+let s:type_init_done    = 0
+let s:autocommands_done = 0
+let s:statusline_in_use = 0
+
 " 0: not checked yet; 1: checked and found; 2: checked and not found
 let s:checked_ctags       = 0
 let s:checked_ctags_types = 0
@@ -969,15 +970,14 @@ function! s:CreateAutocommands() abort
     augroup END
 
     let s:autocommands_done = 1
-    let s:autocommands_enabled = 1
 endfunction
 
 " s:PauseAutocommands() {{{2
 " Toggle autocommands
 function! s:PauseAutocommands() abort
-    if s:autocommands_enabled == 1
+    if s:autocommands_done
         autocmd! TagbarAutoCmds
-        let s:autocommands_enabled = 0
+        let s:autocommands_done = 0
     else
         call s:CreateAutocommands()
         call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
@@ -1853,6 +1853,11 @@ function! s:CloseWindow() abort
                            \ ' ' . s:window_pos.pre.y
            endif
         endif
+    endif
+
+    if s:autocommands_done && !s:statusline_in_use
+        autocmd! TagbarAutoCmds
+        let s:autocommands_done = 0
     endif
 
     call s:LogDebugMessage('CloseWindow finished')
@@ -3718,6 +3723,10 @@ endfunction
 
 " tagbar#currenttag() {{{2
 function! tagbar#currenttag(fmt, default, ...) abort
+    " Indicate that the statusline functionality is being used. This prevents
+    " the CloseWindow() function from removing the autocommands.
+    let s:statusline_in_use = 1
+
     if a:0 > 0
         " also test for non-zero value for backwards compatibility
         let longsig   = a:1 =~# 's' || (type(a:1) == type(0) && a:1 != 0)
