@@ -103,6 +103,10 @@ if !exists('g:tagbar_systemenc')
     let g:tagbar_systemenc = &encoding
 endif
 
+if !exists('g:tagbar_overwrite_statusline')
+    let g:tagbar_overwrite_statusline = 1
+endif
+
 augroup TagbarSession
     autocmd!
     autocmd SessionLoadPost * nested call tagbar#RestoreSession()
