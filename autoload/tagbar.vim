@@ -3355,7 +3355,13 @@ function! s:ExecuteCtags(ctags_cmd) abort
         set shellcmdflag=/s\ /c
     endif
 
-    let ctags_output = system(a:ctags_cmd)
+    if s:debug
+        silent 5verbose let ctags_output = system(a:ctags_cmd)
+        call s:LogDebugMessage(v:statusmsg)
+        redraw!
+    else
+        let ctags_output = system(a:ctags_cmd)
+    endif
 
     if &shell =~ 'cmd\.exe'
         let &shellxquote  = shellxquote_save
