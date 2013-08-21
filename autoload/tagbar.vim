@@ -1756,11 +1756,13 @@ function! s:InitWindow(autoclose) abort
     setlocal foldmethod&
     setlocal foldexpr&
 
-    " Earlier versions have a bug in local, evaluated statuslines
-    if v:version > 701 || (v:version == 701 && has('patch097'))
-        setlocal statusline=%!TagbarGenerateStatusline()
-    else
-        setlocal statusline=Tagbar
+    if g:tagbar_overwrite_statusline
+        " Earlier versions have a bug in local, evaluated statuslines
+        if v:version > 701 || (v:version == 701 && has('patch097'))
+            setlocal statusline=%!TagbarGenerateStatusline()
+        else
+            setlocal statusline=Tagbar
+        endif
     endif
 
     let s:new_window = 1
