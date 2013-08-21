@@ -103,10 +103,6 @@ if !exists('g:tagbar_systemenc')
     let g:tagbar_systemenc = &encoding
 endif
 
-if !exists('g:tagbar_statusfuncs')
-    let g:tagbar_statusfuncs = {}
-endif
-
 augroup TagbarSession
     autocmd!
     autocmd SessionLoadPost * nested call tagbar#RestoreSession()

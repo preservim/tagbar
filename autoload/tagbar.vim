@@ -1699,14 +1699,13 @@ function! s:OpenWindow(flags) abort
         let s:window_expanded = 1
     endif
 
-    let eventignore_save = &eventignore
-    set eventignore=all
+    " let eventignore_save = &eventignore
+    " set eventignore=all
 
-    call s:SetStatusLineOther('noncurrent')
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
 
-    let &eventignore = eventignore_save
+    " let &eventignore = eventignore_save
 
     call s:InitWindow(autoclose)
 
@@ -1719,13 +1718,12 @@ function! s:OpenWindow(flags) abort
     endif
 
     call s:AutoUpdate(curfile, 0)
-    call s:SetStatusLine('current')
+    " call s:SetStatusLine('current')
     call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
-        call s:SetStatusLine('noncurrent')
-        call s:SetStatusLineOther('current')
+        " call s:SetStatusLine('noncurrent')
     endif
 
     call s:LogDebugMessage('OpenWindow finished')
@@ -1866,7 +1864,6 @@ function! s:CloseWindow() abort
         autocmd! TagbarAutoCmds
         let s:autocommands_done = 0
     endif
-    call s:SetStatusLineOther('current')
 
     call s:LogDebugMessage('CloseWindow finished')
 endfunction
@@ -2866,7 +2863,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     let tagbarwinnr = winnr()
 
-    call s:SetStatusLine('noncurrent')
+    " call s:SetStatusLine('noncurrent')
 
     call s:GotoPreviousWindow(taginfo.fileinfo)
 
@@ -2914,13 +2911,12 @@ function! s:JumpToTag(stay_in_tagbar) abort
     if a:stay_in_tagbar
         call s:HighlightTag(0)
         call s:winexec(tagbarwinnr . 'wincmd w')
-        call s:SetStatusLine('current')
+        " call s:SetStatusLine('current')
         redraw
     elseif g:tagbar_autoclose || autoclose
         call s:CloseWindow()
     else
         call s:HighlightTag(0)
-        call s:SetStatusLineOther('current')
     endif
 endfunction
 
@@ -3195,8 +3191,8 @@ function! s:AutoUpdate(fname, force) abort
         let s:nearby_disabled = 0
     endif
 
-    call s:SetStatusLine(bufwinnr('__Tagbar__' == winnr() ? 'current'
-                                                        \ : 'noncurrent'))
+    " call s:SetStatusLine(bufwinnr('__Tagbar__' == winnr() ? 'current'
+    "                                                     \ : 'noncurrent'))
     call s:HighlightTag(0)
     call s:LogDebugMessage('AutoUpdate finished successfully')
 endfunction
@@ -3537,13 +3533,9 @@ function! s:SetStatusLine(current)
     else
         let in_tagbar = 1
     endif
-    let current = a:current == 'current' ? 1 : 0
+    let current = a:current == 'current'
 
-    if g:tagbar_sort
-        let sort = 'Name'
-    else
-        let sort = 'Order'
-    endif
+    let sort = g:tagbar_sort ? 'Name' : 'Order'
 
     if !empty(s:known_files.getCurrent())
         let fname = fnamemodify(s:known_files.getCurrent().fpath, ':t')
@@ -3551,9 +3543,9 @@ function! s:SetStatusLine(current)
         let fname = ''
     endif
 
-    if has_key(g:tagbar_statusfuncs, 'tagbar')
+    if exists('g:tagbar_status_func')
         let args = [current, sort, fname]
-        let &l:statusline = call(g:tagbar_statusfuncs.tagbar, args)
+        let &l:statusline = call(g:tagbar_status_func, args)
     else
         let colour = current ? '%#StatusLine#' : '%#StatusLineNC#'
         let text = colour . '[' . sort . '] ' . fname
@@ -3562,16 +3554,6 @@ function! s:SetStatusLine(current)
 
     if !in_tagbar
         call s:winexec('wincmd p')
-    endif
-endfunction
-
-" s:SetStatusLineOther() {{{2
-function! s:SetStatusLineOther(current)
-    let current = a:current == 'current' ? 1 : 0
-
-    if has_key(g:tagbar_statusfuncs, 'other')
-        let args = [current]
-        let &l:statusline = call(g:tagbar_statusfuncs.other, args)
     endif
 endfunction
 
@@ -3630,12 +3612,12 @@ endfunction
 function! s:winexec(cmd) abort
     call s:LogDebugMessage("Executing without autocommands: " . a:cmd)
 
-    let eventignore_save = &eventignore
-    set eventignore=all
+    " let eventignore_save = &eventignore
+    " set eventignore=all
 
     execute a:cmd
 
-    let &eventignore = eventignore_save
+    " let &eventignore = eventignore_save
 endfunction
 
 " TagbarBalloonExpr() {{{2
