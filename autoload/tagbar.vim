@@ -1738,7 +1738,11 @@ function! s:InitWindow(autoclose) abort
     setlocal nobuflisted
     setlocal nomodifiable
     setlocal nolist
-    setlocal nonumber
+    if g:tagbar_show_line_numbers
+        setlocal number
+    else
+        setlocal nonumber
+    endif
     setlocal nowrap
     setlocal winfixwidth
     setlocal textwidth=0

@@ -103,6 +103,10 @@ if !exists('g:tagbar_systemenc')
     let g:tagbar_systemenc = &encoding
 endif
 
+if !exists('g:tagbar_show_line_numbers')
+    let g:tagbar_show_line_numbers = 0
+endif
+
 augroup TagbarSession
     autocmd!
     autocmd SessionLoadPost * nested call tagbar#RestoreSession()
