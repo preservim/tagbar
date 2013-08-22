@@ -1699,13 +1699,8 @@ function! s:OpenWindow(flags) abort
         let s:window_expanded = 1
     endif
 
-    " let eventignore_save = &eventignore
-    " set eventignore=all
-
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
-
-    " let &eventignore = eventignore_save
 
     call s:InitWindow(autoclose)
 
@@ -1718,12 +1713,10 @@ function! s:OpenWindow(flags) abort
     endif
 
     call s:AutoUpdate(curfile, 0)
-    " call s:SetStatusLine('current')
     call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         call s:winexec('wincmd p')
-        " call s:SetStatusLine('noncurrent')
     endif
 
     call s:LogDebugMessage('OpenWindow finished')
@@ -1760,12 +1753,6 @@ function! s:InitWindow(autoclose) abort
     setlocal foldmethod&
     setlocal foldexpr&
 
-    " Earlier versions have a bug in local, evaluated statuslines
-    " if v:version > 701 || (v:version == 701 && has('patch097'))
-    "     setlocal statusline=%!TagbarGenerateStatusline()
-    " else
-    "     setlocal statusline=Tagbar
-    " endif
     call s:SetStatusLine('current')
 
     let s:new_window = 1
@@ -2863,8 +2850,6 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     let tagbarwinnr = winnr()
 
-    " call s:SetStatusLine('noncurrent')
-
     call s:GotoPreviousWindow(taginfo.fileinfo)
 
     " Mark current position so it can be jumped back to
@@ -2911,7 +2896,6 @@ function! s:JumpToTag(stay_in_tagbar) abort
     if a:stay_in_tagbar
         call s:HighlightTag(0)
         call s:winexec(tagbarwinnr . 'wincmd w')
-        " call s:SetStatusLine('current')
         redraw
     elseif g:tagbar_autoclose || autoclose
         call s:CloseWindow()
@@ -3191,8 +3175,6 @@ function! s:AutoUpdate(fname, force) abort
         let s:nearby_disabled = 0
     endif
 
-    " call s:SetStatusLine(bufwinnr('__Tagbar__' == winnr() ? 'current'
-    "                                                     \ : 'noncurrent'))
     call s:HighlightTag(0)
     call s:LogDebugMessage('AutoUpdate finished successfully')
 endfunction
@@ -3610,7 +3592,9 @@ endfunction
 
 " s:winexec() {{{2
 function! s:winexec(cmd) abort
-    call s:LogDebugMessage("Executing without autocommands: " . a:cmd)
+    " Commented out for now to see if it works without.
+
+    " call s:LogDebugMessage("Executing without autocommands: " . a:cmd)
 
     " let eventignore_save = &eventignore
     " set eventignore=all
