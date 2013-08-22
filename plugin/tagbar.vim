@@ -42,49 +42,31 @@ if v:version == 700 && !has('patch167')
     finish
 endif
 
-if !exists('g:tagbar_left')
-    let g:tagbar_left = 0
-endif
+function! s:init_var(var, value) abort
+    if !exists('g:tagbar_' . a:var)
+        execute 'let g:tagbar_' . a:var . ' = ' . "'" . substitute(a:value, "'", "''", 'g') . "'"
+    endif
+endfunction
 
-if !exists('g:tagbar_width')
-    let g:tagbar_width = 40
-endif
+let s:options = [
+    \ ['autoclose', 0],
+    \ ['autofocus', 0],
+    \ ['autoshowtag', 0],
+    \ ['compact', 0],
+    \ ['expand', 0],
+    \ ['foldlevel', 99],
+    \ ['indent', 2],
+    \ ['left', 0],
+    \ ['show_visibility', 1],
+    \ ['singleclick', 0],
+    \ ['sort', 1],
+    \ ['systemenc', &encoding],
+    \ ['width', 40],
+\ ]
 
-if !exists('g:tagbar_autoclose')
-    let g:tagbar_autoclose = 0
-endif
-
-if !exists('g:tagbar_autofocus')
-    let g:tagbar_autofocus = 0
-endif
-
-if !exists('g:tagbar_sort')
-    let g:tagbar_sort = 1
-endif
-
-if !exists('g:tagbar_compact')
-    let g:tagbar_compact = 0
-endif
-
-if !exists('g:tagbar_indent')
-    let g:tagbar_indent = 2
-endif
-
-if !exists('g:tagbar_show_visibility')
-    let g:tagbar_show_visibility = 1
-endif
-
-if !exists('g:tagbar_expand')
-    let g:tagbar_expand = 0
-endif
-
-if !exists('g:tagbar_singleclick')
-    let g:tagbar_singleclick = 0
-endif
-
-if !exists('g:tagbar_foldlevel')
-    let g:tagbar_foldlevel = 99
-endif
+for [opt, val] in s:options
+    call s:init_var(opt, val)
+endfor
 
 if !exists('g:tagbar_iconchars')
     if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
@@ -93,14 +75,6 @@ if !exists('g:tagbar_iconchars')
     else
         let g:tagbar_iconchars = ['+', '-']
     endif
-endif
-
-if !exists('g:tagbar_autoshowtag')
-    let g:tagbar_autoshowtag = 0
-endif
-
-if !exists('g:tagbar_systemenc')
-    let g:tagbar_systemenc = &encoding
 endif
 
 augroup TagbarSession
