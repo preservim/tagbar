@@ -30,13 +30,18 @@ execute "syntax match TagbarVisibilityPrivate '" . s:pattern . "'"
 
 unlet s:pattern
 
+syntax match TagbarHelp      '^".*' contains=TagbarHelpKey,TagbarHelpTitle
+syntax match TagbarHelpKey   '" \zs.*\ze:' contained
+syntax match TagbarHelpTitle '" \zs-\+ \w\+ -\+' contained
+
 syntax match TagbarNestedKind '^\s\+\[[^]]\+\]$'
-syntax match TagbarComment    '^".*'
 syntax match TagbarType       ' : \zs.*'
 syntax match TagbarSignature  '(.*)'
 syntax match TagbarPseudoID   '\*\ze :'
 
-highlight default link TagbarComment    Comment
+highlight default link TagbarHelp       Comment
+highlight default link TagbarHelpKey    Identifier
+highlight default link TagbarHelpTitle  PreProc
 highlight default link TagbarKind       Identifier
 highlight default link TagbarNestedKind TagbarKind
 highlight default link TagbarScope      Title
