@@ -44,7 +44,7 @@ endif
 
 function! s:init_var(var, value) abort
     if !exists('g:tagbar_' . a:var)
-        execute 'let g:tagbar_' . a:var . ' = ' . "'" . substitute(a:value, "'", "''", 'g') . "'"
+        execute 'let g:tagbar_' . a:var . ' = ' . string(a:value)
     endif
 endfunction
 
@@ -67,6 +67,7 @@ let s:options = [
 for [opt, val] in s:options
     call s:init_var(opt, val)
 endfor
+unlet s:options
 
 if !exists('g:tagbar_iconchars')
     if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
@@ -76,6 +77,31 @@ if !exists('g:tagbar_iconchars')
         let g:tagbar_iconchars = ['+', '-']
     endif
 endif
+
+let s:keymaps = [
+    \ ['jump',      '<CR>'],
+    \ ['preview',   'p'],
+    \ ['nexttag',   '<C-N>'],
+    \ ['prevtag',   '<C-P>'],
+    \ ['showproto', '<Space>'],
+    \
+    \ ['openfold',      ['+', '<kPlus>', 'zo']],
+    \ ['closefold',     ['-', '<kMinus>', 'zc']],
+    \ ['togglefold',    ['o', 'za']],
+    \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
+    \ ['closeallfolds', ['=', 'zM']],
+    \
+    \ ['togglesort', 's'],
+    \ ['zoomwin',    'x'],
+    \ ['close',      'q'],
+    \ ['help',       '<F1>'],
+\ ]
+
+for [map, key] in s:keymaps
+    call s:init_var('map_' . map, key)
+    unlet key
+endfor
+unlet s:keymaps
 
 augroup TagbarSession
     autocmd!

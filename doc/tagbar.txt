@@ -311,27 +311,51 @@ KEY MAPPINGS                                                     *tagbar-keys*
 The following mappings are valid in the Tagbar window:
 
 <F1>          Display key mapping help.
+                Map option: tagbar_map_help
 <CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags
               or generic headers.
+                Map option: tagbar_map_jump
 p             Jump to the tag under the cursor, but stay in the Tagbar window.
+                Map option: tagbar_map_preview
 <LeftMouse>   When on a fold icon, open or close the fold depending on the
               current state.
 <2-LeftMouse> Same as <CR>. See |g:tagbar_singleclick| if you want to use a
               single- instead of a double-click.
+<C-N>         Go to the next top-level tag.
+                Map option: tagbar_map_nexttag
+<C-P>         Go to the previous top-level tag.
+                Map option: tagbar_map_prevtag
 <Space>       Display the prototype of the current tag (i.e. the line defining
               it) in the command line.
+                Map option: tagbar_map_showproto
 +/zo          Open the fold under the cursor.
+                Map option: tagbar_map_openfold
 -/zc          Close the fold under the cursor or the current one if there is
               no fold under the cursor.
+                Map option: tagbar_map_closefold
 o/za          Toggle the fold under the cursor or the current one if there is
               no fold under the cursor.
+                Map option: tagbar_map_togglefold
 */zR          Open all folds by setting foldlevel to 99.
+                Map option: tagbar_map_openallfolds
 =/zM          Close all folds by setting foldlevel to 0.
-<C-N>         Go to the next top-level tag.
-<C-P>         Go to the previous top-level tag.
+                Map option: tagbar_map_closeallfolds
 s             Toggle sort order between name and file order.
+                Map option: tagbar_map_togglesort
 x             Toggle zooming the window.
+                Map option: tagbar_map_zoomwin
 q             Close the Tagbar window.
+                Map option: tagbar_map_close
+
+These mappings can be redefined with the given map options. The argument can
+be either a string or a |List| of strings. In the latter case the
+functionality will be assigned to all of the keys in the list. For example, if
+you want to remap the sort toggling functionality to "r":
+>
+        let g:tagbar_map_togglesort = "r"
+<
+See |key-notation| for how to write special keys like <Space> or the keypad
+keys.
 
 ==============================================================================
 5. Configuration                                        *tagbar-configuration*

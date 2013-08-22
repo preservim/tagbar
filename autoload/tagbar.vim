@@ -919,35 +919,38 @@ function! s:MapKeys() abort
     inoremap <script> <silent> <buffer> <LeftRelease>
                             \ <LeftRelease><C-o>:call <SID>CheckMouseClick()<CR>
 
-    nnoremap <script> <silent> <buffer> <CR>    :call <SID>JumpToTag(0)<CR>
-    nnoremap <script> <silent> <buffer> p       :call <SID>JumpToTag(1)<CR>
-    nnoremap <script> <silent> <buffer> <Space> :call <SID>ShowPrototype(0)<CR>
+    let maps = [
+        \ ['jump',      'JumpToTag(0)'],
+        \ ['preview',   'JumpToTag(1)'],
+        \ ['nexttag',   'GotoNextToplevelTag(1)'],
+        \ ['prevtag',   'GotoNextToplevelTag(-1)'],
+        \ ['showproto', 'ShowPrototype(0)'],
+        \
+        \ ['openfold',      'OpenFold()'],
+        \ ['closefold',     'CloseFold()'],
+        \ ['togglefold',    'ToggleFold()'],
+        \ ['openallfolds',  'SetFoldLevel(99, 1)'],
+        \ ['closeallfolds', 'SetFoldLevel(0, 1)'],
+        \
+        \ ['togglesort', 'ToggleSort()'],
+        \ ['zoomwin',    'ZoomWindow()'],
+        \ ['close',      'CloseWindow()'],
+        \ ['help',       'ToggleHelp()'],
+    \ ]
 
-    nnoremap <script> <silent> <buffer> +        :call <SID>OpenFold()<CR>
-    nnoremap <script> <silent> <buffer> <kPlus>  :call <SID>OpenFold()<CR>
-    nnoremap <script> <silent> <buffer> zo       :call <SID>OpenFold()<CR>
-    nnoremap <script> <silent> <buffer> -        :call <SID>CloseFold()<CR>
-    nnoremap <script> <silent> <buffer> <kMinus> :call <SID>CloseFold()<CR>
-    nnoremap <script> <silent> <buffer> zc       :call <SID>CloseFold()<CR>
-    nnoremap <script> <silent> <buffer> o        :call <SID>ToggleFold()<CR>
-    nnoremap <script> <silent> <buffer> za       :call <SID>ToggleFold()<CR>
-
-    nnoremap <script> <silent> <buffer> *    :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> <kMultiply>
-                                           \ :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> zR   :call <SID>SetFoldLevel(99, 1)<CR>
-    nnoremap <script> <silent> <buffer> =    :call <SID>SetFoldLevel(0, 1)<CR>
-    nnoremap <script> <silent> <buffer> zM   :call <SID>SetFoldLevel(0, 1)<CR>
-
-    nnoremap <script> <silent> <buffer> <C-N>
-                                        \ :call <SID>GotoNextToplevelTag(1)<CR>
-    nnoremap <script> <silent> <buffer> <C-P>
-                                        \ :call <SID>GotoNextToplevelTag(-1)<CR>
-
-    nnoremap <script> <silent> <buffer> s    :call <SID>ToggleSort()<CR>
-    nnoremap <script> <silent> <buffer> x    :call <SID>ZoomWindow()<CR>
-    nnoremap <script> <silent> <buffer> q    :call <SID>CloseWindow()<CR>
-    nnoremap <script> <silent> <buffer> <F1> :call <SID>ToggleHelp()<CR>
+    for [map, func] in maps
+        let def = get(g:, 'tagbar_map_' . map)
+        if type(def) == type("")
+            let keys = [def]
+        else
+            let keys = def
+        endif
+        for key in keys
+            execute 'nnoremap <script> <silent> <buffer> ' . key .
+                        \ ' :call <SID>' . func . '<CR>'
+        endfor
+        unlet def
+    endfor
 endfunction
 
 " s:CreateAutocommands() {{{2
@@ -2729,26 +2732,34 @@ function! s:PrintHelp() abort
         silent 0put ='\" Tagbar keybindings'
         silent  put ='\"'
         silent  put ='\" --------- General ---------'
-        silent  put ='\" <Enter> : Jump to tag definition'
-        silent  put ='\" p       : As above, but stay in'
-        silent  put ='\"           Tagbar window'
-        silent  put ='\" <C-N>   : Go to next top-level tag'
-        silent  put ='\" <C-P>   : Go to previous top-level tag'
-        silent  put ='\" <Space> : Display tag prototype'
+        silent  put ='\" ' . s:get_map_str('jump') . ': Jump to tag definition'
+        silent  put ='\" ' . s:get_map_str('preview') . ': As above, but stay in'
+        silent  put ='\"    Tagbar window'
+        silent  put ='\" ' . s:get_map_str('nexttag') . ': Go to next top-level tag'
+        silent  put ='\" ' . s:get_map_str('prevtag') . ': Go to previous top-level tag'
+        silent  put ='\" ' . s:get_map_str('showproto') . ': Display tag prototype'
         silent  put ='\"'
         silent  put ='\" ---------- Folds ----------'
-        silent  put ='\" +, zo   : Open fold'
-        silent  put ='\" -, zc   : Close fold'
-        silent  put ='\" o, za   : Toggle fold'
-        silent  put ='\" *, zR   : Open all folds'
-        silent  put ='\" =, zM   : Close all folds'
+        silent  put ='\" ' . s:get_map_str('openfold') . ': Open fold'
+        silent  put ='\" ' . s:get_map_str('closefold') . ': Close fold'
+        silent  put ='\" ' . s:get_map_str('togglefold') . ': Toggle fold'
+        silent  put ='\" ' . s:get_map_str('openallfolds') . ': Open all folds'
+        silent  put ='\" ' . s:get_map_str('closeallfolds') . ': Close all folds'
         silent  put ='\"'
         silent  put ='\" ---------- Misc -----------'
-        silent  put ='\" s       : Toggle sort'
-        silent  put ='\" x       : Zoom window in/out'
-        silent  put ='\" q       : Close window'
-        silent  put ='\" <F1>    : Remove help'
+        silent  put ='\" ' . s:get_map_str('togglesort') . ': Toggle sort'
+        silent  put ='\" ' . s:get_map_str('zoomwin') . ': Zoom window in/out'
+        silent  put ='\" ' . s:get_map_str('close') . ': Close window'
+        silent  put ='\" ' . s:get_map_str('help') . ': Toggle help'
         silent  put _
+    endif
+endfunction
+function! s:get_map_str(map) abort
+    let def = get(g:, 'tagbar_map_' . a:map)
+    if type(def) == type("")
+        return def
+    else
+        return join(def, ', ')
     endif
 endfunction
 
