@@ -1011,12 +1011,11 @@ function! s:CheckForExCtags(silent) abort
             endif
         endfor
         if !exists('g:tagbar_ctags_bin')
-            if !a:silent
-                echoerr 'Tagbar: Exuberant ctags not found!'
-                echomsg 'Please download Exuberant Ctags from ctags.sourceforge.net'
-                      \ 'and install it in a directory in your $PATH'
-                      \ 'or set g:tagbar_ctags_bin.'
-            endif
+            let errmsg = 'Tagbar: Exuberant ctags not found!'
+            let infomsg = 'Please download Exuberant Ctags from' .
+                        \ ' ctags.sourceforge.net and install it in a' .
+                        \ ' directory in your $PATH or set g:tagbar_ctags_bin.'
+            call s:CtagsErrMsg(errmsg, infomsg, a:silent)
             let s:checked_ctags = 2
             return 0
         endif
@@ -1030,11 +1029,10 @@ function! s:CheckForExCtags(silent) abort
         let &wildignore = wildignore_save
 
         if !executable(g:tagbar_ctags_bin)
-            if !a:silent
-                echoerr "Tagbar: Exuberant ctags not found at " .
-                      \ "'" . g:tagbar_ctags_bin . "'!"
-                echomsg 'Please check your g:tagbar_ctags_bin setting.'
-            endif
+            let errmsg = "Tagbar: Exuberant ctags not found at " .
+                       \ "'" . g:tagbar_ctags_bin . "'!"
+            let infomsg = 'Please check your g:tagbar_ctags_bin setting.'
+            call s:CtagsErrMsg(errmsg, infomsg, a:silent)
             let s:checked_ctags = 2
             return 0
         endif
@@ -1049,35 +1047,19 @@ function! s:CheckForExCtags(silent) abort
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if v:shell_error || ctags_output !~# 'Exuberant Ctags'
-        if !a:silent
-            echoerr 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
-            echomsg 'GNU ctags will NOT WORK.'
-                  \ 'Please download Exuberant Ctags from ctags.sourceforge.net'
-                  \ 'and install it in a directory in your $PATH'
-                  \ 'or set g:tagbar_ctags_bin.'
-            echomsg 'Executed command: "' . ctags_cmd . '"'
-            if !empty(ctags_output)
-                echomsg 'Command output:'
-                for line in split(ctags_output, '\n')
-                    echomsg line
-                endfor
-            endif
-        endif
+        let errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
+        let infomsg = 'GNU ctags will NOT WORK.' .
+            \ ' Please download Exuberant Ctags from ctags.sourceforge.net' .
+            \ ' and install it in a directory in your $PATH' .
+            \ ' or set g:tagbar_ctags_bin.'
+        call s:CtagsErrMsg(errmsg, infomsg, a:silent, ctags_cmd, ctags_output)
         let s:checked_ctags = 2
         return 0
     elseif !s:CheckExCtagsVersion(ctags_output)
-        if !a:silent
-            echoerr 'Tagbar: Exuberant Ctags is too old!'
-            echomsg 'You need at least version 5.5 for Tagbar to work.'
-                \ 'Please download a newer version from ctags.sourceforge.net.'
-            echomsg 'Executed command: "' . ctags_cmd . '"'
-            if !empty(ctags_output)
-                echomsg 'Command output:'
-                for line in split(ctags_output, '\n')
-                    echomsg line
-                endfor
-            endif
-        endif
+        let errmsg = 'Tagbar: Exuberant Ctags is too old!'
+        let infomsg = 'You need at least version 5.5 for Tagbar to work.' .
+            \ ' Please download a newer version from ctags.sourceforge.net.'
+        call s:CtagsErrMsg(errmsg, infomsg, a:silent, ctags_cmd, ctags_output)
         let s:checked_ctags = 2
         return 0
     else
@@ -1085,6 +1067,35 @@ function! s:CheckForExCtags(silent) abort
         return 1
     endif
 endfunction
+
+" s:CtagsErrMsg() {{{2
+function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort
+    call s:LogDebugMessage(a:errmsg)
+    let ctags_cmd    = a:0 > 0 ? a:1 : ''
+    let ctags_output = a:0 > 0 ? a:2 : ''
+
+    if ctags_output != ''
+        call s:LogDebugMessage("Command output:\n" . ctags_output)
+    endif
+
+    if !a:silent
+        echoerr a:errmsg
+        echomsg a:infomsg
+
+        if ctags_cmd == ''
+            return
+        endif
+
+        echomsg 'Executed command: "' . ctags_cmd . '"'
+        if ctags_output != ''
+            echomsg 'Command output:'
+            for line in split(ctags_output, '\n')
+                echomsg line
+            endfor
+        endif
+    endif
+endfunction
+
 
 " s:CheckExCtagsVersion() {{{2
 function! s:CheckExCtagsVersion(output) abort
