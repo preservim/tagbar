@@ -1104,12 +1104,17 @@ function! s:CheckExCtagsVersion(output) abort
     call s:LogDebugMessage('Checking Exuberant Ctags version')
 
     if a:output =~ 'Exuberant Ctags Development'
+        call s:LogDebugMessage("Found development version, " .
+                             \ "assuming compatibility")
         return 1
     endif
 
     let matchlist = matchlist(a:output, '\vExuberant Ctags (\d+)\.(\d+)')
     let major     = matchlist[1]
     let minor     = matchlist[2]
+
+    call s:LogDebugMessage("Ctags version: " .
+                         \ "major='" . major . "', minor='" . minor . "'")
 
     return major >= 6 || (major == 5 && minor >= 5)
 endfunction
