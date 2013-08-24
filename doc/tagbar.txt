@@ -470,6 +470,23 @@ Example:
         let g:tagbar_show_visibility = 0
 <
 
+                                                   *g:tagbar_show_linenumbers*
+g:tagbar_show_linenumbers~
+Default: 0
+
+Whether line numbers should be shown in the Tagbar window.
+
+Possible values are:
+  0: Don't show any line numbers.
+  1: Show absolute line numbers.
+  2: Show relative line numbers.
+  -1: Use the global line number settings.
+
+Example:
+>
+        let g:tagbar_show_linenumbers = 2
+<
+
                                                              *g:tagbar_expand*
 g:tagbar_expand~
 Default: 0

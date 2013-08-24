@@ -1756,14 +1756,25 @@ function! s:InitWindow(autoclose) abort
     setlocal nobuflisted
     setlocal nomodifiable
     setlocal nolist
-    setlocal nonumber
     setlocal nowrap
     setlocal winfixwidth
     setlocal textwidth=0
     setlocal nospell
 
-    if exists('+relativenumber')
-        setlocal norelativenumber
+    if g:tagbar_show_linenumbers == 0
+        setlocal nonumber
+        if exists('+relativenumber')
+            setlocal norelativenumber
+        endif
+    elseif g:tagbar_show_linenumbers == 1
+        setlocal number
+    elseif g:tagbar_show_linenumbers == 2
+        setlocal relativenumber
+    else
+        set number<
+        if exists('+relativenumber')
+            set relativenumber<
+        endif
     endif
 
     setlocal nofoldenable

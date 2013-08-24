@@ -58,6 +58,7 @@ let s:options = [
     \ ['indent', 2],
     \ ['left', 0],
     \ ['show_visibility', 1],
+    \ ['show_linenumbers', 0],
     \ ['singleclick', 0],
     \ ['sort', 1],
     \ ['systemenc', &encoding],
