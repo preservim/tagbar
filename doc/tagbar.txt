@@ -565,6 +565,33 @@ Example:
         let g:tagbar_systemenc = 'cp936'
 <
 
+                                                        *g:tagbar_status_func*
+g:tagbar_status_func~
+Default: undefined
+
+This is the name of a function whose return value will be used to draw the
+statusline of the Tagbar window.
+
+The function has to take three arguments:
+  1. current: Whether Tagbar is the current window; 0 or 1.
+  2. sort: The sort order of the tags; 'Name' if they are sorted by name and
+     'Order' if they are sorted by their order of appearance in the file.
+  3. fname: The name of the file that the tags belong to.
+
+In order to avoid possible future additions to the arguments resulting in an
+error it is recommended to add an additional vararg to the signature (see
+|a:0|).
+
+Here is an example that, when put into your vimrc, will emulate Tagbar's
+default statusline:
+>
+        function! TagbarStatusFunc(current, sort, fname, ...) abort
+            let colour = a:current ? '%#StatusLine#' : '%#StatusLineNC#'
+            return colour . '[' . a:sort . '] ' . a:fname
+        endfunction
+        let g:tagbar_status_func = 'TagbarStatusFunc'
+<
+
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
 
