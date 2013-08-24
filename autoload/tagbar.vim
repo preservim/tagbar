@@ -2541,8 +2541,17 @@ function! s:RenderContent(...) abort
 
     let typeinfo = fileinfo.typeinfo
 
-    " Print tags
-    call s:PrintKinds(typeinfo, fileinfo)
+    if !empty(fileinfo.tags)
+        " Print tags
+        call s:PrintKinds(typeinfo, fileinfo)
+    else
+        call s:LogDebugMessage('No tags found, skipping printing.')
+        if g:tagbar_compact && s:short_help
+            silent 0put ='\" No tags found.'
+        else
+            silent  put ='\" No tags found.'
+        endif
+    endif
 
     " Delete empty lines at the end of the buffer
     for linenr in range(line('$'), 1, -1)
