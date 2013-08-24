@@ -1092,6 +1092,8 @@ function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort
             for line in split(ctags_output, '\n')
                 echomsg line
             endfor
+        else
+            echomsg 'Command output is empty.'
         endif
     endif
 endfunction
