@@ -491,8 +491,9 @@ Example:
 g:tagbar_expand~
 Default: 0
 
-If this option is set the Vim window will be expanded by the width of the
-Tagbar window if using a GUI version of Vim.
+If this option is set to 1 the Vim window will be expanded by the width of the
+Tagbar window if using a GUI version of Vim. Setting it to 2 will also try
+expanding a terminal, but note that this is not supported by all terminals.
 
 Example:
 >

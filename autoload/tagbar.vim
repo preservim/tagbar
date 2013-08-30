@@ -1711,7 +1711,8 @@ function! s:OpenWindow(flags) abort
 
     " Expand the Vim window to accomodate for the Tagbar window if requested
     " and save the window positions to be able to restore them later.
-    if g:tagbar_expand && !s:window_expanded && has('gui_running')
+    if g:tagbar_expand >= 1 && !s:window_expanded &&
+     \ (has('gui_running') || g:tagbar_expand == 2)
         let s:window_pos.pre.x = getwinposx()
         let s:window_pos.pre.y = getwinposy()
         let &columns += g:tagbar_width + 1
@@ -1869,13 +1870,14 @@ function! s:CloseWindow() abort
         if index(tablist, tagbarbufnr) == -1
             let &columns -= g:tagbar_width + 1
             let s:window_expanded = 0
-            " Only restore window position if it hasn't been moved manually
-            " after the expanding
-            if getwinposx() == s:window_pos.post.x &&
+            " Only restore window position if it is available and if the
+            " window hasn't been moved manually after the expanding
+            if getwinposx() != -1 &&
+             \ getwinposx() == s:window_pos.post.x &&
              \ getwinposy() == s:window_pos.post.y
                execute 'winpos ' . s:window_pos.pre.x .
                            \ ' ' . s:window_pos.pre.y
-           endif
+            endif
         endif
     endif
 
