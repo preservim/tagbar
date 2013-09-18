@@ -964,9 +964,9 @@ function! s:CreateAutocommands() abort
         autocmd WinEnter   __Tagbar__ call s:SetStatusLine('current')
         autocmd WinLeave   __Tagbar__ call s:SetStatusLine('noncurrent')
 
-        autocmd BufReadPost,BufWritePost * call
+        autocmd BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
-        autocmd BufEnter,CursorHold,FileType * call
+        autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
         autocmd BufDelete,BufUnload,BufWipeout * call
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
