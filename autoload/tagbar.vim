@@ -2871,6 +2871,13 @@ function! s:HighlightTag(openfolds, ...) abort
     " instead in that case
     let tagline = tag.getClosedParentTline()
 
+    " No tag above cursor position so don't do anything
+    if tagline == -1
+        call s:winexec(prevwinnr . 'wincmd w')
+        redraw
+        return
+    endif
+
     " Go to the line containing the tag
     execute tagline
 
