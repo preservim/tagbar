@@ -2189,6 +2189,10 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     if has_key(taginfo.fields, 'lineno')
         let taginfo.fields.line = str2nr(taginfo.fields.lineno)
     endif
+    " Do some sanity checking in case ctags reports invalid line numbers
+    if taginfo.fields.line < 0
+        let taginfo.fields.line = 0
+    endif
 
     " Make some information easier accessible
     if has_key(a:typeinfo, 'scope2kind')
@@ -2870,6 +2874,13 @@ function! s:HighlightTag(openfolds, ...) abort
     " Check whether the tag is inside a closed fold and highlight the parent
     " instead in that case
     let tagline = tag.getClosedParentTline()
+
+    " Parent tag line number is invalid, better don't do anything
+    if tagline == 0
+        call s:winexec(prevwinnr . 'wincmd w')
+        redraw
+        return
+    endif
 
     " Go to the line containing the tag
     execute tagline
