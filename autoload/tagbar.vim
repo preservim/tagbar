@@ -2891,7 +2891,12 @@ function! s:HighlightTag(openfolds, ...) abort
     let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
     let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
     call s:LogDebugMessage("Highlight pattern: '" . pattern . "'")
-    execute 'match TagbarHighlight ' . pattern
+    if exists('g:syntax_on') " Safeguard in case syntax highlighting is disabled
+        execute 'match TagbarHighlight ' . pattern
+    else
+        execute 'match Search ' . pattern
+    endif
+
 
     if a:0 <= 1 " no line explicitly given, so assume we were in the file window
         call s:winexec(prevwinnr . 'wincmd w')
