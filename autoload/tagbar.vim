@@ -976,6 +976,9 @@ function! s:CreateAutocommands() abort
         autocmd BufDelete,BufUnload,BufWipeout * call
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
 
+        autocmd QuickFixCmdPre  * let s:tagbar_qf_active = 1
+        autocmd QuickFixCmdPost * unlet s:tagbar_qf_active
+
         autocmd VimEnter * call s:CorrectFocusOnStartup()
     augroup END
 
@@ -3184,6 +3187,12 @@ endfunction
 " s:AutoUpdate() {{{2
 function! s:AutoUpdate(fname, force) abort
     call s:LogDebugMessage('AutoUpdate called [' . a:fname . ']')
+
+    " This file is being loaded due to a quickfix command like vimgrep, so
+    " don't process it
+    if exists('s:tagbar_qf_active')
+        return
+    endif
 
     " Get the filetype of the file we're about to process
     let bufnr = bufnr(a:fname)
