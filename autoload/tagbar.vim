@@ -971,6 +971,8 @@ function! s:CreateAutocommands() abort
 
         autocmd BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
+        " BufReadPost is needed for reloading the current buffer if the file
+        " was changed by an external command; see commit 17d199f
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
         autocmd BufDelete,BufUnload,BufWipeout * call
