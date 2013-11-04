@@ -59,6 +59,7 @@ let s:short_help      = 1
 let s:nearby_disabled = 0
 
 let s:window_expanded   = 0
+let s:expand_bufnr = -1
 let s:window_pos = {
     \ 'pre'  : { 'x' : 0, 'y' : 0 },
     \ 'post' : { 'x' : 0, 'y' : 0 }
@@ -964,6 +965,10 @@ function! s:CreateAutocommands() abort
         autocmd WinEnter   __Tagbar__ call s:SetStatusLine('current')
         autocmd WinLeave   __Tagbar__ call s:SetStatusLine('noncurrent')
 
+        autocmd WinEnter * if bufwinnr('__Tagbar__') == -1 |
+                         \     call s:ShrinkIfExpanded() |
+                         \ endif
+
         autocmd BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
@@ -1806,6 +1811,10 @@ function! s:InitWindow(autoclose) abort
 
     let &cpoptions = cpoptions_save
 
+    if g:tagbar_expand
+        let s:expand_bufnr = bufnr('%')
+    endif
+
     call s:LogDebugMessage('InitWindow finished')
 endfunction
 
@@ -1859,27 +1868,7 @@ function! s:CloseWindow() abort
         endfor
     endif
 
-    " If the Vim window has been expanded, and Tagbar is not open in any other
-    " tabpages, shrink the window again
-    if s:window_expanded
-        let tablist = []
-        for i in range(tabpagenr('$'))
-            call extend(tablist, tabpagebuflist(i + 1))
-        endfor
-
-        if index(tablist, tagbarbufnr) == -1
-            let &columns -= g:tagbar_width + 1
-            let s:window_expanded = 0
-            " Only restore window position if it is available and if the
-            " window hasn't been moved manually after the expanding
-            if getwinposx() != -1 &&
-             \ getwinposx() == s:window_pos.post.x &&
-             \ getwinposy() == s:window_pos.post.y
-               execute 'winpos ' . s:window_pos.pre.x .
-                           \ ' ' . s:window_pos.pre.y
-            endif
-        endif
-    endif
+    call s:ShrinkIfExpanded()
 
     if s:autocommands_done && !s:statusline_in_use
         autocmd! TagbarAutoCmds
@@ -1887,6 +1876,34 @@ function! s:CloseWindow() abort
     endif
 
     call s:LogDebugMessage('CloseWindow finished')
+endfunction
+
+" s:ShrinkIfExpanded() {{{2
+" If the Vim window has been expanded, and Tagbar is not open in any other
+" tabpages, shrink the window again
+function! s:ShrinkIfExpanded() abort
+    if !s:window_expanded || &filetype == 'tagbar' || s:expand_bufnr == -1
+        return
+    endif
+
+    let tablist = []
+    for i in range(tabpagenr('$'))
+        call extend(tablist, tabpagebuflist(i + 1))
+    endfor
+
+    if index(tablist, s:expand_bufnr) == -1
+        let &columns -= g:tagbar_width + 1
+        let s:window_expanded = 0
+        let s:expand_bufnr = -1
+        " Only restore window position if it is available and if the
+        " window hasn't been moved manually after the expanding
+        if getwinposx() != -1 &&
+         \ getwinposx() == s:window_pos.post.x &&
+         \ getwinposy() == s:window_pos.post.y
+           execute 'winpos ' . s:window_pos.pre.x .
+                       \ ' ' . s:window_pos.pre.y
+        endif
+    endif
 endfunction
 
 " s:ZoomWindow() {{{2
