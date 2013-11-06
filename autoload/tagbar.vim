@@ -981,7 +981,7 @@ function! s:CreateAutocommands() abort
         autocmd QuickFixCmdPre  * let s:tagbar_qf_active = 1
         autocmd QuickFixCmdPost * if exists('s:tagbar_qf_active') |
                                 \     unlet s:tagbar_qf_active |
-                                \ fi
+                                \ endif
 
         autocmd VimEnter * call s:CorrectFocusOnStartup()
     augroup END
