@@ -979,7 +979,9 @@ function! s:CreateAutocommands() abort
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
 
         autocmd QuickFixCmdPre  * let s:tagbar_qf_active = 1
-        autocmd QuickFixCmdPost * unlet s:tagbar_qf_active
+        autocmd QuickFixCmdPost * if exists('s:tagbar_qf_active') |
+                                \     unlet s:tagbar_qf_active |
+                                \ fi
 
         autocmd VimEnter * call s:CorrectFocusOnStartup()
     augroup END
