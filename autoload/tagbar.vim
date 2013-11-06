@@ -1733,8 +1733,10 @@ function! s:OpenWindow(flags) abort
         let s:window_expanded = 1
     endif
 
+    let s:window_opening = 1
     let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
     exe 'silent keepalt ' . openpos . g:tagbar_width . 'split ' . '__Tagbar__'
+    unlet s:window_opening
 
     call s:InitWindow(autoclose)
 
@@ -2915,7 +2917,7 @@ function! s:HighlightTag(openfolds, ...) abort
     let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
     let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
     call s:LogDebugMessage("Highlight pattern: '" . pattern . "'")
-    if exists('g:syntax_on') " Safeguard in case syntax highlighting is disabled
+    if hlexists('TagbarHighlight') " Safeguard in case syntax highlighting is disabled
         execute 'match TagbarHighlight ' . pattern
     else
         execute 'match Search ' . pattern
@@ -3195,6 +3197,15 @@ function! s:AutoUpdate(fname, force) abort
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
     if exists('s:tagbar_qf_active')
+        return
+    elseif exists('s:window_opening')
+        " This can happen if another plugin causes the active window to change
+        " with an autocmd during the initial Tagbar window creation. In that
+        " case InitWindow() hasn't had a chance to run yet and things can
+        " break. MiniBufExplorer does this, for example. Completely disabling
+        " autocmds at that point is also not ideal since for example
+        " statusline plugins won't be able to update.
+        call s:LogDebugMessage('Still opening window, stopping processing')
         return
     endif
 
