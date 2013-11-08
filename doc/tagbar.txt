@@ -21,6 +21,7 @@ Contents                                            *tagbar* *tagbar-contents*
               Highlight colours ............. |tagbar-highlight|
               Automatically opening Tagbar .. |tagbar-autoopen|
               Show current tag in statusline  |tagbar-statusline|
+              Ignoring specific files ....... |tagbar-ignore|
          6. Extending Tagbar ................ |tagbar-extend|
          7. Troubleshooting & Known issues .. |tagbar-issues|
          8. History ......................... |tagbar-history|
@@ -738,6 +739,15 @@ tagbar#currenttag({format}, {default} [, {flags}])
 Note that if there is an error when processing the current file no error
 message will be shown in order to not disrupt the statusline. If the function
 doesn't seem to work right open the Tagbar window to see any error messages.
+
+------------------------------------------------------------------------------
+IGNORING SPECIFIC FILES                                        *tagbar-ignore*
+
+You can ignore specific files by setting the |buffer-variable|
+"b:tagbar_ignore" to 1. This is best done with an |autocommand|:
+>
+    autocmd BufNewFile,BufReadPost foo.cpp let b:tagbar_ignore = 1
+<
 
 ==============================================================================
 6. Extending Tagbar                                            *tagbar-extend*

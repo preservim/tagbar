@@ -3590,6 +3590,11 @@ function! s:IsValidFile(fname, ftype) abort
         return 0
     endif
 
+    if getbufvar(a:fname, 'tagbar_ignore') == 1
+        call s:LogDebugMessage('File is marked as ignored')
+        return 0
+    endif
+
     if &previewwindow
         call s:LogDebugMessage('In preview window')
         return 0
