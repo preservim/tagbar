@@ -318,6 +318,8 @@ The following mappings are valid in the Tagbar window:
                 Map option: tagbar_map_jump
 p             Jump to the tag under the cursor, but stay in the Tagbar window.
                 Map option: tagbar_map_preview
+P             Open the tag in a |preview-window|.
+                Map option: tagbar_map_previewwin
 <LeftMouse>   When on a fold icon, open or close the fold depending on the
               current state.
 <2-LeftMouse> Same as <CR>. See |g:tagbar_singleclick| if you want to use a

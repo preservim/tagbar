@@ -922,11 +922,12 @@ function! s:MapKeys() abort
                             \ <LeftRelease><C-o>:call <SID>CheckMouseClick()<CR>
 
     let maps = [
-        \ ['jump',      'JumpToTag(0)'],
-        \ ['preview',   'JumpToTag(1)'],
-        \ ['nexttag',   'GotoNextToplevelTag(1)'],
-        \ ['prevtag',   'GotoNextToplevelTag(-1)'],
-        \ ['showproto', 'ShowPrototype(0)'],
+        \ ['jump',       'JumpToTag(0)'],
+        \ ['preview',    'JumpToTag(1)'],
+        \ ['previewwin', 'ShowInPreviewWin()'],
+        \ ['nexttag',    'GotoNextToplevelTag(1)'],
+        \ ['prevtag',    'GotoNextToplevelTag(-1)'],
+        \ ['showproto',  'ShowPrototype(0)'],
         \
         \ ['openfold',      'OpenFold()'],
         \ ['closefold',     'CloseFold()'],
@@ -2797,6 +2798,7 @@ function! s:PrintHelp() abort
         silent  put ='\" ' . s:get_map_str('jump') . ': Jump to tag definition'
         silent  put ='\" ' . s:get_map_str('preview') . ': As above, but stay in'
         silent  put ='\"    Tagbar window'
+        silent  put ='\" ' . s:get_map_str('previewwin') . ': Show tag in preview window'
         silent  put ='\" ' . s:get_map_str('nexttag') . ': Go to next top-level tag'
         silent  put ='\" ' . s:get_map_str('prevtag') . ': Go to previous top-level tag'
         silent  put ='\" ' . s:get_map_str('showproto') . ': Display tag prototype'
@@ -2994,6 +2996,18 @@ function! s:JumpToTag(stay_in_tagbar) abort
     else
         call s:HighlightTag(0)
     endif
+endfunction
+
+" s:ShowInPreviewWin() {{{2
+function! s:ShowInPreviewWin() abort
+    let taginfo = s:GetTagInfo(line('.'), 1)
+
+    if empty(taginfo) || !taginfo.isNormalTag()
+        return
+    endif
+
+    execute 'topleft pedit +' . taginfo.fields.line . ' ' .
+          \ s:known_files.getCurrent(0).fpath
 endfunction
 
 " s:ShowPrototype() {{{2

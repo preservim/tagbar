@@ -80,11 +80,12 @@ if !exists('g:tagbar_iconchars')
 endif
 
 let s:keymaps = [
-    \ ['jump',      '<CR>'],
-    \ ['preview',   'p'],
-    \ ['nexttag',   '<C-N>'],
-    \ ['prevtag',   '<C-P>'],
-    \ ['showproto', '<Space>'],
+    \ ['jump',       '<CR>'],
+    \ ['preview',    'p'],
+    \ ['previewwin', 'P'],
+    \ ['nexttag',    '<C-N>'],
+    \ ['prevtag',    '<C-P>'],
+    \ ['showproto',  '<Space>'],
     \
     \ ['openfold',      ['+', '<kPlus>', 'zo']],
     \ ['closefold',     ['-', '<kMinus>', 'zc']],
