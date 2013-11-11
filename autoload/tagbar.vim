@@ -3715,6 +3715,11 @@ function! s:NextNormalWindow() abort
             continue
         endif
 
+        " skip the preview window
+        if getwinvar(i, '&previewwindow')
+            continue
+        endif
+
         " skip current window
         if i == winnr()
             continue
