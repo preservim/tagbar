@@ -564,6 +564,18 @@ Example:
         let g:tagbar_autoshowtag = 1
 <
 
+                                                        *g:tagbar_autopreview*
+g:tagbar_autopreview~
+Default: 0
+
+If this variable is set to 1 then moving the cursor in the Tagbar window will
+automatically show the current tag in the preview window.
+
+Example:
+>
+        let g:tagbar_autopreview = 1
+<
+
                                               *g:tagbar_updateonsave_maxlines*
 g:tagbar_updateonsave_maxlines~
 

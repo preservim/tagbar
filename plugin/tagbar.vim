@@ -51,6 +51,7 @@ endfunction
 let s:options = [
     \ ['autoclose', 0],
     \ ['autofocus', 0],
+    \ ['autopreview', 0],
     \ ['autoshowtag', 0],
     \ ['compact', 0],
     \ ['expand', 0],

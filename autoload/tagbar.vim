@@ -967,6 +967,10 @@ function! s:CreateAutocommands() abort
         autocmd WinEnter   __Tagbar__ call s:SetStatusLine('current')
         autocmd WinLeave   __Tagbar__ call s:SetStatusLine('noncurrent')
 
+        if g:tagbar_autopreview
+            autocmd CursorMoved __Tagbar__ nested call s:ShowInPreviewWin()
+        endif
+
         autocmd WinEnter * if bufwinnr('__Tagbar__') == -1 |
                          \     call s:ShrinkIfExpanded() |
                          \ endif
