@@ -2944,7 +2944,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     let tagbarwinnr = winnr()
 
-    call s:GotoPreviousWindow(taginfo.fileinfo)
+    call s:GotoFileWindow(taginfo.fileinfo)
 
     " Mark current position so it can be jumped back to
     mark '
@@ -3558,29 +3558,39 @@ function! s:GetTagInfo(linenr, ignorepseudo) abort
     return taginfo
 endfunction
 
-" s:GotoPreviousWindow() {{{2
-" Try to switch to the previous buffer/window; if the buffer isn't currently
-" shown in a window Tagbar will open it in the first window that has a
-" non-special buffer in it.
-function! s:GotoPreviousWindow(fileinfo) abort
+" s:GotoFileWindow() {{{2
+" Try to switch to the window that has Tagbar's current file loaded in it, or
+" open the file in a window otherwise.
+function! s:GotoFileWindow(fileinfo) abort
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
     call s:winexec('wincmd p')
 
     let filebufnr = bufnr(a:fileinfo.fpath)
-    if bufnr('%') != filebufnr
-        let filewinnr = bufwinnr(filebufnr)
-        if filewinnr != -1
-            call s:winexec(filewinnr . 'wincmd w')
-        else
+    if bufnr('%') != filebufnr || &previewwindow
+        " Search for the first real window that has the correct buffer loaded
+        " in it. Similar to bufwinnr() but skips the previewwindow.
+        let found = 0
+        for i in range(1, winnr('$'))
+            call s:winexec(i . 'wincmd w')
+            if bufnr('%') == filebufnr && !&previewwindow
+                let found = 1
+                break
+            endif
+        endfor
+
+        " If there is no window with the correct buffer loaded then load it
+        " into the first window that has a non-special buffer in it.
+        if !found
             for i in range(1, winnr('$'))
                 call s:winexec(i . 'wincmd w')
-                if &buftype == ''
+                if &buftype == '' && !&previewwindow
                     execute 'buffer ' . filebufnr
                     break
                 endif
             endfor
         endif
+
         " To make ctrl-w_p work we switch between the Tagbar window and the
         " correct window once
         call s:winexec(tagbarwinnr . 'wincmd w')
