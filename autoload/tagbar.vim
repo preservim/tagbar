@@ -962,7 +962,6 @@ function! s:CreateAutocommands() abort
 
     augroup TagbarAutoCmds
         autocmd!
-        autocmd BufEnter   __Tagbar__ nested call s:QuitIfOnlyWindow()
         autocmd CursorHold __Tagbar__ call s:ShowPrototype(1)
         autocmd WinEnter   __Tagbar__ call s:SetStatusLine('current')
         autocmd WinLeave   __Tagbar__ call s:SetStatusLine('noncurrent')
@@ -971,6 +970,7 @@ function! s:CreateAutocommands() abort
             autocmd CursorMoved __Tagbar__ nested call s:ShowInPreviewWin()
         endif
 
+        autocmd BufEnter * nested call s:QuitIfOnlyWindow()
         autocmd WinEnter * if bufwinnr('__Tagbar__') == -1 |
                          \     call s:ShrinkIfExpanded() |
                          \ endif
@@ -3681,6 +3681,14 @@ endfunction
 
 " s:QuitIfOnlyWindow() {{{2
 function! s:QuitIfOnlyWindow() abort
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr == -1
+        return
+    endif
+
+    let curwinnr = winnr()
+    call s:winexec('noautocmd ' . tagbarwinnr . 'wincmd w')
+
     " Check if there is more than one window
     if s:NextNormalWindow() == -1
         " Check if there is more than one tab page
@@ -3697,6 +3705,8 @@ function! s:QuitIfOnlyWindow() abort
             close
         endif
     endif
+
+    call s:winexec('noautocmd ' . curwinnr . 'wincmd w')
 endfunction
 
 " s:NextNormalWindow() {{{2
