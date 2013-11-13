@@ -564,6 +564,24 @@ Example:
         let g:tagbar_autoshowtag = 1
 <
 
+                                                     *g:tagbar_previewwin_pos*
+g:tagbar_previewwin_pos~
+Default: topleft
+
+The position of the preview window. Valid values are the window splitting
+commands that are described starting from |:vertical|. Set it to an empty
+string to use the options 'splitbelow' and 'splitright'.
+
+Example:
+>
+        let g:tagbar_previewwin_pos = "aboveleft"
+<
+If you want to disable line numbers in the preview window put something like
+this into your vimrc:
+>
+        autocmd BufWinEnter * if &previewwindow | setlocal nonumber | endif
+<
+
                                                         *g:tagbar_autopreview*
 g:tagbar_autopreview~
 Default: 0

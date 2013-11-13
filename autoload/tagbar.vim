@@ -3010,7 +3010,7 @@ function! s:ShowInPreviewWin() abort
         return
     endif
 
-    execute 'topleft pedit +' . taginfo.fields.line . ' ' .
+    execute g:tagbar_previewwin_pos . ' pedit +' . taginfo.fields.line . ' ' .
           \ s:known_files.getCurrent(0).fpath
 endfunction
 
