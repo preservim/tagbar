@@ -780,6 +780,9 @@ You can ignore specific files by setting the |buffer-variable|
 >
     autocmd BufNewFile,BufReadPost foo.cpp let b:tagbar_ignore = 1
 <
+Note that autocommands are order-sensitive, so make sure that this autocommand
+gets defined before the ones that Tagbar defines so the variable will get
+found at the right time.
 
 ==============================================================================
 6. Extending Tagbar                                            *tagbar-extend*
