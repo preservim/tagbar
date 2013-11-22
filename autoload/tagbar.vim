@@ -58,6 +58,7 @@ let s:winrestcmd      = ''
 let s:short_help      = 1
 let s:nearby_disabled = 0
 let s:paused = 0
+let s:pedit_by_tagbar = 0
 
 let s:window_expanded   = 0
 let s:expand_bufnr = -1
@@ -69,7 +70,6 @@ let s:window_pos = {
 " Script-local variable needed since compare functions can't
 " take extra arguments
 let s:compare_typeinfo = {}
-
 
 let s:visibility_symbols = {
     \ 'public'    : '+',
@@ -1842,6 +1842,11 @@ function! s:CloseWindow() abort
         return
     endif
 
+    " Close the preview window if it was opened by us
+    if s:pedit_by_tagbar
+        pclose
+    endif
+
     let tagbarbufnr = winbufnr(tagbarwinnr)
 
     if winnr() == tagbarwinnr
@@ -3014,6 +3019,9 @@ function! s:ShowInPreviewWin() abort
 
     execute g:tagbar_previewwin_pos . ' pedit +' . taginfo.fields.line . ' ' .
           \ s:known_files.getCurrent(0).fpath
+    " Remember that the preview window was opened by Tagbar so we can safely
+    " close it by ourselves
+    let s:pedit_by_tagbar = 1
 
     call s:goto_win('P')
     normal! zv
