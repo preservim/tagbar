@@ -547,6 +547,8 @@ function! s:InitTypes() abort
         \ 'function' : 'f'
     \ }
     let s:known_types.python = type_python
+    let s:known_types.pyrex  = type_python
+    let s:known_types.cython = type_python
     " REXX {{{3
     let type_rexx = s:TypeInfo.New()
     let type_rexx.ctagstype = 'rexx'
