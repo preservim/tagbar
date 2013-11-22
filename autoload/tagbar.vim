@@ -3014,6 +3014,10 @@ function! s:ShowInPreviewWin() abort
 
     execute g:tagbar_previewwin_pos . ' pedit +' . taginfo.fields.line . ' ' .
           \ s:known_files.getCurrent(0).fpath
+
+    call s:goto_win('P')
+    normal! zv
+    call s:goto_win('p')
 endfunction
 
 " s:ShowPrototype() {{{2
