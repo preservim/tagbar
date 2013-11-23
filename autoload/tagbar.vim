@@ -1890,6 +1890,12 @@ function! s:CloseWindow() abort
 
     call s:ShrinkIfExpanded()
 
+    " The window sizes may have changed due to the shrinking happening after
+    " the window closing, so equalize them again.
+    if &equalalways
+        wincmd =
+    endif
+
     if s:autocommands_done && !s:statusline_in_use
         autocmd! TagbarAutoCmds
         let s:autocommands_done = 0
