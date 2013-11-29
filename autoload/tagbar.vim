@@ -3000,9 +3000,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
     normal! z.
     call cursor(taginfo.fields.line, taginfo.fields.column)
 
-    if foldclosed('.') != -1
-        .foldopen
-    endif
+    normal! zv
 
     if a:stay_in_tagbar
         call s:HighlightTag(0)
