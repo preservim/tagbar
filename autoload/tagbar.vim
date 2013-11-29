@@ -3042,6 +3042,7 @@ function! s:ShowInPreviewWin() abort
 
     call s:goto_win('P', 1)
     normal! zv
+    normal! zz
     call s:goto_win('p', 1)
 endfunction
 
