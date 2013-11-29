@@ -58,7 +58,7 @@ let s:winrestcmd      = ''
 let s:short_help      = 1
 let s:nearby_disabled = 0
 let s:paused = 0
-let s:pedit_by_tagbar = 0
+let s:pwin_by_tagbar = 0
 
 let s:window_expanded   = 0
 let s:expand_bufnr = -1
@@ -1843,7 +1843,7 @@ function! s:CloseWindow() abort
     endif
 
     " Close the preview window if it was opened by us
-    if s:pedit_by_tagbar
+    if s:pwin_by_tagbar
         pclose
     endif
 
@@ -3023,15 +3023,28 @@ function! s:ShowInPreviewWin() abort
         return
     endif
 
-    execute g:tagbar_previewwin_pos . ' pedit +' . taginfo.fields.line . ' ' .
-          \ s:known_files.getCurrent(0).fpath
+    " Use psearch instead of pedit since pedit essentially reloads the file
+    " and creates an empty undo entry. psearch has to be called from the file
+    " window, and since we only want matches in the current file we disable
+    " the 'include' option. Also start searching at the correct line number to
+    " find the correct tag in case of tags with the same name and to speed up
+    " the searching. Unfortunately the /\%l pattern doesn't seem to work with
+    " psearch.
+    call s:GotoFileWindow(taginfo.fileinfo, 1)
+    let include_save = &include
+    set include=
+    silent! execute g:tagbar_previewwin_pos . ' ' .
+          \ taginfo.fields.line . ',$psearch! /' . taginfo.pattern . '/'
+    let &include = include_save
+    call s:goto_tagbar(1)
+
     " Remember that the preview window was opened by Tagbar so we can safely
     " close it by ourselves
-    let s:pedit_by_tagbar = 1
+    let s:pwin_by_tagbar = 1
 
-    call s:goto_win('P')
+    call s:goto_win('P', 1)
     normal! zv
-    call s:goto_win('p')
+    call s:goto_win('p', 1)
 endfunction
 
 " s:ShowPrototype() {{{2
@@ -3585,10 +3598,12 @@ endfunction
 " s:GotoFileWindow() {{{2
 " Try to switch to the window that has Tagbar's current file loaded in it, or
 " open the file in a window otherwise.
-function! s:GotoFileWindow(fileinfo) abort
+function! s:GotoFileWindow(fileinfo, ...) abort
+    let noauto = a:0 > 0 ? a:1 : 0
+
     let tagbarwinnr = bufwinnr('__Tagbar__')
 
-    call s:goto_win('p')
+    call s:goto_win('p', noauto)
 
     let filebufnr = bufnr(a:fileinfo.fpath)
     if bufnr('%') != filebufnr || &previewwindow
@@ -3617,8 +3632,8 @@ function! s:GotoFileWindow(fileinfo) abort
 
         " To make ctrl-w_p work we switch between the Tagbar window and the
         " correct window once
-        call s:goto_win(tagbarwinnr)
-        call s:goto_win('p')
+        call s:goto_win(tagbarwinnr, noauto)
+        call s:goto_win('p', noauto)
     endif
 
     return winnr()
@@ -3767,7 +3782,8 @@ endfunction
 
 " s:goto_win() {{{2
 function! s:goto_win(winnr, ...) abort
-    let cmd = a:winnr == 'p' ? 'wincmd p' : a:winnr . 'wincmd w'
+    let cmd = type(a:winnr) == type(0) ? a:winnr . 'wincmd w'
+                                     \ : 'wincmd ' . a:winnr
     let noauto = a:0 > 0 ? a:1 : 0
 
     call s:LogDebugMessage("goto_win(): " . cmd . ", " . noauto)
@@ -3777,6 +3793,12 @@ function! s:goto_win(winnr, ...) abort
     else
         execute cmd
     endif
+endfunction
+
+" s:goto_tagbar() {{{2
+function! s:goto_tagbar(...) abort
+    let noauto = a:0 > 0 ? a:1 : 0
+    call s:goto_win(bufwinnr('__Tagbar__'), noauto)
 endfunction
 
 " TagbarBalloonExpr() {{{2
