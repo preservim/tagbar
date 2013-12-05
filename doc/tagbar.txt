@@ -1383,11 +1383,16 @@ software.
 The folding technique was inspired by NERDTree by Martin Grenfell.
 
 Thanks to the following people for code contributions, feature suggestions etc:
+Peter Butkovic
+Zhao Cai
 Jan Christoph Ebersbach
 Vadim Fint
 Leandro Freitas
+Ingo Karkat
+Michael McClimon
 Seth Milliken
 Kien N
+Darcy Parker
 pielgrzym
 Taybin Rutkin
 Kian Ryan
