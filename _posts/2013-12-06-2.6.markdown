@@ -1,0 +1,16 @@
+---
+title: 2.6
+---
+
+- Added possibility to show tags in the preview window, either manually or
+  automatically.
+- Allow customizing the statusline, see :help g:tagbar_status_func.
+- Type configuration can now be project-specific.
+- The keybindings in the Tagbar window are now configurable.
+- Improvements to Ctags execution on Windows, thanks to Darcy Parker.
+- Added function tagbar#currentfile() that returns the path to the file
+  currently being displayed in Tagbar, thanks to Zhao Cai.
+- Added a :Tagbar command as an alias for :TagbarToggle.
+- Added an way to ignore specific files in case they create problems.
+- Optionally show line numbers in the Tagbar window.
+- The usual bunch of small improvements and bugfixes.
