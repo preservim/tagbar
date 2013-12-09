@@ -1497,7 +1497,7 @@ endfunction
 
 " s:KindheaderTag.toggleFold() {{{3
 function! s:KindheaderTag.toggleFold() abort dict
-    let fileinfo = s:known_files.getCurrent()
+    let fileinfo = s:known_files.getCurrent(0)
 
     let fileinfo.kindfolds[self.short] = !fileinfo.kindfolds[self.short]
 endfunction
