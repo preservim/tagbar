@@ -3007,8 +3007,13 @@ function! s:JumpToTag(stay_in_tagbar) abort
         call s:goto_win(tagbarwinnr)
         redraw
     elseif g:tagbar_autoclose || autoclose
+        " Also closes preview window
         call s:CloseWindow()
     else
+        " Close the preview window if it was opened by us
+        if s:pwin_by_tagbar
+            pclose
+        endif
         call s:HighlightTag(0)
     endif
 endfunction
