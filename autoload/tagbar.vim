@@ -2125,7 +2125,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--excmd=pattern',
                           \ '--fields=nksSa',
                           \ '--extra=',
-                          \ '--sort=yes'
+                          \ '--sort=no'
                           \ ]
 
         " Include extra type definitions
