@@ -3740,6 +3740,7 @@ function! s:QuitIfOnlyWindow() abort
     endif
 
     let curwinnr = winnr()
+    let prevwinnr = winnr('#')
     call s:goto_win(tagbarwinnr, 1)
 
     " Check if there is more than one window
@@ -3759,6 +3760,7 @@ function! s:QuitIfOnlyWindow() abort
         endif
     endif
 
+    call s:goto_win(prevwinnr, 1)
     call s:goto_win(curwinnr, 1)
 endfunction
 
