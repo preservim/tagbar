@@ -3,7 +3,7 @@
 Author:         Jan Larres <jan@majutsushi.net>
 Licence:        Vim licence, see |license|
 Homepage:       http://majutsushi.github.com/tagbar/
-Version:        2.6
+Version:        2.6.1
 
 ==============================================================================
 Contents                                            *tagbar* *tagbar-contents*
@@ -1230,6 +1230,13 @@ file.
 
 ==============================================================================
 8. History                                                    *tagbar-history*
+
+2.6.1 (2014-01-23)
+    - Automatically close the preview window when jumping to a tag
+    - Don't forget the previous window in certain situations, which was
+      causing problems with for example fugitive
+    - Fixed toggling kind-specific folds
+    - Fixed ctags error that can happen with Cygwin
 
 2.6 (2013-12-06)
     - Added possibility to show tags in the preview window, either manually or
