@@ -457,6 +457,7 @@ function! s:InitTypes() abort
         \ {'short' : 's', 'long' : 'structs',                 'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'interns',                 'fold' : 0, 'stl' : 1},
         \ {'short' : 'p', 'long' : 'private functions',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',               'fold' : 0, 'stl' : 1},
         \ {'short' : 'm', 'long' : 'macros',                  'fold' : 0, 'stl' : 1},
         \ {'short' : 'i', 'long' : 'inlines',                 'fold' : 0, 'stl' : 1},
         \ {'short' : 'a', 'long' : 'multimethod definitions', 'fold' : 0, 'stl' : 1},
