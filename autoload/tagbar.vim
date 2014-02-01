@@ -1875,17 +1875,11 @@ function! s:CloseWindow() abort
         " Go to the tagbar window, close it and then come back to the original
         " window. Save a win-local variable in the original window so we can
         " jump back to it even if the window number changed.
-        let w:tagbar_returnhere = 1
+        call s:mark_window()
         call s:goto_win(tagbarwinnr)
         close
 
-        for window in range(1, winnr('$'))
-            call s:goto_win(window)
-            if exists('w:tagbar_returnhere')
-                unlet w:tagbar_returnhere
-                break
-            endif
-        endfor
+        call s:goto_markedwin()
     endif
 
     call s:ShrinkIfExpanded()
@@ -3026,6 +3020,9 @@ function! s:ShowInPreviewWin() abort
         return
     endif
 
+    call s:GotoFileWindow(taginfo.fileinfo, 1)
+    call s:mark_window()
+
     " Check whether the preview window is already open and open it if not.
     " This has to be done before the :psearch below so the window is relative
     " to the Tagbar window.
@@ -3052,17 +3049,16 @@ function! s:ShowInPreviewWin() abort
     " find the correct tag in case of tags with the same name and to speed up
     " the searching. Unfortunately the /\%l pattern doesn't seem to work with
     " psearch.
-    call s:GotoFileWindow(taginfo.fileinfo, 1)
     let include_save = &include
     set include=
     silent! execute taginfo.fields.line . ',$psearch! /' . taginfo.pattern . '/'
     let &include = include_save
-    call s:goto_tagbar(1)
 
     call s:goto_win('P', 1)
     normal! zv
     normal! zz
-    call s:goto_win('p', 1)
+    call s:goto_markedwin()
+    call s:goto_tagbar(1)
 endfunction
 
 " s:ShowPrototype() {{{2
@@ -3832,6 +3828,25 @@ endfunction
 function! s:goto_tagbar(...) abort
     let noauto = a:0 > 0 ? a:1 : 0
     call s:goto_win(bufwinnr('__Tagbar__'), noauto)
+endfunction
+
+" s:mark_window() {{{2
+" Mark window with a window-local variable so we can jump back to it even if
+" the window numbers have changed.
+function! s:mark_window() abort
+    let w:tagbar_mark = 1
+endfunction
+
+" s:goto_markedwin() {{{2
+" Go to a previously marked window and delete the mark.
+function! s:goto_markedwin() abort
+    for window in range(1, winnr('$'))
+        call s:goto_win(window)
+        if exists('w:tagbar_mark')
+            unlet w:tagbar_mark
+            break
+        endif
+    endfor
 endfunction
 
 " TagbarBalloonExpr() {{{2
