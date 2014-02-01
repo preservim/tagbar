@@ -3613,48 +3613,61 @@ function! s:GetTagInfo(linenr, ignorepseudo) abort
     return taginfo
 endfunction
 
-" s:GotoFileWindow() {{{2
-" Try to switch to the window that has Tagbar's current file loaded in it, or
-" open the file in a window otherwise.
-function! s:GotoFileWindow(fileinfo, ...) abort
-    let noauto = a:0 > 0 ? a:1 : 0
+" s:GetFileWinnr() {{{2
+" Get the number of the window that has Tagbar's current file loaded into it,
+" or 0 if no window has loaded it. It tries the previous window first, if that
+" does not have the correct buffer loaded it will look for the first one with
+" the correct buffer in it.
+function! s:GetFileWinnr(fileinfo) abort
+    let filewinnr = 0
+    let prevwinnr = winnr("#")
 
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-
-    call s:goto_win('p', noauto)
-
-    let filebufnr = bufnr(a:fileinfo.fpath)
-    if bufnr('%') != filebufnr || &previewwindow
+    if winbufnr(prevwinnr) == a:fileinfo.bufnr &&
+     \ !getwinvar(prevwinnr, '&previewwindow')
+        let filewinnr = prevwinnr
+    else
         " Search for the first real window that has the correct buffer loaded
         " in it. Similar to bufwinnr() but skips the previewwindow.
-        let found = 0
         for i in range(1, winnr('$'))
             call s:goto_win(i, 1)
-            if bufnr('%') == filebufnr && !&previewwindow
-                let found = 1
+            if bufnr('%') == a:fileinfo.bufnr && !&previewwindow
+                let filewinnr = winnr()
                 break
             endif
         endfor
 
-        " If there is no window with the correct buffer loaded then load it
-        " into the first window that has a non-special buffer in it.
-        if !found
-            for i in range(1, winnr('$'))
-                call s:goto_win(i, 1)
-                if &buftype == '' && !&previewwindow
-                    execute 'buffer ' . filebufnr
-                    break
-                endif
-            endfor
-        endif
-
-        " To make ctrl-w_p work we switch between the Tagbar window and the
-        " correct window once
-        call s:goto_win(tagbarwinnr, noauto)
-        call s:goto_win('p', noauto)
+        call s:goto_tagbar(1)
     endif
 
-    return winnr()
+    return filewinnr
+endfunction
+
+" s:GotoFileWindow() {{{2
+" Try to switch to the window that has Tagbar's current file loaded in it, or
+" open the file in an existing window otherwise.
+function! s:GotoFileWindow(fileinfo, ...) abort
+    let noauto = a:0 > 0 ? a:1 : 0
+
+    let filewinnr = s:GetFileWinnr(a:fileinfo)
+
+    " If there is no window with the correct buffer loaded then load it
+    " into the first window that has a non-special buffer in it.
+    if filewinnr == 0
+        for i in range(1, winnr('$'))
+            call s:goto_win(i, 1)
+            if &buftype == '' && !&previewwindow
+                execute 'buffer ' . a:fileinfo.bufnr
+                break
+            endif
+        endfor
+    else
+        call s:goto_win(filewinnr, 1)
+    endif
+
+    " To make ctrl-w_p work we switch between the Tagbar window and the
+    " correct window once
+    call s:goto_tagbar(noauto)
+    call s:goto_win('p', noauto)
 endfunction
 
 " s:IsValidFile() {{{2
