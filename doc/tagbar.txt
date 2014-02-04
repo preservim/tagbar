@@ -398,6 +398,22 @@ Example:
         let g:tagbar_width = 30
 <
 
+                                                          *g:tagbar_zoomwidth*
+g:tagbar_zoomwidth~
+Default: 1
+
+Width of the Tagbar window when zoomed.
+
+Possible values are:
+  1: Use the maximum width available.
+  0: Use the width of the longest currently visible tag.
+  >1: Use this width in characters.
+
+Example:
+>
+        let g:tagbar_zoomwidth = 0
+<
+
                                                           *g:tagbar_autoclose*
 g:tagbar_autoclose~
 Default: 0

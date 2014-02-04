@@ -65,6 +65,7 @@ let s:options = [
     \ ['sort', 1],
     \ ['systemenc', &encoding],
     \ ['width', 40],
+    \ ['zoomwidth', 1],
 \ ]
 
 for [opt, val] in s:options

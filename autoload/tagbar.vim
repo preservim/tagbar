@@ -1929,12 +1929,21 @@ endfunction
 " s:ZoomWindow() {{{2
 function! s:ZoomWindow() abort
     if s:is_maximized
-        execute 'vert resize ' . g:tagbar_width
+        execute 'vertical resize ' . g:tagbar_width
         execute s:winrestcmd
         let s:is_maximized = 0
     else
         let s:winrestcmd = winrestcmd()
-        vert resize
+        if g:tagbar_zoomwidth == 1
+            vertical resize
+        elseif g:tagbar_zoomwidth == 0
+            let func = exists('*strdisplaywidth') ? 'strdisplaywidth' : 'strlen'
+            let maxline = max(map(getline(line('w0'), line('w$')),
+                                \ func . '(v:val)'))
+            execute 'vertical resize ' . maxline
+        elseif g:tagbar_zoomwidth > 1
+            execute 'vertical resize ' . g:tagbar_zoomwidth
+        endif
         let s:is_maximized = 1
     endif
 endfunction
