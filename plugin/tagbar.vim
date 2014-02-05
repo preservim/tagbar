@@ -56,6 +56,7 @@ let s:options = [
     \ ['compact', 0],
     \ ['expand', 0],
     \ ['foldlevel', 99],
+    \ ['hide_nonpublic', 0],
     \ ['indent', 2],
     \ ['left', 0],
     \ ['previewwin_pos', 'topleft'],
@@ -83,12 +84,13 @@ if !exists('g:tagbar_iconchars')
 endif
 
 let s:keymaps = [
-    \ ['jump',       '<CR>'],
-    \ ['preview',    'p'],
-    \ ['previewwin', 'P'],
-    \ ['nexttag',    '<C-N>'],
-    \ ['prevtag',    '<C-P>'],
-    \ ['showproto',  '<Space>'],
+    \ ['jump',          '<CR>'],
+    \ ['preview',       'p'],
+    \ ['previewwin',    'P'],
+    \ ['nexttag',       '<C-N>'],
+    \ ['prevtag',       '<C-P>'],
+    \ ['showproto',     '<Space>'],
+    \ ['hidenonpublic', 'h'],
     \
     \ ['openfold',      ['+', '<kPlus>', 'zo']],
     \ ['closefold',     ['-', '<kMinus>', 'zc']],
