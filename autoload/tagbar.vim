@@ -2658,7 +2658,7 @@ endfunction
 function! s:PrintKinds(typeinfo, fileinfo) abort
     call s:LogDebugMessage('PrintKinds called')
 
-    let first_tag = 1
+    let is_first_tag = 1
 
     for kind in a:typeinfo.kinds
         let curtags = filter(copy(a:fileinfo.tags),
@@ -2674,53 +2674,13 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
          \ has_key(a:typeinfo.kind2scope, kind.short)
             " Scoped tags
             for tag in curtags
-                if g:tagbar_compact && first_tag && s:short_help
-                    silent 0put =tag.strfmt()
-                else
-                    silent  put =tag.strfmt()
-                endif
-
-                " Save the current tagbar line in the tag for easy
-                " highlighting access
-                let curline                   = line('.')
-                let tag.tline                 = curline
-                let a:fileinfo.tline[curline] = tag
-
-                " Print children
-                if tag.isFoldable() && !tag.isFolded()
-                    for ckind in a:typeinfo.kinds
-                        let childtags = filter(copy(tag.children),
-                                          \ 'v:val.fields.kind ==# ckind.short')
-                        if len(childtags) > 0
-                            " Print 'kind' header of following children, but
-                            " only if they are not scope-defining tags (since
-                            " those already have an identifier)
-                            if !has_key(a:typeinfo.kind2scope, ckind.short)
-                                let indent  = g:tagbar_indent
-                                let indent += g:tagbar_show_visibility
-                                let indent += 1 " fold symbol
-                                silent put =repeat(' ', indent) .
-                                                 \ '[' . ckind.long . ']'
-                                " Add basic tag to allow folding when on the
-                                " header line
-                                let headertag = s:BaseTag.New(ckind.long)
-                                let headertag.parent = tag
-                                let headertag.fileinfo = tag.fileinfo
-                                let a:fileinfo.tline[line('.')] = headertag
-                            endif
-                            for childtag in childtags
-                                call s:PrintTag(childtag, 1,
-                                              \ a:fileinfo, a:typeinfo)
-                            endfor
-                        endif
-                    endfor
-                endif
+                call s:PrintTag(tag, 0, is_first_tag, a:fileinfo, a:typeinfo)
 
                 if !g:tagbar_compact
                     silent put _
                 endif
 
-                let first_tag = 0
+                let is_first_tag = 0
             endfor
         else
             " Non-scoped tags
@@ -2733,7 +2693,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             endif
 
             let padding = g:tagbar_show_visibility ? ' ' : ''
-            if g:tagbar_compact && first_tag && s:short_help
+            if g:tagbar_compact && is_first_tag && s:short_help
                 silent 0put =foldmarker . padding . kind.long
             else
                 silent  put =foldmarker . padding . kind.long
@@ -2761,15 +2721,19 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
                 silent put _
             endif
 
-            let first_tag = 0
+            let is_first_tag = 0
         endif
     endfor
 endfunction
 
 " s:PrintTag() {{{2
-function! s:PrintTag(tag, depth, fileinfo, typeinfo) abort
+function! s:PrintTag(tag, depth, is_first, fileinfo, typeinfo) abort
     " Print tag indented according to depth
-    silent put =repeat(' ', a:depth * g:tagbar_indent) . a:tag.strfmt()
+    if a:is_first && g:tagbar_compact && s:short_help
+        silent 0put =repeat(' ', a:depth * g:tagbar_indent) . a:tag.strfmt()
+    else
+        silent  put =repeat(' ', a:depth * g:tagbar_indent) . a:tag.strfmt()
+    endif
 
     " Save the current tagbar line in the tag for easy
     " highlighting access
@@ -2798,7 +2762,7 @@ function! s:PrintTag(tag, depth, fileinfo, typeinfo) abort
                     let a:fileinfo.tline[line('.')] = headertag
                 endif
                 for childtag in childtags
-                    call s:PrintTag(childtag, a:depth + 1,
+                    call s:PrintTag(childtag, a:depth + 1, 0,
                                   \ a:fileinfo, a:typeinfo)
                 endfor
             endif
