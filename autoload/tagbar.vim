@@ -2797,6 +2797,7 @@ function! s:PrintHelp() abort
         silent  put ='\" ' . s:get_map_str('nexttag') . ': Go to next top-level tag'
         silent  put ='\" ' . s:get_map_str('prevtag') . ': Go to previous top-level tag'
         silent  put ='\" ' . s:get_map_str('showproto') . ': Display tag prototype'
+        silent  put ='\" ' . s:get_map_str('hidenonpublic') . ': Hide non-public tags'
         silent  put ='\"'
         silent  put ='\" ---------- Folds ----------'
         silent  put ='\" ' . s:get_map_str('openfold') . ': Open fold'
@@ -3654,6 +3655,7 @@ endfunction
 function! s:ToggleHideNonPublicTags() abort
     let g:tagbar_hide_nonpublic = !g:tagbar_hide_nonpublic
     call s:RenderKeepView()
+    call s:SetStatusLine('current')
 endfunction
 
 " s:IsValidFile() {{{2
@@ -3722,7 +3724,8 @@ function! s:SetStatusLine(current)
         let &l:statusline = call(g:tagbar_status_func, args)
     else
         let colour = current ? '%#StatusLine#' : '%#StatusLineNC#'
-        let text = colour . '[' . sort . '] ' . fname
+        let hide = g:tagbar_hide_nonpublic ? '[h] ' : ''
+        let text = colour . '[' . sort . '] ' . hide . fname
         let &l:statusline = text
     endif
 

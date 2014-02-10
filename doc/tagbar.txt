@@ -331,6 +331,9 @@ P             Open the tag in a |preview-window|.
 <Space>       Display the prototype of the current tag (i.e. the line defining
               it) in the command line.
                 Map option: tagbar_map_showproto
+h             Hide tags that are declared non-public. Tags without any
+              visibility information will still be shown.
+                Map option: tagbar_map_hidenonpublic
 +/zo          Open the fold under the cursor.
                 Map option: tagbar_map_openfold
 -/zc          Close the fold under the cursor or the current one if there is
@@ -504,6 +507,19 @@ Possible values are:
 Example:
 >
         let g:tagbar_show_linenumbers = 2
+<
+
+                                                     *g:tagbar_hide_nonpublic*
+g:tagbar_hide_nonpublic~
+Default: 0
+
+Hide tags that are declared non-public. Tags without any visibility
+information will still be shown. This can also be toggled with a key, see
+|tagbar-keys|.
+
+Example:
+>
+        let g:tagbar_hide_nonpublic = 1
 <
 
                                                              *g:tagbar_expand*
