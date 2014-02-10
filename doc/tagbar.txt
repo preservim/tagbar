@@ -331,7 +331,7 @@ P             Open the tag in a |preview-window|.
 <Space>       Display the prototype of the current tag (i.e. the line defining
               it) in the command line.
                 Map option: tagbar_map_showproto
-h             Hide tags that are declared non-public. Tags without any
+v             Hide tags that are declared non-public. Tags without any
               visibility information will still be shown.
                 Map option: tagbar_map_hidenonpublic
 +/zo          Open the fold under the cursor.
