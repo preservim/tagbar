@@ -311,7 +311,7 @@ KEY MAPPINGS                                                     *tagbar-keys*
 
 The following mappings are valid in the Tagbar window:
 
-<F1>          Display key mapping help.
+<F1>/?        Display key mapping help.
                 Map option: tagbar_map_help
 <CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags
               or generic headers.
