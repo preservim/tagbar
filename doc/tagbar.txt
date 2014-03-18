@@ -1205,11 +1205,22 @@ If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
 value here instead of simply "ctags".
 
 If Tagbar doesn't seem to work at all, but you don't get any error messages,
-you can use Tagbar's debug mode to try to find the source of the problem (see
-|tagbar-commands| on how to invoke it). In that case you should especially pay
-attention to the reported file type and the ctags command line in the log
-file.
+you can use Tagbar's debug mode to try to find the source of the problem. Use
+it like this:
 
+  1. Open Vim without loading any files.
+  2. Call :TagbarDebug.
+  3. Open the file you are having problems with.
+  4. Open Tagbar.
+  5. Exit Vim.
+
+This should leave a file called "tagbardebug.log" in the current directory.
+See |tagbar-commands| for more information on the debug commands. When you
+look at the file you should especially pay attention to the reported file type
+and the ctags command line in the log file.
+
+
+Known issues~
 
   - jsctags has to be newer than 2011-01-06 since it needs the "-f" option to
     work. Also, the output of jsctags seems to be a bit unreliable at the
