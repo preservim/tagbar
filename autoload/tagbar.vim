@@ -3891,10 +3891,20 @@ function! s:StopDebug() abort
 endfunction
 
 " s:LogDebugMessage() {{{2
+if has('reltime')
+    function! s:gettime() abort
+        let time = split(reltimestr(reltime()), '\.')
+        return strftime('%Y-%m-%d %H:%M:%S.', time[0]) . time[1]
+    endfunction
+else
+    function! s:gettime() abort
+        return strftime('%Y-%m-%d %H:%M:%S')
+    endfunction
+endif
 function! s:LogDebugMessage(msg) abort
     if s:debug
         execute 'redir >> ' . s:debug_file
-        silent echon strftime('%H:%M:%S') . ': ' . a:msg . "\n"
+        silent echon s:gettime() . ': ' . a:msg . "\n"
         redir END
     endif
 endfunction
