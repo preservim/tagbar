@@ -984,8 +984,7 @@ function! s:CreateAutocommands() abort
         " was changed by an external command; see commit 17d199f
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
-        autocmd BufDelete,BufWipeout * call
-                    \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
+        autocmd BufDelete,BufWipeout * call s:RemoveFileinfo(expand('<afile>'))
 
         autocmd QuickFixCmdPre  * let s:tagbar_qf_active = 1
         autocmd QuickFixCmdPost * if exists('s:tagbar_qf_active') |
@@ -3696,6 +3695,13 @@ function! s:IsValidFile(fname, ftype) abort
     endif
 
     return 1
+endfunction
+
+" s:RemoveFileinfo() {{{2
+function! s:RemoveFileinfo(file) abort
+    let file = fnamemodify(a:file, ':p')
+    call s:debug('Removing fileinfo for [' . file . ']')
+    call s:known_files.rm(file)
 endfunction
 
 " s:SetStatusLine() {{{2
