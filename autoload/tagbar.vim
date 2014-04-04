@@ -1996,6 +1996,8 @@ function! s:ProcessFile(fname, ftype) abort
         let fileinfo = s:FileInfo.New(a:fname, a:ftype, typeinfo)
     endif
 
+    call s:debug('typeinfo for file to process: ' . string(typeinfo))
+
     " Use a temporary files for ctags processing instead of the original one.
     " This allows using Tagbar for files accessed with netrw, and also doesn't
     " slow down Tagbar for files that sit on slow network drives.
