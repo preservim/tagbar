@@ -1204,14 +1204,14 @@ ctags manually execute the following command in a terminal:
 If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
 value here instead of simply "ctags".
 
-If Tagbar doesn't seem to work at all, but you don't get any error messages,
-you can use Tagbar's debug mode to try to find the source of the problem. Use
-it like this:
+If the bug does seem to be in Tagbar then you can use Tagbar's debug mode to
+try to find the source of the problem. Usually you would use it like this:
 
   1. Open Vim without loading any files.
-  2. Call :TagbarDebug.
+  2. Run :TagbarDebug.
   3. Open the file you are having problems with.
-  4. Open Tagbar.
+  4. Open Tagbar. If the problem is with the statusline functionality this
+     step may not be necessary.
   5. Exit Vim.
 
 This should leave a file called "tagbardebug.log" in the current directory.
