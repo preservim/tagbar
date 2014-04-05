@@ -957,6 +957,8 @@ function! s:MapKeys() abort
         endfor
         unlet def
     endfor
+
+    let b:tagbar_mapped_keys = 1
 endfunction
 
 " s:CreateAutocommands() {{{2
@@ -1820,7 +1822,7 @@ function! s:InitWindow(autoclose) abort
     let cpoptions_save = &cpoptions
     set cpoptions&vim
 
-    if !hasmapto('JumpToTag', 'n')
+    if !exists('b:tagbar_mapped_keys')
         call s:MapKeys()
     endif
 
