@@ -3796,12 +3796,7 @@ function! s:NextNormalWindow() abort
         let buf = winbufnr(i)
 
         " skip unlisted buffers
-        if buflisted(buf) == 0
-            continue
-        endif
-
-        " skip un-modifiable buffers
-        if getbufvar(buf, '&modifiable') != 1
+        if !buflisted(buf)
             continue
         endif
 
