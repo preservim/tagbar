@@ -251,7 +251,8 @@ COMMANDS                                                     *tagbar-commands*
     'j'   Jump to Tagbar window if already open
     'c'   Close Tagbar on tag selection (just as if |g:tagbar_autoclose| were
           set to 1, but doesn't imply 'f'), but only if the Tagbar window was
-          opened using this command.
+          opened using this command. If this is used the "c" flag will be
+          shown in the statusline of the Tagbar window.
 
     For example, the following command would always jump to the Tagbar window,
     opening it first if necessary, but keep it open after selecting a tag
@@ -348,6 +349,8 @@ o/za          Toggle the fold under the cursor or the current one if there is
                 Map option: tagbar_map_closeallfolds
 s             Toggle sort order between name and file order.
                 Map option: tagbar_map_togglesort
+c             Toggle the |g:tagbar_autoclose| option.
+                Map option: tagbar_map_toggleautoclose
 x             Toggle zooming the window.
                 Map option: tagbar_map_zoomwin
 q             Close the Tagbar window.
@@ -422,7 +425,9 @@ g:tagbar_autoclose~
 Default: 0
 
 If you set this option the Tagbar window will automatically close when you
-jump to a tag. This implies |g:tagbar_autofocus|.
+jump to a tag. This implies |g:tagbar_autofocus|. If enabled the "C" flag will
+be shown in the statusline of the Tagbar window. This can also be toggled with
+a key, see |tagbar-keys|.
 
 Example:
 >
@@ -514,7 +519,8 @@ g:tagbar_hide_nonpublic~
 Default: 0
 
 Hide tags that are declared non-public. Tags without any visibility
-information will still be shown. This can also be toggled with a key, see
+information will still be shown. If enabled the "v" flag will be shown in the
+statusline of the Tagbar window. This can also be toggled with a key, see
 |tagbar-keys|.
 
 Example:
@@ -656,11 +662,13 @@ Default: undefined
 This is the name of a function whose return value will be used to draw the
 statusline of the Tagbar window.
 
-The function has to take three arguments:
+The function has to take four arguments:
   1. current: Whether Tagbar is the current window; 0 or 1.
   2. sort: The sort order of the tags; 'Name' if they are sorted by name and
      'Order' if they are sorted by their order of appearance in the file.
   3. fname: The name of the file that the tags belong to.
+  4. flags: A list of characters that represent various state in the Tagbar
+     window.
 
 In order to avoid possible future additions to the arguments resulting in an
 error it is recommended to add an additional vararg to the signature (see
@@ -669,9 +677,13 @@ error it is recommended to add an additional vararg to the signature (see
 Here is an example that, when put into your vimrc, will emulate Tagbar's
 default statusline:
 >
-        function! TagbarStatusFunc(current, sort, fname, ...) abort
+        function! TagbarStatusFunc(current, sort, fname, flags, ...) abort
             let colour = a:current ? '%#StatusLine#' : '%#StatusLineNC#'
-            return colour . '[' . a:sort . '] ' . a:fname
+            let flagstr = join(flags, '')
+            if flagstr != ''
+                let flagstr = '[' . flagstr . '] '
+            endif
+            return colour . '[' . sort . '] ' . flagstr . fname
         endfunction
         let g:tagbar_status_func = 'TagbarStatusFunc'
 <

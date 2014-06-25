@@ -98,10 +98,11 @@ let s:keymaps = [
     \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
     \ ['closeallfolds', ['=', 'zM']],
     \
-    \ ['togglesort', 's'],
-    \ ['zoomwin',    'x'],
-    \ ['close',      'q'],
-    \ ['help',       ['<F1>', '?']],
+    \ ['togglesort',      's'],
+    \ ['toggleautoclose', 'c'],
+    \ ['zoomwin',         'x'],
+    \ ['close',           'q'],
+    \ ['help',            ['<F1>', '?']],
 \ ]
 
 for [map, key] in s:keymaps
