@@ -591,7 +591,7 @@ Default: 0
 If this variable is set to 1 and the current tag is inside of a closed fold
 then the folds will be opened as much as needed for the tag to be visible so
 it can be highlighted. If it is set to 0 then the folds will only be opened
-when opening the Tagbar window and the current tag is insided a closed fold,
+when opening the Tagbar window and the current tag is inside a closed fold,
 otherwise the folds won't be opened and the parent tag will be highlighted
 instead. If it is set to 2 then the folds will never be opened automatically.
 
