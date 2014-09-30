@@ -3,117 +3,75 @@ layout: default
 title: Tagbar, the Vim class outline viewer
 ---
 
-<a href="https://github.com/majutsushi/tagbar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-
+<a href="https://github.com/majutsushi/tagbar"><img alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" style="position: absolute; top: 0; right: 0; border: 0;"/></a>
 <div id="container">
-
-    <h1><a href="https://github.com/majutsushi/tagbar">Tagbar</a></h1>
-    <h2>The Vim class outline viewer</h2>
-
-    <div class="description">
-        Vim plugin that displays tags in a window, ordered by class etc.
-    </div>
-
-    <p>
-        Tagbar is a vim plugin for browsing the tags of source code files. It
-        provides a sidebar that displays the ctags-generated tags of the
-        current file, ordered by their scope. This means that for example
-        methods in C++ are displayed under the class they are defined in.
-    </p>
-
-    <h2>Dependencies</h2>
-    <p><a href="http://www.vim.org/">Vim 7.0</a><br/>
-    <a href="http://ctags.sourceforge.net/">Exuberant ctags 5.5</a></p>
-
-    <h2>Install</h2>
-    <p>
-        Extract the archive or clone the repository into a directory in your
-        'runtimepath' or use
-        <a href="http://www.vim.org/scripts/script.php?script_id=2332">pathogen</a>.
-        Don't forget to run <span class="pre">:helptags</span> so you can
-        access the documentation with <span class="pre">:help tagbar</span>.
-    </p>
-
-    <p>
-        Note: Vim versions &lt; 7.0.167 have a bug that prevents Tagbar from
-        working. If you are affected by this use this alternate Tagbar
-        download instead:
-        <a href="https://github.com/majutsushi/tagbar/zipball/70fix">zip</a>.
-        It is on par with version 2.2 but probably won't be updated after
-        that.
-    </p>
-
-    <p>
-        If the ctags executable is not installed in one of the directories in
-        your $PATH environment variable you have to set the
-        g:tagbar_ctags_bin variable, see the documentation for more info.
-    </p>
-
-    <h2>Quickstart</h2>
-    <p>
-        Put something like the following into your ~/.vimrc:
-
-{% highlight vim %}
-nmap <F8> :TagbarToggle<CR>
-{% endhighlight %}
-
-        Then the F8 key will toggle the Tagbar window. You can of course use
-        any shortcut you want. For more flexible ways to open and close the
-        window (and the rest of the functionality) see the documentation.
-    </p>
-
-    <h2>Support for additional filetypes</h2>
-
-    <p>
-        The
-        <a href="https://github.com/majutsushi/tagbar/wiki">wiki</a>
-        describes how to get better support for JavaScript with jsctags and
-        extensions for additional filetypes that are not supported by
-        Exuberant Ctags by default. If you create your own extension please
-        add it to the wiki!
-    </p>
-
-    <h2>Screenshots</h2>
-    <a href="tagbar1.png"><img src="tagbar1_t.png"/></a>
-    <a href="tagbar2.png"><img src="tagbar2_t.png"/></a>
-    <a href="tagbar3.png"><img src="tagbar3_t.png"/></a>
-
-    <h2>License</h2>
-    <p>Vim license</p>
-
-    <h2>Author</h2>
-    <p>Jan Larres &lt;<a href="mailto:jan@majutsushi.net">jan@majutsushi.net</a>&gt;</p>
-
-    <h2>Download</h2>
-    <h3>Latest stable release</h3>
+<div id="title">
+<h1><a href="https://github.com/majutsushi/tagbar">Tagbar</a></h1>
+<p>A class outline viewer for Vim</p>
+</div>
+<div id="markdown-output"><h2>What Tagbar is</h2><p>Tagbar is a Vim plugin that provides an easy way to browse the tags of the
+current file and get an overview of its structure. It does this by creating a
+sidebar that displays the ctags-generated tags of the current file, ordered by
+their scope. This means that for example methods in C++ are displayed under
+the class they are defined in.</p><h2>What Tagbar is not</h2><p>Tagbar is not a general-purpose tool for managing <code>tags</code> files. It only
+creates the tags it needs on-the-fly in-memory without creating any files.
+<code>tags</code> file management is provided by other plugins, like for example
+<a href="https://github.com/xolox/vim-easytags">easytags</a>.</p><h2>Dependencies</h2><p><a href="http://www.vim.org/">Vim 7.0</a> (But see note below)<br/>
+<a href="http://ctags.sourceforge.net/">Exuberant ctags 5.5</a></p><h2>Installation</h2><p>Extract the archive or clone the repository into a directory in your
+<code>'runtimepath'</code>, or use a plugin manager of your choice like
+<a href="https://github.com/tpope/vim-pathogen">pathogen</a>. Don't forget to run
+<code>:helptags</code> if your plugin manager doesn't do it for you so you can access the
+documentation with <code>:help tagbar</code>.</p><p>Note: Vim versions &lt; 7.0.167 have a bug that prevents Tagbar from working. If
+you are affected by this use this alternate Tagbar download instead:
+<a href="https://github.com/majutsushi/tagbar/zipball/70fix">zip</a>. It is on par with
+version 2.2 but probably won't be updated after that due to the amount of
+changes required.</p><p>If the ctags executable is not installed in one of the directories in your
+<code>$PATH</code> environment variable you have to set the <code>g:tagbar_ctags_bin</code>
+variable, see the documentation for more info.</p><h2>Quickstart</h2><p>Put something like the following into your ~/.vimrc:</p><pre><code class="vim">nmap &lt;F8&gt; :TagbarToggle&lt;CR&gt;
+</code></pre><p>If you do this the F8 key will toggle the Tagbar window. You can of course use
+any shortcut you want. For more flexible ways to open and close the window
+(and the rest of the functionality) see the documentation.</p><h2>Support for additional filetypes</h2><p>For filetypes that are not supported by Exuberant Ctags check out <a href="https://github.com/majutsushi/tagbar/wiki">the
+wiki</a> to see whether other projects
+offer support for them and how to use them. Please add any other
+projects/configurations that you find or create yourself so that others can
+benefit from them, too.</p><h2>Note: If the file structure display is wrong</h2><p>If you notice that there are some errors in the way your file's structure is
+displayed in Tagbar, please make sure that the bug is actually in Tagbar
+before you report an issue. Since Tagbar uses
+<a href="http://ctags.sourceforge.net/">exuberant-ctags</a> and compatible programs to do
+the actual file parsing, it is likely that the bug is actually in the program
+responsible for that filetype instead.</p><p>There is an example in <code>:h tagbar-issues</code> about how to run ctags manually so
+you can determine where the bug actually is. If the bug is actually in ctags,
+please report it on their website instead, as there is nothing I can do about
+it in Tagbar. Thank you!</p><p>You can also have a look at <a href="https://github.com/majutsushi/tagbar/issues?labels=ctags-bug&amp;page=1&amp;state=closed">ctags bugs that have previously been filed
+against Tagbar</a>.</p><h2>Screenshots</h2><p><img alt="screenshot1" src="https://i.imgur.com/HAX75UN.png"/>
+<img alt="screenshot2" src="https://i.imgur.com/2RYZz8z.png"/></p><h2>License</h2><p>Vim license, see LICENSE</p><h2>Maintainer</h2><p>Jan Larres &lt;<a href="mailto:jan@majutsushi.net">jan@majutsushi.net</a>&gt;</p></div>
+<h2>Download</h2>
+<h3>Latest stable release</h3>
 
     {% for post in site.posts limit:1 %}
 
     <span style="font-weight:bold">{{ post.title }}</span> ({{ post.date | date:"%Y-%m-%d" }})
     <a href="https://github.com/majutsushi/tagbar/zipball/v{{ post.title }}">zip</a>
-    <a href="https://github.com/majutsushi/tagbar/tarball/v{{ post.title }}">tar</a>
+<a href="https://github.com/majutsushi/tagbar/tarball/v{{ post.title }}">tar</a>
 
         {{ post.content }}
 
     {% endfor %}
 
     <a href="archive">Old releases</a>
-
-    <h3>Latest development version</h3>
-    <p>
+<h3>Latest development version</h3>
+<p>
         Download as:
         <a href="https://github.com/majutsushi/tagbar/zipball/master">zip</a>
-        <a href="https://github.com/majutsushi/tagbar/tarball/master">tar</a>
-    </p>
-    <p>
+<a href="https://github.com/majutsushi/tagbar/tarball/master">tar</a>
+</p>
+<p>
         You can also clone the project with <a href="http://git-scm.com">Git</a>
         by running:
 
         <pre>$ git clone git://github.com/majutsushi/tagbar</pre>
-    </p>
-
-    <div class="footer">
+</p>
+<div class="footer">
         get the source code on GitHub : <a href="https://github.com/majutsushi/tagbar">majutsushi/tagbar</a>
-    </div>
-
+</div>
 </div>
