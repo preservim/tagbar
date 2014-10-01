@@ -77,8 +77,8 @@ against Tagbar](https://github.com/majutsushi/tagbar/issues?labels=ctags-bug&pag
 
 ## Screenshots
 
-![screenshot1](https://i.imgur.com/HAX75UN.png)
-![screenshot2](https://i.imgur.com/2RYZz8z.png)
+![screenshot1](https://i.imgur.com/Sf9Ls2r.png)
+![screenshot2](https://i.imgur.com/n4bpPv3.png)
 
 ## License
 
