@@ -2958,12 +2958,12 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...)
     endif
 
     if a:0 == 1
-        let fname = shellescape(a:1)
+        let fname = s:shellescape(a:1)
     else
         let fname = ''
     endif
 
-    let ctags_cmd = shellescape(a:ctags_bin) . ' ' . a:args . ' ' . fname
+    let ctags_cmd = s:shellescape(a:ctags_bin) . ' ' . a:args . ' ' . fname
 
     if exists('+shellslash')
         let &shellslash = shellslash_save
@@ -3086,6 +3086,17 @@ function! s:CheckMouseClick()
     endif
 endfunction
 
+" s:shellescape() {{{2
+function! s:shellescape(s) abort
+    " shellescape() was added by patch 7.0.111
+    if exists('*shellescape')
+        return shellescape(a:s)
+    elseif has('win32') || has('win64')
+        return '"' . a:s . '"'
+    else
+        return "'" . a:s . '"'
+    endif
+endfunction
 " TagbarBalloonExpr() {{{2
 function! TagbarBalloonExpr()
     let taginfo = s:GetTagInfo(v:beval_lnum, 1)
