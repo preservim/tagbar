@@ -3502,6 +3502,12 @@ endfunction
 function! s:ExecuteCtags(ctags_cmd) abort
     call s:debug('Executing ctags command: ' . a:ctags_cmd)
 
+    if has('unix')
+        " Reset shell in case it is set to something incompatible like fish
+        let shell_save = &shell
+        set shell=sh
+    endif
+
     if exists('+shellslash')
         let shellslash_save = &shellslash
         set noshellslash
@@ -3529,6 +3535,10 @@ function! s:ExecuteCtags(ctags_cmd) abort
 
     if exists('+shellslash')
         let &shellslash = shellslash_save
+    endif
+
+    if has('unix')
+        let &shell = shell_save
     endif
 
     return ctags_output
