@@ -196,11 +196,11 @@ and have it close automatically on tag selection regardless of the
 |g:tagbar_autoclose| setting.
 
 Pausing the Tagbar window~
-Use |:TagbarTogglePause| to toggle freezing the Tagbar window on its currently
-displayed file. Freezing the window stops the Tagbar contents from changing
-when switching to a different source file. All Tagbar functionality continues
-to work as expected. Unfreezing the window will cause it to load the current
-source file.
+Use |:TagbarTogglePause| to toggle freezing/locking the Tagbar window on its
+currently displayed file. Freezing the window stops the Tagbar contents from
+changing when switching to a different source file. All Tagbar functionality
+continues to work as expected. Unfreezing the window will cause it to load the
+current source file.
 
 Jumping to tags~
 When you're inside the Tagbar window you can jump to the definition of a tag
