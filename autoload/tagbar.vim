@@ -1394,6 +1394,11 @@ function! s:NormalTag.getPrototype(short) abort dict
     else
         let bufnr = self.fileinfo.bufnr
 
+        if self.fields.line == 0
+            " No linenumber available, try the pattern instead
+            return substitute(self.pattern, '^\\V\\^\\C\s*\(.*\)\\$$', '\1', '')
+        endif
+
         let line = getbufline(bufnr, self.fields.line)[0]
         let list = split(line, '\zs')
 
