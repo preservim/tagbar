@@ -1394,8 +1394,9 @@ function! s:NormalTag.getPrototype(short) abort dict
     else
         let bufnr = self.fileinfo.bufnr
 
-        if self.fields.line == 0
-            " No linenumber available, try the pattern instead
+        if self.fields.line == 0 || !bufloaded(bufnr)
+            " No linenumber available or buffer not loaded (probably due to
+            " 'nohidden'), try the pattern instead
             return substitute(self.pattern, '^\\V\\^\\C\s*\(.*\)\\$$', '\1', '')
         endif
 
