@@ -1854,9 +1854,8 @@ function! s:CloseWindow() abort
     " Close the preview window if it was opened by us
     if s:pwin_by_tagbar
         pclose
+        let tagbarwinnr = bufwinnr('__Tagbar__')
     endif
-
-    let tagbarbufnr = winbufnr(tagbarwinnr)
 
     if winnr() == tagbarwinnr
         if winbufnr(2) != -1
@@ -3018,7 +3017,8 @@ endfunction
 
 " s:ShowInPreviewWin() {{{2
 function! s:ShowInPreviewWin() abort
-    let taginfo = s:GetTagInfo(line('.'), 1)
+    let pos = getpos('.')
+    let taginfo = s:GetTagInfo(pos[1], 1)
 
     if empty(taginfo) || !taginfo.isNormalTag()
         return
@@ -3039,7 +3039,7 @@ function! s:ShowInPreviewWin() abort
     endfor
 
     if !pwin_open
-        silent! execute
+        silent execute
             \ g:tagbar_previewwin_pos . ' pedit ' . taginfo.fileinfo.fpath
         " Remember that the preview window was opened by Tagbar so we can
         " safely close it by ourselves
@@ -3061,8 +3061,9 @@ function! s:ShowInPreviewWin() abort
     call s:goto_win('P', 1)
     normal! zv
     normal! zz
-    call s:goto_markedwin()
+    call s:goto_markedwin(1)
     call s:goto_tagbar(1)
+    call cursor(pos[1], pos[2])
 endfunction
 
 " s:ShowPrototype() {{{2
@@ -3867,9 +3868,10 @@ endfunction
 
 " s:goto_markedwin() {{{2
 " Go to a previously marked window and delete the mark.
-function! s:goto_markedwin() abort
+function! s:goto_markedwin(...) abort
+    let noauto = a:0 > 0 ? a:1 : 0
     for window in range(1, winnr('$'))
-        call s:goto_win(window)
+        call s:goto_win(window, noauto)
         if exists('w:tagbar_mark')
             unlet w:tagbar_mark
             break
