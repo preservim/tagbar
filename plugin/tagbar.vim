@@ -4,7 +4,7 @@
 " Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
 " Website:     http://majutsushi.github.com/tagbar/
-" Version:     2.6
+" Version:     2.6.1
 " Note:        This plugin was heavily inspired by the 'Taglist' plugin by
 "              Yegappan Lakshmanan and uses a small amount of code from it.
 "
@@ -56,6 +56,7 @@ let s:options = [
     \ ['compact', 0],
     \ ['expand', 0],
     \ ['foldlevel', 99],
+    \ ['hide_nonpublic', 0],
     \ ['indent', 2],
     \ ['left', 0],
     \ ['previewwin_pos', 'topleft'],
@@ -65,6 +66,7 @@ let s:options = [
     \ ['sort', 1],
     \ ['systemenc', &encoding],
     \ ['width', 40],
+    \ ['zoomwidth', 1],
 \ ]
 
 for [opt, val] in s:options
@@ -82,12 +84,13 @@ if !exists('g:tagbar_iconchars')
 endif
 
 let s:keymaps = [
-    \ ['jump',       '<CR>'],
-    \ ['preview',    'p'],
-    \ ['previewwin', 'P'],
-    \ ['nexttag',    '<C-N>'],
-    \ ['prevtag',    '<C-P>'],
-    \ ['showproto',  '<Space>'],
+    \ ['jump',          '<CR>'],
+    \ ['preview',       'p'],
+    \ ['previewwin',    'P'],
+    \ ['nexttag',       '<C-N>'],
+    \ ['prevtag',       '<C-P>'],
+    \ ['showproto',     '<Space>'],
+    \ ['hidenonpublic', 'v'],
     \
     \ ['openfold',      ['+', '<kPlus>', 'zo']],
     \ ['closefold',     ['-', '<kMinus>', 'zc']],
@@ -95,10 +98,11 @@ let s:keymaps = [
     \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
     \ ['closeallfolds', ['=', 'zM']],
     \
-    \ ['togglesort', 's'],
-    \ ['zoomwin',    'x'],
-    \ ['close',      'q'],
-    \ ['help',       '<F1>'],
+    \ ['togglesort',      's'],
+    \ ['toggleautoclose', 'c'],
+    \ ['zoomwin',         'x'],
+    \ ['close',           'q'],
+    \ ['help',            ['<F1>', '?']],
 \ ]
 
 for [map, key] in s:keymaps
@@ -128,3 +132,4 @@ command! -nargs=0 TagbarTogglePause   call tagbar#toggle_pause()
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
+>>>>>>> upstream/master
