@@ -1114,13 +1114,7 @@ endfunction
 function! s:CheckExCtagsVersion(output) abort
     call s:LogDebugMessage('Checking Exuberant Ctags version')
 
-    if a:output =~ 'Exuberant Ctags Development'
-        call s:LogDebugMessage("Found development version, " .
-                             \ "assuming compatibility")
-        return 1
-    endif
-
-    if a:output =~ 'Fishman Ctags Development'
+    if a:output =~ 'Exuberant Ctags Development' || a:output =~ 'Fishman Ctags Development'
         call s:LogDebugMessage("Found development version, " .
                              \ "assuming compatibility")
         return 1
