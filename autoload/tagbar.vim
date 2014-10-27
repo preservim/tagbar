@@ -4140,5 +4140,10 @@ function! tagbar#gettypeconfig(type) abort
     silent put =output
 endfunction
 
+" tagbar#inspect() {{{2
+function! tagbar#inspect(var) abort
+    return get(s:, a:var)
+endfunction
+
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
