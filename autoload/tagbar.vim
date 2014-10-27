@@ -2156,15 +2156,18 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
             let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
         endif
 
-        let ctags_type = a:typeinfo.ctagstype
+        " Third-party programs may not necessarily make use of this
+        if has_key(a:typeinfo, 'ctagstype')
+            let ctags_type = a:typeinfo.ctagstype
 
-        let ctags_kinds = ''
-        for kind in a:typeinfo.kinds
-            let ctags_kinds .= kind.short
-        endfor
+            let ctags_kinds = ''
+            for kind in a:typeinfo.kinds
+                let ctags_kinds .= kind.short
+            endfor
 
-        let ctags_args += ['--language-force=' . ctags_type]
-        let ctags_args += ['--' . ctags_type . '-kinds=' . ctags_kinds]
+            let ctags_args += ['--language-force=' . ctags_type]
+            let ctags_args += ['--' . ctags_type . '-kinds=' . ctags_kinds]
+        endif
     endif
 
     if has_key(a:typeinfo, 'ctagsbin')
