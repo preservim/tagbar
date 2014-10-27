@@ -647,8 +647,8 @@ system is different from the one set in Vim, i.e. the 'encoding' option. For
 example, if you use a Simplified Chinese Windows version that has a system
 encoding of "cp936", and you have set 'encoding' to "utf-8", then you would
 have to set this variable to "cp936".
-Note that this requires Vim to be compiled with the |+multi_byte| and (unless
-your encoding is latin1) |+iconv| features to work.
+Note that this requires Vim to be compiled with the |+multi_byte| and |+iconv|
+features to work.
 
 Example:
 >
