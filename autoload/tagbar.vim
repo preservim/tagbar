@@ -413,10 +413,7 @@ function! s:InitTypes() abort
     \ }
     let s:known_types.java = type_java
     " JavaScript {{{3
-    " JavaScript is weird -- it does have scopes, but ctags doesn't seem to
-    " properly generate the information for them, instead it simply uses the
-    " complete name. So ctags has to be fixed before I can do anything here.
-    " Alternatively jsctags/doctorjs will be used if available.
+    " jsctags/doctorjs will be used if available.
     let type_javascript = s:TypeInfo.New()
     let type_javascript.ctagstype = 'javascript'
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
@@ -437,12 +434,23 @@ function! s:InitTypes() abort
         let type_javascript.ctagsargs  = '-f -'
     else
         let type_javascript.kinds = [
-            \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0, 'stl' : 0},
-            \ {'short' : 'c', 'long' : 'classes',          'fold' : 0, 'stl' : 1},
-            \ {'short' : 'p', 'long' : 'properties',       'fold' : 0, 'stl' : 0},
-            \ {'short' : 'm', 'long' : 'methods',          'fold' : 0, 'stl' : 1},
-            \ {'short' : 'f', 'long' : 'functions',        'fold' : 0, 'stl' : 1}
+            \ {'short': 'v', 'long': 'global variables', 'fold': 0, 'stl': 0},
+            \ {'short': 'c', 'long': 'classes',          'fold': 0, 'stl': 1},
+            \ {'short': 'p', 'long': 'properties',       'fold': 0, 'stl': 0},
+            \ {'short': 'm', 'long': 'methods',          'fold': 0, 'stl': 1},
+            \ {'short': 'f', 'long': 'functions',        'fold': 0, 'stl': 1},
         \ ]
+        let type_javascript.sro        = '.'
+        let type_javascript.kind2scope = {
+            \ 'c' : 'class',
+            \ 'f' : 'function',
+            \ 'm' : 'method',
+            \ 'p' : 'property',
+        \ }
+        let type_javascript.scope2kind = {
+            \ 'class'    : 'c',
+            \ 'function' : 'f',
+        \ }
     endif
     let s:known_types.javascript = type_javascript
     " Lisp {{{3
