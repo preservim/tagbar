@@ -2006,7 +2006,8 @@ function! s:ProcessFile(fname, ftype) abort
 
     " If the file has only been updated preserve the fold states, otherwise
     " create a new entry
-    if s:known_files.has(a:fname) && !empty(s:known_files.get(a:fname))
+    if s:known_files.has(a:fname) && !empty(s:known_files.get(a:fname)) &&
+     \ s:known_files.get(a:fname).ftype == a:ftype
         let fileinfo = s:known_files.get(a:fname)
         let typeinfo = fileinfo.typeinfo
         call fileinfo.reset()
@@ -3334,7 +3335,7 @@ function! s:AutoUpdate(fname, force) abort
     if s:known_files.has(a:fname)
         let curfile = s:known_files.get(a:fname)
         " if a:force || getbufvar(curfile.bufnr, '&modified') ||
-        if a:force || empty(curfile) ||
+        if a:force || empty(curfile) || curfile.ftype != sftype ||
          \ (filereadable(a:fname) && getftime(a:fname) > curfile.mtime)
             call s:debug('File data outdated, updating [' . a:fname . ']')
             call s:ProcessFile(a:fname, sftype)
