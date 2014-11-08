@@ -388,9 +388,27 @@ Default: 0
 By default the Tagbar window will be opened on the right-hand side of vim. Set
 this option to open it on the left instead.
 
+If |g:tagbar_vertical| is used then setting this variable will open the Tagbar
+window at the top, otherwise it will open at the bottom.
+
 Example:
 >
         let g:tagbar_left = 1
+<
+
+                                                           *g:tagbar_vertical*
+g:tagbar_vertical~
+Default: 0
+
+If this is set to a positive value then the Tagbar window will be opened at
+the top or bottom of the Vim window instead of at the side. This can be useful
+for monitors that have been rotated into a vertical position. The value of
+this variable will determine the number of lines to use for the Tagbar window.
+See |g:tagbar_left| for configuring the position of the window.
+
+Example:
+>
+        let g:tagbar_vertical = 30
 <
 
                                                               *g:tagbar_width*
@@ -604,7 +622,7 @@ Example:
 
                                                      *g:tagbar_previewwin_pos*
 g:tagbar_previewwin_pos~
-Default: topleft
+Default: "topleft", or "rightbelow vertical" if |g:tagbar_vertical| is set
 
 The position of the preview window. Valid values are the window splitting
 commands that are described starting from |:vertical|. Set it to an empty

@@ -48,6 +48,11 @@ function! s:init_var(var, value) abort
     endif
 endfunction
 
+if !exists('g:tagbar_vertical') || g:tagbar_vertical == 0
+    let s:previewwin_pos = 'topleft'
+else
+    let s:previewwin_pos = 'rightbelow vertical'
+endif
 let s:options = [
     \ ['autoclose', 0],
     \ ['autofocus', 0],
@@ -59,15 +64,17 @@ let s:options = [
     \ ['hide_nonpublic', 0],
     \ ['indent', 2],
     \ ['left', 0],
-    \ ['previewwin_pos', 'topleft'],
+    \ ['previewwin_pos', s:previewwin_pos],
     \ ['show_visibility', 1],
     \ ['show_linenumbers', 0],
     \ ['singleclick', 0],
     \ ['sort', 1],
     \ ['systemenc', &encoding],
+    \ ['vertical', 0],
     \ ['width', 40],
     \ ['zoomwidth', 1],
 \ ]
+unlet s:previewwin_pos
 
 for [opt, val] in s:options
     call s:init_var(opt, val)
