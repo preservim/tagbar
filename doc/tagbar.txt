@@ -108,14 +108,13 @@ The following features are supported by Tagbar:
 ------------------------------------------------------------------------------
 OTHER CTAGS-COMPATIBLE PROGRAMS                                 *tagbar-other*
 
-Tagbar theoretically also supports filetype-specific programs that can output
-tag information that is compatible with ctags. However due to potential
-incompatibilities this may not always completely work. Tagbar has been tested
-with doctorjs/jsctags and will use that if present, other programs require
-some configuration (see |tagbar-extend|). If a program does not work even with
-correct configuration please contact me.
+Tagbar also supports filetype-specific programs that can produce
+ctags-compatible output, as long as these programs can write to the standard
+output. Tagbar has been tested with doctorjs/jsctags and will use that if
+present, other programs require some configuration (see |tagbar-extend|). If a
+program does not work even with correct configuration please contact me.
 
-Note: Please check |tagbar-issues| for some possible issues with jsctags.
+Note: Please check |tagbar-issues| for some potential issues with jsctags.
 
 ==============================================================================
 2. Requirements                                          *tagbar-requirements*
