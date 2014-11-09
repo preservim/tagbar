@@ -347,6 +347,10 @@ o/za          Toggle the fold under the cursor or the current one if there is
                 Map option: tagbar_map_openallfolds
 =/zM          Close all folds by setting foldlevel to 0.
                 Map option: tagbar_map_closeallfolds
+zj            Go to the start of the next fold, like the standard Vim |zj|.
+                Map option: tagbar_map_nextfold
+zk            Go to the end of the previous fold, like the standard Vim |zk|.
+                Map option: tagbar_map_prevfold
 s             Toggle sort order between name and file order.
                 Map option: tagbar_map_togglesort
 c             Toggle the |g:tagbar_autoclose| option.

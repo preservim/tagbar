@@ -104,6 +104,8 @@ let s:keymaps = [
     \ ['togglefold',    ['o', 'za']],
     \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
     \ ['closeallfolds', ['=', 'zM']],
+    \ ['nextfold',      'zj'],
+    \ ['prevfold',      'zk'],
     \
     \ ['togglesort',      's'],
     \ ['toggleautoclose', 'c'],

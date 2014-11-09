@@ -955,6 +955,8 @@ function! s:MapKeys() abort
         \ ['togglefold',    'ToggleFold()'],
         \ ['openallfolds',  'SetFoldLevel(99, 1)'],
         \ ['closeallfolds', 'SetFoldLevel(0, 1)'],
+        \ ['nextfold',      'GotoNextFold()'],
+        \ ['prevfold',      'GotoPrevFold()'],
         \
         \ ['togglesort',      'ToggleSort()'],
         \ ['toggleautoclose', 'ToggleAutoclose()'],
@@ -2854,6 +2856,8 @@ function! s:PrintHelp() abort
         silent  put ='\" ' . s:get_map_str('togglefold') . ': Toggle fold'
         silent  put ='\" ' . s:get_map_str('openallfolds') . ': Open all folds'
         silent  put ='\" ' . s:get_map_str('closeallfolds') . ': Close all folds'
+        silent  put ='\" ' . s:get_map_str('nextfold') . ': Go to next fold'
+        silent  put ='\" ' . s:get_map_str('prevfold') . ': Go to previous fold'
         silent  put ='\"'
         silent  put ='\" ---------- Misc -----------'
         silent  put ='\" ' . s:get_map_str('togglesort') . ': Toggle sort'
@@ -3300,6 +3304,61 @@ function! s:OpenParents(...) abort
         call tag.openParents()
         call s:RenderKeepView()
     endif
+endfunction
+
+" s:GotoNextFold() {{{2
+function! s:GotoNextFold() abort
+    let curlinenr = line('.')
+    let newlinenr = line('.')
+
+    let range = range(line('.') + 1, line('$'))
+
+    for linenr in range
+        let taginfo = s:GetTagInfo(linenr, 0)
+
+        if empty(taginfo)
+            continue
+        elseif !empty(get(taginfo, 'children', [])) || taginfo.isKindheader()
+            let newlinenr = linenr
+            break
+        endif
+    endfor
+
+    if curlinenr != newlinenr
+        execute linenr
+        call winline()
+    endif
+
+    redraw
+endfunction
+
+" s:GotoPrevFold() {{{2
+function! s:GotoPrevFold() abort
+    let curlinenr = line('.')
+    let newlinenr = line('.')
+    let curtag = s:GetTagInfo(curlinenr, 0)
+    let curparent = get(curtag, 'parent', {})
+
+    let range = range(line('.') - 1, 1, -1)
+
+    for linenr in range
+        let taginfo = s:GetTagInfo(linenr, 0)
+
+        if empty(taginfo)
+            continue
+        elseif !empty(taginfo.parent) && taginfo.parent != curparent &&
+              \ empty(get(taginfo, 'children', []))
+            let newlinenr = linenr
+            break
+        endif
+    endfor
+
+    if curlinenr != newlinenr
+        execute linenr
+        call winline()
+    endif
+
+    redraw
 endfunction
 
 " Helper functions {{{1
