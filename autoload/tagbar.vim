@@ -3346,8 +3346,14 @@ function! s:GotoPrevFold() abort
 
         if empty(taginfo)
             continue
-        elseif !empty(taginfo.parent) && taginfo.parent != curparent &&
-              \ empty(get(taginfo, 'children', []))
+        " Check for the first tag that is either:
+        " - the last tag in an open fold, that is skip all tags that have the
+        "   same parent as the current one, or
+        " - a closed parent fold.
+        elseif (!empty(taginfo.parent) && taginfo.parent != curparent &&
+              \ empty(get(taginfo, 'children', []))) ||
+             \ ((!empty(get(taginfo, 'children', [])) || taginfo.isKindheader()) &&
+              \ taginfo.isFolded())
             let newlinenr = linenr
             break
         endif
