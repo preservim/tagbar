@@ -48,38 +48,39 @@ function! s:init_var(var, value) abort
     endif
 endfunction
 
-if !exists('g:tagbar_vertical') || g:tagbar_vertical == 0
-    let s:previewwin_pos = 'topleft'
-else
-    let s:previewwin_pos = 'rightbelow vertical'
-endif
-let s:options = [
-    \ ['autoclose', 0],
-    \ ['autofocus', 0],
-    \ ['autopreview', 0],
-    \ ['autoshowtag', 0],
-    \ ['compact', 0],
-    \ ['expand', 0],
-    \ ['foldlevel', 99],
-    \ ['hide_nonpublic', 0],
-    \ ['indent', 2],
-    \ ['left', 0],
-    \ ['previewwin_pos', s:previewwin_pos],
-    \ ['show_visibility', 1],
-    \ ['show_linenumbers', 0],
-    \ ['singleclick', 0],
-    \ ['sort', 1],
-    \ ['systemenc', &encoding],
-    \ ['vertical', 0],
-    \ ['width', 40],
-    \ ['zoomwidth', 1],
-\ ]
-unlet s:previewwin_pos
+function! s:setup_options() abort
+    if !exists('g:tagbar_vertical') || g:tagbar_vertical == 0
+        let previewwin_pos = 'topleft'
+    else
+        let previewwin_pos = 'rightbelow vertical'
+    endif
+    let options = [
+        \ ['autoclose', 0],
+        \ ['autofocus', 0],
+        \ ['autopreview', 0],
+        \ ['autoshowtag', 0],
+        \ ['compact', 0],
+        \ ['expand', 0],
+        \ ['foldlevel', 99],
+        \ ['hide_nonpublic', 0],
+        \ ['indent', 2],
+        \ ['left', 0],
+        \ ['previewwin_pos', previewwin_pos],
+        \ ['show_visibility', 1],
+        \ ['show_linenumbers', 0],
+        \ ['singleclick', 0],
+        \ ['sort', 1],
+        \ ['systemenc', &encoding],
+        \ ['vertical', 0],
+        \ ['width', 40],
+        \ ['zoomwidth', 1],
+    \ ]
 
-for [opt, val] in s:options
-    call s:init_var(opt, val)
-endfor
-unlet s:options
+    for [opt, val] in options
+        call s:init_var(opt, val)
+    endfor
+endfunction
+call s:setup_options()
 
 if !exists('g:tagbar_iconchars')
     if has('multi_byte') && has('unix') && &encoding == 'utf-8' &&
@@ -90,35 +91,37 @@ if !exists('g:tagbar_iconchars')
     endif
 endif
 
-let s:keymaps = [
-    \ ['jump',          '<CR>'],
-    \ ['preview',       'p'],
-    \ ['previewwin',    'P'],
-    \ ['nexttag',       '<C-N>'],
-    \ ['prevtag',       '<C-P>'],
-    \ ['showproto',     '<Space>'],
-    \ ['hidenonpublic', 'v'],
-    \
-    \ ['openfold',      ['+', '<kPlus>', 'zo']],
-    \ ['closefold',     ['-', '<kMinus>', 'zc']],
-    \ ['togglefold',    ['o', 'za']],
-    \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
-    \ ['closeallfolds', ['=', 'zM']],
-    \ ['nextfold',      'zj'],
-    \ ['prevfold',      'zk'],
-    \
-    \ ['togglesort',      's'],
-    \ ['toggleautoclose', 'c'],
-    \ ['zoomwin',         'x'],
-    \ ['close',           'q'],
-    \ ['help',            ['<F1>', '?']],
-\ ]
+function! s:setup_keymaps() abort
+    let keymaps = [
+        \ ['jump',          '<CR>'],
+        \ ['preview',       'p'],
+        \ ['previewwin',    'P'],
+        \ ['nexttag',       '<C-N>'],
+        \ ['prevtag',       '<C-P>'],
+        \ ['showproto',     '<Space>'],
+        \ ['hidenonpublic', 'v'],
+        \
+        \ ['openfold',      ['+', '<kPlus>', 'zo']],
+        \ ['closefold',     ['-', '<kMinus>', 'zc']],
+        \ ['togglefold',    ['o', 'za']],
+        \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
+        \ ['closeallfolds', ['=', 'zM']],
+        \ ['nextfold',      'zj'],
+        \ ['prevfold',      'zk'],
+        \
+        \ ['togglesort',      's'],
+        \ ['toggleautoclose', 'c'],
+        \ ['zoomwin',         'x'],
+        \ ['close',           'q'],
+        \ ['help',            ['<F1>', '?']],
+    \ ]
 
-for [map, key] in s:keymaps
-    call s:init_var('map_' . map, key)
-    unlet key
-endfor
-unlet s:keymaps
+    for [map, key] in keymaps
+        call s:init_var('map_' . map, key)
+        unlet key
+    endfor
+endfunction
+call s:setup_keymaps()
 
 augroup TagbarSession
     autocmd!
