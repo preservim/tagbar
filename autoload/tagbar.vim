@@ -1158,7 +1158,7 @@ function! s:CheckFTCtags(bin, ftype) abort
     endif
 
     if exists('g:tagbar_type_' . a:ftype)
-        execute 'let userdef = ' . 'g:tagbar_type_' . a:ftype
+        let userdef = g:tagbar_type_{a:ftype}
         if has_key(userdef, 'ctagsbin')
             return userdef.ctagsbin
         else
@@ -1291,7 +1291,6 @@ endfunction
 " s:BaseTag.getClosedParentTline() {{{3
 function! s:BaseTag.getClosedParentTline() abort dict
     let tagline  = self.tline
-    let fileinfo = self.fileinfo
 
     " Find the first closed parent, starting from the top of the hierarchy.
     let parents   = []
@@ -1374,7 +1373,6 @@ endfunction
 
 " s:NormalTag.strfmt() {{{3
 function! s:NormalTag.strfmt() abort dict
-    let fileinfo = self.fileinfo
     let typeinfo = self.typeinfo
 
     let suffix = get(self.fields, 'signature', '')
@@ -1477,7 +1475,6 @@ endfunction
 
 " s:PseudoTag.strfmt() {{{3
 function! s:PseudoTag.strfmt() abort dict
-    let fileinfo = self.fileinfo
     let typeinfo = self.typeinfo
 
     let suffix = get(self.fields, 'signature', '')
@@ -3292,8 +3289,6 @@ endfunction
 
 " s:OpenParents() {{{2
 function! s:OpenParents(...) abort
-    let tagline = 0
-
     if a:0 == 1
         let tag = a:1
     else
