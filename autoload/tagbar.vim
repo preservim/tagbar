@@ -1266,6 +1266,11 @@ function! s:BaseTag._getPrefix() abort dict
         endif
     endif
 
+    " File-restricted scoping
+    if has_key(self.fields, 'file')
+        let prefix .= '-'
+    end
+
     return prefix
 endfunction
 
@@ -2159,7 +2164,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '-',
                           \ '--format=2',
                           \ '--excmd=pattern',
-                          \ '--fields=nksSa',
+                          \ '--fields=nksSaf',
                           \ '--extra=',
                           \ '--sort=no',
                           \ '--append=no'
@@ -2260,6 +2265,10 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         let key = strpart(field, 0, delimit)
         " Remove all tabs that may illegally be in the value
         let val = substitute(strpart(field, delimit + 1), '\t', '', 'g')
+        " File-restricted scoping
+        if key == "file"
+            let taginfo.fields[key] = 'yes'
+        endif
         if len(val) > 0
             if key == 'line' || key == 'column'
                 let taginfo.fields[key] = str2nr(val)
