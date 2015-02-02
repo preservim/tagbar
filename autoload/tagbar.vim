@@ -1261,15 +1261,12 @@ function! s:BaseTag._getPrefix() abort dict
     if g:tagbar_show_visibility
         if has_key(self.fields, 'access')
             let prefix .= get(s:visibility_symbols, self.fields.access, ' ')
+        elseif has_key(self.fields, 'file')
+            let prefix .= s:visibility_symbols.private
         else
             let prefix .= ' '
         endif
     endif
-
-    " File-restricted scoping
-    if has_key(self.fields, 'file')
-        let prefix .= '-'
-    end
 
     return prefix
 endfunction
