@@ -2204,6 +2204,8 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
+        call s:debug('Command output:')
+        call s:debug(ctags_output)
         " Only display an error message if the Tagbar window is open and we
         " haven't seen the error before.
         if bufwinnr("__Tagbar__") != -1 &&
@@ -2212,8 +2214,6 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
             call s:warning('Tagbar: Could not execute ctags for ' . a:realfname . '!')
             echomsg 'Executed command: "' . ctags_cmd . '"'
             if !empty(ctags_output)
-                call s:debug('Command output:')
-                call s:debug(ctags_output)
                 echomsg 'Command output:'
                 for line in split(ctags_output, '\n')
                     echomsg line
