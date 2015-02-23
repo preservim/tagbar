@@ -3621,8 +3621,8 @@ endfunction
 function! s:ExecuteCtags(ctags_cmd) abort
     call s:debug('Executing ctags command: ' . a:ctags_cmd)
 
-    if has('unix')
-        " Reset shell in case it is set to something incompatible like fish
+    if &shell =~# 'fish$'
+        " Reset shell since fish isn't really compatible
         let shell_save = &shell
         set shell=sh
     endif
@@ -3656,7 +3656,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         let &shellslash = shellslash_save
     endif
 
-    if has('unix')
+    if exists('shell_save')
         let &shell = shell_save
     endif
 
