@@ -1202,10 +1202,11 @@ imporant tips to get it to integrate well with Tagbar:
     (stdout), it doesn't generate files and reads them in after that. So make
     sure that your program has an option to output the tags on stdout.
   - Some fields are supported for providing additional information about a
-    tag. One field is required: the "kind" field as a single letter without
-    a "kind:" fieldname. This field has to be the first one in the list. All
-    other fields need to have a fieldname in order to determine what they are.
-    The following fields are supported for all filetypes:
+    tag. One field is required: the "kind" field as a single letter, either
+    with or without a "kind:" fieldname. If it is used without the fieldname
+    then it has to be the first field in the list. All other fields need to
+    have a fieldname in order to determine what they are. The following fields
+    are supported for all filetypes:
 
         * line:      The line number of the tag.
         * column:    The column number of the tag.

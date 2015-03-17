@@ -2077,8 +2077,10 @@ function! s:ProcessFile(fname, ftype) abort
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
             let taginfo = s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
-            let fileinfo.fline[taginfo.fields.line] = taginfo
-            call add(fileinfo.tags, taginfo)
+            if !empty(taginfo)
+                let fileinfo.fline[taginfo.fields.line] = taginfo
+                call add(fileinfo.tags, taginfo)
+            endif
         endif
     endfor
 
@@ -2255,7 +2257,9 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     " When splitting fields make sure not to create empty keys or values in
     " case a value illegally contains tabs
     let fields = split(a:part2, '^\t\|\t\ze\w\+:')
-    let taginfo.fields.kind = remove(fields, 0)
+    if fields[0] !~# ':'
+        let taginfo.fields.kind = remove(fields, 0)
+    endif
     for field in fields
         " can't use split() since the value can contain ':'
         let delimit = stridx(field, ':')
@@ -2281,6 +2285,16 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     " Do some sanity checking in case ctags reports invalid line numbers
     if taginfo.fields.line < 0
         let taginfo.fields.line = 0
+    endif
+
+    if !has_key(taginfo.fields, 'kind')
+        call s:debug("Warning: No 'kind' field found for tag " . basic_info[0] . "!")
+        if index(s:warnings.type, a:typeinfo.ftype) == -1
+            call s:warning("No 'kind' field found for tag " . basic_info[0] . "!" .
+                         \ " Please read the last section of ':help tagbar-extend'.")
+            call add(s:warnings.type, a:typeinfo.ftype)
+        endif
+        return {}
     endif
 
     " Make some information easier accessible
@@ -2314,6 +2328,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
                 \ ' Please read '':help tagbar-extend''.')
             call add(s:warnings.type, a:typeinfo.ftype)
         endif
+        return {}
     endtry
 
     return taginfo
