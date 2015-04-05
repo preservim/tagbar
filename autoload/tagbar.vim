@@ -28,6 +28,11 @@ if exists(':Tagbar') == 0
     runtime plugin/tagbar.vim
 endif
 
+if exists(':Tagbar') == 0
+    echomsg 'Tagbar: Could not load plugin code, check your runtimepath!'
+    finish
+endif
+
 " Basic init {{{2
 
 redir => s:ftype_out
