@@ -1238,6 +1238,10 @@ ctags manually execute the following command in a terminal:
 If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
 value here instead of simply "ctags".
 
+If something more fundamental isn't working right then try running the
+|:messages| command to see if Tagbar printed any error messages that might
+have been missed.
+
 If the bug does seem to be in Tagbar then you can use Tagbar's debug mode to
 try to find the source of the problem. Usually you would use it like this:
 
