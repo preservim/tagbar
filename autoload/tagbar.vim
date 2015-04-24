@@ -3665,7 +3665,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         call s:debug(v:statusmsg)
         redraw!
     else
-        let ctags_output = system(a:ctags_cmd)
+        silent let ctags_output = system(a:ctags_cmd)
     endif
 
     if &shell =~ 'cmd\.exe'
