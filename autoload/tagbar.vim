@@ -1086,7 +1086,7 @@ function! s:CheckForExCtags(silent) abort
 
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
-    if v:shell_error || ctags_output !~# 'Exuberant Ctags'
+    if v:shell_error || ctags_output !~# 'Exuberant Ctags' && ctags_output !~# 'Universal Ctags'
         let errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
         let infomsg = 'GNU ctags will NOT WORK.' .
             \ ' Please download Exuberant Ctags from ctags.sourceforge.net' .
@@ -1143,7 +1143,7 @@ endfunction
 function! s:CheckExCtagsVersion(output) abort
     call s:debug('Checking Exuberant Ctags version')
 
-    if a:output =~ 'Exuberant Ctags Development'
+    if a:output =~ 'Exuberant Ctags Development' || a:output =~ 'Universal Ctags Development'
         call s:debug("Found development version, assuming compatibility")
         return 1
     endif
