@@ -132,7 +132,7 @@ The following requirements have to be met in order to be able to use tagbar:
 
     Tagbar will work on any platform that ctags runs on -- this includes
     UNIX derivatives, Mac OS X and Windows. Note that other versions like
-    GNU ctags will not work.
+    BSD ctags will not work.
     Tagbar generates the tag information by itself and doesn't need (or use)
     already existing tag files.
   - File type detection must be turned on in vim. This can be done with the
