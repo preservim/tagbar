@@ -530,7 +530,9 @@ function! s:InitTypes() abort
         \ {'short' : 'c', 'long' : 'constants',   'fold' : 0, 'stl' : 0},
         \ {'short' : 'f', 'long' : 'formats',     'fold' : 0, 'stl' : 0},
         \ {'short' : 'l', 'long' : 'labels',      'fold' : 0, 'stl' : 1},
-        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1}
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'types', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'attributes', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.perl = type_perl
     " PHP {{{3
