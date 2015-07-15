@@ -1780,13 +1780,16 @@ function! s:OpenWindow(flags) abort
 
     let s:window_opening = 1
     if g:tagbar_vertical == 0
-        let openpos = g:tagbar_left ? 'topleft vertical ' : 'botright vertical '
+        let mode = 'vertical '
+        let openpos = g:tagbar_left ? 'topleft ' : 'botright '
         let width = g:tagbar_width
     else
+        let mode = ''
         let openpos = g:tagbar_left ? 'leftabove ' : 'rightbelow '
         let width = g:tagbar_vertical
     endif
-    exe 'silent keepalt ' . openpos . width . 'split ' . '__Tagbar__'
+    exe 'silent keepalt ' . openpos . mode . width . 'split ' . '__Tagbar__'
+    exe 'silent ' . mode . 'resize ' . width
     unlet s:window_opening
 
     call s:InitWindow(autoclose)
