@@ -42,37 +42,7 @@ variable, see the documentation for more info.
 ####apt-vim
 Install [apt-vim](https://github.com/egalpin/apt-vim) and Tagbar will be automatically installed as an example. If you already have `apt-vim` but want to add Tagbar, copy and paste the following into your terminal:
 
-```json
-apt-vim install -jy
-{
-    "depends-on": [
-        {
-            "name": "ctags",
-            "recipe": {
-                "darwin": [
-                    "curl -LSso ctags-5.8.tar.gz 'http://sourceforge.net/projects/ctags/files/ctags/5.8/ctags-5.8.tar.gz/download?use_mirror=iweb'",
-                    "tar xzf ctags-5.8.tar.gz",
-                    "cd ctags-5.8",
-                    "sudo ./configure",
-                    "sudo make",
-                    "sudo make install"
-                ],
-                "linux": [
-                    "curl -LSso ctags-5.8.tar.gz 'http://sourceforge.net/projects/ctags/files/ctags/5.8/ctags-5.8.tar.gz/download?use_mirror=iweb'",
-                    "tar xzf ctags-5.8.tar.gz",
-                    "cd ctags-5.8",
-                    "sudo ./configure",
-                    "sudo make",
-                    "sudo make install"
-                ]
-            }
-        }
-    ],
-    "name": "tagbar",
-    "pkg-url": "https://github.com/majutsushi/tagbar.git",
-    "recipe": {}
-}
-```
+`apt-vim install -y https://github.com/majutsushi/tagbar.git`
 
 ## Quickstart
 
