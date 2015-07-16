@@ -537,8 +537,10 @@ function! s:InitTypes() abort
     let type_php = s:TypeInfo.New()
     let type_php.ctagstype = 'php'
     let type_php.kinds     = [
+        \ {'short' : 'n', 'long' : 'namespaces',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'traits',               'fold' : 0, 'stl' : 1},
         \ {'short' : 'd', 'long' : 'constant definitions', 'fold' : 0, 'stl' : 0},
         \ {'short' : 'f', 'long' : 'functions',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'variables',            'fold' : 0, 'stl' : 0},
