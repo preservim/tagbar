@@ -559,11 +559,12 @@ function! s:InitTypes() abort
     let type_python.kind2scope = {
         \ 'c' : 'class',
         \ 'f' : 'function',
-        \ 'm' : 'function'
+        \ 'm' : 'method'
     \ }
     let type_python.scope2kind = {
         \ 'class'    : 'c',
-        \ 'function' : 'f'
+        \ 'function' : 'f',
+        \ 'method'   : 'm'
     \ }
     let s:known_types.python = type_python
     let s:known_types.pyrex  = type_python
