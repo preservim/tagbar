@@ -93,6 +93,122 @@ let s:warnings = {
     \ 'encoding': 0
 \ }
 
+let s:singular_types = {
+            \ 'Classes': 'Class',
+            \ 'Delegates': 'Delegate',
+            \ 'Enumeration values': 'Enumeration value',
+            \ 'Enumerations': 'Enumeration',
+            \ 'Error codes': 'Error code',
+            \ 'Error domains': 'Error domain',
+            \ 'Fields': 'Field',
+            \ 'Interfaces': 'Interface',
+            \ 'JavaScript funtions': 'JavaScript function',
+            \ 'Methods': 'Method',
+            \ 'MobiLink Conn Scripts': 'MobiLink Conn Script',
+            \ 'MobiLink Properties': 'MobiLink Property',
+            \ 'MobiLink Table Scripts': 'MobiLink Table Script',
+            \ 'Properties': 'Property',
+            \ 'Signals': 'Signal',
+            \ 'Structures': 'Structure',
+            \ 'autocommand groups': 'autocommand group',
+            \ 'block data': 'block data',
+            \ 'block label': 'block label',
+            \ 'chapters': 'chapter',
+            \ 'classes': 'class',
+            \ 'commands': 'command',
+            \ 'common blocks': 'common block',
+            \ 'components': 'component',
+            \ 'constant definitions': 'constant definition',
+            \ 'constants': 'constant',
+            \ 'constructors': 'constructor',
+            \ 'cursors': 'cursor',
+            \ 'data items': 'data item',
+            \ 'defines': 'define',
+            \ 'derived types and structures': 'derived type and structure',
+            \ 'domains': 'domain',
+            \ 'entities': 'entity',
+            \ 'entry points': 'entry point',
+            \ 'enum constants': 'enum constant',
+            \ 'enum types': 'enum type',
+            \ 'enumerations': 'enumeration',
+            \ 'enumerators': 'enumerator',
+            \ 'enums': 'enum',
+            \ 'events': 'event',
+            \ 'exception declarations': 'exception declaration',
+            \ 'exceptions': 'exception',
+            \ 'features': 'feature',
+            \ 'fields': 'field',
+            \ 'file descriptions': 'file description',
+            \ 'formats': 'format',
+            \ 'fragments': 'fragment',
+            \ 'function definitions': 'function definition',
+            \ 'functions': 'function',
+            \ 'functor definitions': 'functor definition',
+            \ 'global variables': 'global variable',
+            \ 'group items': 'group item',
+            \ 'imports': 'import',
+            \ 'includes': 'include',
+            \ 'indexes': 'index',
+            \ 'interfaces': 'interface',
+            \ 'javascript functions': 'JavaScript function',
+            \ 'labels': 'label',
+            \ 'macro definitions': 'macro definition',
+            \ 'macros': 'macro',
+            \ 'maps': 'map',
+            \ 'members': 'member',
+            \ 'methods': 'method',
+            \ 'modules or functors': 'module or function',
+            \ 'modules': 'module',
+            \ 'mxtags': 'mxtag',
+            \ 'named anchors': 'named anchor',
+            \ 'namelists': 'namelist',
+            \ 'namespaces': 'namespace',
+            \ 'net data types': 'net data type',
+            \ 'packages': 'package',
+            \ 'paragraphs': 'paragraph',
+            \ 'parts': 'part',
+            \ 'patterns': 'pattern',
+            \ 'ports': 'port',
+            \ 'procedures': 'procedure',
+            \ 'program ids': 'program id',
+            \ 'programs': 'program',
+            \ 'projects': 'project',
+            \ 'properties': 'property',
+            \ 'prototypes': 'prototype',
+            \ 'publications': 'publication',
+            \ 'record definitions': 'record definition',
+            \ 'record fields': 'record field',
+            \ 'records': 'record',
+            \ 'register data types': 'register data type',
+            \ 'sections': 'section',
+            \ 'services': 'services',
+            \ 'sets': 'sets',
+            \ 'signature declarations': 'signature declaration',
+            \ 'singleton methods': 'singleton method',
+            \ 'slots': 'slot',
+            \ 'structs': 'struct',
+            \ 'structure declarations': 'structure declaration',
+            \ 'structure fields': 'structure field',
+            \ 'subparagraphs': 'subparagraph',
+            \ 'subroutines': 'subroutine',
+            \ 'subsections': 'subsection',
+            \ 'subsubsections': 'subsubsection',
+            \ 'subtypes': 'subtype',
+            \ 'synonyms': 'synonym',
+            \ 'tables': 'table',
+            \ 'targets': 'target',
+            \ 'tasks': 'task',
+            \ 'triggers': 'trigger',
+            \ 'type definitions': 'type definition',
+            \ 'type names': 'type name',
+            \ 'typedefs': 'typedef',
+            \ 'types': 'type',
+            \ 'unions': 'union',
+            \ 'value bindings': 'value binding',
+            \ 'variables': 'variable',
+            \ 'views': 'view',
+            \ 'vimball filenames': 'vimball filename'}
+
 " s:Init() {{{2
 function! s:Init(silent) abort
     if s:checked_ctags == 2 && a:silent
@@ -1414,9 +1530,14 @@ function! s:NormalTag.str(longsig, full, showkind) abort dict
             let str .= '()'
         endif
     elseif a:showkind
-        let str .= ' (' . 
-                    \ self.fileinfo.typeinfo.kind2scope[self.fields.kind] .
-                    \ ')'
+        let kind = tag.fields.kind
+        if kind == ''
+            return str
+        endif
+
+        let typeinfo = tag.fileinfo.typeinfo
+        let plural = typeinfo.kinds[typeinfo.kinddict[kind]].long
+        let str .= ' (' . s:singular_types[plural] . ')'
     endif
 
     return str
