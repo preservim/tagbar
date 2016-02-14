@@ -1400,7 +1400,7 @@ function! s:NormalTag.strfmt() abort dict
 endfunction
 
 " s:NormalTag.str() {{{3
-function! s:NormalTag.str(longsig, full) abort dict
+function! s:NormalTag.str(longsig, full, showkind) abort dict
     if a:full && self.path != ''
         let str = self.path . self.typeinfo.sro . self.name
     else
@@ -1413,6 +1413,10 @@ function! s:NormalTag.str(longsig, full) abort dict
         else
             let str .= '()'
         endif
+    elseif a:showkind
+        let str .= ' (' . 
+                    \ self.fileinfo.typeinfo.kind2scope[self.fields.kind] .
+                    \ ')'
     endif
 
     return str
@@ -4182,16 +4186,20 @@ function! tagbar#currenttag(fmt, default, ...) abort
     " Indicate that the statusline functionality is being used. This prevents
     " the CloseWindow() function from removing the autocommands.
     let s:statusline_in_use = 1
+    let longsig = 0
+    let fullpath = 0
+    let prototype = 0
+    let showkind = 0
 
     if a:0 > 0
         " also test for non-zero value for backwards compatibility
         let longsig   = a:1 =~# 's' || (type(a:1) == type(0) && a:1 != 0)
         let fullpath  = a:1 =~# 'f'
         let prototype = a:1 =~# 'p'
-    else
-        let longsig   = 0
-        let fullpath  = 0
-        let prototype = 0
+        if a:1 =~# 'k'
+            let showkind = 1
+            let fullpath = 1
+        endif
     endif
 
     if !s:Init(1)
@@ -4204,7 +4212,7 @@ function! tagbar#currenttag(fmt, default, ...) abort
         if prototype
             return tag.getPrototype(1)
         else
-            return printf(a:fmt, tag.str(longsig, fullpath))
+            return printf(a:fmt, tag.str(longsig, fullpath, showkind))
         endif
     else
         return a:default
