@@ -721,6 +721,18 @@ default statusline:
         let g:tagbar_status_func = 'TagbarStatusFunc'
 <
 
+                                                           *g:tagbar_silent*
+g:tagbar_silent~
+Default: 0
+
+By default if the cursor is over a tag in the tagbar window, information
+about the tag is echoed out. Set this option to disable that behavior.
+
+Example:
+>
+        let g:tagbar_silent = 1
+<
+
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
 

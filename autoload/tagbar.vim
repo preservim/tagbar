@@ -1033,7 +1033,10 @@ function! s:CreateAutocommands() abort
 
     augroup TagbarAutoCmds
         autocmd!
-        autocmd CursorHold __Tagbar__.* call s:ShowPrototype(1)
+
+        if !g:tagbar_silent
+            autocmd CursorHold __Tagbar__.* call s:ShowPrototype(1)
+        endif
         autocmd WinEnter   __Tagbar__.* call s:SetStatusLine()
         autocmd WinLeave   __Tagbar__.* call s:SetStatusLine()
 
