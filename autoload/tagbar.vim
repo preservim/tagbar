@@ -3941,8 +3941,15 @@ function! s:QuitIfOnlyWindow() abort
         endif
     endif
 
-    call s:goto_win(prevwinnr, 1)
-    call s:goto_win(curwinnr, 1)
+    " Check that prevwinnr is still a valid window number
+    if prevwinnr <= winnr('$')
+      call s:goto_win(prevwinnr, 1)
+    endif
+    
+    " Check that curwinnr is still a valid window number
+    if curwinnr <= winnr('$')
+      call s:goto_win(curwinnr, 1)
+    endif
 endfunction
 
 " s:NextNormalWindow() {{{2
