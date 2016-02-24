@@ -4030,10 +4030,15 @@ function! s:QuitIfOnlyWindow() abort
         endif
     endif
 
-    if prevwinnr != tagbarwinnr
+    " Check that prevwinnr is still a valid window number
+    if prevwinnr != tagbarwinnr && prevwinnr <= winnr('$')
         call s:goto_win(prevwinnr, 1)
     endif
-    call s:goto_win(curwinnr, 1)
+
+    " Check that curwinnr is still a valid window number
+    if curwinnr <= winnr('$')
+        call s:goto_win(curwinnr, 1)
+    endif
 endfunction
 
 " s:NextNormalWindow() {{{2
