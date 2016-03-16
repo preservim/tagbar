@@ -76,7 +76,7 @@ auto-generated name.
 
 Another case where pseudo-tags appear is in C++ implementation files. Since
 classes are usually defined in a header file but the member methods and
-variables in the implementation file the class itself won't generate a tag
+variables are in the implementation file the class itself won't generate a tag
 in that file.
 
 Since pseudo-tags don't really exist they cannot be jumped to from the Tagbar
