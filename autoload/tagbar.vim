@@ -964,11 +964,12 @@ function! s:MapKeys() abort
         \ ['nextfold',      'GotoNextFold()'],
         \ ['prevfold',      'GotoPrevFold()'],
         \
-        \ ['togglesort',      'ToggleSort()'],
-        \ ['toggleautoclose', 'ToggleAutoclose()'],
-        \ ['zoomwin',         'ZoomWindow()'],
-        \ ['close',           'CloseWindow()'],
-        \ ['help',            'ToggleHelp()'],
+        \ ['togglesort',            'ToggleSort()'],
+        \ ['togglecaseinsensitive', 'ToggleCaseInsensitive()'],
+        \ ['toggleautoclose',       'ToggleAutoclose()'],
+        \ ['zoomwin',               'ZoomWindow()'],
+        \ ['close',                 'CloseWindow()'],
+        \ ['help',                  'ToggleHelp()'],
     \ ]
 
     for [map, func] in maps
@@ -2579,7 +2580,8 @@ function! s:CompareByKind(tag1, tag2) abort
             let name2 = a:tag2.name
         endif
 
-        if name1 <=# name2
+        let ci = g:tagbar_case_insensitive
+        if (((!ci) && (name1 <=# name2)) || (ci && (name1 <=? name2)))
             return -1
         else
             return 1
@@ -2890,6 +2892,7 @@ function! s:PrintHelp() abort
         silent  put ='\"'
         silent  put ='\" ---------- Misc -----------'
         silent  put ='\" ' . s:get_map_str('togglesort') . ': Toggle sort'
+        silent  put ='\" ' . s:get_map_str('togglecaseinsensitive') . ': Toggle case insensitive sort option'
         silent  put ='\" ' . s:get_map_str('toggleautoclose') . ': Toggle autoclose option'
         silent  put ='\" ' . s:get_map_str('zoomwin') . ': Zoom window in/out'
         silent  put ='\" ' . s:get_map_str('close') . ': Close window'
@@ -3823,6 +3826,35 @@ function! s:ToggleHideNonPublicTags() abort
     call s:SetStatusLine('current')
 endfunction
 
+" s:ToggleCaseInsensitive() {{{2
+function! s:ToggleCaseInsensitive() abort
+    let fileinfo = s:known_files.getCurrent(0)
+    if empty(fileinfo)
+        return
+    endif
+
+    " Save the tag the cursor is currently on
+    let curline = line('.')
+    let taginfo = s:GetTagInfo(curline, 0)
+
+    match none
+
+    let g:tagbar_case_insensitive = !g:tagbar_case_insensitive
+
+    call fileinfo.sortTags()
+
+    call s:RenderKeepView()
+    call s:SetStatusLine('current')
+
+    " If we were on a tag before sorting then jump to it, otherwise restore
+    " the cursor to the current line
+    if !empty(taginfo)
+        execute taginfo.tline
+    else
+        execute curline
+    endif
+endfunction
+
 " s:ToggleAutoclose() {{{2
 function! s:ToggleAutoclose() abort
     let g:tagbar_autoclose = !g:tagbar_autoclose
@@ -3893,6 +3925,7 @@ function! s:SetStatusLine(current)
     let flags = []
     let flags += exists('w:autoclose') && w:autoclose ? ['c'] : []
     let flags += g:tagbar_autoclose ? ['C'] : []
+    let flags += (g:tagbar_sort && g:tagbar_case_insensitive) ? ['i'] : []
     let flags += g:tagbar_hide_nonpublic ? ['v'] : []
 
     if exists('g:tagbar_status_func')
