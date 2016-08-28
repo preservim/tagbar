@@ -4020,12 +4020,16 @@ function! s:QuitIfOnlyWindow() abort
         endif
 
         if tagbarwinnr == winnr()
-            " Before quitting Vim, delete the tagbar buffer so that
-            " the '0 mark is correctly set to the previous buffer.
-            " Also disable autocmd on this command to avoid unnecessary
-            " autocmd nesting.
-            noautocmd bdelete
-            quit
+            if tabpagenr('$') == 1
+                " Before quitting Vim, delete the tagbar buffer so that
+                " the '0 mark is correctly set to the previous buffer.
+                " Also disable autocmd on this command to avoid unnecessary
+                " autocmd nesting.
+                noautocmd bdelete
+                quit
+            else
+                close
+            endif
         endif
     endif
 endfunction
