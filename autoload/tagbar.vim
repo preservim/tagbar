@@ -4010,72 +4010,24 @@ endfunction
 
 " s:QuitIfOnlyWindow() {{{2
 function! s:QuitIfOnlyWindow() abort
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr == -1
-        return
-    endif
+    " If tagbar is the only window, then the window count in the
+    " tab will be 1 and the only window in the tab will be the
+    " window for the __Tagbar__ buffer
+    if winnr('$') == 1
+        let tagbarwinnr = bufwinnr('__Tagbar__')
+        if tagbarwinnr == -1
+            return
+        endif
 
-    let curwinnr = winnr()
-    let prevwinnr = winnr('#') == 0 ? curwinnr : winnr('#')
-    call s:goto_win(tagbarwinnr, 1)
-
-    " Check if there is more than one window
-    if s:NextNormalWindow() == -1
-        " Check if there is more than one tab page
-        if tabpagenr('$') == 1
+        if tagbarwinnr == winnr()
             " Before quitting Vim, delete the tagbar buffer so that
             " the '0 mark is correctly set to the previous buffer.
             " Also disable autocmd on this command to avoid unnecessary
             " autocmd nesting.
-            if winnr('$') == 1
-                noautocmd bdelete
-            endif
+            noautocmd bdelete
             quit
-        else
-            close
         endif
     endif
-
-    " Check that prevwinnr is still a valid window number
-    if prevwinnr != tagbarwinnr && prevwinnr <= winnr('$')
-        call s:goto_win(prevwinnr, 1)
-    endif
-
-    " Check that curwinnr is still a valid window number
-    if curwinnr <= winnr('$')
-        call s:goto_win(curwinnr, 1)
-    endif
-endfunction
-
-" s:NextNormalWindow() {{{2
-function! s:NextNormalWindow() abort
-    for i in range(1, winnr('$'))
-        let buf = winbufnr(i)
-
-        " skip unlisted buffers, except for netrw
-        if !buflisted(buf) && getbufvar(buf, '&filetype') != 'netrw'
-            continue
-        endif
-
-        " skip temporary buffers with buftype set
-        if getbufvar(buf, '&buftype') != ''
-            continue
-        endif
-
-        " skip the preview window
-        if getwinvar(i, '&previewwindow')
-            continue
-        endif
-
-        " skip current window
-        if i == winnr()
-            continue
-        endif
-
-        return i
-    endfor
-
-    return -1
 endfunction
 
 " s:goto_win() {{{2
