@@ -995,8 +995,8 @@ function! s:CreateAutocommands() abort
     augroup TagbarAutoCmds
         autocmd!
         autocmd CursorHold __Tagbar__ call s:ShowPrototype(1)
-        autocmd WinEnter   __Tagbar__ call s:SetStatusLine('current')
-        autocmd WinLeave   __Tagbar__ call s:SetStatusLine('noncurrent')
+        autocmd WinEnter   __Tagbar__ call s:SetStatusLine()
+        autocmd WinLeave   __Tagbar__ call s:SetStatusLine()
 
         if g:tagbar_autopreview
             autocmd CursorMoved __Tagbar__ nested call s:ShowInPreviewWin()
@@ -1011,8 +1011,11 @@ function! s:CreateAutocommands() abort
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
         " BufReadPost is needed for reloading the current buffer if the file
         " was changed by an external command; see commit 17d199f
-        autocmd BufReadPost,BufEnter,CursorHold,FileType * call
+        autocmd BufReadPost,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
+        autocmd BufEnter * call
+                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0) |
+                    \ call s:SetStatusLine()
         autocmd BufDelete,BufWipeout * call
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
 
@@ -1853,7 +1856,7 @@ function! s:InitWindow(autoclose) abort
 
     let w:autoclose = a:autoclose
 
-    call s:SetStatusLine('current')
+    call s:SetStatusLine()
 
     let s:new_window = 1
 
@@ -2616,7 +2619,7 @@ function! s:ToggleSort() abort
     call fileinfo.sortTags()
 
     call s:RenderContent()
-    call s:SetStatusLine('current')
+    call s:SetStatusLine()
 
     " If we were on a tag before sorting then jump to it, otherwise restore
     " the cursor to the current line
@@ -3820,13 +3823,13 @@ endfunction
 function! s:ToggleHideNonPublicTags() abort
     let g:tagbar_hide_nonpublic = !g:tagbar_hide_nonpublic
     call s:RenderKeepView()
-    call s:SetStatusLine('current')
+    call s:SetStatusLine()
 endfunction
 
 " s:ToggleAutoclose() {{{2
 function! s:ToggleAutoclose() abort
     let g:tagbar_autoclose = !g:tagbar_autoclose
-    call s:SetStatusLine('current')
+    call s:SetStatusLine()
 endfunction
 
 " s:IsValidFile() {{{2
@@ -3868,7 +3871,7 @@ function! s:IsValidFile(fname, ftype) abort
 endfunction
 
 " s:SetStatusLine() {{{2
-function! s:SetStatusLine(current)
+function! s:SetStatusLine()
     " Make sure we're actually in the Tagbar window
     let tagbarwinnr = bufwinnr('__Tagbar__')
     if tagbarwinnr == -1
@@ -3880,7 +3883,6 @@ function! s:SetStatusLine(current)
     else
         let in_tagbar = 1
     endif
-    let current = a:current == 'current'
 
     let sort = g:tagbar_sort ? 'Name' : 'Order'
 
@@ -3896,10 +3898,10 @@ function! s:SetStatusLine(current)
     let flags += g:tagbar_hide_nonpublic ? ['v'] : []
 
     if exists('g:tagbar_status_func')
-        let args = [current, sort, fname, flags]
+        let args = [in_tagbar, sort, fname, flags]
         let &l:statusline = call(g:tagbar_status_func, args)
     else
-        let colour = current ? '%#StatusLine#' : '%#StatusLineNC#'
+        let colour = in_tagbar ? '%#StatusLine#' : '%#StatusLineNC#'
         let flagstr = join(flags, '')
         if flagstr != ''
             let flagstr = '[' . flagstr . '] '
@@ -4137,6 +4139,7 @@ function! tagbar#toggle_pause() abort
         call s:known_files.setPaused()
     else
         call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 1)
+        call s:SetStatusLine()
     endif
 endfunction
 
