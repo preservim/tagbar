@@ -155,6 +155,34 @@ function! s:InitTypes() abort
         \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.aspvbs = type_aspvbs
+    " Asymptote {{{3
+    " Asymptote gets parsed well using filetype = c
+    let type_asy = s:TypeInfo.New()
+    let type_asy.ctagstype = 'c'
+    let type_asy.kinds     = [
+        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'structs',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1}
+    \ ]
+    let type_asy.sro        = '::'
+    let type_asy.kind2scope = {
+        \ 'g' : 'enum',
+        \ 's' : 'struct',
+        \ 'u' : 'union'
+    \ }
+    let type_asy.scope2kind = {
+        \ 'enum'   : 'g',
+        \ 'struct' : 's',
+        \ 'union'  : 'u'
+    \ }
+    let s:known_types.asy = type_asy
     " Awk {{{3
     let type_awk = s:TypeInfo.New()
     let type_awk.ctagstype = 'awk'
