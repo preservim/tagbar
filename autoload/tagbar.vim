@@ -3523,6 +3523,7 @@ function! s:AutoUpdate(fname, force) abort
     endif
 
     call s:HighlightTag(0)
+    call s:SetStatusLine('noncurrent')
     call s:debug('AutoUpdate finished successfully')
 endfunction
 
