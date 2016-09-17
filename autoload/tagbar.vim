@@ -3856,9 +3856,28 @@ endfunction
 
 " s:ToggleHideNonPublicTags() {{{2
 function! s:ToggleHideNonPublicTags() abort
+    let fileinfo = s:known_files.getCurrent(0)
+    if empty(fileinfo)
+        return
+    endif
+
+    " Save the tag the cursor is currently on
+    let curline = line('.')
+    let taginfo = s:GetTagInfo(curline, 0)
+
+    match none
+
     let g:tagbar_hide_nonpublic = !g:tagbar_hide_nonpublic
     call s:RenderKeepView()
     call s:SetStatusLine('current')
+
+    " If we were on a tag before sorting then jump to it, otherwise restore
+    " the cursor to the current line
+    if !empty(taginfo)
+        execute taginfo.tline
+    else
+        execute curline
+    endif
 endfunction
 
 " s:ToggleAutoclose() {{{2
