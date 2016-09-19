@@ -59,6 +59,7 @@ function! s:setup_options() abort
         \ ['autofocus', 0],
         \ ['autopreview', 0],
         \ ['autoshowtag', 0],
+        \ ['case_insensitive', 0],
         \ ['compact', 0],
         \ ['expand', 0],
         \ ['foldlevel', 99],
@@ -109,11 +110,12 @@ function! s:setup_keymaps() abort
         \ ['nextfold',      'zj'],
         \ ['prevfold',      'zk'],
         \
-        \ ['togglesort',      's'],
-        \ ['toggleautoclose', 'c'],
-        \ ['zoomwin',         'x'],
-        \ ['close',           'q'],
-        \ ['help',            ['<F1>', '?']],
+        \ ['togglesort',            's'],
+        \ ['togglecaseinsensitive', 'i'],
+        \ ['toggleautoclose',       'c'],
+        \ ['zoomwin',               'x'],
+        \ ['close',                 'q'],
+        \ ['help',                  ['<F1>', '?']],
     \ ]
 
     for [map, key] in keymaps

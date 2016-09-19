@@ -481,6 +481,18 @@ Example:
         let g:tagbar_sort = 0
 <
 
+                                                   *g:tagbar_case_insensitive*
+g:tagbar_case_insensitive~
+Default: 0
+
+If this option is set a case-insensitive comparison is used when the tags
+are sorted according to their name. If it is unset a case-sensitive
+comparison is used.
+
+Example:
+>
+        let g:tagbar_case_insensitive = 1
+<
                                                             *g:tagbar_compact*
 g:tagbar_compact~
 Default: 0
