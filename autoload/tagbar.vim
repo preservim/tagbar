@@ -4030,7 +4030,9 @@ function! s:QuitIfOnlyWindow() abort
         endif
     endif
 
-    call s:goto_win(prevwinnr, 1)
+    if prevwinnr != tagbarwinnr
+        call s:goto_win(prevwinnr, 1)
+    endif
     call s:goto_win(curwinnr, 1)
 endfunction
 
@@ -4039,8 +4041,8 @@ function! s:NextNormalWindow() abort
     for i in range(1, winnr('$'))
         let buf = winbufnr(i)
 
-        " skip unlisted buffers
-        if !buflisted(buf)
+        " skip unlisted buffers, except for netrw
+        if !buflisted(buf) && getbufvar(buf, '&filetype') != 'netrw'
             continue
         endif
 
