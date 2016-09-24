@@ -65,6 +65,7 @@ let s:short_help      = 1
 let s:nearby_disabled = 0
 let s:paused = 0
 let s:pwin_by_tagbar = 0
+let s:vim_quitting = 0
 
 let s:window_expanded   = 0
 let s:expand_bufnr = -1
@@ -1038,6 +1039,7 @@ function! s:CreateAutocommands() abort
             autocmd CursorMoved __Tagbar__ nested call s:ShowInPreviewWin()
         endif
 
+        autocmd QuitPre * let s:vim_quitting = 1
         autocmd WinEnter * nested call s:QuitIfOnlyWindow()
         autocmd WinEnter * if bufwinnr('__Tagbar__') == -1 |
                          \     call s:ShrinkIfExpanded() |
@@ -4013,6 +4015,9 @@ function! s:QuitIfOnlyWindow() abort
     " If tagbar is the only window, then the window count in the
     " tab will be 1 and the only window in the tab will be the
     " window for the __Tagbar__ buffer
+    let vim_quitting = s:vim_quitting
+    let s:vim_quitting = 0
+
     if winnr('$') == 1
         let tagbarwinnr = bufwinnr('__Tagbar__')
         if tagbarwinnr == -1
@@ -4020,15 +4025,17 @@ function! s:QuitIfOnlyWindow() abort
         endif
 
         if tagbarwinnr == winnr()
-            if tabpagenr('$') == 1
-                " Before quitting Vim, delete the tagbar buffer so that
-                " the '0 mark is correctly set to the previous buffer.
-                " Also disable autocmd on this command to avoid unnecessary
-                " autocmd nesting.
-                noautocmd bdelete
+            " Have to save it here because bdelete may cause the
+            " tab page to be deleted and the number of tab pages
+            " will change
+            let currenttabpagenr = tabpagenr('$')
+
+            " Disable autocmd on this command to avoid unnecessary
+            " autocmd nesting.
+            noautocmd bdelete
+
+            if vim_quitting && (currenttabpagenr == 1)
                 quit
-            else
-                close
             endif
         endif
     endif
