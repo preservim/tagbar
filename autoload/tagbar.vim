@@ -1261,7 +1261,7 @@ function! s:BaseTag._init(name) abort dict
     let self.name          = a:name
     let self.fields        = {}
     let self.fields.line   = 0
-    let self.fields.column = 1
+    let self.fields.column = 0
     let self.prototype     = ''
     let self.path          = ''
     let self.fullpath      = a:name
@@ -3098,9 +3098,15 @@ function! s:JumpToTag(stay_in_tagbar) abort
         let taginfo.fileinfo.fline[curline] = taginfo
     endif
 
-    " Center the tag in the window and jump to the correct column if available
+    " Center the tag in the window and jump to the correct column if
+    " available, otherwise try to find it in the line
     normal! z.
-    call cursor(taginfo.fields.line, taginfo.fields.column)
+    if taginfo.fields.column > 0
+        call cursor(taginfo.fields.line, taginfo.fields.column)
+    else
+        call cursor(taginfo.fields.line, 1)
+        call search(taginfo.name, 'c', line('.'))
+    endif
 
     normal! zv
 
