@@ -65,7 +65,6 @@ let s:short_help      = 1
 let s:nearby_disabled = 0
 let s:paused = 0
 let s:pwin_by_tagbar = 0
-let s:vim_quitting = 0
 let s:buffer_seqno = 0
 
 let s:window_expanded   = 0
