@@ -65,6 +65,7 @@ let s:short_help      = 1
 let s:nearby_disabled = 0
 let s:paused = 0
 let s:pwin_by_tagbar = 0
+let s:vim_quitting = 0
 
 let s:window_expanded   = 0
 let s:expand_bufnr = -1
@@ -1038,6 +1039,7 @@ function! s:CreateAutocommands() abort
             autocmd CursorMoved __Tagbar__ nested call s:ShowInPreviewWin()
         endif
 
+        autocmd QuitPre * let s:vim_quitting = 1
         autocmd WinEnter * nested call s:QuitIfOnlyWindow()
         autocmd WinEnter * if bufwinnr('__Tagbar__') == -1 |
                          \     call s:ShrinkIfExpanded() |
@@ -4010,72 +4012,33 @@ endfunction
 
 " s:QuitIfOnlyWindow() {{{2
 function! s:QuitIfOnlyWindow() abort
-    let tagbarwinnr = bufwinnr('__Tagbar__')
-    if tagbarwinnr == -1
-        return
-    endif
+    " If tagbar is the only window, then the window count in the
+    " tab will be 1 and the only window in the tab will be the
+    " window for the __Tagbar__ buffer
+    let vim_quitting = s:vim_quitting
+    let s:vim_quitting = 0
 
-    let curwinnr = winnr()
-    let prevwinnr = winnr('#') == 0 ? curwinnr : winnr('#')
-    call s:goto_win(tagbarwinnr, 1)
+    if winnr('$') == 1
+        let tagbarwinnr = bufwinnr('__Tagbar__')
+        if tagbarwinnr == -1
+            return
+        endif
 
-    " Check if there is more than one window
-    if s:NextNormalWindow() == -1
-        " Check if there is more than one tab page
-        if tabpagenr('$') == 1
-            " Before quitting Vim, delete the tagbar buffer so that
-            " the '0 mark is correctly set to the previous buffer.
-            " Also disable autocmd on this command to avoid unnecessary
+        if tagbarwinnr == winnr()
+            " Have to save it here because bdelete may cause the
+            " tab page to be deleted and the number of tab pages
+            " will change
+            let currenttabpagenr = tabpagenr('$')
+
+            " Disable autocmd on this command to avoid unnecessary
             " autocmd nesting.
-            if winnr('$') == 1
-                noautocmd bdelete
+            noautocmd bdelete
+
+            if vim_quitting && (currenttabpagenr == 1)
+                quit
             endif
-            quit
-        else
-            close
         endif
     endif
-
-    " Check that prevwinnr is still a valid window number
-    if prevwinnr != tagbarwinnr && prevwinnr <= winnr('$')
-        call s:goto_win(prevwinnr, 1)
-    endif
-
-    " Check that curwinnr is still a valid window number
-    if curwinnr <= winnr('$')
-        call s:goto_win(curwinnr, 1)
-    endif
-endfunction
-
-" s:NextNormalWindow() {{{2
-function! s:NextNormalWindow() abort
-    for i in range(1, winnr('$'))
-        let buf = winbufnr(i)
-
-        " skip unlisted buffers, except for netrw
-        if !buflisted(buf) && getbufvar(buf, '&filetype') != 'netrw'
-            continue
-        endif
-
-        " skip temporary buffers with buftype set
-        if getbufvar(buf, '&buftype') != ''
-            continue
-        endif
-
-        " skip the preview window
-        if getwinvar(i, '&previewwindow')
-            continue
-        endif
-
-        " skip current window
-        if i == winnr()
-            continue
-        endif
-
-        return i
-    endfor
-
-    return -1
 endfunction
 
 " s:goto_win() {{{2
