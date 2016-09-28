@@ -4041,7 +4041,7 @@ function! s:QuitIfOnlyWindow() abort
                 noautocmd bdelete
             endif
             quit
-        else
+        elseif exists('t:tagbar_buf_name')
             close
         endif
     endif
