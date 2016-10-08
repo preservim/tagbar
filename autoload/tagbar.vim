@@ -3727,7 +3727,31 @@ function! s:ExecuteCtags(ctags_cmd) abort
         call s:debug(v:statusmsg)
         redraw!
     else
-        silent let ctags_output = system(a:ctags_cmd)
+        let use_python = 0
+        if has('win32') || has('win64') || has('win16') || has('win95')
+            if has('python') && exists('g:tagbar_python_system')
+                if g:tagbar_python_system != 0
+                    let use_python = 1
+                endif
+            endif
+        endif
+        if use_python == 0
+            silent let ctags_output = system(a:ctags_cmd)
+        else
+            py import subprocess, vim
+            py x = vim.eval('a:ctags_cmd')
+            py m = subprocess.PIPE
+            py n = subprocess.STDOUT
+            py s = sys.platform[:3] == 'win' and True or False
+            py p = subprocess.Popen(x, shell = s, stdout = m, stderr = n)
+            py t = p.stdout.read()
+            py p.stdout.close()
+            py p.wait()
+            py t = t.replace('\\', '\\\\').replace('"', '\\"')
+            py t = t.replace('\n', '\\n').replace('\r', '\\r')
+            py vim.command('let l:text = "%s"'%t)
+            let ctags_output = l:text
+        endif
     endif
 
     if &shell =~ 'cmd\.exe'
