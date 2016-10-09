@@ -1860,6 +1860,8 @@ endfunction
 function! s:InitWindow(autoclose) abort
     call s:debug('InitWindow called with autoclose: ' . a:autoclose)
 
+    " Buffer-local options
+
     setlocal filetype=tagbar
 
     setlocal noreadonly " in case the "view" mode is used
@@ -1868,10 +1870,19 @@ function! s:InitWindow(autoclose) abort
     setlocal noswapfile
     setlocal nobuflisted
     setlocal nomodifiable
+    setlocal textwidth=0
+
+    if has('balloon_eval')
+        setlocal balloonexpr=TagbarBalloonExpr()
+        set ballooneval
+    endif
+
+
+    " Window-local options
+
     setlocal nolist
     setlocal nowrap
     setlocal winfixwidth
-    setlocal textwidth=0
     setlocal nospell
 
     if g:tagbar_show_linenumbers == 0
@@ -1898,16 +1909,12 @@ function! s:InitWindow(autoclose) abort
     setlocal foldmethod&
     setlocal foldexpr&
 
+
     let w:autoclose = a:autoclose
 
     call s:SetStatusLine()
 
     let s:new_window = 1
-
-    if has('balloon_eval')
-        setlocal balloonexpr=TagbarBalloonExpr()
-        set ballooneval
-    endif
 
     let cpoptions_save = &cpoptions
     set cpoptions&vim
