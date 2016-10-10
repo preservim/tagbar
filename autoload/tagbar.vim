@@ -1041,7 +1041,7 @@ function! s:CreateAutocommands() abort
         endif
 
         autocmd QuitPre * let s:vim_quitting = 1
-        autocmd WinEnter * nested call s:QuitIfOnlyWindow()
+        autocmd WinEnter * nested call s:HandleOnlyWindow()
         autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
                          \     call s:ShrinkIfExpanded() |
                          \ endif
@@ -4031,8 +4031,8 @@ function! s:SetStatusLine()
     endif
 endfunction
 
-" s:QuitIfOnlyWindow() {{{2
-function! s:QuitIfOnlyWindow() abort
+" s:HandleOnlyWindow() {{{2
+function! s:HandleOnlyWindow() abort
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
     if tagbarwinnr == -1 || exists('s:reopen_window')
         return
