@@ -1059,10 +1059,12 @@ function! s:CreateAutocommands() abort
         autocmd BufDelete,BufWipeout * call
                     \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
 
-        autocmd QuickFixCmdPre  * let s:tagbar_qf_active = 1
-        autocmd QuickFixCmdPost * if exists('s:tagbar_qf_active') |
-                                \     unlet s:tagbar_qf_active |
-                                \ endif
+        " Suspend Tagbar while grep commands are running, since we don't want
+        " to process files that only get loaded temporarily to search them
+        autocmd QuickFixCmdPre  *grep* let s:tagbar_qf_active = 1
+        autocmd QuickFixCmdPost *grep* if exists('s:tagbar_qf_active') |
+                                     \     unlet s:tagbar_qf_active |
+                                     \ endif
 
         autocmd VimEnter * call s:CorrectFocusOnStartup()
     augroup END
