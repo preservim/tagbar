@@ -67,6 +67,7 @@ let s:paused = 0
 let s:pwin_by_tagbar = 0
 let s:buffer_seqno = 0
 let s:vim_quitting = 0
+let s:last_alt_bufnr = -1
 
 let s:window_expanded   = 0
 let s:expand_bufnr = -1
@@ -1040,15 +1041,14 @@ function! s:CreateAutocommands() abort
             autocmd CursorMoved __Tagbar__.* nested call s:ShowInPreviewWin()
         endif
 
+        autocmd BufEnter * if expand('<amatch>') !~ '__Tagbar__.*' |
+                         \     let s:last_alt_bufnr = bufnr('#') |
+                         \ endif
         autocmd QuitPre * let s:vim_quitting = 1
         autocmd WinEnter * nested call s:HandleOnlyWindow()
         autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
                          \     call s:ShrinkIfExpanded() |
                          \ endif
-        autocmd BufWinEnter * if exists('s:reopen_window') |
-                            \     unlet s:reopen_window |
-                            \     call s:OpenWindow('') |
-                            \ endif
 
         autocmd BufWritePost * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
@@ -1056,8 +1056,8 @@ function! s:CreateAutocommands() abort
         " was changed by an external command; see commit 17d199f
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
-        autocmd BufDelete,BufWipeout * call
-                    \ s:known_files.rm(fnamemodify(expand('<afile>'), ':p'))
+        autocmd BufDelete,BufWipeout *
+                    \ nested call s:HandleBufDelete(expand('<afile>'))
 
         " Suspend Tagbar while grep commands are running, since we don't want
         " to process files that only get loaded temporarily to search them
@@ -4036,56 +4036,97 @@ endfunction
 " s:HandleOnlyWindow() {{{2
 function! s:HandleOnlyWindow() abort
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
-    if tagbarwinnr == -1 || exists('s:reopen_window')
+    if tagbarwinnr == -1
         return
     endif
 
     let vim_quitting = s:vim_quitting
     let s:vim_quitting = 0
 
-    let curwinnr = winnr()
-    let prevwinnr = winnr('#') == 0 ? curwinnr : winnr('#')
-    call s:goto_win(tagbarwinnr, 1)
+    if vim_quitting && !s:HasOpenFileWindows()
+        if winnr('$') >= 1
+            call s:goto_win(tagbarwinnr, 1)
+        endif
 
-    " Check if there is more than one window
-    if s:NextNormalWindow() == -1
-        " Check if there is more than one tab page
-        if tabpagenr('$') == 1 && vim_quitting
-            " Before quitting Vim, delete the tagbar buffer so that
-            " the '0 mark is correctly set to the previous buffer.
-            " Also disable autocmd on this command to avoid unnecessary
-            " autocmd nesting.
-            if winnr('$') == 1
-                noautocmd bdelete
-            endif
-            quit
-        elseif tabpagenr('$') == 1
+        " Before quitting Vim, delete the tagbar buffer so that the '0 mark is
+        " correctly set to the previous buffer.
+        if tabpagenr('$') == 1
+            keepalt bdelete
+        endif
+
+        try
+            try
+                quit
+            catch /.*/ " This can be E173 and maybe others
+                call s:OpenWindow('')
+                echoerr v:exception
+            endtry
+        catch /.*/
+            echohl ErrorMsg
+            echo v:exception
+            echohl None
+        endtry
+    endif
+endfunction
+
+" s:HandleBufDelete() {{{2
+function! s:HandleBufDelete(bufname) abort
+    let tagbarwinnr = bufwinnr(s:TagbarBufName())
+    if tagbarwinnr == -1 || a:bufname =~ '__Tagbar__.*'
+        return
+    endif
+
+    call s:known_files.rm(fnamemodify(a:bufname, ':p'))
+
+    if !s:HasOpenFileWindows()
+        if tabpagenr('$') == 1 && exists('t:tagbar_buf_name')
             " The last normal window closed due to a :bdelete/:bwipeout.
-            " In order to get a normal file window back delete the Tagbar
-            " buffer that we're currently displaying and reset the Tagbar-set
-            " window options, and then re-open the Tagbar window once Vim has
-            " switched to the buffer it has chosen to display next.
-            noautocmd bdelete
+            " In order to get a normal file window back switch to the last
+            " alternative buffer (or a new one if there is no alternative
+            " buffer), reset the Tagbar-set window options, and then re-open
+            " the Tagbar window.
+
+            " Ignore the buffer to be deleted, just in case
+            call setbufvar(a:bufname, 'tagbar_ignore', 1)
+
+            if s:last_alt_bufnr == -1 || s:last_alt_bufnr == expand('<abuf>')
+                if argc() > 1 && argidx() < argc() - 1
+                    " We don't have an alternative buffer, but there are still
+                    " files left in the argument list
+                    next
+                else
+                    enew
+                endif
+            else
+                " Ignore the buffer we're switching to for now, it will get
+                " processed due to the OpenWindow() call anyway
+                call setbufvar(s:last_alt_bufnr, 'tagbar_ignore', 1)
+                execute 'keepalt buffer' s:last_alt_bufnr
+                call setbufvar(s:last_alt_bufnr, 'tagbar_ignore', 0)
+            endif
+
+            " Reset Tagbar window-local options
             set winfixwidth<
-            let s:reopen_window = 1
+
+            call s:OpenWindow('')
         elseif exists('t:tagbar_buf_name')
             close
         endif
     endif
-
-    " Check that prevwinnr is still a valid window number
-    if prevwinnr != tagbarwinnr && prevwinnr <= winnr('$')
-        call s:goto_win(prevwinnr, 1)
-    endif
-
-    " Check that curwinnr is still a valid window number
-    if curwinnr <= winnr('$')
-        call s:goto_win(curwinnr, 1)
-    endif
 endfunction
 
-" s:NextNormalWindow() {{{2
-function! s:NextNormalWindow() abort
+" s:ReopenWindow() {{{2
+function! s:ReopenWindow(delbufname) abort
+    if expand('<amatch>') == a:delbufname
+        return
+    endif
+
+    autocmd! TagbarAutoCmds BufWinEnter
+    call s:OpenWindow("")
+endfunction
+
+" s:HasOpenFileWindows() {{{2
+function! s:HasOpenFileWindows() abort
     for i in range(1, winnr('$'))
         let buf = winbufnr(i)
 
@@ -4104,15 +4145,10 @@ function! s:NextNormalWindow() abort
             continue
         endif
 
-        " skip current window
-        if i == winnr()
-            continue
-        endif
-
-        return i
+        return 1
     endfor
 
-    return -1
+    return 0
 endfunction
 
 " s:TagbarBufName() {{{2
