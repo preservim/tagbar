@@ -1044,7 +1044,9 @@ function! s:CreateAutocommands() abort
         autocmd BufEnter * if expand('<amatch>') !~ '__Tagbar__.*' |
                          \     let s:last_alt_bufnr = bufnr('#') |
                          \ endif
-        autocmd QuitPre * let s:vim_quitting = 1
+        if exists('##QuitPre')
+            autocmd QuitPre * let s:vim_quitting = 1
+        endif
         autocmd WinEnter * nested call s:HandleOnlyWindow()
         autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
                          \     call s:ShrinkIfExpanded() |
