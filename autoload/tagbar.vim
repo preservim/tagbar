@@ -1779,7 +1779,7 @@ endfunction
 
 " Window management {{{1
 " s:ToggleWindow() {{{2
-function! s:ToggleWindow() abort
+function! s:ToggleWindow(flags) abort
     call s:debug('ToggleWindow called')
 
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
@@ -1788,7 +1788,7 @@ function! s:ToggleWindow() abort
         return
     endif
 
-    call s:OpenWindow('')
+    call s:OpenWindow(a:flags)
 
     call s:debug('ToggleWindow finished')
 endfunction
@@ -4282,8 +4282,9 @@ endfunction
 " Autoload functions {{{1
 
 " Wrappers {{{2
-function! tagbar#ToggleWindow() abort
-    call s:ToggleWindow()
+function! tagbar#ToggleWindow(...) abort
+    let flags = a:0 > 0 ? a:1 : ''
+    call s:ToggleWindow(flags)
 endfunction
 
 function! tagbar#OpenWindow(...) abort
