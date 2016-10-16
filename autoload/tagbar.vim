@@ -3028,54 +3028,59 @@ function! s:HighlightTag(openfolds, ...) abort
     if tagbarwinnr == -1
         return
     endif
-    let prevwinnr = winnr()
-    call s:goto_win(tagbarwinnr)
 
-    match none
-
-    " No tag above cursor position so don't do anything
-    if tagline == 0
-        call s:goto_win(prevwinnr)
-        redraw
-        return
-    endif
-
-    if g:tagbar_autoshowtag == 1 || a:openfolds
-        call s:OpenParents(tag)
-    endif
-
-    " Check whether the tag is inside a closed fold and highlight the parent
-    " instead in that case
-    let tagline = tag.getClosedParentTline()
-
-    " Parent tag line number is invalid, better don't do anything
-    if tagline <= 0
-        call s:goto_win(prevwinnr)
-        redraw
-        return
-    endif
-
-    " Go to the line containing the tag
-    execute tagline
-
-    " Make sure the tag is visible in the window
-    call winline()
-
-    let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
-    let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
-    call s:debug("Highlight pattern: '" . pattern . "'")
-    if hlexists('TagbarHighlight') " Safeguard in case syntax highlighting is disabled
-        execute 'match TagbarHighlight ' . pattern
+    if tagbarwinnr == winnr()
+        let in_tagbar = 1
     else
-        execute 'match Search ' . pattern
+        let in_tagbar = 0
+        let prevwinnr = winnr()
+        call s:goto_win('p', 1)
+        let pprevwinnr = winnr()
+        call s:goto_win(tagbarwinnr, 1)
     endif
 
+    try
+        match none
 
-    if a:0 <= 1 " no line explicitly given, so assume we were in the file window
-        call s:goto_win(prevwinnr)
-    endif
+        " No tag above cursor position so don't do anything
+        if tagline == 0
+            return
+        endif
 
-    redraw
+        if g:tagbar_autoshowtag == 1 || a:openfolds
+            call s:OpenParents(tag)
+        endif
+
+        " Check whether the tag is inside a closed fold and highlight the parent
+        " instead in that case
+        let tagline = tag.getClosedParentTline()
+
+        " Parent tag line number is invalid, better don't do anything
+        if tagline <= 0
+            return
+        endif
+
+        " Go to the line containing the tag
+        execute tagline
+
+        " Make sure the tag is visible in the window
+        call winline()
+
+        let foldpat = '[' . s:icon_open . s:icon_closed . ' ]'
+        let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
+        call s:debug("Highlight pattern: '" . pattern . "'")
+        if hlexists('TagbarHighlight') " Safeguard in case syntax highlighting is disabled
+            execute 'match TagbarHighlight ' . pattern
+        else
+            execute 'match Search ' . pattern
+        endif
+    finally
+        if !in_tagbar
+            call s:goto_win(pprevwinnr, 1)
+            call s:goto_win(prevwinnr, 1)
+        endif
+        redraw
+    endtry
 endfunction
 
 " s:JumpToTag() {{{2
@@ -3991,14 +3996,18 @@ endfunction
 
 " s:SetStatusLine() {{{2
 function! s:SetStatusLine()
-    " Make sure we're actually in the Tagbar window
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
     if tagbarwinnr == -1
         return
     endif
+
+    " Make sure we're actually in the Tagbar window
     if tagbarwinnr != winnr()
         let in_tagbar = 0
-        call s:goto_win(tagbarwinnr)
+        let prevwinnr = winnr()
+        call s:goto_win('p', 1)
+        let pprevwinnr = winnr()
+        call s:goto_win(tagbarwinnr, 1)
     else
         let in_tagbar = 1
     endif
@@ -4031,7 +4040,8 @@ function! s:SetStatusLine()
     endif
 
     if !in_tagbar
-        call s:goto_win('p')
+        call s:goto_win(pprevwinnr, 1)
+        call s:goto_win(prevwinnr, 1)
     endif
 endfunction
 
