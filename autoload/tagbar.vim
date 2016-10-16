@@ -1816,6 +1816,11 @@ function! s:OpenWindow(flags) abort
         return
     endif
 
+    let prevwinnr = winnr()
+    call s:goto_win('p', 1)
+    let pprevwinnr = winnr()
+    call s:goto_win('p', 1)
+
     " This is only needed for the CorrectFocusOnStartup() function
     let s:last_autofocus = autofocus
 
@@ -1860,7 +1865,8 @@ function! s:OpenWindow(flags) abort
     call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
-        call s:goto_win('p')
+        call s:goto_win(pprevwinnr, 1)
+        call s:goto_win(prevwinnr)
     endif
 
     call s:debug('OpenWindow finished')
