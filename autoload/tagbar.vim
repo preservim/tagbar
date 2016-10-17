@@ -1816,9 +1816,17 @@ function! s:OpenWindow(flags) abort
         return
     endif
 
-    let prevwinnr = winnr()
-    call s:goto_win('p', 1)
-    let pprevwinnr = winnr()
+    " Use the window ID if the functionality exists, this is more reliable
+    " since the window number can change due to the Tagbar window opening
+    if exists('*win_getid')
+        let prevwinid = win_getid()
+        call s:goto_win('p', 1)
+        let pprevwinid = win_getid()
+    else
+        let prevwinnr = winnr()
+        call s:goto_win('p', 1)
+        let pprevwinnr = winnr()
+    endif
     call s:goto_win('p', 1)
 
     " This is only needed for the CorrectFocusOnStartup() function
@@ -1865,8 +1873,21 @@ function! s:OpenWindow(flags) abort
     call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
-        call s:goto_win(pprevwinnr, 1)
-        call s:goto_win(prevwinnr)
+        if exists('*win_getid')
+            noautocmd call win_gotoid(pprevwinid)
+            call win_gotoid(prevwinid)
+        else
+            " If the Tagbar winnr is identical to one of the saved values
+            " then that means that the window numbers have changed.
+            " Just jump back to the previous window since we won't be able to
+            " restore the window history.
+            if winnr() == pprevwinnr || winnr() == prevwinnr
+                call s:goto_win('p')
+            else
+                call s:goto_win(pprevwinnr, 1)
+                call s:goto_win(prevwinnr)
+            endif
+        endif
     endif
 
     call s:debug('OpenWindow finished')
