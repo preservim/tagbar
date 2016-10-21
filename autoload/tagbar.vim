@@ -1010,6 +1010,11 @@ function! s:MapKeys() abort
         \ ['help',                  'ToggleHelp()'],
     \ ]
 
+    let map_options = ' <script> <silent> <buffer> '
+    if v:version > 703 || (v:version == 703 && has('patch1261'))
+        let map_options .= ' <nowait> '
+    endif
+
     for [map, func] in maps
         let def = get(g:, 'tagbar_map_' . map)
         if type(def) == type("")
@@ -1018,7 +1023,7 @@ function! s:MapKeys() abort
             let keys = def
         endif
         for key in keys
-            execute 'nnoremap <script> <silent> <buffer> ' . key .
+            execute 'nnoremap' . map_options . key .
                         \ ' :call <SID>' . func . '<CR>'
         endfor
         unlet def
