@@ -1142,7 +1142,8 @@ function! s:CheckForExCtags(silent) abort
             \ ' Please download Exuberant Ctags from ctags.sourceforge.net' .
             \ ' and install it in a directory in your $PATH' .
             \ ' or set g:tagbar_ctags_bin.'
-        call s:CtagsErrMsg(errmsg, infomsg, a:silent, ctags_cmd, ctags_output)
+        call s:CtagsErrMsg(errmsg, infomsg, a:silent,
+                         \ ctags_cmd, ctags_output, v:shell_error)
         let s:checked_ctags = 2
         return 0
     elseif !s:CheckExCtagsVersion(ctags_output)
@@ -1162,10 +1163,18 @@ endfunction
 function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort
     call s:debug(a:errmsg)
     let ctags_cmd    = a:0 > 0 ? a:1 : ''
-    let ctags_output = a:0 > 0 ? a:2 : ''
+    let ctags_output = a:0 > 1 ? a:2 : ''
+
+    let exit_code_set = a:0 > 2
+    if exit_code_set
+        let exit_code = a:3
+    endif
 
     if ctags_output != ''
         call s:debug("Command output:\n" . ctags_output)
+    endif
+    if exit_code_set
+        call s:debug("Exit code: " . exit_code)
     endif
 
     if !a:silent
@@ -1184,6 +1193,9 @@ function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort
             endfor
         else
             echomsg 'Command output is empty.'
+        endif
+        if exit_code_set
+            echomsg 'Exit code: ' . exit_code
         endif
     endif
 endfunction
@@ -2314,6 +2326,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
     if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
         call s:debug('Command output:')
         call s:debug(ctags_output)
+        call s:debug('Exit code: ' . v:shell_error)
         " Only display an error message if the Tagbar window is open and we
         " haven't seen the error before.
         if bufwinnr(s:TagbarBufName()) != -1 &&
@@ -2327,6 +2340,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                     echomsg line
                 endfor
             endif
+            echomsg 'Exit code: ' . v:shell_error
         endif
         return -1
     endif
