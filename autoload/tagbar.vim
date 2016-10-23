@@ -4024,6 +4024,12 @@ function! s:IsValidFile(fname, ftype) abort
         return 0
     endif
 
+    let winnr = bufwinnr(a:fname)
+    if winnr != -1 && getwinvar(winnr, '&diff')
+        call s:debug('Window is in diff mode')
+        return 0
+    endif
+
     if &previewwindow
         call s:debug('In preview window')
         return 0
