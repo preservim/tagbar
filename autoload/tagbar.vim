@@ -3805,6 +3805,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
     if s:debug
         silent 5verbose let ctags_output = system(a:ctags_cmd)
         call s:debug(v:statusmsg)
+        call s:debug('Exit code: ' . v:shell_error)
         redraw!
     else
         silent let ctags_output = system(a:ctags_cmd)
