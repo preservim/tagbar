@@ -1849,14 +1849,19 @@ function! s:OpenWindow(flags) abort
     " since the window number can change due to the Tagbar window opening
     if exists('*win_getid')
         let prevwinid = win_getid()
-        call s:goto_win('p', 1)
-        let pprevwinid = win_getid()
+        if winnr('$') > 1
+            call s:goto_win('p', 1)
+            let pprevwinid = win_getid()
+            call s:goto_win('p', 1)
+        endif
     else
         let prevwinnr = winnr()
-        call s:goto_win('p', 1)
-        let pprevwinnr = winnr()
+        if winnr('$') > 1
+            call s:goto_win('p', 1)
+            let pprevwinnr = winnr()
+            call s:goto_win('p', 1)
+        endif
     endif
-    call s:goto_win('p', 1)
 
     " This is only needed for the CorrectFocusOnStartup() function
     let s:last_autofocus = autofocus
@@ -1903,7 +1908,9 @@ function! s:OpenWindow(flags) abort
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         if exists('*win_getid')
-            noautocmd call win_gotoid(pprevwinid)
+            if exists('pprevwinid')
+                noautocmd call win_gotoid(pprevwinid)
+            endif
             call win_gotoid(prevwinid)
         else
             " If the Tagbar winnr is identical to one of the saved values
@@ -1913,7 +1920,9 @@ function! s:OpenWindow(flags) abort
             if winnr() == pprevwinnr || winnr() == prevwinnr
                 call s:goto_win('p')
             else
-                call s:goto_win(pprevwinnr, 1)
+                if exists('pprevwinnr')
+                    call s:goto_win(pprevwinnr, 1)
+                endif
                 call s:goto_win(prevwinnr)
             endif
         endif
