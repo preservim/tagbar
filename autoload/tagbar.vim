@@ -1917,7 +1917,8 @@ function! s:OpenWindow(flags) abort
             " then that means that the window numbers have changed.
             " Just jump back to the previous window since we won't be able to
             " restore the window history.
-            if winnr() == pprevwinnr || winnr() == prevwinnr
+            if winnr() == prevwinnr
+             \ || (exists('pprevwinnr') && winnr() == pprevwinnr)
                 call s:goto_win('p')
             else
                 if exists('pprevwinnr')
