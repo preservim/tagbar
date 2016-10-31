@@ -4087,22 +4087,24 @@ function! s:SetStatusLine()
         let in_tagbar = 1
     endif
 
-    let sort = g:tagbar_sort ? 'Name' : 'Order'
-
     if !empty(s:TagbarState().getCurrent(0))
-        let fname = fnamemodify(s:TagbarState().getCurrent(0).fpath, ':t')
+        let fileinfo = s:TagbarState().getCurrent(0)
+        let fname = fnamemodify(fileinfo.fpath, ':t')
+        let sorted = get(fileinfo.typeinfo, 'sort', g:tagbar_sort)
     else
         let fname = ''
+        let sorted = g:tagbar_sort
     endif
+    let sortstr = sorted ? 'Name' : 'Order'
 
     let flags = []
     let flags += exists('w:autoclose') && w:autoclose ? ['c'] : []
     let flags += g:tagbar_autoclose ? ['C'] : []
-    let flags += (g:tagbar_sort && g:tagbar_case_insensitive) ? ['i'] : []
+    let flags += (sorted && g:tagbar_case_insensitive) ? ['i'] : []
     let flags += g:tagbar_hide_nonpublic ? ['v'] : []
 
     if exists('g:tagbar_status_func')
-        let args = [in_tagbar, sort, fname, flags]
+        let args = [in_tagbar, sortstr, fname, flags]
         let &l:statusline = call(g:tagbar_status_func, args)
     else
         let colour = in_tagbar ? '%#StatusLine#' : '%#StatusLineNC#'
@@ -4110,7 +4112,7 @@ function! s:SetStatusLine()
         if flagstr != ''
             let flagstr = '[' . flagstr . '] '
         endif
-        let text = colour . '[' . sort . '] ' . flagstr . fname
+        let text = colour . '[' . sortstr . '] ' . flagstr . fname
         let &l:statusline = text
     endif
 
