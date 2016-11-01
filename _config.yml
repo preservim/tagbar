@@ -1,2 +1,1 @@
-markdown: rdiscount
-highlighter: pygments
+highlighter: rouge
