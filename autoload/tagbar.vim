@@ -3255,7 +3255,8 @@ function! s:ShowInPreviewWin() abort
     " explicitly before the :psearch below to better control its positioning.
     if !pwin_open
         silent execute
-            \ g:tagbar_previewwin_pos . ' pedit ' . taginfo.fileinfo.fpath
+            \ g:tagbar_previewwin_pos . ' pedit ' .
+            \ fnameescape(taginfo.fileinfo.fpath)
         if g:tagbar_vertical != 0
             silent execute 'vertical resize ' . g:tagbar_width
         endif
