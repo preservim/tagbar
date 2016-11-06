@@ -4144,7 +4144,7 @@ function! s:HandleOnlyWindow() abort
         " Before quitting Vim, delete the tagbar buffer so that the '0 mark is
         " correctly set to the previous buffer.
         if tabpagenr('$') == 1
-            keepalt bdelete
+            noautocmd keepalt bdelete
         endif
 
         try
