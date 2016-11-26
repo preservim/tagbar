@@ -2228,6 +2228,13 @@ function! s:ProcessFile(fname, ftype) abort
         endif
     endfor
 
+    " Allow filetype totally transform/remove some tags
+    if has_key(typeinfo, 'transform')
+        call s:debug('Transforming tags using custom function')
+
+        let fileinfo.tags = typeinfo.transform(fileinfo.tags)
+    endif
+
     " Process scoped tags
     let processedtags = []
     if has_key(typeinfo, 'kind2scope')
