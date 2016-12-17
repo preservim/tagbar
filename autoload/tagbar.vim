@@ -1150,6 +1150,9 @@ function! s:CheckForExCtags(silent) abort
 
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
+    call s:debug("Command output:\n" . ctags_output)
+    call s:debug("Exit code: " . v:shell_error)
+
     if v:shell_error || ctags_output !~# '\(Exuberant\|Universal\) Ctags'
         let errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
         let infomsg = 'BSD ctags will NOT WORK.' .
@@ -1182,13 +1185,6 @@ function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort
     let exit_code_set = a:0 > 2
     if exit_code_set
         let exit_code = a:3
-    endif
-
-    if ctags_output != ''
-        call s:debug("Command output:\n" . ctags_output)
-    endif
-    if exit_code_set
-        call s:debug("Exit code: " . exit_code)
     endif
 
     if !a:silent
