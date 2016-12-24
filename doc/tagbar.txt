@@ -1269,12 +1269,18 @@ have been missed.
 If the bug does seem to be in Tagbar then you can use Tagbar's debug mode to
 try to find the source of the problem. Usually you would use it like this:
 
-  1. Open Vim without loading any files.
-  2. Run :TagbarDebug.
-  3. Open the file you are having problems with.
-  4. Open Tagbar. If the problem is with the statusline functionality this
+  1. Remove the |tagbar-statusline| support from your vimrc if you use it, and
+     make sure you don't have any autocommands that load Tagbar on startup.
+  2. Open Vim without loading any files.
+  3. Run :TagbarDebug.
+  4. Open the file you are having problems with.
+  5. Open Tagbar. If the problem is with the statusline functionality this
      step may not be necessary.
-  5. Exit Vim.
+  6. Exit Vim.
+
+Note that it is important that the "TagbarDebug" command gets called before
+any other call to a Tagbar command or function, so step 1 is important to get
+a complete log.
 
 This should leave a file called "tagbardebug.log" in the current directory.
 See |tagbar-commands| for more information on the debug commands. When you
