@@ -4161,7 +4161,7 @@ endfunction
 " s:HandleBufDelete() {{{2
 function! s:HandleBufDelete(bufname, bufnr) abort
     " Ignore autocmd events generated for "set nobuflisted",
-    let nr = +a:bufnr " bufnr is passed as a string
+    let nr = str2nr(a:bufnr)
     if bufexists(nr) && !buflisted(nr)
         return
     endif
