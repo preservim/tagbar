@@ -1076,7 +1076,7 @@ function! s:CreateAutocommands() abort
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
         autocmd BufDelete,BufWipeout *
-                    \ nested call s:HandleBufDelete(expand('<afile>'))
+                    \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
 
         " Suspend Tagbar while grep commands are running, since we don't want
         " to process files that only get loaded temporarily to search them
@@ -4159,7 +4159,13 @@ function! s:HandleOnlyWindow() abort
 endfunction
 
 " s:HandleBufDelete() {{{2
-function! s:HandleBufDelete(bufname) abort
+function! s:HandleBufDelete(bufname, bufnr) abort
+    " Ignore autocmd events generated for "set nobuflisted",
+    let nr = str2nr(a:bufnr)
+    if bufexists(nr) && !buflisted(nr)
+        return
+    endif
+
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
     if tagbarwinnr == -1 || a:bufname =~ '__Tagbar__.*'
         return
