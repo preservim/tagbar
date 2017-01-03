@@ -4193,11 +4193,15 @@ function! s:HandleBufDelete(bufname, bufnr) abort
                     enew
                 endif
             else
+                " Save a local copy as the global value will change
+                " during buffer switching
+                let last_alt_bufnr = s:last_alt_bufnr
+
                 " Ignore the buffer we're switching to for now, it will get
                 " processed due to the OpenWindow() call anyway
-                call setbufvar(s:last_alt_bufnr, 'tagbar_ignore', 1)
-                execute 'keepalt buffer' s:last_alt_bufnr
-                call setbufvar(s:last_alt_bufnr, 'tagbar_ignore', 0)
+                call setbufvar(last_alt_bufnr, 'tagbar_ignore', 1)
+                execute 'keepalt buffer' last_alt_bufnr
+                call setbufvar(last_alt_bufnr, 'tagbar_ignore', 0)
             endif
 
             " Reset Tagbar window-local options
