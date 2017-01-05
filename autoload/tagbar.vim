@@ -1255,7 +1255,7 @@ endfunction
 
 " s:GetSupportedFiletypes() {{{2
 function! s:GetSupportedFiletypes() abort
-    call s:debug('Getting filetypes sypported by Exuberant Ctags')
+    call s:debug('Getting filetypes supported by Exuberant Ctags')
 
     let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--list-languages')
     if ctags_cmd == ''
