@@ -1273,7 +1273,9 @@ function! s:GetSupportedFiletypes() abort
     let types = split(ctags_output, '\n\+')
 
     for type in types
-        let s:ctags_types[tolower(type)] = 1
+        if match(type, '\[disabled\]') == -1
+            let s:ctags_types[tolower(type)] = 1
+        endif
     endfor
 
     let s:checked_ctags_types = 1
