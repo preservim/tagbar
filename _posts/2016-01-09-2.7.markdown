@@ -1,0 +1,18 @@
+---
+title: 2.7
+---
+
+- Added support for Universal Ctags, courtesy of Dmytro Konstantinov
+- Added option to arrange Tagbar window vertically
+- Added case-insensitive sort option, courtesy of Martin Vuille
+- Added option to configure zoom width
+- Added option to hide non-public tags
+- Added "silent" option to disable the display of tag information in the
+  command line, courtesy of Anmol Sethi
+- Added mappings for moving between folds
+- Improved handling of calling :bdelete/:bwipeout/:quit when Tagbar is
+  open
+- Improved handling of multiple tabs with separate Tagbar instances,
+  courtesy of Martin Vuille
+- Better handling of various errors to allow Tagbar to continue working
+- Various other small improvements and bugfixes
