@@ -871,11 +871,11 @@ function! s:InitTypes() abort
         let typeinfo.ftype = type
     endfor
 
-    call s:LoadUserTypeDefs()
-
     for typeinfo in values(s:known_types)
         call typeinfo.createKinddict()
     endfor
+
+    call s:LoadUserTypeDefs()
 
     let s:type_init_done = 1
 endfunction
@@ -907,11 +907,8 @@ function! s:LoadUserTypeDefs(...) abort
         else
             call extend(s:known_types[key], value)
         endif
+        call s:known_types[key].createKinddict()
     endfor
-
-    if a:0 > 0
-        call s:known_types[type].createKinddict()
-    endif
 endfunction
 
 " s:TransformUserTypeDef() {{{2
@@ -1305,6 +1302,7 @@ function! s:BaseTag._init(name) abort dict
     let self.fullpath      = a:name
     let self.depth         = 0
     let self.parent        = {}
+    let self.children      = []
     let self.tline         = -1
     let self.fileinfo      = {}
     let self.typeinfo      = {}
@@ -1334,7 +1332,7 @@ endfunction
 function! s:BaseTag._getPrefix() abort dict
     let fileinfo = self.fileinfo
 
-    if has_key(self, 'children') && !empty(self.children)
+    if !empty(self.children)
         if fileinfo.tagfolds[self.fields.kind][self.fullpath]
             let prefix = s:icon_closed
         else
@@ -1399,7 +1397,7 @@ endfunction
 
 " s:BaseTag.isFoldable() {{{3
 function! s:BaseTag.isFoldable() abort dict
-    return has_key(self, 'children') && !empty(self.children)
+    return !empty(self.children)
 endfunction
 
 " s:BaseTag.isFolded() {{{3
@@ -2543,10 +2541,6 @@ function! s:AddScopedTags(tags, processedtags, parent, depth,
                 continue
             endif
 
-            if !has_key(tag, 'children')
-                let tag.children = []
-            endif
-
             " Check for tags with the exact same name that may be created
             " alternatively in a conditional (Issue #139). The only way to
             " distinguish between them is by line number.
@@ -2623,10 +2617,6 @@ function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo, fileinfo) abort
             continue
         endif
 
-        if !has_key(childtag, 'children')
-            let childtag.children = []
-        endif
-
         call s:AddScopedTags(a:tags, childtag.children, childtag, a:depth + 1,
                            \ a:typeinfo, a:fileinfo, line('$'))
     endfor
@@ -2683,7 +2673,7 @@ function! s:SortTags(tags, comparemethod) abort
     call sort(a:tags, a:comparemethod)
 
     for tag in a:tags
-        if has_key(tag, 'children')
+        if !empty(tag.children)
             call s:SortTags(tag.children, a:comparemethod)
         endif
     endfor
@@ -3461,7 +3451,7 @@ function! s:SetFoldLevelRecursive(fileinfo, tags, level) abort
             call tag.setFolded(0)
         endif
 
-        if has_key(tag, 'children')
+        if !empty(tag.children)
             call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level)
         endif
     endfor
@@ -3493,7 +3483,7 @@ function! s:GotoNextFold() abort
 
         if empty(taginfo)
             continue
-        elseif !empty(get(taginfo, 'children', [])) || taginfo.isKindheader()
+        elseif !empty(taginfo.children) || taginfo.isKindheader()
             let newlinenr = linenr
             break
         endif
@@ -3526,8 +3516,8 @@ function! s:GotoPrevFold() abort
         "   same parent as the current one, or
         " - a closed parent fold.
         elseif (!empty(taginfo.parent) && taginfo.parent != curparent &&
-              \ empty(get(taginfo, 'children', []))) ||
-             \ ((!empty(get(taginfo, 'children', [])) || taginfo.isKindheader()) &&
+              \ empty(taginfo.children)) ||
+             \ ((!empty(taginfo.children) || taginfo.isKindheader()) &&
               \ taginfo.isFolded())
             let newlinenr = linenr
             break
