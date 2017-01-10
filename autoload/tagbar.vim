@@ -2226,6 +2226,13 @@ function! s:ProcessFile(fname, ftype) abort
         endif
     endfor
 
+    " Allow filetype totally transform/remove some tags
+    if has_key(typeinfo, 'transform')
+        call s:debug('Transforming tags using custom function')
+
+        let fileinfo.tags = typeinfo.transform(fileinfo.tags)
+    endif
+
     " Process scoped tags
     let processedtags = []
     if has_key(typeinfo, 'kind2scope')
@@ -3227,6 +3234,70 @@ function! s:JumpToTag(stay_in_tagbar) abort
     endif
 endfunction
 
+" s:JumpToTagName() {{{2
+function! s:JumpToTagName(tag_name) abort
+    let taginfo = s:GetTagInfoByName(a:tag_name)
+
+    if empty(taginfo) || !taginfo.isNormalTag()
+        return
+    endif
+
+    call s:GotoFileWindow(taginfo.fileinfo)
+
+    " Jump to the line where the tag is defined. Don't use the search pattern
+    " since it doesn't take the scope into account and thus can fail if tags
+    " with the same name are defined in different scopes (e.g. classes)
+    execute taginfo.fields.line
+
+    " If the file has been changed but not saved, the tag may not be on the
+    " saved line anymore, so search for it in the vicinity of the saved line
+    if match(getline('.'), taginfo.pattern) == -1
+        let interval = 1
+        let forward  = 1
+        while search(taginfo.pattern, 'W' . forward ? '' : 'b') == 0
+            if !forward
+                if interval > line('$')
+                    break
+                else
+                    let interval = interval * 2
+                endif
+            endif
+            let forward = !forward
+        endwhile
+    endif
+
+    " If the tag is on a different line after unsaved changes update the tag
+    " and file infos/objects
+    let curline = line('.')
+    if taginfo.fields.line != curline
+        let taginfo.fields.line = curline
+        let taginfo.fileinfo.fline[curline] = taginfo
+    endif
+
+    " Center the tag in the window and jump to the correct column if
+    " available, otherwise try to find it in the line
+    normal! z.
+    if taginfo.fields.column > 0
+        call cursor(taginfo.fields.line, taginfo.fields.column)
+    else
+        call cursor(taginfo.fields.line, 1)
+        call search(taginfo.name, 'c', line('.'))
+    endif
+
+    normal! zv
+
+    if g:tagbar_autoclose
+        " Also closes preview window
+        call s:CloseWindow()
+    else
+        " Close the preview window if it was opened by us
+        if s:pwin_by_tagbar
+            pclose
+        endif
+        call s:HighlightTag(0)
+    endif
+endfunction
+
 " s:ShowInPreviewWin() {{{2
 function! s:ShowInPreviewWin() abort
     let pos = getpos('.')
@@ -3909,6 +3980,26 @@ function! s:GetTagInfo(linenr, ignorepseudo) abort
     return taginfo
 endfunction
 
+
+" s:GetTagInfoByName() {{{2
+" Return the info dictionary of the tag by tag name.
+" If such tag name cannot be found return an empty dictionary.
+function! s:GetTagInfoByName(tag_text) abort
+    let fileinfo = s:TagbarState().getCurrent(0)
+
+    if empty(fileinfo)
+        return {}
+    endif
+
+    for taginfo in fileinfo.tags
+        if a:tag_text == taginfo.name
+            return taginfo
+        endif
+    endfor
+
+    return {}
+endfunction
+
 " s:GetFileWinnr() {{{2
 " Get the number of the window that has Tagbar's current file loaded into it,
 " or 0 if no window has loaded it. It tries the previous window first, if that
@@ -4505,6 +4596,25 @@ function! tagbar#currenttag(fmt, default, ...) abort
     else
         return a:default
     endif
+endfunction
+
+" tagbar#currenttags() {{{2
+function! tagbar#currenttags(bufname) abort
+    call s:Init(0)
+"        return []
+"    endif
+
+    let curfile = fnamemodify(a:bufname, ':p')
+    call s:AutoUpdate(curfile, 1)
+
+    let fileinfo = s:TagbarState().getCurrent(1)
+    let tags = map(copy(fileinfo.tags), "v:val.name")
+    return tags
+endfunction
+
+" tagbar#jump_to_tag() {{{2
+function! tagbar#jumptotag(tag_name) abort
+    call s:JumpToTagName(a:tag_name)
 endfunction
 
 " tagbar#currentfile() {{{2

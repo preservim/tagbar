@@ -1021,7 +1021,19 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
 
            If special escaping is required for different OS shell types or if
            in doubt, then it is recommended to define ctagsargs with a List.
+transform: Vim script function that can transform tags array. Following
+{optional} example will leave only tags, that are marked as type 'f'.
+           It is possible to remove some tags, rewrite tag names, etc.
+>
+            function! Tag_transform(tags)
+              call filter(a:tags, ' v:val.fields.kind == "f" ')
+              return a:tags
+            endfunction
 
+            let g:tagbar_type_{vim filetype} = {
+              \ 'transform_tags': function("Tag_transform"),
+              \ }
+<
 
 You then have to assign this dictionary to a variable in your vimrc with the
 name
