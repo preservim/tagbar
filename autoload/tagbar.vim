@@ -1469,7 +1469,7 @@ function! s:NormalTag.strfmt() abort dict
         let suffix .= ' : ' . typeinfo.kind2scope[self.fields.kind]
     endif
 
-    return self._getPrefix() . self.name . suffix . "\n"
+    return self._getPrefix() . self.name . suffix
 endfunction
 
 " s:NormalTag.str() {{{3
@@ -2864,7 +2864,10 @@ endfunction
 function! s:PrintKinds(typeinfo, fileinfo) abort
     call s:debug('PrintKinds called')
 
-    let is_first_tag = 1
+    " If the short or long help is being displayed then the line numbers don't
+    " match up with the length of the output list
+    let offset = g:tagbar_compact && s:short_help ? 0 : line('.')
+    let output = []
 
     for kind in a:typeinfo.kinds
         let curtags = filter(copy(a:fileinfo.tags),
@@ -2880,13 +2883,11 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
          \ has_key(a:typeinfo.kind2scope, kind.short)
             " Scoped tags
             for tag in curtags
-                call s:PrintTag(tag, 0, is_first_tag, a:fileinfo, a:typeinfo)
+                call s:PrintTag(tag, 0, output, a:fileinfo, a:typeinfo)
 
                 if !g:tagbar_compact
-                    silent put _
+                    call add(output, "")
                 endif
-
-                let is_first_tag = 0
             endfor
         else
             " Non-scoped tags
@@ -2899,24 +2900,20 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             endif
 
             let padding = g:tagbar_show_visibility ? ' ' : ''
-            if g:tagbar_compact && is_first_tag && s:short_help
-                silent 0put =foldmarker . padding . kind.long
-            else
-                silent  put =foldmarker . padding . kind.long
-            endif
+            call add(output, foldmarker . padding . kind.long)
 
-            let curline                   = line('.')
+            let curline                   = len(output) + offset
             let kindtag.tline             = curline
             let a:fileinfo.tline[curline] = kindtag
 
             if !kindtag.isFolded()
                 for tag in curtags
                     let str = tag.strfmt()
-                    silent put =repeat(' ', g:tagbar_indent) . str
+                    call add(output, repeat(' ', g:tagbar_indent) . str)
 
                     " Save the current tagbar line in the tag for easy
                     " highlighting access
-                    let curline                   = line('.')
+                    let curline                   = len(output) + offset
                     let tag.tline                 = curline
                     let a:fileinfo.tline[curline] = tag
                     let tag.depth                 = 1
@@ -2924,16 +2921,21 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             endif
 
             if !g:tagbar_compact
-                silent put _
+                call add(output, "")
             endif
-
-            let is_first_tag = 0
         endif
     endfor
+
+    let outstr = join(output, "\n")
+    if g:tagbar_compact && s:short_help
+        silent 0put =outstr
+    else
+        silent  put =outstr
+    endif
 endfunction
 
 " s:PrintTag() {{{2
-function! s:PrintTag(tag, depth, is_first, fileinfo, typeinfo) abort
+function! s:PrintTag(tag, depth, output, fileinfo, typeinfo) abort
     if g:tagbar_hide_nonpublic &&
      \ get(a:tag.fields, 'access', 'public') !=# 'public'
         let a:tag.tline = -1
@@ -2942,14 +2944,11 @@ function! s:PrintTag(tag, depth, is_first, fileinfo, typeinfo) abort
 
     " Print tag indented according to depth
     let tagstr = repeat(' ', a:depth * g:tagbar_indent) . a:tag.strfmt()
-    if a:is_first && g:tagbar_compact && s:short_help
-        silent 0put =tagstr
-    else
-        silent  put =tagstr
-    endif
+    call add(a:output, tagstr)
 
     " Save the current tagbar line in the tag for easy highlighting access
-    let curline                   = line('.')
+    let offset = g:tagbar_compact && s:short_help ? 0 : line('.')
+    let curline                   = len(a:output) + offset
     let a:tag.tline               = curline
     let a:fileinfo.tline[curline] = a:tag
 
@@ -2970,15 +2969,15 @@ function! s:PrintTag(tag, depth, is_first, fileinfo, typeinfo) abort
                     let indent  = (a:depth + 1) * g:tagbar_indent
                     let indent += g:tagbar_show_visibility
                     let indent += 1 " fold symbol
-                    silent put =repeat(' ', indent) . '[' . ckind.long . ']'
+                    call add(a:output, repeat(' ', indent) . '[' . ckind.long . ']')
                     " Add basic tag to allow folding when on the header line
                     let headertag = s:BaseTag.New(ckind.long)
                     let headertag.parent = a:tag
                     let headertag.fileinfo = a:tag.fileinfo
-                    let a:fileinfo.tline[line('.')] = headertag
+                    let a:fileinfo.tline[len(a:output) + offset] = headertag
                 endif
                 for childtag in childtags
-                    call s:PrintTag(childtag, a:depth + 1, 0,
+                    call s:PrintTag(childtag, a:depth + 1, a:output,
                                   \ a:fileinfo, a:typeinfo)
                 endfor
             endif
