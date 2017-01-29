@@ -877,6 +877,22 @@ function! s:InitTypes() abort
 
     call s:LoadUserTypeDefs()
 
+    " Add an 'unknown' kind to the types for pseudotags that we can't
+    " determine the correct kind for since they don't have any children that
+    " are not pseudotags and that therefore don't provide scope information
+    for typeinfo in values(s:known_types)
+        if has_key(typeinfo, 'kind2scope')
+            let unknown_kind =
+                \ {'short' : '?', 'long' : 'unknown',  'fold' : 0, 'stl' : 1}
+            " Check for existence first since some types exist under more than
+            " one name
+            if index(typeinfo.kinds, unknown_kind) == -1
+                call add(typeinfo.kinds, unknown_kind)
+            endif
+            let typeinfo.kind2scope['?'] = 'unknown'
+        endif
+    endfor
+
     let s:type_init_done = 1
 endfunction
 
@@ -1464,8 +1480,7 @@ function! s:NormalTag.strfmt() abort dict
     let suffix = get(self.fields, 'signature', '')
     if has_key(self.fields, 'type')
         let suffix .= ' : ' . self.fields.type
-    elseif has_key(typeinfo, 'kind2scope') &&
-         \ has_key(typeinfo.kind2scope, self.fields.kind)
+    elseif has_key(get(typeinfo, 'kind2scope', {}), self.fields.kind)
         let suffix .= ' : ' . typeinfo.kind2scope[self.fields.kind]
     endif
 
@@ -1643,6 +1658,7 @@ function! s:TypeInfo.createKinddict() abort dict
         let self.kinddict[kind.short] = i
         let i += 1
     endfor
+    let self.kinddict['?'] = i
 endfunction
 
 " File info {{{2
@@ -2216,41 +2232,20 @@ function! s:ProcessFile(fname, ftype) abort
 
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
-            let taginfo = s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
-            if !empty(taginfo)
-                let fileinfo.fline[taginfo.fields.line] = taginfo
-                call add(fileinfo.tags, taginfo)
-            endif
+            call s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
         endif
     endfor
 
-    " Process scoped tags
-    let processedtags = []
-    if has_key(typeinfo, 'kind2scope')
-        call s:debug('Processing scoped tags')
-
-        let scopedtags = []
-        let is_scoped = 'has_key(typeinfo.kind2scope, v:val.fields.kind) ||
-                       \ has_key(v:val, "scope")'
-        let scopedtags += filter(copy(fileinfo.tags), is_scoped)
-        call filter(fileinfo.tags, '!(' . is_scoped . ')')
-
-        call s:AddScopedTags(scopedtags, processedtags, {}, 0,
-                           \ typeinfo, fileinfo, line('$'))
-
-        if !empty(scopedtags)
-            echoerr 'Tagbar: ''scopedtags'' not empty after processing,'
-                  \ 'this should never happen!'
-                  \ 'Please contact the script maintainer with an example.'
-        endif
-    endif
-    call s:debug('Number of top-level tags: ' . len(processedtags))
-
-    " Create a placeholder tag for the 'kind' header for folding purposes
+    " Create a placeholder tag for the 'kind' header for folding purposes, but
+    " only for non-scoped tags
     for kind in typeinfo.kinds
+        if has_key(get(typeinfo, 'kind2scope', {}), kind.short)
+            continue
+        endif
 
         let curtags = filter(copy(fileinfo.tags),
-                           \ 'v:val.fields.kind ==# kind.short')
+                           \ 'v:val.fields.kind ==# kind.short && ' .
+                           \ '!has_key(v:val, "scope")')
         call s:debug('Processing kind: ' . kind.short .
                    \ ', number of tags: ' . len(curtags))
 
@@ -2267,10 +2262,6 @@ function! s:ProcessFile(fname, ftype) abort
             let tag.parent = kindtag
         endfor
     endfor
-
-    if !empty(processedtags)
-        call extend(fileinfo.tags, processedtags)
-    endif
 
     " Clear old folding information from previous file version to prevent leaks
     call fileinfo.clearOldFolds()
@@ -2321,7 +2312,9 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
 
             let ctags_kinds = ''
             for kind in a:typeinfo.kinds
-                let ctags_kinds .= kind.short
+                if kind.short !=# '?'
+                    let ctags_kinds .= kind.short
+                endif
             endfor
 
             let ctags_args += ['--language-force=' . ctags_type]
@@ -2437,26 +2430,35 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
                          \ " Please read the last section of ':help tagbar-extend'.")
             call add(s:warnings.type, a:typeinfo.ftype)
         endif
-        return {}
-    endif
-
-    " Make some information easier accessible
-    if has_key(a:typeinfo, 'scope2kind')
-        for scope in keys(a:typeinfo.scope2kind)
-            if has_key(taginfo.fields, scope)
-                let taginfo.scope = scope
-                let taginfo.path  = taginfo.fields[scope]
-
-                let taginfo.fullpath = taginfo.path . a:typeinfo.sro .
-                                     \ taginfo.name
-                break
-            endif
-        endfor
-        let taginfo.depth = len(split(taginfo.path, '\V' . a:typeinfo.sro))
+        return
     endif
 
     let taginfo.fileinfo = a:fileinfo
     let taginfo.typeinfo = a:typeinfo
+
+    let a:fileinfo.fline[taginfo.fields.line] = taginfo
+
+    " If this filetype doesn't have any scope information then we can stop
+    " here after adding the tag to the list
+    if !has_key(a:typeinfo, 'scope2kind')
+        call add(a:fileinfo.tags, taginfo)
+        return
+    endif
+
+
+    " Make some information easier accessible
+    for scope in keys(a:typeinfo.scope2kind)
+        if has_key(taginfo.fields, scope)
+            let taginfo.scope = scope
+            let taginfo.path  = taginfo.fields[scope]
+
+            let taginfo.fullpath = taginfo.path . a:typeinfo.sro .
+                                 \ taginfo.name
+            break
+        endif
+    endfor
+    let pathlist = split(taginfo.path, '\V' . a:typeinfo.sro)
+    let taginfo.depth = len(pathlist)
 
     " Needed for folding
     try
@@ -2471,168 +2473,107 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
                 \ ' Please read '':help tagbar-extend''.')
             call add(s:warnings.type, a:typeinfo.ftype)
         endif
-        return {}
+        return
     endtry
 
-    return taginfo
+    call s:add_tag_recursive(a:fileinfo.tags, {}, taginfo, pathlist)
 endfunction
 
-" s:AddScopedTags() {{{2
-" Recursively process tags. Unfortunately there is a problem: not all tags in
-" a hierarchy are actually there. For example, in C++ a class can be defined
-" in a header file and implemented in a .cpp file (so the class itself doesn't
-" appear in the .cpp file and thus doesn't generate a tag). Another example
-" are anonymous structures like namespaces, structs, enums, and unions, that
-" also don't get a tag themselves. These tags are thus called 'pseudo-tags' in
-" Tagbar. Properly parsing them is quite tricky, so try not to think about it
-" too much.
-function! s:AddScopedTags(tags, processedtags, parent, depth,
-                        \ typeinfo, fileinfo, maxline) abort
-    if !empty(a:parent)
-        let curpath = a:parent.fullpath
-        let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
-    else
-        let curpath = ''
-        let pscope  = ''
-    endif
-
-    let is_cur_tag = 'v:val.depth == a:depth'
-
-    if !empty(curpath)
-        " Check whether the tag is either a direct child at the current depth
-        " or at least a proper grandchild with pseudo-tags in between. If it
-        " is a direct child also check for matching scope.
-        let is_cur_tag .= ' &&
-        \ (v:val.path ==# curpath ||
-         \ match(v:val.path, ''\V\^\C'' . curpath . a:typeinfo.sro) == 0) &&
-        \ (v:val.path ==# curpath ? (v:val.scope ==# pscope) : 1) &&
-        \ v:val.fields.line >= a:parent.fields.line &&
-        \ v:val.fields.line <= a:maxline'
-    endif
-
-    let curtags = filter(copy(a:tags), is_cur_tag)
-
-    if !empty(curtags)
-        call filter(a:tags, '!(' . is_cur_tag . ')')
-
-        let realtags   = []
-        let pseudotags = []
-
-        while !empty(curtags)
-            let tag = remove(curtags, 0)
-
-            if tag.path != curpath
-                " tag is child of a pseudo-tag, so create a new pseudo-tag and
-                " add all its children to it
-                let pseudotag = s:ProcessPseudoTag(curtags, tag, a:parent,
-                                                 \ a:typeinfo, a:fileinfo)
-
-                call add(pseudotags, pseudotag)
-            else
-                call add(realtags, tag)
+" s:add_tag_recursive() {{{2
+function! s:add_tag_recursive(tags, parent, taginfo, pathlist) abort
+    " If the pathlist is empty we are at the correct scope for the current tag
+    if empty(a:pathlist)
+        if !a:taginfo.isPseudoTag()
+            " If a childtag got processed before a parent tag then there will
+            " be a pseudotag here as a placeholder. Copy the children over and
+            " then replace the pseudotag with the real one.
+            let pseudotags = filter(copy(a:tags),
+                        \ 'v:val.name == a:taginfo.name && ' .
+                        \ '(v:val.fields.kind ==# "?" || v:val.fields.kind ==# a:taginfo.fields.kind) && ' .
+                        \ 'v:val.isPseudoTag()')
+            if len(pseudotags) == 1
+                let pseudotag = pseudotags[0]
+                let a:taginfo.children = pseudotag.children
+                for child in a:taginfo.children
+                    let child.parent = a:taginfo
+                endfor
+                call remove(a:tags, index(a:tags, pseudotag))
+            elseif len(pseudotags) > 1
+                echoerr 'Tagbar: Found duplicate pseudotag; this should never happen!'
+                      \ 'Please contact the script maintainer with an example.'
+                      \ 'Pseudotag name:' pseudotag.name
             endif
-        endwhile
-
-        " Recursively add the children of the tags on the current level
-        for tag in realtags
-            let tag.parent = a:parent
-
-            if !has_key(a:typeinfo.kind2scope, tag.fields.kind)
-                continue
-            endif
-
-            " Check for tags with the exact same name that may be created
-            " alternatively in a conditional (Issue #139). The only way to
-            " distinguish between them is by line number.
-            let twins = filter(copy(realtags),
-                             \ "v:val.fullpath ==# '" .
-                             \ substitute(tag.fullpath, "'", "''", 'g') . "'" .
-                             \ " && v:val.fields.line != " . tag.fields.line)
-            let maxline = line('$')
-            for twin in twins
-                if twin.fields.line <= maxline &&
-                 \ twin.fields.line > tag.fields.line
-                    let maxline = twin.fields.line - 1
-                endif
-            endfor
-
-            call s:AddScopedTags(a:tags, tag.children, tag, a:depth + 1,
-                               \ a:typeinfo, a:fileinfo, maxline)
-        endfor
-        call extend(a:processedtags, realtags)
-
-        " Recursively add the children of the tags that are children of the
-        " pseudo-tags on the current level
-        for tag in pseudotags
-            call s:ProcessPseudoChildren(a:tags, tag, a:depth, a:typeinfo,
-                                       \ a:fileinfo)
-        endfor
-        call extend(a:processedtags, pseudotags)
-    endif
-
-    " Now we have to check if there are any pseudo-tags at the current level
-    " so we have to check for real tags at a lower level, i.e. grandchildren
-    let is_grandchild = 'v:val.depth > a:depth'
-
-    if !empty(curpath)
-        let is_grandchild .=
-        \ ' && match(v:val.path, ''\V\^\C'' . curpath . a:typeinfo.sro) == 0'
-    endif
-
-    let grandchildren = filter(copy(a:tags), is_grandchild)
-
-    if !empty(grandchildren)
-        call s:AddScopedTags(a:tags, a:processedtags, a:parent, a:depth + 1,
-                           \ a:typeinfo, a:fileinfo, a:maxline)
-    endif
-endfunction
-
-" s:ProcessPseudoTag() {{{2
-function! s:ProcessPseudoTag(curtags, tag, parent, typeinfo, fileinfo) abort
-    let curpath = !empty(a:parent) ? a:parent.fullpath : ''
-
-    let pseudoname = substitute(a:tag.path, curpath, '', '')
-    let pseudoname = substitute(pseudoname, '\V\^' . a:typeinfo.sro, '', '')
-    let pseudotag  = s:CreatePseudoTag(pseudoname, a:parent, a:tag.scope,
-                                     \ a:typeinfo, a:fileinfo)
-    let pseudotag.children = [a:tag]
-
-    " get all the other (direct) children of the current pseudo-tag
-    let ispseudochild = 'v:val.path ==# a:tag.path && v:val.scope ==# a:tag.scope'
-    let pseudochildren = filter(copy(a:curtags), ispseudochild)
-    if !empty(pseudochildren)
-        call filter(a:curtags, '!(' . ispseudochild . ')')
-        call extend(pseudotag.children, pseudochildren)
-    endif
-
-    return pseudotag
-endfunction
-
-" s:ProcessPseudoChildren() {{{2
-function! s:ProcessPseudoChildren(tags, tag, depth, typeinfo, fileinfo) abort
-    for childtag in a:tag.children
-        let childtag.parent = a:tag
-
-        if !has_key(a:typeinfo.kind2scope, childtag.fields.kind)
-            continue
         endif
 
-        call s:AddScopedTags(a:tags, childtag.children, childtag, a:depth + 1,
-                           \ a:typeinfo, a:fileinfo, line('$'))
-    endfor
-
-    let is_grandchild = 'v:val.depth > a:depth && ' .
-            \ 'match(v:val.path,' .
-            \ '''^\C'' . substitute(a:tag.fullpath, "''", "''''", "g")) == 0'
-    let grandchildren = filter(copy(a:tags), is_grandchild)
-    if !empty(grandchildren)
-        call s:AddScopedTags(a:tags, a:tag.children, a:tag, a:depth + 1,
-                           \ a:typeinfo, a:fileinfo, line('$'))
+        if !empty(a:parent)
+            let a:taginfo.parent = a:parent
+        endif
+        call add(a:tags, a:taginfo)
+        return
     endif
+
+
+    " There is still at least one more scope between the current one and the
+    " one of the current tag, so we have to either find or create the
+    " intermediate tags
+
+    let grandparent = a:parent
+    let parentname = remove(a:pathlist, 0)
+
+    let parentcond = 'v:val.name == "' . parentname . '"'
+    if empty(a:pathlist)
+        " If the current tag is a direct child of the parent we're looking for
+        " then we can also filter the parents based on the scope information
+        let parentcond .= ' && (v:val.fields.kind ==# "?" || get(a:taginfo.typeinfo.kind2scope, v:val.fields.kind, "") == a:taginfo.scope)'
+    endif
+    let parents = filter(copy(a:tags), parentcond)
+
+    if empty(parents)
+        " No parents found, so either the parent is a pseudotag or it hasn't
+        " been processed yet. Create a pseudotag as a placeholder; if the
+        " actual parent gets processed later it will get replaced.
+        if empty(a:pathlist)
+            let pseudokind = a:taginfo.typeinfo.scope2kind[a:taginfo.scope]
+        else
+            let pseudokind = '?'
+        endif
+        let parent = s:create_pseudotag(parentname, grandparent,
+                    \ pseudokind, a:taginfo.typeinfo, a:taginfo.fileinfo)
+        call add(a:tags, parent)
+    else
+        " If there are multiple possible parents (c.f. issue #139, or tags
+        " with the same name but a different kind) then we will pick the one
+        " that is closest above the current tag as a heuristic.
+
+        " Start at line 0 so that pseudotags get included
+        let minline = 0
+        for candidate in parents
+            if candidate.fields.line <= a:taginfo.fields.line &&
+             \ candidate.fields.line >= minline
+                let parent = candidate
+                let minline = candidate.fields.line
+            endif
+        endfor
+    endif
+
+    " If the parent is a pseudotag it may have gotten created as an in-between
+    " tag without proper information about its kind because all if its
+    " children are also pseudotags, so it may be incorrect. If the current tag
+    " is a direct child of a pseudotag then we can derive the correct kind, so
+    " replace it if necessary.
+    if parent.isPseudoTag() && empty(a:pathlist)
+        let parentkind = a:taginfo.typeinfo.scope2kind[a:taginfo.scope]
+        if parent.fields.kind ==# '?' || parentkind !=# parent.fields.kind
+            let parent.fields.kind = parentkind
+            call parent.initFoldState()
+        endif
+    endif
+
+    call s:add_tag_recursive(parent.children, parent, a:taginfo, a:pathlist)
 endfunction
 
-" s:CreatePseudoTag() {{{2
-function! s:CreatePseudoTag(name, parent, scope, typeinfo, fileinfo) abort
+" s:create_pseudotag() {{{2
+function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
     if !empty(a:parent)
         let curpath = a:parent.fullpath
         let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
@@ -2642,7 +2583,7 @@ function! s:CreatePseudoTag(name, parent, scope, typeinfo, fileinfo) abort
     endif
 
     let pseudotag             = s:PseudoTag.New(a:name)
-    let pseudotag.fields.kind = a:typeinfo.scope2kind[a:scope]
+    let pseudotag.fields.kind = a:kind
 
     let parentscope = substitute(curpath, a:name . '$', '', '')
     let parentscope = substitute(parentscope,
@@ -2879,8 +2820,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             continue
         endif
 
-        if has_key(a:typeinfo, 'kind2scope') &&
-         \ has_key(a:typeinfo.kind2scope, kind.short)
+        if has_key(get(a:typeinfo, 'kind2scope', {}), kind.short)
             " Scoped tags
             for tag in curtags
                 call s:PrintTag(tag, 0, output, a:fileinfo, a:typeinfo)
