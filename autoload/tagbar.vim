@@ -1318,10 +1318,11 @@ function! s:BaseTag._init(name) abort dict
     let self.fullpath      = a:name
     let self.depth         = 0
     let self.parent        = {}
-    let self.children      = []
     let self.tline         = -1
     let self.fileinfo      = {}
     let self.typeinfo      = {}
+    let self._childlist    = []
+    let self._childdict    = {}
 endfunction
 
 " s:BaseTag.isNormalTag() {{{3
@@ -1348,7 +1349,7 @@ endfunction
 function! s:BaseTag._getPrefix() abort dict
     let fileinfo = self.fileinfo
 
-    if !empty(self.children)
+    if !empty(self._childlist)
         if fileinfo.tagfolds[self.fields.kind][self.fullpath]
             let prefix = s:icon_closed
         else
@@ -1413,7 +1414,7 @@ endfunction
 
 " s:BaseTag.isFoldable() {{{3
 function! s:BaseTag.isFoldable() abort dict
-    return !empty(self.children)
+    return !empty(self._childlist)
 endfunction
 
 " s:BaseTag.isFolded() {{{3
@@ -1463,6 +1464,41 @@ function! s:BaseTag.openParents() abort dict
         call parent.openFold()
         let parent = parent.parent
     endwhile
+endfunction
+
+" s:BaseTag.addChild() {{{3
+function! s:BaseTag.addChild(tag) abort dict
+    call add(self._childlist, a:tag)
+
+    if has_key(self._childdict, a:tag.name)
+        call add(self._childdict[a:tag.name], a:tag)
+    else
+        let self._childdict[a:tag.name] = [a:tag]
+    endif
+endfunction
+
+" s:BaseTag.getChildren() {{{3
+function! s:BaseTag.getChildren() dict abort
+    return self._childlist
+endfunction
+
+" s:BaseTag.getChildrenByName() {{{3
+function! s:BaseTag.getChildrenByName(tagname) dict abort
+    return get(self._childdict, a:tagname, [])
+endfunction
+
+" s:BaseTag.removeChild() {{{3
+function! s:BaseTag.removeChild(tag) dict abort
+    let idx = index(self._childlist, a:tag)
+    if idx >= 0
+        call remove(self._childlist, idx)
+    endif
+
+    let namelist = get(self._childdict, a:tag.name, [])
+    let idx = index(namelist, a:tag)
+    if idx >= 0
+        call remove(namelist, idx)
+    endif
 endfunction
 
 " Normal tag {{{2
@@ -1681,7 +1717,8 @@ function! s:FileInfo.New(fname, ftype, typeinfo) abort dict
 
     " List of the tags that are present in the file, sorted according to the
     " value of 'g:tagbar_sort'
-    let newobj.tags = []
+    let newobj._taglist = []
+    let newobj._tagdict = {}
 
     " Dictionary of the tags, indexed by line number in the file
     let newobj.fline = {}
@@ -1711,12 +1748,48 @@ function! s:FileInfo.New(fname, ftype, typeinfo) abort dict
     return newobj
 endfunction
 
+" s:FileInfo.addTag() {{{3
+function! s:FileInfo.addTag(tag) abort dict
+    call add(self._taglist, a:tag)
+
+    if has_key(self._tagdict, a:tag.name)
+        call add(self._tagdict[a:tag.name], a:tag)
+    else
+        let self._tagdict[a:tag.name] = [a:tag]
+    endif
+endfunction
+
+" s:FileInfo.getTags() {{{3
+function! s:FileInfo.getTags() dict abort
+    return self._taglist
+endfunction
+
+" s:FileInfo.getTagsByName() {{{3
+function! s:FileInfo.getTagsByName(tagname) dict abort
+    return get(self._tagdict, a:tagname, [])
+endfunction
+
+" s:FileInfo.removeTag() {{{3
+function! s:FileInfo.removeTag(tag) dict abort
+    let idx = index(self._taglist, a:tag)
+    if idx >= 0
+        call remove(self._taglist, idx)
+    endif
+
+    let namelist = get(self._tagdict, a:tag.name, [])
+    let idx = index(namelist, a:tag)
+    if idx >= 0
+        call remove(namelist, idx)
+    endif
+endfunction
+
 " s:FileInfo.reset() {{{3
 " Reset stuff that gets regenerated while processing a file and save the old
 " tag folds
 function! s:FileInfo.reset() abort dict
     let self.mtime = getftime(self.fpath)
-    let self.tags  = []
+    let self._taglist = []
+    let self._tagdict = {}
     let self.fline = {}
     let self.tline = {}
 
@@ -1738,9 +1811,9 @@ endfunction
 " s:FileInfo.sortTags() {{{3
 function! s:FileInfo.sortTags() abort dict
     if get(s:compare_typeinfo, 'sort', g:tagbar_sort)
-        call s:SortTags(self.tags, 's:CompareByKind')
+        call s:SortTags(self._taglist, 's:CompareByKind')
     else
-        call s:SortTags(self.tags, 's:CompareByLine')
+        call s:SortTags(self._taglist, 's:CompareByLine')
     endif
 endfunction
 
@@ -2243,7 +2316,7 @@ function! s:ProcessFile(fname, ftype) abort
             continue
         endif
 
-        let curtags = filter(copy(fileinfo.tags),
+        let curtags = filter(copy(fileinfo.getTags()),
                            \ 'v:val.fields.kind ==# kind.short && ' .
                            \ '!has_key(v:val, "scope")')
         call s:debug('Processing kind: ' . kind.short .
@@ -2441,7 +2514,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     " If this filetype doesn't have any scope information then we can stop
     " here after adding the tag to the list
     if !has_key(a:typeinfo, 'scope2kind')
-        call add(a:fileinfo.tags, taginfo)
+        call a:fileinfo.addTag(taginfo)
         return
     endif
 
@@ -2476,39 +2549,56 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         return
     endtry
 
-    call s:add_tag_recursive(a:fileinfo.tags, {}, taginfo, pathlist)
+    call s:add_tag_recursive({}, taginfo, pathlist)
 endfunction
 
 " s:add_tag_recursive() {{{2
-function! s:add_tag_recursive(tags, parent, taginfo, pathlist) abort
+" Add a tag recursively as a child of its parent, or if there is no parent, to
+" the root tag list in the fileinfo object.
+function! s:add_tag_recursive(parent, taginfo, pathlist) abort
     " If the pathlist is empty we are at the correct scope for the current tag
     if empty(a:pathlist)
-        if !a:taginfo.isPseudoTag()
-            " If a childtag got processed before a parent tag then there will
-            " be a pseudotag here as a placeholder. Copy the children over and
-            " then replace the pseudotag with the real one.
-            let pseudotags = filter(copy(a:tags),
-                        \ 'v:val.name == a:taginfo.name && ' .
-                        \ '(v:val.fields.kind ==# "?" || v:val.fields.kind ==# a:taginfo.fields.kind) && ' .
-                        \ 'v:val.isPseudoTag()')
-            if len(pseudotags) == 1
-                let pseudotag = pseudotags[0]
-                let a:taginfo.children = pseudotag.children
-                for child in a:taginfo.children
-                    let child.parent = a:taginfo
-                endfor
-                call remove(a:tags, index(a:tags, pseudotag))
-            elseif len(pseudotags) > 1
-                echoerr 'Tagbar: Found duplicate pseudotag; this should never happen!'
-                      \ 'Please contact the script maintainer with an example.'
-                      \ 'Pseudotag name:' pseudotag.name
-            endif
+        " If a child tag got processed before a parent tag then there will
+        " be a pseudotag here as a placeholder. Copy the children over and
+        " then replace the pseudotag with the real one.
+        let pseudotags = []
+        if empty(a:parent)
+            let name_siblings = a:taginfo.fileinfo.getTagsByName(a:taginfo.name)
+        else
+            let name_siblings = a:parent.getChildrenByName(a:taginfo.name)
         endif
 
-        if !empty(a:parent)
+        for tag in name_siblings
+            if (tag.fields.kind ==# '?'
+              \ || tag.fields.kind ==# a:taginfo.fields.kind)
+             \ && tag.isPseudoTag()
+                call add(pseudotags, tag)
+            endif
+        endfor
+
+        if len(pseudotags) == 1
+            let pseudotag = pseudotags[0]
+            for child in pseudotag.getChildren()
+                call a:taginfo.addChild(child)
+                let child.parent = a:taginfo
+            endfor
+            if empty(a:parent)
+                call a:taginfo.fileinfo.removeTag(pseudotag)
+            else
+                call a:parent.removeChild(pseudotag)
+            endif
+        elseif len(pseudotags) > 1
+            echoerr 'Tagbar: Found duplicate pseudotag; this should never happen!'
+                  \ 'Please contact the script maintainer with an example.'
+                  \ 'Pseudotag name:' pseudotag.name
+        endif
+
+        if empty(a:parent)
+            call a:taginfo.fileinfo.addTag(a:taginfo)
+        else
+            call a:parent.addChild(a:taginfo)
             let a:taginfo.parent = a:parent
         endif
-        call add(a:tags, a:taginfo)
         return
     endif
 
@@ -2520,13 +2610,24 @@ function! s:add_tag_recursive(tags, parent, taginfo, pathlist) abort
     let grandparent = a:parent
     let parentname = remove(a:pathlist, 0)
 
-    let parentcond = 'v:val.name == "' . parentname . '"'
+    if empty(grandparent)
+        let name_siblings = a:taginfo.fileinfo.getTagsByName(parentname)
+    else
+        let name_siblings = grandparent.getChildrenByName(parentname)
+    endif
     if empty(a:pathlist)
         " If the current tag is a direct child of the parent we're looking for
         " then we can also filter the parents based on the scope information
-        let parentcond .= ' && (v:val.fields.kind ==# "?" || get(a:taginfo.typeinfo.kind2scope, v:val.fields.kind, "") == a:taginfo.scope)'
+        let parents = []
+        for tag in name_siblings
+            if tag.fields.kind ==# '?'
+             \ || get(a:taginfo.typeinfo.kind2scope, tag.fields.kind, "") == a:taginfo.scope
+                call add(parents, tag)
+            endif
+        endfor
+    else
+        let parents = name_siblings
     endif
-    let parents = filter(copy(a:tags), parentcond)
 
     if empty(parents)
         " No parents found, so either the parent is a pseudotag or it hasn't
@@ -2539,7 +2640,11 @@ function! s:add_tag_recursive(tags, parent, taginfo, pathlist) abort
         endif
         let parent = s:create_pseudotag(parentname, grandparent,
                     \ pseudokind, a:taginfo.typeinfo, a:taginfo.fileinfo)
-        call add(a:tags, parent)
+        if empty(grandparent)
+            call a:taginfo.fileinfo.addTag(parent)
+        else
+            call grandparent.addChild(parent)
+        endif
     else
         " If there are multiple possible parents (c.f. issue #139, or tags
         " with the same name but a different kind) then we will pick the one
@@ -2569,7 +2674,7 @@ function! s:add_tag_recursive(tags, parent, taginfo, pathlist) abort
         endif
     endif
 
-    call s:add_tag_recursive(parent.children, parent, a:taginfo, a:pathlist)
+    call s:add_tag_recursive(parent, a:taginfo, a:pathlist)
 endfunction
 
 " s:create_pseudotag() {{{2
@@ -2614,8 +2719,8 @@ function! s:SortTags(tags, comparemethod) abort
     call sort(a:tags, a:comparemethod)
 
     for tag in a:tags
-        if !empty(tag.children)
-            call s:SortTags(tag.children, a:comparemethod)
+        if !empty(tag.getChildren())
+            call s:SortTags(tag.getChildren(), a:comparemethod)
         endif
     endfor
 endfunction
@@ -2749,7 +2854,7 @@ function! s:RenderContent(...) abort
 
     let typeinfo = fileinfo.typeinfo
 
-    if !empty(fileinfo.tags)
+    if !empty(fileinfo.getTags())
         " Print tags
         call s:PrintKinds(typeinfo, fileinfo)
     else
@@ -2811,7 +2916,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
     let output = []
 
     for kind in a:typeinfo.kinds
-        let curtags = filter(copy(a:fileinfo.tags),
+        let curtags = filter(copy(a:fileinfo.getTags()),
                            \ 'v:val.fields.kind ==# kind.short')
         call s:debug('Printing kind: ' . kind.short .
                    \ ', number of (top-level) tags: ' . len(curtags))
@@ -2900,7 +3005,7 @@ function! s:PrintTag(tag, depth, output, fileinfo, typeinfo) abort
                 let childfilter .=
                       \ ' && get(v:val.fields, "access", "public") ==# "public"'
             endif
-            let childtags = filter(copy(a:tag.children), childfilter)
+            let childtags = filter(copy(a:tag.getChildren()), childfilter)
             if len(childtags) > 0
                 " Print 'kind' header of following children, but only if they
                 " are not scope-defining tags (since those already have an
@@ -3358,7 +3463,7 @@ function! s:SetFoldLevel(level, force) abort
         return
     endif
 
-    call s:SetFoldLevelRecursive(fileinfo, fileinfo.tags, a:level)
+    call s:SetFoldLevelRecursive(fileinfo, fileinfo.getTags(), a:level)
 
     let typeinfo = fileinfo.typeinfo
 
@@ -3390,8 +3495,8 @@ function! s:SetFoldLevelRecursive(fileinfo, tags, level) abort
             call tag.setFolded(0)
         endif
 
-        if !empty(tag.children)
-            call s:SetFoldLevelRecursive(a:fileinfo, tag.children, a:level)
+        if !empty(tag.getChildren())
+            call s:SetFoldLevelRecursive(a:fileinfo, tag.getChildren(), a:level)
         endif
     endfor
 endfunction
@@ -3422,7 +3527,7 @@ function! s:GotoNextFold() abort
 
         if empty(taginfo)
             continue
-        elseif !empty(taginfo.children) || taginfo.isKindheader()
+        elseif !empty(taginfo.getChildren()) || taginfo.isKindheader()
             let newlinenr = linenr
             break
         endif
@@ -3455,8 +3560,8 @@ function! s:GotoPrevFold() abort
         "   same parent as the current one, or
         " - a closed parent fold.
         elseif (!empty(taginfo.parent) && taginfo.parent != curparent &&
-              \ empty(taginfo.children)) ||
-             \ ((!empty(taginfo.children) || taginfo.isKindheader()) &&
+              \ empty(taginfo.getChildren())) ||
+             \ ((!empty(taginfo.getChildren()) || taginfo.isKindheader()) &&
               \ taginfo.isFolded())
             let newlinenr = linenr
             break
