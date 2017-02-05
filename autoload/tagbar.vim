@@ -76,6 +76,8 @@ let s:window_pos = {
     \ 'post' : { 'x' : 0, 'y' : 0 }
 \}
 
+let s:delayed_update_files = []
+
 " Script-local variable needed since compare functions can't
 " take extra arguments
 let s:compare_typeinfo = {}
@@ -1082,8 +1084,9 @@ function! s:CreateAutocommands() abort
                          \     call s:ShrinkIfExpanded() |
                          \ endif
 
-        autocmd BufWritePost * call
-                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 1)
+        autocmd BufWritePost *
+                    \ call s:HandleBufWrite(fnamemodify(expand('<afile>'), ':p'))
+        autocmd CursorHold,CursorHoldI * call s:do_delayed_update()
         " BufReadPost is needed for reloading the current buffer if the file
         " was changed by an external command; see commit 17d199f
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
@@ -3578,8 +3581,12 @@ endfunction
 
 " Helper functions {{{1
 " s:AutoUpdate() {{{2
-function! s:AutoUpdate(fname, force) abort
+function! s:AutoUpdate(fname, force, ...) abort
     call s:debug('AutoUpdate called [' . a:fname . ']')
+
+    " Whether we want to skip actually displaying the tags in Tagbar and only
+    " update the fileinfo
+    let no_display = a:0 > 0 ? a:1 : 0
 
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
@@ -3639,6 +3646,10 @@ function! s:AutoUpdate(fname, force) abort
         call s:debug('New file, processing [' . a:fname . ']')
         call s:ProcessFile(a:fname, sftype)
         let updated = 1
+    endif
+
+    if no_display
+        return
     endif
 
     let fileinfo = s:known_files.get(a:fname)
@@ -4248,6 +4259,29 @@ function! s:HandleBufDelete(bufname, bufnr) abort
             close
         endif
     endif
+endfunction
+
+" s:HandleBufWrite() {{{2
+function! s:HandleBufWrite(fname) abort
+    if index(s:delayed_update_files, a:fname) == -1
+        call add(s:delayed_update_files, a:fname)
+    endif
+endfunction
+
+" s:do_delayed_update() {{{2
+function! s:do_delayed_update() abort
+    let curfile = s:TagbarState().getCurrent(0)
+    if empty(curfile)
+        let curfname = ''
+    else
+        let curfname = curfile.fpath
+    endif
+
+    while !empty(s:delayed_update_files)
+        let fname = remove(s:delayed_update_files, 0)
+        let no_display = curfname !=# fname
+        call s:AutoUpdate(fname, 1, no_display)
+    endwhile
 endfunction
 
 " s:ReopenWindow() {{{2
