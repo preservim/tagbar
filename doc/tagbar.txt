@@ -1269,8 +1269,9 @@ have been missed.
 If the bug does seem to be in Tagbar then you can use Tagbar's debug mode to
 try to find the source of the problem. Usually you would use it like this:
 
-  1. Remove the |tagbar-statusline| support from your vimrc if you use it, and
-     make sure you don't have any autocommands that load Tagbar on startup.
+  1. Remove the |tagbar-statusline| support from your vimrc if you use it
+     unless the problem is with this functionality, and make sure you don't
+     have any autocommands that load Tagbar on startup.
   2. Open Vim without loading any files.
   3. Run :TagbarDebug.
   4. Open the file you are having problems with.
@@ -1282,7 +1283,12 @@ Note that it is important that the "TagbarDebug" command gets called before
 any other call to a Tagbar command or function, so step 1 is important to get
 a complete log.
 
-This should leave a file called "tagbardebug.log" in the current directory.
+This should leave a file called "tagbardebug.log" in the current directory. If
+ctags got executed successfully then there should also be a file called
+"tagbardebug.log.ctags_out" which contains the full output of the last ctags
+invocation. This can be very helpful when debugging but may contain sensitive
+information and is therefore kept in a separate file.
+
 See |tagbar-commands| for more information on the debug commands. When you
 look at the file you should especially pay attention to the reported file type
 and the ctags command line in the log file.

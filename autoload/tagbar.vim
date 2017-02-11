@@ -2438,6 +2438,12 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
     endif
 
     call s:debug('Ctags executed successfully')
+    if s:debug
+        exe 'redir! > ' . s:debug_file . '.ctags_out'
+        silent echon ctags_output
+        redir END
+    endif
+
     return ctags_output
 endfunction
 
