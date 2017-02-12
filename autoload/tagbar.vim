@@ -2654,6 +2654,8 @@ function! s:add_tag_recursive(parent, taginfo, pathlist) abort
         else
             call grandparent.addChild(parent)
         endif
+    elseif len(parents) == 1
+        let parent = parents[0]
     else
         " If there are multiple possible parents (c.f. issue #139, or tags
         " with the same name but a different kind) then we will pick the one
@@ -2668,6 +2670,20 @@ function! s:add_tag_recursive(parent, taginfo, pathlist) abort
                 let minline = candidate.fields.line
             endif
         endfor
+
+        if !exists('parent')
+            " If we still haven't found a parent it must be below the current
+            " tag, so find the closest parent below the tag. This can happen
+            " for example in Go.
+            let maxline = line('$')
+            for candidate in parents
+                if candidate.fields.line >= a:taginfo.fields.line &&
+                 \ candidate.fields.line <= maxline
+                    let parent = candidate
+                    let maxline = candidate.fields.line
+                endif
+            endfor
+        endif
     endif
 
     " If the parent is a pseudotag it may have gotten created as an in-between
