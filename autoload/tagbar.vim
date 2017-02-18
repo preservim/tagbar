@@ -2706,7 +2706,9 @@ endfunction
 function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
     if !empty(a:parent)
         let curpath = a:parent.fullpath
-        let pscope  = a:typeinfo.kind2scope[a:parent.fields.kind]
+        " If the kind is not present in the kind2scope dictionary, return an
+        " empty scope. This can happen due to incorrect ctags output as in #397.
+        let pscope  = get(a:typeinfo.kind2scope, a:parent.fields.kind, '')
     else
         let curpath = ''
         let pscope  = ''
