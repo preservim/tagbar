@@ -636,7 +636,8 @@ function! s:InitTypes() abort
     let type_ruby.sro        = '.'
     let type_ruby.kind2scope = {
         \ 'c' : 'class',
-        \ 'm' : 'class'
+        \ 'm' : 'class',
+        \ 'f' : 'class'
     \ }
     let type_ruby.scope2kind = {
         \ 'class' : 'c'
