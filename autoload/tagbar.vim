@@ -1373,6 +1373,11 @@ function! s:BaseTag._getPrefix() abort dict
         endif
     endif
 
+    " File-restricted scoping
+    if has_key(self.fields, 'file')
+        let prefix .= '-'
+    end
+
     return prefix
 endfunction
 
