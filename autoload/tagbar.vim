@@ -602,11 +602,12 @@ function! s:InitTypes() abort
     let type_python.kind2scope = {
         \ 'c' : 'class',
         \ 'f' : 'function',
-        \ 'm' : 'function'
+        \ 'm' : 'method'
     \ }
     let type_python.scope2kind = {
         \ 'class'    : 'c',
-        \ 'function' : 'f'
+        \ 'function' : 'f',
+        \ 'method'   : 'm'
     \ }
     if s:ctags_is_uctags
         " Universal Ctags treats member functions differently from normal
