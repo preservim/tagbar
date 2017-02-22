@@ -509,7 +509,23 @@ function! s:InitTypes() abort
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.lisp = type_lisp
-    let s:known_types.clojure = type_lisp
+    " Clojure {{{3
+    let type_clojure = s:TypeInfo.New()
+    let type_clojure.ctagstype = 'clojure'
+    let type_clojure.kinds     = [
+        \ {'short' : 'n', 'long' : 'namespace',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'definitions',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'definitions (once)',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structs',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'interns',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'private functions',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'macros',                  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'inlines',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'multimethod definitions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'multimethods',            'fold' : 0, 'stl' : 1}
+    \ ]
+    let s:known_types.clojure = type_clojure
     " Lua {{{3
     let type_lua = s:TypeInfo.New()
     let type_lua.ctagstype = 'lua'
