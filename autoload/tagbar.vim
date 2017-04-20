@@ -131,6 +131,27 @@ function! s:InitTypes() abort
 
     let s:known_types = {}
 
+    " Ada {{{3
+    let type_ada = s:TypeInfo.New()
+    let type_ada.ctagstype = 'ada'
+    let type_ada.kinds     = [
+                \ {'short' : 'd', 'long' : 'macros',          'fold' : 1, 'stl' : 1},
+                \ {'short' : 'p', 'long' : 'prototypes',      'fold' : 1, 'stl' : 1},
+                \ {'short' : 'g', 'long' : 'enums',           'fold' : 0, 'stl' : 1},
+                \ {'short' : 'e', 'long' : 'enumerators',     'fold' : 0, 'stl' : 1},
+                \ {'short' : 't', 'long' : 'types',           'fold' : 0, 'stl' : 1},
+                \ {'short' : 's', 'long' : 'structs',         'fold' : 0, 'stl' : 1},
+                \ {'short' : 'u', 'long' : 'subtypes',        'fold' : 0, 'stl' : 1},
+                \ {'short' : 'm', 'long' : 'members',         'fold' : 0, 'stl' : 1},
+                \ {'short' : 'v', 'long' : 'variables',       'fold' : 0, 'stl' : 1},
+                \ {'short' : 'i', 'long' : 'identifier',      'fold' : 0, 'stl' : 1},
+                \ {'short' : 'n', 'long' : 'constants',       'fold' : 0, 'stl' : 1},
+                \ {'short' : 'r', 'long' : 'subprogram',      'fold' : 0, 'stl' : 1},
+                \ {'short' : 'R', 'long' : 'subprogramspecs', 'fold' : 0, 'stl' : 1},
+                \ ]
+    let type_ada.sro        = '::'
+
+    let s:known_types.ada = type_ada
     " Ant {{{3
     let type_ant = s:TypeInfo.New()
     let type_ant.ctagstype = 'ant'
