@@ -588,6 +588,24 @@ function! s:InitTypes() abort
         \ {'short' : 'j', 'long' : 'javascript functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.php = type_php
+    " Go {{{3
+    let type_go = s:TypeInfo.New()
+    let type_go.ctagstype = 'go'
+    let type_go.kinds     = [
+        \ {'short' : 'p', 'long' : 'packages',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'consts',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'types',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
+    \ ]
+    let type_go.sro        = '.'
+    let type_go.kind2scope = {
+        \ 'p' : 'package'
+    \ }
+    let type_go.scope2kind = {
+        \ 'package'    : 'p',
+    \ }
+    let s:known_types.go = type_go
     " Python {{{3
     let type_python = s:TypeInfo.New()
     let type_python.ctagstype = 'python'
