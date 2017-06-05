@@ -51,6 +51,7 @@ let s:icon_open   = g:tagbar_iconchars[1]
 let s:type_init_done    = 0
 let s:autocommands_done = 0
 let s:statusline_in_use = 0
+let s:init_done = 0
 
 " 0: not checked yet; 1: checked and found; 2: checked and not found
 let s:checked_ctags       = 0
@@ -122,6 +123,7 @@ function! s:Init(silent) abort
         call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
     endif
 
+    let s:init_done = 1
     return 1
 endfunction
 
@@ -967,6 +969,11 @@ endfunction
 " s:RestoreSession() {{{2
 " Properly restore Tagbar after a session got loaded
 function! s:RestoreSession() abort
+    if s:init_done
+        call s:debug('Tagbar already initialized; not restoring session')
+        return
+    endif
+
     call s:debug('Restoring session')
 
     let curfile = fnamemodify(bufname('%'), ':p')
@@ -975,12 +982,12 @@ function! s:RestoreSession() abort
     if tagbarwinnr == -1
         " Tagbar wasn't open in the saved session, nothing to do
         return
-    else
-        let in_tagbar = 1
-        if winnr() != tagbarwinnr
-            call s:goto_win(tagbarwinnr)
-            let in_tagbar = 0
-        endif
+    endif
+
+    let in_tagbar = 1
+    if winnr() != tagbarwinnr
+        call s:goto_win(tagbarwinnr, 1)
+        let in_tagbar = 0
     endif
 
     let s:last_autofocus = 0
