@@ -1918,6 +1918,18 @@ function! s:ToggleWindow(flags) abort
     call s:debug('ToggleWindow finished')
 endfunction
 
+function! s:FocusBuffer(flags) abort
+    call s:debug('FocusBuffer called')
+
+    let tagbarwinnr = bufwinnr(s:TagbarBufName())
+    if tagbarwinnr != -1
+        call s:goto_win(tagbarwinnr)
+        return
+    endif
+
+    call s:debug('FocusBuffer finished')
+endfunction
+
 " s:OpenWindow() {{{2
 function! s:OpenWindow(flags) abort
     call s:debug("OpenWindow called with flags: '" . a:flags . "'")
@@ -4484,6 +4496,11 @@ endfunction
 function! tagbar#ToggleWindow(...) abort
     let flags = a:0 > 0 ? a:1 : ''
     call s:ToggleWindow(flags)
+endfunction
+
+function! tagbar#FocusBuffer(...) abort
+    let flags = a:0 > 0 ? a:1 : ''
+    call s:FocusBuffer(flags)
 endfunction
 
 function! tagbar#OpenWindow(...) abort
