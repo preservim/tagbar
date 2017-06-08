@@ -637,9 +637,10 @@ function! s:InitTypes() abort
     \ ]
     let type_ruby.sro        = '.'
     let type_ruby.kind2scope = {
+        \ 'm' : 'module',
         \ 'c' : 'class',
-        \ 'm' : 'class',
-        \ 'f' : 'class'
+        \ 'f' : 'method',
+        \ 'F' : 'singleton method'
     \ }
     let type_ruby.scope2kind = {
         \ 'class' : 'c'
