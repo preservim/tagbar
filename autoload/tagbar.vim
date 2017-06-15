@@ -479,7 +479,7 @@ function! s:InitTypes() abort
             \ 'f' : 'namespace'
         \ }
         let type_javascript.scope2kind = {
-            \ 'namespace' : 'v'
+            \ 'namespace' : 'f'
         \ }
         let type_javascript.ctagsbin   = jsctags
         let type_javascript.ctagsargs  = '-f -'
