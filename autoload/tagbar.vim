@@ -2672,6 +2672,14 @@ function! s:add_tag_recursive(parent, taginfo, pathlist) abort
         " Start at line 0 so that pseudotags get included
         let minline = 0
         for candidate in parents
+            " If the line number of the current tag is 0 then we have no way
+            " of determining the best candidate by comparing line numbers.
+            " Just use the first one we have.
+            if a:taginfo.fields.line == 0
+                let parent = candidate
+                break
+            endif
+
             if candidate.fields.line <= a:taginfo.fields.line &&
              \ candidate.fields.line >= minline
                 let parent = candidate
