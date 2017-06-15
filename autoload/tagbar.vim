@@ -1563,7 +1563,7 @@ function! s:NormalTag.getPrototype(short) abort dict
         if self.fields.line == 0 || !bufloaded(bufnr)
             " No linenumber available or buffer not loaded (probably due to
             " 'nohidden'), try the pattern instead
-            return substitute(self.pattern, '^\\V\\^\\C\s*\(.*\)\\$$', '\1', '')
+            return substitute(self.pattern, '^\\M\\^\\C\s*\(.*\)\\$$', '\1', '')
         endif
 
         let line = getbufline(bufnr, self.fields.line)[0]
@@ -2478,7 +2478,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         let dollar = ''
     endif
     let pattern         = strpart(pattern, start, end - start)
-    let taginfo.pattern = '\V\^\C' . pattern . dollar
+    let taginfo.pattern = '\M\^\C' . pattern . dollar
 
     " When splitting fields make sure not to create empty keys or values in
     " case a value illegally contains tabs
