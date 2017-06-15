@@ -2733,7 +2733,7 @@ function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
     let pseudotag             = s:PseudoTag.New(a:name)
     let pseudotag.fields.kind = a:kind
 
-    let parentscope = substitute(curpath, a:name . '$', '', '')
+    let parentscope = substitute(curpath, '\V' . a:name . '$', '', '')
     let parentscope = substitute(parentscope,
                                \ '\V\^' . a:typeinfo.sro . '\$', '', '')
 
