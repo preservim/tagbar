@@ -108,6 +108,8 @@ function! s:setup_keymaps() abort
         \ ['togglefold',    ['o', 'za']],
         \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
         \ ['closeallfolds', ['=', 'zM']],
+        \ ['incrementfolds',  ['zr']],
+        \ ['decrementfolds',  ['zm']],
         \ ['nextfold',      'zj'],
         \ ['prevfold',      'zk'],
         \
