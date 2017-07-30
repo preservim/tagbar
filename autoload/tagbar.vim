@@ -3511,31 +3511,7 @@ function! s:ChangeFoldLevel(diff, force) abort
 
     let level = fileinfo.foldlevel
     let level = level + a:diff
-    if level < 0
-        call s:warning('Foldlevel can''t be negative')
-        return
-    endif
-
-    call s:SetFoldLevelRecursive(fileinfo, fileinfo.getTags(), level)
-
-    let typeinfo = fileinfo.typeinfo
-
-    " Apply foldlevel to 'kind's
-    if level == 0
-        for kind in typeinfo.kinds
-            call fileinfo.closeKindFold(kind)
-        endfor
-    else
-        for kind in typeinfo.kinds
-            if a:force || !kind.fold
-                call fileinfo.openKindFold(kind)
-            endif
-        endfor
-    endif
-
-    let fileinfo.foldlevel = level
-
-    call s:RenderContent()
+    call s:SetFoldLevel(level, a:force)
 endfunction
 
 " s:SetFoldLevel() {{{2
