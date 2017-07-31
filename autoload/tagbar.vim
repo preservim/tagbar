@@ -279,6 +279,15 @@ function! s:InitTypes() abort
     \ }
     let s:known_types.cpp = type_cpp
     let s:known_types.cuda = type_cpp
+    " CSS {{{3
+    let type_css = s:TypeInfo.New()
+    let type_css.ctagstype = 'css'
+    let type_css.kinds     = [
+        \ {'short' : 's', 'long' : 'selector',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'identities', 'fold' : 1, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',    'fold' : 1, 'stl' : 0}
+    \ ]
+    let s:known_types.css = type_css
     " C# {{{3
     let type_cs = s:TypeInfo.New()
     let type_cs.ctagstype = 'c#'
@@ -582,8 +591,10 @@ function! s:InitTypes() abort
     let type_php = s:TypeInfo.New()
     let type_php.ctagstype = 'php'
     let type_php.kinds     = [
+        \ {'short' : 'n', 'long' : 'namespaces',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'traits',               'fold' : 0, 'stl' : 1},
         \ {'short' : 'd', 'long' : 'constant definitions', 'fold' : 0, 'stl' : 0},
         \ {'short' : 'f', 'long' : 'functions',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'variables',            'fold' : 0, 'stl' : 0},
