@@ -324,6 +324,24 @@ function! s:InitTypes() abort
         \ {'short' : 's', 'long' : 'sections',          'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.cobol = type_cobol
+    " Clojure {{{3
+    let type_clojure = s:TypeInfo.New()
+    let type_clojure.ctagstype = 'clojure'
+    let type_clojure.kinds     = [
+        \ {'short' : 'n', 'long' : 'namespace',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'definition',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'function',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'private function',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'macro',                    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'inline',                   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'multimethod definition',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'multimethod instance',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'definition (once)',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'struct',                   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'intern',                   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'namespace',                'fold' : 0, 'stl' : 1}
+    \ ]
+    let s:known_types.clojure = type_clojure
     " DOS Batch {{{3
     let type_dosbatch = s:TypeInfo.New()
     let type_dosbatch.ctagstype = 'dosbatch'
@@ -511,7 +529,7 @@ function! s:InitTypes() abort
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let s:known_types.lisp = type_lisp
-    let s:known_types.clojure = type_lisp
+    "let s:known_types.clojure = type_lisp
     " Lua {{{3
     let type_lua = s:TypeInfo.New()
     let type_lua.ctagstype = 'lua'
