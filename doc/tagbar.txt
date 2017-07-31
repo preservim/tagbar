@@ -858,6 +858,9 @@ tagbar#currenttag({format}, {default} [, {flags}])
     'p'   Display the raw prototype instead of the parsed tag. This can be
           useful in cases where ctags doesn't report some information, like
           the signature. Note that this can get quite long.
+    'k'   This is essentially the same as in 'f' flag - it will display the
+          full hierarchy of the tag, and additionally will provide the
+          information of the kind of the tag.
 
     For example, if you put the following into your statusline: >
         %{tagbar#currenttag('[%s] ','')}

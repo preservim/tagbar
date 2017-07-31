@@ -100,6 +100,122 @@ let s:warnings = {
     \ 'encoding': 0
 \ }
 
+let s:singular_types = {
+            \ 'Classes': 'Class',
+            \ 'Delegates': 'Delegate',
+            \ 'Enumeration values': 'Enumeration value',
+            \ 'Enumerations': 'Enumeration',
+            \ 'Error codes': 'Error code',
+            \ 'Error domains': 'Error domain',
+            \ 'Fields': 'Field',
+            \ 'Interfaces': 'Interface',
+            \ 'JavaScript funtions': 'JavaScript function',
+            \ 'Methods': 'Method',
+            \ 'MobiLink Conn Scripts': 'MobiLink Conn Script',
+            \ 'MobiLink Properties': 'MobiLink Property',
+            \ 'MobiLink Table Scripts': 'MobiLink Table Script',
+            \ 'Properties': 'Property',
+            \ 'Signals': 'Signal',
+            \ 'Structures': 'Structure',
+            \ 'autocommand groups': 'autocommand group',
+            \ 'block data': 'block data',
+            \ 'block label': 'block label',
+            \ 'chapters': 'chapter',
+            \ 'classes': 'class',
+            \ 'commands': 'command',
+            \ 'common blocks': 'common block',
+            \ 'components': 'component',
+            \ 'constant definitions': 'constant definition',
+            \ 'constants': 'constant',
+            \ 'constructors': 'constructor',
+            \ 'cursors': 'cursor',
+            \ 'data items': 'data item',
+            \ 'defines': 'define',
+            \ 'derived types and structures': 'derived type and structure',
+            \ 'domains': 'domain',
+            \ 'entities': 'entity',
+            \ 'entry points': 'entry point',
+            \ 'enum constants': 'enum constant',
+            \ 'enum types': 'enum type',
+            \ 'enumerations': 'enumeration',
+            \ 'enumerators': 'enumerator',
+            \ 'enums': 'enum',
+            \ 'events': 'event',
+            \ 'exception declarations': 'exception declaration',
+            \ 'exceptions': 'exception',
+            \ 'features': 'feature',
+            \ 'fields': 'field',
+            \ 'file descriptions': 'file description',
+            \ 'formats': 'format',
+            \ 'fragments': 'fragment',
+            \ 'function definitions': 'function definition',
+            \ 'functions': 'function',
+            \ 'functor definitions': 'functor definition',
+            \ 'global variables': 'global variable',
+            \ 'group items': 'group item',
+            \ 'imports': 'import',
+            \ 'includes': 'include',
+            \ 'indexes': 'index',
+            \ 'interfaces': 'interface',
+            \ 'javascript functions': 'JavaScript function',
+            \ 'labels': 'label',
+            \ 'macro definitions': 'macro definition',
+            \ 'macros': 'macro',
+            \ 'maps': 'map',
+            \ 'members': 'member',
+            \ 'methods': 'method',
+            \ 'modules or functors': 'module or function',
+            \ 'modules': 'module',
+            \ 'mxtags': 'mxtag',
+            \ 'named anchors': 'named anchor',
+            \ 'namelists': 'namelist',
+            \ 'namespaces': 'namespace',
+            \ 'net data types': 'net data type',
+            \ 'packages': 'package',
+            \ 'paragraphs': 'paragraph',
+            \ 'parts': 'part',
+            \ 'patterns': 'pattern',
+            \ 'ports': 'port',
+            \ 'procedures': 'procedure',
+            \ 'program ids': 'program id',
+            \ 'programs': 'program',
+            \ 'projects': 'project',
+            \ 'properties': 'property',
+            \ 'prototypes': 'prototype',
+            \ 'publications': 'publication',
+            \ 'record definitions': 'record definition',
+            \ 'record fields': 'record field',
+            \ 'records': 'record',
+            \ 'register data types': 'register data type',
+            \ 'sections': 'section',
+            \ 'services': 'services',
+            \ 'sets': 'sets',
+            \ 'signature declarations': 'signature declaration',
+            \ 'singleton methods': 'singleton method',
+            \ 'slots': 'slot',
+            \ 'structs': 'struct',
+            \ 'structure declarations': 'structure declaration',
+            \ 'structure fields': 'structure field',
+            \ 'subparagraphs': 'subparagraph',
+            \ 'subroutines': 'subroutine',
+            \ 'subsections': 'subsection',
+            \ 'subsubsections': 'subsubsection',
+            \ 'subtypes': 'subtype',
+            \ 'synonyms': 'synonym',
+            \ 'tables': 'table',
+            \ 'targets': 'target',
+            \ 'tasks': 'task',
+            \ 'triggers': 'trigger',
+            \ 'type definitions': 'type definition',
+            \ 'type names': 'type name',
+            \ 'typedefs': 'typedef',
+            \ 'types': 'type',
+            \ 'unions': 'union',
+            \ 'value bindings': 'value binding',
+            \ 'variables': 'variable',
+            \ 'views': 'view',
+            \ 'vimball filenames': 'vimball filename'}
+
 " s:Init() {{{2
 function! s:Init(silent) abort
     if s:checked_ctags == 2 && a:silent
@@ -1537,7 +1653,7 @@ function! s:NormalTag.strfmt() abort dict
 endfunction
 
 " s:NormalTag.str() {{{3
-function! s:NormalTag.str(longsig, full) abort dict
+function! s:NormalTag.str(longsig, full, showkind) abort dict
     if a:full && self.path != ''
         let str = self.path . self.typeinfo.sro . self.name
     else
@@ -1550,6 +1666,15 @@ function! s:NormalTag.str(longsig, full) abort dict
         else
             let str .= '()'
         endif
+    elseif a:showkind
+        let kind = tag.fields.kind
+        if kind == ''
+            return str
+        endif
+
+        let typeinfo = tag.fileinfo.typeinfo
+        let plural = typeinfo.kinds[typeinfo.kinddict[kind]].long
+        let str .= ' (' . s:singular_types[plural] . ')'
     endif
 
     return str
@@ -4623,16 +4748,20 @@ function! tagbar#currenttag(fmt, default, ...) abort
     " Indicate that the statusline functionality is being used. This prevents
     " the CloseWindow() function from removing the autocommands.
     let s:statusline_in_use = 1
+    let longsig = 0
+    let fullpath = 0
+    let prototype = 0
+    let showkind = 0
 
     if a:0 > 0
         " also test for non-zero value for backwards compatibility
         let longsig   = a:1 =~# 's' || (type(a:1) == type(0) && a:1 != 0)
         let fullpath  = a:1 =~# 'f'
         let prototype = a:1 =~# 'p'
-    else
-        let longsig   = 0
-        let fullpath  = 0
-        let prototype = 0
+        if a:1 =~# 'k'
+            let showkind = 1
+            let fullpath = 1
+        endif
     endif
 
     if !s:Init(1)
@@ -4645,7 +4774,7 @@ function! tagbar#currenttag(fmt, default, ...) abort
         if prototype
             return tag.getPrototype(1)
         else
-            return printf(a:fmt, tag.str(longsig, fullpath))
+            return printf(a:fmt, tag.str(longsig, fullpath, showkind))
         endif
     else
         return a:default
