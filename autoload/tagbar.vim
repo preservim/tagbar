@@ -645,6 +645,32 @@ function! s:InitTypes() abort
         \ 'class' : 'c'
     \ }
     let s:known_types.ruby = type_ruby
+    " Rust {{{3
+    let type_rust = s:TypeInfo.New()
+    let type_rust.ctagstype = 'rust'
+    let type_rust.kinds     = [
+        \ {'short' : 'n', 'long' : 'modules',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structural types', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'trait interfaces', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'implementations',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'enums',            'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'type aliases',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'global variables', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'M', 'long' : 'macro definitions','fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'struct fields',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enum variants',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'F', 'long' : 'methods',          'fold' : 0, 'stl' : 1},
+    \ ]
+    let type_rust.sro        = '::'
+    let type_rust.kind2scope = {
+        \ 'c' : 'implementation',
+        \ 'F' : 'implementation'
+    \ }
+    let type_rust.scope2kind = {
+        \ 'implementation' : 'c'
+    \ }
+    let s:known_types.rust = type_rust
     " Scheme {{{3
     let type_scheme = s:TypeInfo.New()
     let type_scheme.ctagstype = 'scheme'
