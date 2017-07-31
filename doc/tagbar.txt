@@ -346,6 +346,12 @@ o/za          Toggle the fold under the cursor or the current one if there is
                 Map option: tagbar_map_openallfolds
 =/zM          Close all folds by setting foldlevel to 0.
                 Map option: tagbar_map_closeallfolds
+zr            Increase the fold level of the buffer by 1. Opens all folds one
+              level.
+                Map option: tagbar_map_incrementfolds
+zm            Decrease the fold level of the buffer by 1. Closes all folds one
+              level.
+                Map option: tagbar_map_decrementfolds
 zj            Go to the start of the next fold, like the standard Vim |zj|.
                 Map option: tagbar_map_nextfold
 zk            Go to the end of the previous fold, like the standard Vim |zk|.

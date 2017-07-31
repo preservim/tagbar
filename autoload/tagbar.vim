@@ -1031,6 +1031,8 @@ function! s:MapKeys() abort
         \ ['togglefold',    'ToggleFold()'],
         \ ['openallfolds',  'SetFoldLevel(99, 1)'],
         \ ['closeallfolds', 'SetFoldLevel(0, 1)'],
+        \ ['incrementfolds',  'ChangeFoldLevel(1, 1)'],
+        \ ['decrementfolds',  'ChangeFoldLevel(-1, 1)'],
         \ ['nextfold',      'GotoNextFold()'],
         \ ['prevfold',      'GotoPrevFold()'],
         \
@@ -3097,6 +3099,8 @@ function! s:PrintHelp() abort
         silent  put ='\" ' . s:get_map_str('togglefold') . ': Toggle fold'
         silent  put ='\" ' . s:get_map_str('openallfolds') . ': Open all folds'
         silent  put ='\" ' . s:get_map_str('closeallfolds') . ': Close all folds'
+        silent  put ='\" ' . s:get_map_str('incrementfolds') . ': Increment fold level by 1'
+        silent  put ='\" ' . s:get_map_str('decrementfolds') . ': Decrement fold level by 1'
         silent  put ='\" ' . s:get_map_str('nextfold') . ': Go to next fold'
         silent  put ='\" ' . s:get_map_str('prevfold') . ': Go to previous fold'
         silent  put ='\"'
@@ -3494,6 +3498,22 @@ function! s:ToggleFold() abort
     call s:RenderKeepView(newline)
 endfunction
 
+" s:ChangeFoldLevel() {{{2
+function! s:ChangeFoldLevel(diff, force) abort
+    let fileinfo = s:TagbarState().getCurrent(0)
+    if empty(fileinfo)
+        return
+    endif
+
+    if fileinfo.foldlevel == 99
+        call s:MinimizeMaxFoldLevel(fileinfo, fileinfo.getTags())
+    endif
+
+    let level = fileinfo.foldlevel
+    let level = level + a:diff
+    call s:SetFoldLevel(level, a:force)
+endfunction
+
 " s:SetFoldLevel() {{{2
 function! s:SetFoldLevel(level, force) abort
     if a:level < 0
@@ -3542,6 +3562,23 @@ function! s:SetFoldLevelRecursive(fileinfo, tags, level) abort
             call s:SetFoldLevelRecursive(a:fileinfo, tag.getChildren(), a:level)
         endif
     endfor
+endfunction
+
+" s:MinimizeMaxFoldLevel() {{{2
+" Set the file's fold level to the lowest value that still shows all tags
+function! s:MinimizeMaxFoldLevel(fileinfo, tags) abort
+    let maxlvl = 0
+    let tags = copy(a:tags)
+
+    for tag in tags
+        if maxlvl < tag.depth
+            let maxlvl = tag.depth
+        endif
+        call tag.setFolded(0)
+        call extend(tags, tag.getChildren())
+    endfor
+
+    let a:fileinfo.foldlevel = maxlvl
 endfunction
 
 " s:OpenParents() {{{2
