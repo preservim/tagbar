@@ -127,6 +127,7 @@ function! s:InitTypes() abort
     " Use jsctags/doctorjs if available
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
     if jsctags != ''
+        call s:debug('Detected jsctags, overriding typedef')
         let type_javascript = tagbar#prototypes#typeinfo#new()
         let type_javascript.ctagstype = 'javascript'
         let type_javascript.kinds = [
@@ -143,6 +144,7 @@ function! s:InitTypes() abort
         \ }
         let type_javascript.ctagsbin   = jsctags
         let type_javascript.ctagsargs  = '-f -'
+        call type_javascript.createKinddict()
         let s:known_types.javascript = type_javascript
     endif
 
