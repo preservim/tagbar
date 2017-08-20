@@ -142,6 +142,7 @@ function! s:InitTypes() abort
         \ }
         let type_javascript.ctagsbin   = jsctags
         let type_javascript.ctagsargs  = '-f -'
+        let type_javascript.ftype = 'javascript'
         call type_javascript.createKinddict()
         let s:known_types.javascript = type_javascript
     endif
