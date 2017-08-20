@@ -1163,9 +1163,8 @@ endfunction
 " fields that are always present: kind, line
 function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     let basic_info  = split(a:part1, '\t')
-
-    let taginfo      = tagbar#prototypes#normaltag#new(basic_info[0])
-    let taginfo.file = basic_info[1]
+    let tagname  = basic_info[0]
+    let filename = basic_info[1]
 
     " the pattern can contain tabs and thus may have been split up, so join
     " the rest of the items together again
@@ -1178,14 +1177,14 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     else
         let dollar = ''
     endif
-    let pattern         = strpart(pattern, start, end - start)
-    let taginfo.pattern = '\M\^\C' . pattern . dollar
+    let pattern = '\M\^\C' . strpart(pattern, start, end - start) . dollar
 
     " When splitting fields make sure not to create empty keys or values in
     " case a value illegally contains tabs
     let fields = split(a:part2, '^\t\|\t\ze\w\+:')
+    let fielddict = {}
     if fields[0] !~# ':'
-        let taginfo.fields.kind = remove(fields, 0)
+        let fielddict.kind = remove(fields, 0)
     endif
     for field in fields
         " can't use split() since the value can contain ':'
@@ -1195,16 +1194,62 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         let val = substitute(strpart(field, delimit + 1), '\t', '', 'g')
         " File-restricted scoping
         if key == "file"
-            let taginfo.fields[key] = 'yes'
+            let fielddict[key] = 'yes'
         endif
         if len(val) > 0
             if key == 'line' || key == 'column'
-                let taginfo.fields[key] = str2nr(val)
+                let fielddict[key] = str2nr(val)
             else
-                let taginfo.fields[key] = val
+                let fielddict[key] = val
             endif
         endif
     endfor
+
+    " If the tag covers multiple scopes, split it up and create individual tags
+    " for each scope so that the hierarchy can be displayed correctly.
+    " This can happen with PHP's 'namespace' tags in uctags, for example.
+    if has_key(a:typeinfo, 'kind2scope') && has_key(a:typeinfo.kind2scope, fielddict.kind)
+            \ && tagname =~# '\V' . escape(a:typeinfo.sro, '\')
+        let tagparts = split(tagname, '\V' . escape(a:typeinfo.sro, '\'))
+
+        let scope = a:typeinfo.kind2scope[fielddict.kind]
+        if has_key(fielddict, scope)
+            let parent = fielddict[scope]
+        else
+            let parent = ''
+        endif
+        let curfielddict = fielddict
+
+        for i in range(len(tagparts))
+            let part = tagparts[i]
+            call s:ProcessTag(part, filename, pattern, curfielddict,
+                            \ i != len(tagparts) - 1, a:typeinfo, a:fileinfo)
+            if parent != ''
+                let parent = parent . a:typeinfo.sro . part
+            else
+                let parent = part
+            endif
+            let curfielddict = copy(fielddict)
+            let curfielddict[scope] = parent
+        endfor
+    else
+        call s:ProcessTag(tagname, filename, pattern, fielddict, 0,
+                        \ a:typeinfo, a:fileinfo)
+    endif
+endfunction
+
+" s:ProcessTag() {{{2
+function s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, fileinfo) abort
+    if a:is_split
+        let taginfo = tagbar#prototypes#splittag#new(a:name)
+    else
+        let taginfo = tagbar#prototypes#normaltag#new(a:name)
+    endif
+
+    let taginfo.file    = a:filename
+    let taginfo.pattern = a:pattern
+    call extend(taginfo.fields, a:fields)
+
     " Needed for jsctags
     if has_key(taginfo.fields, 'lineno')
         let taginfo.fields.line = str2nr(taginfo.fields.lineno)
@@ -1215,7 +1260,8 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     endif
 
     if !has_key(taginfo.fields, 'kind')
-        call tagbar#debug#log("Warning: No 'kind' field found for tag " . basic_info[0] . "!")
+        call tagbar#debug#log(
+            \ "Warning: No 'kind' field found for tag " . basic_info[0] . "!")
         if index(s:warnings.type, a:typeinfo.ftype) == -1
             call s:warning("No 'kind' field found for tag " . basic_info[0] . "!" .
                          \ " Please read the last section of ':help tagbar-extend'.")
@@ -1248,7 +1294,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
             break
         endif
     endfor
-    let pathlist = split(taginfo.path, '\V' . a:typeinfo.sro)
+    let pathlist = split(taginfo.path, '\V' . escape(a:typeinfo.sro, '\'))
     let taginfo.depth = len(pathlist)
 
     " Needed for folding
@@ -1286,10 +1332,13 @@ function! s:add_tag_recursive(parent, taginfo, pathlist) abort
             let name_siblings = a:parent.getChildrenByName(a:taginfo.name)
         endif
 
+        " Consider a tag as replaceable if the current tag is considered to
+        " have more appropriate information
         for tag in name_siblings
             if (tag.fields.kind ==# '?'
               \ || tag.fields.kind ==# a:taginfo.fields.kind)
-             \ && tag.isPseudoTag()
+             \ && (tag.isPseudoTag()
+              \ || (!a:taginfo.isSplitTag() && tag.isSplitTag()))
                 call add(pseudotags, tag)
             endif
         endfor
@@ -1309,6 +1358,16 @@ function! s:add_tag_recursive(parent, taginfo, pathlist) abort
             echoerr 'Tagbar: Found duplicate pseudotag; this should never happen!'
                   \ 'Please contact the script maintainer with an example.'
                   \ 'Pseudotag name:' pseudotag.name
+        endif
+
+        " If this is a tag that got created due to splitting up a tag name,
+        " don't replace existing tags of the same kind.
+        if a:taginfo.isSplitTag()
+            for tag in name_siblings
+                if tag.fields.kind ==# a:taginfo.fields.kind
+                    return
+                endif
+            endfor
         endif
 
         if empty(a:parent)
@@ -1436,7 +1495,7 @@ function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
 
     let parentscope = substitute(curpath, '\V' . a:name . '$', '', '')
     let parentscope = substitute(parentscope,
-                               \ '\V\^' . a:typeinfo.sro . '\$', '', '')
+                        \ '\V\^' . escape(a:typeinfo.sro, '\') . '\$', '', '')
 
     if pscope != ''
         let pseudotag.fields[pscope] = parentscope
@@ -1445,7 +1504,7 @@ function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
         let pseudotag.fullpath =
                     \ pseudotag.path . a:typeinfo.sro . pseudotag.name
     endif
-    let pseudotag.depth = len(split(pseudotag.path, '\V' . a:typeinfo.sro))
+    let pseudotag.depth = len(split(pseudotag.path, '\V' . escape(a:typeinfo.sro, '\')))
 
     let pseudotag.parent = a:parent
 

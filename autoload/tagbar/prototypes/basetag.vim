@@ -44,6 +44,11 @@ function! s:BaseTag.isPseudoTag() abort dict
     return 0
 endfunction
 
+" s:BaseTag.isSplitTag {{{1
+function! s:BaseTag.isSplitTag() abort dict
+    return 0
+endfunction
+
 " s:BaseTag.isKindheader() {{{1
 function! s:BaseTag.isKindheader() abort dict
     return 0

@@ -435,7 +435,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'v', 'long' : 'variables',            'fold' : 1, 'stl' : 0},
         \ {'short' : 'f', 'long' : 'functions',            'fold' : 0, 'stl' : 1}
     \ ]
-    let type_php.sro        = '\\\\'
+    let type_php.sro        = '\\'
     let type_php.kind2scope = {
         \ 'c' : 'class',
         \ 'n' : 'namespace',

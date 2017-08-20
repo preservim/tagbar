@@ -1,5 +1,7 @@
 let s:NormalTag = copy(g:tagbar#prototypes#basetag#BaseTag)
 
+let g:tagbar#prototypes#normaltag#NormalTag = s:NormalTag
+
 function! tagbar#prototypes#normaltag#new(name) abort
     let newobj = copy(s:NormalTag)
 
