@@ -117,9 +117,9 @@ function! s:InitTypes() abort
     let supported_types = s:GetSupportedFiletypes()
 
     if s:ctags_is_uctags
-        let s:known_types = tagbar#typedefs#uctags#init(supported_types)
+        let s:known_types = tagbar#types#uctags#init(supported_types)
     else
-        let s:known_types = tagbar#typedefs#ctags#init(supported_types)
+        let s:known_types = tagbar#types#ctags#init(supported_types)
     endif
 
     " Use jsctags/doctorjs if available

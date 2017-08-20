@@ -1,6 +1,6 @@
-" Type definitions for Universal Ctags
+" Type definitions for standard Exuberant Ctags
 
-function! tagbar#typedefs#uctags#init(supported_types) abort
+function! tagbar#types#ctags#init(supported_types) abort
     let types = {}
 
     " Ant {{{1
@@ -296,10 +296,8 @@ function! tagbar#typedefs#uctags#init(supported_types) abort
     let type_html = tagbar#prototypes#typeinfo#new()
     let type_html.ctagstype = 'html'
     let type_html.kinds = [
-        \ {'short' : 'a', 'long' : 'named anchors', 'fold' : 0, 'stl' : 1},
-        \ {'short' : 'h', 'long' : 'H1 headings',   'fold' : 0, 'stl' : 1},
-        \ {'short' : 'i', 'long' : 'H2 headings',   'fold' : 0, 'stl' : 1},
-        \ {'short' : 'j', 'long' : 'H3 headings',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'JavaScript functions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'named anchors',        'fold' : 0, 'stl' : 1}
     \ ]
     let types.html = type_html
     " Java {{{1
@@ -454,8 +452,6 @@ function! tagbar#typedefs#uctags#init(supported_types) abort
         \ 'class'    : 'c',
         \ 'function' : 'f'
     \ }
-    let type_python.kind2scope.m = 'member'
-    let type_python.scope2kind.member = 'm'
     let types.python = type_python
     let types.pyrex  = type_python
     let types.cython = type_python
