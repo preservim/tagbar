@@ -433,8 +433,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 't', 'long' : 'traits',               'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',              'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'variables',            'fold' : 1, 'stl' : 0},
-        \ {'short' : 'f', 'long' : 'functions',            'fold' : 0, 'stl' : 1},
-        \ {'short' : 'j', 'long' : 'javascript functions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',            'fold' : 0, 'stl' : 1}
     \ ]
     let type_php.sro        = '\\\\'
     let type_php.kind2scope = {
