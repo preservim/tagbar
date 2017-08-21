@@ -488,16 +488,18 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'm', 'long' : 'modules',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'methods',           'fold' : 0, 'stl' : 1},
-        \ {'short' : 'F', 'long' : 'singleton methods', 'fold' : 0, 'stl' : 1}
+        \ {'short' : 'S', 'long' : 'singleton methods', 'fold' : 0, 'stl' : 1}
     \ ]
     let type_ruby.sro        = '.'
     let type_ruby.kind2scope = {
         \ 'c' : 'class',
-        \ 'm' : 'class',
-        \ 'f' : 'class'
+        \ 'f' : 'method',
+        \ 'm' : 'module'
     \ }
     let type_ruby.scope2kind = {
-        \ 'class' : 'c'
+        \ 'class'  : 'c',
+        \ 'method' : 'f',
+        \ 'module' : 'm'
     \ }
     let types.ruby = type_ruby
     " Scheme {{{1
