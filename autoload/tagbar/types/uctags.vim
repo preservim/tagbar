@@ -212,6 +212,15 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 's', 'long' : 'sections',          'fold' : 0, 'stl' : 1}
     \ ]
     let types.cobol = type_cobol
+    " CSS {{{1
+    let type_css = tagbar#prototypes#typeinfo#new()
+    let type_css.ctagstype = 'css'
+    let type_css.kinds     = [
+        \ {'short' : 's', 'long' : 'selector',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'identities', 'fold' : 1, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',    'fold' : 1, 'stl' : 0}
+    \ ]
+    let types.css = type_css
     " DOS Batch {{{1
     let type_dosbatch = tagbar#prototypes#typeinfo#new()
     let type_dosbatch.ctagstype = 'dosbatch'
