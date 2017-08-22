@@ -528,6 +528,43 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'module' : 'm'
     \ }
     let types.ruby = type_ruby
+    " Rust {{{1
+    let type_rust = tagbar#prototypes#typeinfo#new()
+    let type_rust.ctagstype = 'rust'
+    let type_rust.kinds     = [
+        \ {'short' : 'n', 'long' : 'module',          'fold' : 1, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'struct',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'trait',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'implementation',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'function',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'enum',            'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'type alias',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'global variable', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'M', 'long' : 'macro',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'struct field',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enum variant',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'F', 'long' : 'method',          'fold' : 0, 'stl' : 1}
+    \ ]
+    let type_rust.sro        = '::'
+    let type_rust.kind2scope = {
+        \ 'n' : 'module',
+        \ 's' : 'struct',
+        \ 'i' : 'interface',
+        \ 'c' : 'implementation',
+        \ 'f' : 'function',
+        \ 'g' : 'enum',
+        \ 'F' : 'method',
+    \ }
+    let type_rust.scope2kind = {
+        \ 'module'        : 'n',
+        \ 'struct'        : 's',
+        \ 'interface'     : 'i',
+        \ 'implementation': 'c',
+        \ 'function'      : 'f',
+        \ 'enum'          : 'g',
+        \ 'method'        : 'F',
+    \ }
+    let types.rust = type_rust
     " Scheme {{{1
     let type_scheme = tagbar#prototypes#typeinfo#new()
     let type_scheme.ctagstype = 'scheme'
