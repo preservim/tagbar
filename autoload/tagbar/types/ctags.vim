@@ -590,6 +590,7 @@ function! tagbar#types#ctags#init(supported_types) abort
     \ }
     let type_tex.sort = 0
     let types.tex = type_tex
+    let types.nuweb = type_tex
     " Vala {{{1
     " Vala is supported by the ctags fork provided by Anjuta, so only add the
     " type if the fork is used to prevent error messages otherwise
