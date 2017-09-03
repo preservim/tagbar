@@ -173,13 +173,9 @@ function! s:LoadUserTypeDefs(...) abort
     if a:0 > 0
         let type = a:1
 
-        call tagbar#debug#log("Initializing user type '" . type . "'")
-
         let defdict = {}
         let defdict[type] = g:tagbar_type_{type}
     else
-        call tagbar#debug#log('Initializing user types')
-
         let defdict = tagbar#getusertypes()
     endif
 
@@ -190,6 +186,7 @@ function! s:LoadUserTypeDefs(...) abort
     endfor
 
     for [key, value] in items(transformed)
+        call tagbar#debug#log("Initializing user type '" . key . "'")
         if !has_key(s:known_types, key) || get(value, 'replace', 0)
             let s:known_types[key] = tagbar#prototypes#typeinfo#new(value)
         else
