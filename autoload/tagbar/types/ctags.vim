@@ -375,6 +375,36 @@ function! tagbar#types#ctags#init(supported_types) abort
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
     \ ]
     let types.matlab = type_matlab
+    " ObjectiveC {{{1
+    let type_objc = tagbar#prototypes#typeinfo#new()
+    let type_objc.ctagstype = 'objectivec'
+    let type_objc.kinds = [
+        \ {'short' : 'M', 'long' : 'preprocessor macros',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'global variables',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'class interfaces',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'I', 'long' : 'class implementations', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'class methods',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'F', 'long' : 'object fields',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'object methods',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'type structures',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'type aliases',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerations',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'properties',            'fold' : 0, 'stl' : 0},
+    \ ]
+    let type_objc.sro        = ':'
+    let type_objc.kind2scope = {
+        \ 'i' : 'interface',
+        \ 'I' : 'implementation',
+        \ 's' : 'struct',
+    \ }
+    let type_objc.scope2kind = {
+        \ 'interface' : 'i',
+        \ 'implementation' : 'I',
+        \ 'struct' : 's',
+    \ }
+    let types.objc = type_objc
+    let types.objcpp = type_objc
     " Ocaml {{{1
     let type_ocaml = tagbar#prototypes#typeinfo#new()
     let type_ocaml.ctagstype = 'ocaml'

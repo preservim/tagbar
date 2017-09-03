@@ -3,22 +3,59 @@
 function! tagbar#types#uctags#init(supported_types) abort
     let types = {}
 
+    " Ada {{{1
+    let type_ada = tagbar#prototypes#typeinfo#new()
+    let type_ada.ctagstype = 'ada'
+    let type_ada.kinds = [
+        \ {'short' : 'P', 'long' : 'package specifications',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'packages',                      'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'types',                         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'subtypes',                      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'record type components',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'enum type literals',            'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',                     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'generic formal parameters',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'n', 'long' : 'constants',                     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'x', 'long' : 'user defined exceptions',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'R', 'long' : 'subprogram specifications',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'subprograms',                   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'K', 'long' : 'task specifications',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'k', 'long' : 'tasks',                         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'O', 'long' : 'protected data specifications', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'o', 'long' : 'protected data',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'task/protected data entries',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'labels',                        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'loop/declare identifiers',      'fold' : 0, 'stl' : 1},
+    \ ]
+    let type_ada.sro        = '.' " Not sure if possible
+    let type_ada.kind2scope = {
+        \ 'P' : 'packspec',
+        \ 't' : 'type',
+    \ }
+    let type_ada.scope2kind = {
+        \ 'packspec' : 'P',
+        \ 'type'     : 't',
+    \ }
+    let types.ada = type_ada
     " Ant {{{1
     let type_ant = tagbar#prototypes#typeinfo#new()
     let type_ant.ctagstype = 'ant'
     let type_ant.kinds     = [
-        \ {'short' : 'p', 'long' : 'projects', 'fold' : 0, 'stl' : 1},
-        \ {'short' : 't', 'long' : 'targets',  'fold' : 0, 'stl' : 1}
+        \ {'short' : 'p', 'long' : 'projects',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'antfiles',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'P', 'long' : 'properties', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'targets',    'fold' : 0, 'stl' : 1}
     \ ]
     let types.ant = type_ant
     " Asm {{{1
     let type_asm = tagbar#prototypes#typeinfo#new()
     let type_asm.ctagstype = 'asm'
     let type_asm.kinds     = [
-        \ {'short' : 'm', 'long' : 'macros',  'fold' : 0, 'stl' : 1},
-        \ {'short' : 't', 'long' : 'types',   'fold' : 0, 'stl' : 1},
-        \ {'short' : 'd', 'long' : 'defines', 'fold' : 0, 'stl' : 1},
-        \ {'short' : 'l', 'long' : 'labels',  'fold' : 0, 'stl' : 1}
+        \ {'short' : 'm', 'long' : 'macros',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'types',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sections',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'defines',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'labels',    'fold' : 0, 'stl' : 1}
     \ ]
     let types.asm = type_asm
     " ASP {{{1
@@ -60,6 +97,37 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'union'  : 'u'
     \ }
     let types.asy = type_asy
+    " Autoconf {{{1
+    let type_autoconf = tagbar#prototypes#typeinfo#new()
+    let type_autoconf.ctagstype = 'autoconf'
+    let type_autoconf.kinds = [
+        \ {'short': 'p', 'long': 'packages',            'fold': 0, 'stl': 1},
+        \ {'short': 't', 'long': 'templates',           'fold': 0, 'stl': 1},
+        \ {'short': 'm', 'long': 'autoconf macros',     'fold': 0, 'stl': 1},
+        \ {'short': 'w', 'long': '"with" options',      'fold': 0, 'stl': 1},
+        \ {'short': 'e', 'long': '"enable" options',    'fold': 0, 'stl': 1},
+        \ {'short': 's', 'long': 'substitution keys',   'fold': 0, 'stl': 1},
+        \ {'short': 'c', 'long': 'automake conditions', 'fold': 0, 'stl': 1},
+        \ {'short': 'd', 'long': 'definitions',         'fold': 0, 'stl': 1},
+    \ ]
+    let types.config = type_autoconf
+    " Automake {{{1
+    let type_automake = tagbar#prototypes#typeinfo#new()
+    let type_automake.ctagstype = 'automake'
+    let type_automake.kinds = [
+        \ {'short' : 'I', 'long' : 'makefiles',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'directories', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'P', 'long' : 'programs',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'M', 'long' : 'manuals',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'macros',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'targets',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'ltlibraries', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'L', 'long' : 'libraries',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'S', 'long' : 'scripts',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'D', 'long' : 'datum',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'conditions',  'fold' : 0, 'stl' : 1},
+    \ ]
+    let types.automake = type_automake
     " Awk {{{1
     let type_awk = tagbar#prototypes#typeinfo#new()
     let type_awk.ctagstype = 'awk'
@@ -92,16 +160,17 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_c = tagbar#prototypes#typeinfo#new()
     let type_c.ctagstype = 'c'
     let type_c.kinds     = [
-        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
-        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1, 'stl' : 0},
-        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
-        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
-        \ {'short' : 's', 'long' : 'structs',     'fold' : 0, 'stl' : 1},
-        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0, 'stl' : 1},
-        \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 0},
-        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0},
-        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1}
+        \ {'short' : 'h', 'long' : 'header files', 'fold' : 1, 'stl' : 0},
+        \ {'short' : 'd', 'long' : 'macros',       'fold' : 1, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'prototypes',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enums',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'structs',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'unions',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',    'fold' : 0, 'stl' : 1}
     \ ]
     let type_c.sro        = '::'
     let type_c.kind2scope = {
@@ -119,18 +188,19 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_cpp = tagbar#prototypes#typeinfo#new()
     let type_cpp.ctagstype = 'c++'
     let type_cpp.kinds     = [
-        \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
-        \ {'short' : 'p', 'long' : 'prototypes',  'fold' : 1, 'stl' : 0},
-        \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
-        \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 't', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
-        \ {'short' : 'n', 'long' : 'namespaces',  'fold' : 0, 'stl' : 1},
-        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
-        \ {'short' : 's', 'long' : 'structs',     'fold' : 0, 'stl' : 1},
-        \ {'short' : 'u', 'long' : 'unions',      'fold' : 0, 'stl' : 1},
-        \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1},
-        \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 0},
-        \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0}
+        \ {'short' : 'h', 'long' : 'header files', 'fold' : 1, 'stl' : 0},
+        \ {'short' : 'd', 'long' : 'macros',       'fold' : 1, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'prototypes',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enums',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'typedefs',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'n', 'long' : 'namespaces',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structs',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'unions',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',    'fold' : 0, 'stl' : 0}
     \ ]
     let type_cpp.sro        = '::'
     let type_cpp.kind2scope = {
@@ -186,29 +256,43 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_clojure = tagbar#prototypes#typeinfo#new()
     let type_clojure.ctagstype = 'clojure'
     let type_clojure.kinds     = [
-        \ {'short': 'n', 'long': 'namespace',              'fold': 0, 'stl': 1},
-        \ {'short': 'd', 'long': 'definition',             'fold': 0, 'stl': 1},
-        \ {'short': 'f', 'long': 'function',               'fold': 0, 'stl': 1},
-        \ {'short': 'p', 'long': 'private function',       'fold': 0, 'stl': 1},
-        \ {'short': 'm', 'long': 'macro',                  'fold': 0, 'stl': 1},
-        \ {'short': 'i', 'long': 'inline',                 'fold': 0, 'stl': 1},
-        \ {'short': 'a', 'long': 'multimethod definition', 'fold': 0, 'stl': 1},
-        \ {'short': 'b', 'long': 'multimethod instance',   'fold': 0, 'stl': 1},
-        \ {'short': 'c', 'long': 'definition (once)',      'fold': 0, 'stl': 1},
-        \ {'short': 's', 'long': 'struct',                 'fold': 0, 'stl': 1},
-        \ {'short': 'v', 'long': 'intern',                 'fold': 0, 'stl': 1},
-        \ {'short': 'n', 'long': 'namespace',              'fold': 0, 'stl': 1}
+        \ {'short': 'n', 'long': 'namespace', 'fold': 0, 'stl': 1},
+        \ {'short': 'f', 'long': 'function',  'fold': 0, 'stl': 1},
     \ ]
+    let type_clojure.sro = '.'
+    let type_clojure.kind2scope = {
+        \ 'n' : 'namespace',
+    \ }
+    let type_clojure.scope2kind = {
+        \ 'namespace'  : 'n'
+    \ }
     let types.clojure = type_clojure
+    " Ctags config {{{1
+    let type_ctags = tagbar#prototypes#typeinfo#new()
+    let type_ctags.ctagstype = 'ctags'
+    let type_ctags.kinds = [
+        \ {'short' : 'l', 'long' : 'language definitions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'k', 'long' : 'kind definitions',     'fold' : 0, 'stl' : 1},
+    \ ]
+    let type_ctags.sro        = '.' " Not actually possible
+    let type_ctags.kind2scope = {
+        \ 'l' : 'langdef',
+    \ }
+    let type_ctags.scope2kind = {
+        \ 'langdef' : 'l',
+    \ }
+    let types.ctags = type_ctags
     " COBOL {{{1
     let type_cobol = tagbar#prototypes#typeinfo#new()
     let type_cobol.ctagstype = 'cobol'
     let type_cobol.kinds     = [
         \ {'short' : 'd', 'long' : 'data items',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'D', 'long' : 'divisions',         'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'file descriptions', 'fold' : 0, 'stl' : 1},
         \ {'short' : 'g', 'long' : 'group items',       'fold' : 0, 'stl' : 1},
         \ {'short' : 'p', 'long' : 'paragraphs',        'fold' : 0, 'stl' : 1},
         \ {'short' : 'P', 'long' : 'program ids',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'S', 'long' : 'source code file',  'fold' : 0, 'stl' : 1},
         \ {'short' : 's', 'long' : 'sections',          'fold' : 0, 'stl' : 1}
     \ ]
     let types.cobol = type_cobol
@@ -221,6 +305,45 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'c', 'long' : 'classes',    'fold' : 1, 'stl' : 0}
     \ ]
     let types.css = type_css
+    " D {{{1
+    let type_d = tagbar#prototypes#typeinfo#new()
+    let type_d.ctagstype = 'D'
+    let type_d.kinds = [
+        \ {'short' : 'M', 'long' : 'modules',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'V', 'long' : 'version statements',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'n', 'long' : 'namespaces',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'templates',            'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'interfaces',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structure names',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'enumeration names',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerators',          'fold' : 0, 'stl' : 0},
+        \ {'short' : 'u', 'long' : 'union names',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'function prototypes',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'function definitions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'members',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'aliases',              'fold' : 1, 'stl' : 0},
+        \ {'short' : 'X', 'long' : 'mixins',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variable definitions', 'fold' : 0, 'stl' : 0},
+    \ ]
+    let type_d.sro = '.'
+    let type_d.kind2scope = {
+        \ 'g' : 'enum',
+        \ 'n' : 'namespace',
+        \ 'i' : 'interface',
+        \ 'c' : 'class',
+        \ 's' : 'struct',
+        \ 'u' : 'union'
+    \ }
+    let type_d.scope2kind = {
+        \ 'enum'      : 'g',
+        \ 'namespace' : 'n',
+        \ 'interface' : 'i',
+        \ 'class'     : 'c',
+        \ 'struct'    : 's',
+        \ 'union'     : 'u'
+    \ }
+    let types.d = type_d
     " DOS Batch {{{1
     let type_dosbatch = tagbar#prototypes#typeinfo#new()
     let type_dosbatch.ctagstype = 'dosbatch'
@@ -246,6 +369,31 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'feature' : 'f'
     \ }
     let types.eiffel = type_eiffel
+    " Elm {{{1
+    " based on https://github.com/bitterjug/vim-tagbar-ctags-elm/blob/master/ftplugin/elm/tagbar-elm.vim
+    let type_elm = tagbar#prototypes#typeinfo#new()
+    let type_elm.ctagstype = 'elm'
+    let type_elm.kinds = [
+        \ {'short' : 'm', 'long' : 'modules',           'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'imports',           'fold' : 1, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'types',             'fold' : 1, 'stl' : 0},
+        \ {'short' : 'a', 'long' : 'type aliases',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'type constructors', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'ports',             'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',         'fold' : 1, 'stl' : 0},
+    \ ]
+    let type_elm.sro = ':'
+    let type_elm.kind2scope = {
+        \ 'f' : 'function',
+        \ 'm' : 'module',
+        \ 't' : 'type'
+    \ }
+    let type_elm.scope2kind = {
+        \ 'function' : 'f',
+        \ 'module'   : 'm',
+        \ 'type'     : 't'
+    \ }
+    let types.elm = type_elm
     " Erlang {{{1
     let type_erlang = tagbar#prototypes#typeinfo#new()
     let type_erlang.ctagstype = 'erlang'
@@ -253,7 +401,8 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'm', 'long' : 'modules',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'd', 'long' : 'macro definitions',  'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
-        \ {'short' : 'r', 'long' : 'record definitions', 'fold' : 0, 'stl' : 1}
+        \ {'short' : 'r', 'long' : 'record definitions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'type definitions',   'fold' : 0, 'stl' : 1}
     \ ]
     let type_erlang.sro        = '.' " Not sure, is nesting even possible?
     let type_erlang.kind2scope = {
@@ -298,9 +447,13 @@ function! tagbar#types#uctags#init(supported_types) abort
          \ 'stl' : 1},
         \ {'short' : 'c', 'long' : 'common blocks', 'fold' : 0, 'stl' : 1},
         \ {'short' : 'b', 'long' : 'block data',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'E', 'long' : 'enumerations',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'N', 'long' : 'enumeration values', 'fold' : 0, 'stl' : 0},
         \ {'short' : 'e', 'long' : 'entry points',  'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',     'fold' : 0, 'stl' : 1},
         \ {'short' : 's', 'long' : 'subroutines',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'M', 'long' : 'type bound procedures',   'fold' : 0,
+         \ 'stl' : 1},
         \ {'short' : 'l', 'long' : 'labels',        'fold' : 0, 'stl' : 1},
         \ {'short' : 'n', 'long' : 'namelists',     'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'variables',     'fold' : 0, 'stl' : 0}
@@ -319,6 +472,27 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'subroutine' : 's'
     \ }
     let types.fortran = type_fortran
+    " Go {{{1
+    let type_go = tagbar#prototypes#typeinfo#new()
+    let type_go.ctagstype = 'go'
+    let type_go.kinds = [
+        \ {'short' : 'p', 'long' : 'packages',       'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'interfaces',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'constants',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'structs',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'struct members', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'types',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',      'fold' : 0, 'stl' : 0}
+    \ ]
+    let type_go.sro = '.'
+    let type_go.kind2scope = {
+        \ 's' : 'struct'
+    \ }
+    let type_go.scope2kind = {
+        \ 'struct' : 's'
+    \ }
+    let types.go = type_go
     " HTML {{{1
     let type_html = tagbar#prototypes#typeinfo#new()
     let type_html.ctagstype = 'html'
@@ -337,6 +511,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'f', 'long' : 'fields',         'fold' : 0, 'stl' : 0},
         \ {'short' : 'g', 'long' : 'enum types',     'fold' : 0, 'stl' : 1},
         \ {'short' : 'e', 'long' : 'enum constants', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'a', 'long' : 'annotations',    'fold' : 0, 'stl' : 0},
         \ {'short' : 'i', 'long' : 'interfaces',     'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',        'fold' : 0, 'stl' : 1},
         \ {'short' : 'm', 'long' : 'methods',        'fold' : 0, 'stl' : 1}
@@ -358,7 +533,9 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_javascript.ctagstype = 'javascript'
     let type_javascript.kinds = [
         \ {'short': 'v', 'long': 'global variables', 'fold': 0, 'stl': 0},
+        \ {'short': 'C', 'long': 'contants',         'fold': 0, 'stl': 0},
         \ {'short': 'c', 'long': 'classes',          'fold': 0, 'stl': 1},
+        \ {'short': 'g', 'long': 'generators',       'fold': 0, 'stl': 0},
         \ {'short': 'p', 'long': 'properties',       'fold': 0, 'stl': 0},
         \ {'short': 'm', 'long': 'methods',          'fold': 0, 'stl': 1},
         \ {'short': 'f', 'long': 'functions',        'fold': 0, 'stl': 1},
@@ -393,16 +570,52 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_make = tagbar#prototypes#typeinfo#new()
     let type_make.ctagstype = 'make'
     let type_make.kinds     = [
-        \ {'short' : 'm', 'long' : 'macros', 'fold' : 0, 'stl' : 1}
+        \ {'short' : 'I', 'long' : 'makefiles', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'macros',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'targets',   'fold' : 0, 'stl' : 1}
     \ ]
     let types.make = type_make
     " Matlab {{{1
     let type_matlab = tagbar#prototypes#typeinfo#new()
     let type_matlab.ctagstype = 'matlab'
     let type_matlab.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
+        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0}
     \ ]
     let types.matlab = type_matlab
+    " ObjectiveC {{{1
+    let type_objc = tagbar#prototypes#typeinfo#new()
+    let type_objc.ctagstype = 'objectivec'
+    let type_objc.kinds = [
+        \ {'short' : 'M', 'long' : 'preprocessor macros',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'type aliases',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'global variables',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'class interfaces',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'I', 'long' : 'class implementations', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'class methods',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'E', 'long' : 'object fields',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'object methods',        'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'type structures',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerations',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'properties',            'fold' : 0, 'stl' : 0},
+        \ {'short' : 'P', 'long' : 'protocols',             'fold' : 0, 'stl' : 0},
+    \ ]
+    let type_objc.sro        = ':'
+    let type_objc.kind2scope = {
+        \ 'i' : 'interface',
+        \ 'I' : 'implementation',
+        \ 's' : 'struct',
+        \ 'p' : 'protocol',
+    \ }
+    let type_objc.scope2kind = {
+        \ 'interface' : 'i',
+        \ 'implementation' : 'I',
+        \ 'struct' : 's',
+        \ 'protocol' : 'p',
+    \ }
+    let types.objc = type_objc
+    let types.objcpp = type_objc
     " Ocaml {{{1
     let type_ocaml = tagbar#prototypes#typeinfo#new()
     let type_ocaml.ctagstype = 'ocaml'
@@ -415,7 +628,8 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'e', 'long' : 'exceptions',          'fold' : 0, 'stl' : 1},
         \ {'short' : 't', 'long' : 'type names',          'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',           'fold' : 0, 'stl' : 1},
-        \ {'short' : 'r', 'long' : 'structure fields',    'fold' : 0, 'stl' : 0}
+        \ {'short' : 'r', 'long' : 'structure fields',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'signature items',     'fold' : 0, 'stl' : 0}
     \ ]
     let type_ocaml.sro        = '.' " Not sure, is nesting even possible?
     let type_ocaml.kind2scope = {
@@ -448,6 +662,22 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1}
     \ ]
     let types.perl = type_perl
+    " Perl 6 {{{1
+    let type_perl6 = tagbar#prototypes#typeinfo#new()
+    let type_perl6.ctagstype = 'perl6'
+    let type_perl6.kinds     = [
+        \ {'short' : 'o', 'long' : 'modules',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'packages',    'fold' : 1, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'grammars',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'methods',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'roles',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'rules',       'fold' : 0, 'stl' : 0},
+        \ {'short' : 'b', 'long' : 'submethods',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'tokens',      'fold' : 0, 'stl' : 0},
+    \ ]
+    let types.perl6 = type_perl6
     " PHP {{{1
     let type_php = tagbar#prototypes#typeinfo#new()
     let type_php.ctagstype = 'php'
@@ -475,11 +705,23 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'trait'     : 't',
     \ }
     let types.php = type_php
+    " Protobuf {{{1
+    let type_protobuf = tagbar#prototypes#typeinfo#new()
+    let type_protobuf.ctagstype = 'Protobuf'
+    let type_protobuf.kinds = [
+        \ {'short' : 'p', 'long' : 'packages',       'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'messages',       'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'fields',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 'e', 'long' : 'enum constants', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'enum types',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'services',       'fold' : 0, 'stl' : 0},
+    \ ]
+    let types.proto = type_protobuf
     " Python {{{1
     let type_python = tagbar#prototypes#typeinfo#new()
     let type_python.ctagstype = 'python'
     let type_python.kinds     = [
-        \ {'short' : 'i', 'long' : 'imports',   'fold' : 1, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'modules',   'fold' : 1, 'stl' : 0},
         \ {'short' : 'c', 'long' : 'classes',   'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1},
         \ {'short' : 'm', 'long' : 'members',   'fold' : 0, 'stl' : 1},
@@ -500,6 +742,17 @@ function! tagbar#types#uctags#init(supported_types) abort
     let types.python = type_python
     let types.pyrex  = type_python
     let types.cython = type_python
+    " R {{{1
+    let type_r = tagbar#prototypes#typeinfo#new()
+    let type_r.ctagstype = 'R'
+    let type_r.kinds = [
+        \ {'short' : 'l', 'long' : 'libraries',          'fold' : 1, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sources',            'fold' : 0, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'global variables',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'function variables', 'fold' : 0, 'stl' : 0},
+    \ ]
+    let types.r = type_r
     " REXX {{{1
     let type_rexx = tagbar#prototypes#typeinfo#new()
     let type_rexx.ctagstype = 'rexx'
@@ -578,7 +831,9 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_sh = tagbar#prototypes#typeinfo#new()
     let type_sh.ctagstype = 'sh'
     let type_sh.kinds     = [
-        \ {'short' : 'f', 'long' : 'functions', 'fold' : 0, 'stl' : 1}
+        \ {'short' : 'f', 'long' : 'functions',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'aliases',      'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'script files', 'fold' : 0, 'stl' : 0}
     \ ]
     let types.sh = type_sh
     let types.csh = type_sh
@@ -615,7 +870,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'd', 'long' : 'prototypes',             'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'cursors',                'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',              'fold' : 0, 'stl' : 1},
-        \ {'short' : 'F', 'long' : 'record fields',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'E', 'long' : 'record fields',          'fold' : 0, 'stl' : 1},
         \ {'short' : 'L', 'long' : 'block label',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'p', 'long' : 'procedures',             'fold' : 0, 'stl' : 1},
         \ {'short' : 's', 'long' : 'subtypes',               'fold' : 0, 'stl' : 1},
@@ -638,8 +893,7 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_tcl = tagbar#prototypes#typeinfo#new()
     let type_tcl.ctagstype = 'tcl'
     let type_tcl.kinds     = [
-        \ {'short' : 'c', 'long' : 'classes',    'fold' : 0, 'stl' : 1},
-        \ {'short' : 'm', 'long' : 'methods',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'namespaces', 'fold' : 0, 'stl' : 1},
         \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0, 'stl' : 1}
     \ ]
     let types.tcl = type_tcl
@@ -719,13 +973,16 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_vera = tagbar#prototypes#typeinfo#new()
     let type_vera.ctagstype = 'vera'
     let type_vera.kinds     = [
+        \ {'short' : 'h', 'long' : 'header files', 'fold' : 1, 'stl' : 0},
         \ {'short' : 'd', 'long' : 'macros',      'fold' : 1, 'stl' : 0},
         \ {'short' : 'g', 'long' : 'enums',       'fold' : 0, 'stl' : 1},
         \ {'short' : 'T', 'long' : 'typedefs',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'interfaces',  'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',     'fold' : 0, 'stl' : 1},
         \ {'short' : 'e', 'long' : 'enumerators', 'fold' : 0, 'stl' : 0},
         \ {'short' : 'm', 'long' : 'members',     'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'signals',     'fold' : 0, 'stl' : 0},
         \ {'short' : 't', 'long' : 'tasks',       'fold' : 0, 'stl' : 1},
         \ {'short' : 'v', 'long' : 'variables',   'fold' : 0, 'stl' : 0},
         \ {'short' : 'p', 'long' : 'programs',    'fold' : 0, 'stl' : 1}
@@ -750,6 +1007,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'e', 'long' : 'events',              'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'm', 'long' : 'modules',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'blocks',              'fold' : 0, 'stl' : 1},
         \ {'short' : 'n', 'long' : 'net data types',      'fold' : 0, 'stl' : 1},
         \ {'short' : 'p', 'long' : 'ports',               'fold' : 0, 'stl' : 1},
         \ {'short' : 'r', 'long' : 'register data types', 'fold' : 0, 'stl' : 1},
