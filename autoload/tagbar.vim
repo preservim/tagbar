@@ -2966,6 +2966,7 @@ function! s:HandleOnlyWindow() abort
     let s:vim_quitting = 0
 
     if vim_quitting && !s:HasOpenFileWindows()
+        call tagbar#debug#log('Closing Tagbar window due to QuitPre event')
         if winnr('$') >= 1
             call s:goto_win(tagbarwinnr, 1)
         endif
