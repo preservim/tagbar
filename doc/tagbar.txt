@@ -1206,8 +1206,11 @@ certain tag kinds in some projects.
 In order to use this feature you need to create User |autocommand|s in an
 augroup called "TagbarProjects" and have it create a buffer-local variable
 called "b:tagbar_type". This variable has to hold a type definition just like
-the normal ones described in this chapter. This definition will then be
-applied only to the files matched by the autocommand.
+the normal ones described in this chapter. If there already is a definition
+then the project-specific one will be merged with the existing one, with the
+project-specific one taking precedence. This makes it possible to have
+project-specific overrides. This definition will then be applied only to the
+files matched by the autocommand.
 
 Note that there can be multiple definitions of the augroup with their own
 autocommands (for example in separate project directories); they will get
