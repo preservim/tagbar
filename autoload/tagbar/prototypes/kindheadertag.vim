@@ -1,48 +1,60 @@
-let s:KindheaderTag = copy(g:tagbar#prototypes#basetag#BaseTag)
-
 function! tagbar#prototypes#kindheadertag#new(name) abort
-    let newobj = copy(s:KindheaderTag)
+    let newobj = tagbar#prototypes#basetag#new(a:name)
 
-    call newobj._init(a:name)
+    let newobj.isKindheader = function(s:add_snr('s:isKindheader'))
+    let newobj.getPrototype = function(s:add_snr('s:getPrototype'))
+    let newobj.isFoldable = function(s:add_snr('s:isFoldable'))
+    let newobj.isFolded = function(s:add_snr('s:isFolded'))
+    let newobj.openFold = function(s:add_snr('s:openFold'))
+    let newobj.closeFold = function(s:add_snr('s:closeFold'))
+    let newobj.toggleFold = function(s:add_snr('s:toggleFold'))
 
     return newobj
 endfunction
 
-" s:KindheaderTag.isKindheader() {{{1
-function! s:KindheaderTag.isKindheader() abort dict
+" s:isKindheader() {{{1
+function! s:isKindheader() abort dict
     return 1
 endfunction
 
-" s:KindheaderTag.getPrototype() {{{1
-function! s:KindheaderTag.getPrototype(short) abort dict
+" s:getPrototype() {{{1
+function! s:getPrototype(short) abort dict
     return self.name . ': ' .
          \ self.numtags . ' ' . (self.numtags > 1 ? 'tags' : 'tag')
 endfunction
 
-" s:KindheaderTag.isFoldable() {{{1
-function! s:KindheaderTag.isFoldable() abort dict
+" s:isFoldable() {{{1
+function! s:isFoldable() abort dict
     return 1
 endfunction
 
-" s:KindheaderTag.isFolded() {{{1
-function! s:KindheaderTag.isFolded() abort dict
+" s:isFolded() {{{1
+function! s:isFolded() abort dict
     return self.fileinfo.kindfolds[self.short]
 endfunction
 
-" s:KindheaderTag.openFold() {{{1
-function! s:KindheaderTag.openFold() abort dict
+" s:openFold() {{{1
+function! s:openFold() abort dict
     let self.fileinfo.kindfolds[self.short] = 0
 endfunction
 
-" s:KindheaderTag.closeFold() {{{1
-function! s:KindheaderTag.closeFold() abort dict
+" s:closeFold() {{{1
+function! s:closeFold() abort dict
     let self.fileinfo.kindfolds[self.short] = 1
     return line('.')
 endfunction
 
-" s:KindheaderTag.toggleFold() {{{1
-function! s:KindheaderTag.toggleFold(fileinfo) abort dict
+" s:toggleFold() {{{1
+function! s:toggleFold(fileinfo) abort dict
     let a:fileinfo.kindfolds[self.short] = !a:fileinfo.kindfolds[self.short]
+endfunction
+
+" s:add_snr() {{{1
+function! s:add_snr(funcname) abort
+    if !exists("s:snr")
+        let s:snr = matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_snr$')
+    endif
+    return s:snr . a:funcname
 endfunction
 
 " Modeline {{{1

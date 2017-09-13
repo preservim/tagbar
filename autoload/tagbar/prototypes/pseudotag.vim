@@ -1,20 +1,19 @@
-let s:PseudoTag = copy(g:tagbar#prototypes#basetag#BaseTag)
-
 function! tagbar#prototypes#pseudotag#new(name) abort
-    let newobj = copy(s:PseudoTag)
+    let newobj = tagbar#prototypes#basetag#new(a:name)
 
-    call newobj._init(a:name)
+    let newobj.isPseudoTag = function(s:add_snr('s:isPseudoTag'))
+    let newobj.strfmt = function(s:add_snr('s:strfmt'))
 
     return newobj
 endfunction
 
-" s:PseudoTag.isPseudoTag() {{{1
-function! s:PseudoTag.isPseudoTag() abort dict
+" s:isPseudoTag() {{{1
+function! s:isPseudoTag() abort dict
     return 1
 endfunction
 
-" s:PseudoTag.strfmt() {{{1
-function! s:PseudoTag.strfmt() abort dict
+" s:strfmt() {{{1
+function! s:strfmt() abort dict
     let typeinfo = self.typeinfo
 
     let suffix = get(self.fields, 'signature', '')
@@ -23,6 +22,14 @@ function! s:PseudoTag.strfmt() abort dict
     endif
 
     return self._getPrefix() . self.name . '*' . suffix
+endfunction
+
+" s:add_snr() {{{1
+function! s:add_snr(funcname) abort
+    if !exists("s:snr")
+        let s:snr = matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_snr$')
+    endif
+    return s:snr . a:funcname
 endfunction
 
 " Modeline {{{1

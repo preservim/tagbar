@@ -1,22 +1,21 @@
-let s:NormalTag = copy(g:tagbar#prototypes#basetag#BaseTag)
-
-let g:tagbar#prototypes#normaltag#NormalTag = s:NormalTag
-
 function! tagbar#prototypes#normaltag#new(name) abort
-    let newobj = copy(s:NormalTag)
+    let newobj = tagbar#prototypes#basetag#new(a:name)
 
-    call newobj._init(a:name)
+    let newobj.isNormalTag = function(s:add_snr('s:isNormalTag'))
+    let newobj.strfmt = function(s:add_snr('s:strfmt'))
+    let newobj.str = function(s:add_snr('s:str'))
+    let newobj.getPrototype = function(s:add_snr('s:getPrototype'))
 
     return newobj
 endfunction
 
-" s:NormalTag.isNormalTag() {{{1
-function! s:NormalTag.isNormalTag() abort dict
+" s:isNormalTag() {{{1
+function! s:isNormalTag() abort dict
     return 1
 endfunction
 
-" s:NormalTag.strfmt() {{{1
-function! s:NormalTag.strfmt() abort dict
+" s:strfmt() {{{1
+function! s:strfmt() abort dict
     let typeinfo = self.typeinfo
 
     let suffix = get(self.fields, 'signature', '')
@@ -29,8 +28,8 @@ function! s:NormalTag.strfmt() abort dict
     return self._getPrefix() . self.name . suffix
 endfunction
 
-" s:NormalTag.str() {{{1
-function! s:NormalTag.str(longsig, full) abort dict
+" s:str() {{{1
+function! s:str(longsig, full) abort dict
     if a:full && self.path != ''
         let str = self.path . self.typeinfo.sro . self.name
     else
@@ -48,8 +47,8 @@ function! s:NormalTag.str(longsig, full) abort dict
     return str
 endfunction
 
-" s:NormalTag.getPrototype() {{{1
-function! s:NormalTag.getPrototype(short) abort dict
+" s:getPrototype() {{{1
+function! s:getPrototype(short) abort dict
     if self.prototype != ''
         let prototype = self.prototype
     else
@@ -106,6 +105,14 @@ function! s:NormalTag.getPrototype(short) abort dict
     endif
 
     return prototype
+endfunction
+
+" s:add_snr() {{{1
+function! s:add_snr(funcname) abort
+    if !exists("s:snr")
+        let s:snr = matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_snr$')
+    endif
+    return s:snr . a:funcname
 endfunction
 
 " Modeline {{{1
