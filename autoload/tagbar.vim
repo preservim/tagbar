@@ -3182,7 +3182,15 @@ function! TagbarBalloonExpr() abort
         return ''
     endif
 
-    return taginfo.getPrototype(0)
+    let prototype = taginfo.getPrototype(0)
+    if has('multi_byte')
+        if g:tagbar_systemenc != &encoding
+            let prototype = iconv(prototype, &encoding, g:tagbar_systemenc)
+        elseif $LANG != ''
+            let prototype = iconv(prototype, &encoding, $LANG)
+        endif
+    endif
+    return prototype
 endfunction
 
 " Autoload functions {{{1
