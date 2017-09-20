@@ -16,16 +16,14 @@ their scope. This means that for example methods in C++ are displayed under
 the class they are defined in.</p><h2>What Tagbar is not</h2><p>Tagbar is not a general-purpose tool for managing <code>tags</code> files. It only
 creates the tags it needs on-the-fly in-memory without creating any files.
 <code>tags</code> file management is provided by other plugins, like for example
-<a href="https://github.com/xolox/vim-easytags">easytags</a>.</p><h2>Dependencies</h2><p><a href="http://www.vim.org/">Vim 7.0</a> (But see note below)<br/>
-<a href="http://ctags.sourceforge.net/">Exuberant ctags 5.5</a></p><h2>Installation</h2><p>Extract the archive or clone the repository into a directory in your
+<a href="https://github.com/xolox/vim-easytags">easytags</a>.</p><h2>Dependencies</h2><p><a href="http://www.vim.org/">Vim 7.3.1058</a><br/>
+<a href="http://ctags.sourceforge.net/">Exuberant Ctags 5.5</a> or
+<a href="https://ctags.io">Universal Ctags</a> (recommended), a maintained fork of
+Exuberant Ctags.</p><h2>Installation</h2><p>Extract the archive or clone the repository into a directory in your
 <code>'runtimepath'</code>, or use a plugin manager of your choice like
 <a href="https://github.com/tpope/vim-pathogen">pathogen</a>. Don't forget to run
 <code>:helptags</code> if your plugin manager doesn't do it for you so you can access the
-documentation with <code>:help tagbar</code>.</p><p>Note: Vim versions &lt; 7.0.167 have a bug that prevents Tagbar from working. If
-you are affected by this use this alternate Tagbar download instead:
-<a href="https://github.com/majutsushi/tagbar/zipball/70fix">zip</a>. It is on par with
-version 2.2 but probably won't be updated after that due to the amount of
-changes required.</p><p>If the ctags executable is not installed in one of the directories in your
+documentation with <code>:help tagbar</code>.</p><p>If the ctags executable is not installed in one of the directories in your
 <code>$PATH</code> environment variable you have to set the <code>g:tagbar_ctags_bin</code>
 variable, see the documentation for more info.</p><h2>Quickstart</h2><p>Put something like the following into your ~/.vimrc:</p><pre><code class="vim">nmap &lt;F8&gt; :TagbarToggle&lt;CR&gt;
 </code></pre><p>If you do this the F8 key will toggle the Tagbar window. You can of course use
