@@ -18,7 +18,9 @@ creates the tags it needs on-the-fly in-memory without creating any files.
 ## Dependencies
 
 [Vim 7.3.1058](http://www.vim.org/)  
-[Exuberant ctags 5.5](http://ctags.sourceforge.net/)
+[Exuberant Ctags 5.5](http://ctags.sourceforge.net/) or
+[Universal Ctags](https://ctags.io) (recommended), a maintained fork of
+Exuberant Ctags.
 
 ## Installation
 
