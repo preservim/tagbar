@@ -985,12 +985,21 @@ function! s:ProcessFile(fname, ftype) abort
         let tempfile .= '.' . ext
     endif
 
-    call writefile(getbufline(fileinfo.bufnr, 1, '$'), tempfile)
+    call tagbar#debug#log('Caching file into: ' . tempfile)
+    let templines = getbufline(fileinfo.bufnr, 1, '$')
+    let res = writefile(templines, tempfile)
+
+    if res != 0
+        call tagbar#debug#log('Could not create copy '.tempfile)
+        return
+    endif
     let fileinfo.mtime = getftime(tempfile)
 
     let ctags_output = s:ExecuteCtagsOnFile(tempfile, a:fname, typeinfo)
 
-    call delete(tempfile)
+    if !tagbar#debug#enabled()
+        call delete(tempfile)
+    endif
 
     if ctags_output == -1
         call tagbar#debug#log('Ctags error when processing file')
@@ -1087,6 +1096,11 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
+
+        " verbose if debug enabled
+        if tagbar#debug#enabled()
+            let ctags_args += [ '-V' ]
+        endif
 
         " Include extra type definitions
         if has_key(a:typeinfo, 'deffile')
