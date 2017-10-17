@@ -670,7 +670,7 @@ function! s:OpenWindow(flags) abort
         return 0
     endif
 
-    " Expand the Vim window to accomodate for the Tagbar window if requested
+    " Expand the Vim window to accommodate for the Tagbar window if requested
     " and save the window positions to be able to restore them later.
     if g:tagbar_expand >= 1 && !s:window_expanded &&
      \ (has('gui_running') || g:tagbar_expand == 2)
