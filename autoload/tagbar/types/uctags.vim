@@ -533,7 +533,7 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_javascript.ctagstype = 'javascript'
     let type_javascript.kinds = [
         \ {'short': 'v', 'long': 'global variables', 'fold': 0, 'stl': 0},
-        \ {'short': 'C', 'long': 'contants',         'fold': 0, 'stl': 0},
+        \ {'short': 'C', 'long': 'constants',        'fold': 0, 'stl': 0},
         \ {'short': 'c', 'long': 'classes',          'fold': 0, 'stl': 1},
         \ {'short': 'g', 'long': 'generators',       'fold': 0, 'stl': 0},
         \ {'short': 'p', 'long': 'properties',       'fold': 0, 'stl': 0},
