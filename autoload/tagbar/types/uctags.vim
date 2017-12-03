@@ -796,7 +796,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'M', 'long' : 'macro',           'fold' : 0, 'stl' : 1},
         \ {'short' : 'm', 'long' : 'struct field',    'fold' : 0, 'stl' : 1},
         \ {'short' : 'e', 'long' : 'enum variant',    'fold' : 0, 'stl' : 1},
-        \ {'short' : 'F', 'long' : 'method',          'fold' : 0, 'stl' : 1}
+        \ {'short' : 'P', 'long' : 'method',          'fold' : 0, 'stl' : 1}
     \ ]
     let type_rust.sro        = '::'
     let type_rust.kind2scope = {
@@ -806,7 +806,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'c' : 'implementation',
         \ 'f' : 'function',
         \ 'g' : 'enum',
-        \ 'F' : 'method',
+        \ 'P' : 'method',
     \ }
     let type_rust.scope2kind = {
         \ 'module'        : 'n',
@@ -815,7 +815,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'implementation': 'c',
         \ 'function'      : 'f',
         \ 'enum'          : 'g',
-        \ 'method'        : 'F',
+        \ 'method'        : 'P',
     \ }
     let types.rust = type_rust
     " Scheme {{{1
