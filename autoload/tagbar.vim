@@ -387,7 +387,11 @@ endfunction
 function! s:CheckForExCtags(silent) abort
     call tagbar#debug#log('Checking for Exuberant Ctags')
 
-    if !exists('g:tagbar_ctags_bin')
+    if has('ivim')
+        " iVim can't run external commands and has integrated ctags as an
+        " internal command
+        let g:tagbar_ctags_bin = 'ictags'
+    elseif !exists('g:tagbar_ctags_bin')
         let ctagsbins  = []
         let ctagsbins += ['ctags-exuberant'] " Debian
         let ctagsbins += ['exuberant-ctags']
@@ -2585,6 +2589,9 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
         "  character that needs to be escaped for tagbar.vim is <space> for
         "  windows cmd.exe.
         let ctags_cmd = a:ctags_bin
+    elseif has('ivim')
+        " ictags is an internal command under iVim and should not be escaped
+        let ctags_cmd = a:ctags_bin
     else
         let ctags_cmd = shellescape(a:ctags_bin)
     endif
@@ -2643,6 +2650,24 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     return ctags_cmd
 endfunction
 
+" s:ExecuteCmd() {{{2
+" Execute ctags command based on platform
+" allows support for platforms which can't execute system calls
+function! s:ExecuteCmd(ctags_cmd)
+    if has('ivim')
+        let temp_reg = @"
+        redir @"
+        silent execute a:ctags_cmd
+        redir END
+        let ctags_output = copy(@")
+        let @" = temp_reg
+    else
+        silent let ctags_output = system(a:ctags_cmd)
+    endif
+
+    return ctags_output
+endfunction
+
 " s:ExecuteCtags() {{{2
 " Execute ctags with necessary shell settings
 " Partially based on the discussion at
@@ -2669,12 +2694,12 @@ function! s:ExecuteCtags(ctags_cmd) abort
     endif
 
     if tagbar#debug#enabled()
-        silent 5verbose let ctags_output = system(a:ctags_cmd)
+        silent 5verbose let ctags_output = s:ExecuteCmd(a:ctags_cmd)
         call tagbar#debug#log(v:statusmsg)
         call tagbar#debug#log('Exit code: ' . v:shell_error)
         redraw!
     else
-        silent let ctags_output = system(a:ctags_cmd)
+        let ctags_output = s:ExecuteCmd(a:ctags_cmd)
     endif
 
     if &shell =~ 'cmd\.exe'
