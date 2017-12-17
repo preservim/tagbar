@@ -1941,7 +1941,7 @@ function! s:HighlightTag(openfolds, ...) abort
         call winline()
 
         let foldpat = '[' . g:tagbar#icon_open . g:tagbar#icon_closed . ' ]'
-        let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\zs[^( ]\+\ze/'
+        let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\?\zs[^( ]\+\ze/'
         call tagbar#debug#log("Highlight pattern: '" . pattern . "'")
         if hlexists('TagbarHighlight') " Safeguard in case syntax highlighting is disabled
             execute 'match TagbarHighlight ' . pattern
