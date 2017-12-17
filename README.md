@@ -69,7 +69,7 @@ please report it on their website instead, as there is nothing I can do about
 it in Tagbar. Thank you!
 
 You can also have a look at [ctags bugs that have previously been filed
-against Tagbar](https://github.com/majutsushi/tagbar/issues?labels=ctags-bug&page=1&state=closed).
+against Tagbar](https://github.com/majutsushi/tagbar/issues?labels=ctags&page=1&state=closed).
 
 ## Screenshots
 
