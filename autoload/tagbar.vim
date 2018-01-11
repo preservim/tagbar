@@ -862,8 +862,7 @@ function! s:CloseWindow() abort
     call s:ShrinkIfExpanded()
 
     if s:autocommands_done && !s:statusline_in_use
-        autocmd! TagbarAutoCmds
-        let s:autocommands_done = 0
+        call tagbar#StopAutoUpdate()
     endif
 
     call tagbar#debug#log('CloseWindow finished')
@@ -3241,6 +3240,11 @@ endfunction
 
 function! tagbar#RestoreSession() abort
     call s:RestoreSession()
+endfunction
+
+function! tagbar#StopAutoUpdate() abort
+    autocmd! TagbarAutoCmds
+    let s:autocommands_done = 0
 endfunction
 
 " }}}2

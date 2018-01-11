@@ -306,6 +306,15 @@ COMMANDS                                                     *tagbar-commands*
 :TagbarDebugEnd                                              *:TagbarDebugEnd*
     End debug mode, debug messages will no longer be written to the logfile.
 
+
+------------------------------------------------------------------------------
+FUNCTIONS                                                   *tagbar-functions*
+
+*tagbar#StopAutoUpdate()*
+    Remove autocommands that might have been installed to automatically
+    update tag information.  This should be called after you have used
+    |tagbar#currenttag| manually.
+
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*
 
@@ -866,6 +875,10 @@ tagbar#currenttag({format}, {default} [, {flags}])
 Note that if there is an error when processing the current file no error
 message will be shown in order to not disrupt the statusline. If the function
 doesn't seem to work right open the Tagbar window to see any error messages.
+
+Note you should call |tagbar#StopAutoUpdate| manually in case you do not want
+to display the current tag anymore.  Otherwise the autocommands to update the
+state are being executed all the time still.
 
 ------------------------------------------------------------------------------
 IGNORING SPECIFIC FILES                                        *tagbar-ignore*
