@@ -1033,7 +1033,6 @@ function! s:ProcessFile(fname, ftype) abort
         if len(parts) == 2 " Is a valid tag line
             call s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
         endif
-        let prev = line
     endfor
 
     " Create a placeholder tag for the 'kind' header for folding purposes, but
