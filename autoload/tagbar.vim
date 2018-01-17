@@ -1021,16 +1021,19 @@ function! s:ProcessFile(fname, ftype) abort
     " Parse the ctags output lines
     call tagbar#debug#log('Parsing ctags output')
     let rawtaglist = split(ctags_output, '\n\+')
+    let seen = {}
     for line in rawtaglist
-        " skip comments
-        if line =~# '^!_TAG_'
+        " skip comments and duplicates (can happen when --sort=no)
+        if line =~# '^!_TAG_' || has_key(seen, line)
             continue
         endif
+        let seen[line] = 1
 
         let parts = split(line, ';"')
         if len(parts) == 2 " Is a valid tag line
             call s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
         endif
+        let prev = line
     endfor
 
     " Create a placeholder tag for the 'kind' header for folding purposes, but
@@ -1255,7 +1258,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
 endfunction
 
 " s:ProcessTag() {{{2
-function s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, fileinfo) abort
+function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, fileinfo) abort
     if a:is_split
         let taginfo = tagbar#prototypes#splittag#new(a:name)
     else
