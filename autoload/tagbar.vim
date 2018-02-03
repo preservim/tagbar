@@ -1096,6 +1096,10 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
+        if exists('g:tagbar_ctags_options')
+            let ctags_args  = add(ctags_args,
+                \ '--options='.g:tagbar_ctags_options)
+        fi
 
         " verbose if debug enabled
         if tagbar#debug#enabled()

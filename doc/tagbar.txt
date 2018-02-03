@@ -390,6 +390,22 @@ Example:
         let g:tagbar_ctags_bin = 'C:\Ctags5.8\ctags.exe'
 <
 
+                                                      *g:tagbar_ctags_options*
+g:tagbar_ctags_options
+Default: undefined
+
+Use this option to specify the '--options' flag for the ctags executable,
+reading in an additional ctags configuration file. This is similar to the
+deffile key for tagbar type extensions, see |tagbar-extend|, but acts
+globally.
+
+Example:
+>
+        let g:tagbar_ctags_options = split(&rtp,",")[0].'/ctags.cnf'
+
+This makes sure that ctags is called with options from ~/.vim/ctags.cnf
+
+
                                                                *g:tagbar_left*
 g:tagbar_left~
 Default: 0
@@ -1269,7 +1285,9 @@ ctags manually execute the following command in a terminal:
         ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt myfile
 <
 If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
-value here instead of simply "ctags".
+value here instead of simply "ctags". Also, if you use
+|:tagbar_ctags_options|, you should include the equivalent --options flag in
+the call to ctags.
 
 If something more fundamental isn't working right then try running the
 |:messages| command to see if Tagbar printed any error messages that might
