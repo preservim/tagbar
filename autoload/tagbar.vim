@@ -1086,7 +1086,14 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
         "intended to be in an argument, spaces in a single ctag_args
         "string would be ambiguous. Is the space an argument separator
         "or to be included in the argument
-        let ctags_args  = [ '-f',
+        let ctags_args = []
+        if exists('g:tagbar_ctags_options')
+            for value in g:tagbar_ctags_options
+                call add(ctags_args, '--options='.value)
+            endfor
+        fi
+        let ctags_args  = ctags_args + [
+                          \ '-f',
                           \ '-',
                           \ '--format=2',
                           \ '--excmd=pattern',
@@ -1096,10 +1103,6 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
-        if exists('g:tagbar_ctags_options')
-            let ctags_args  = add(ctags_args,
-                \ '--options='.g:tagbar_ctags_options)
-        fi
 
         " verbose if debug enabled
         if tagbar#debug#enabled()

@@ -394,16 +394,20 @@ Example:
 g:tagbar_ctags_options
 Default: undefined
 
-Use this option to specify the '--options' flag for the ctags executable,
-reading in an additional ctags configuration file. This is similar to the
-deffile key for tagbar type extensions, see |tagbar-extend|, but acts
-globally.
+Use this option to specify a list of filenames to pass to ctags with the
+'--options' flag.  This is similar to the deffile key for tagbar type
+extensions, see |tagbar-extend|, but acts globally. The special value 'NONE'
+as the first entry disables reading of the default configuration files (e.g.
+~/.ctags). Without this, if ~/.ctags and other files listed in
+g:tagbar_ctags_options include some of the same patterns, tagbar might show
+duplicate entries.
 
 Example:
 >
-        let g:tagbar_ctags_options = split(&rtp,",")[0].'/ctags.cnf'
+        let g:tagbar_ctags_options = ['NONE', split(&rtp,",")[0].'/ctags.cnf']
 
-This makes sure that ctags is called with options from ~/.vim/ctags.cnf
+This causes ctags to use settings from ~/.vim/ctags.cnf, ignoring other
+configuration files.
 
 
                                                                *g:tagbar_left*
