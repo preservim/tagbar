@@ -1255,7 +1255,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
 endfunction
 
 " s:ProcessTag() {{{2
-function s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, fileinfo) abort
+function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, fileinfo) abort
     if a:is_split
         let taginfo = tagbar#prototypes#splittag#new(a:name)
     else
