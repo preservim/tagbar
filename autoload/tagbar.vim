@@ -159,6 +159,7 @@ let s:singular_types = {
             \ 'namespaces': 'namespace',
             \ 'net data types': 'net data type',
             \ 'packages': 'package',
+            \ 'package': 'package',
             \ 'paragraphs': 'paragraph',
             \ 'parts': 'part',
             \ 'patterns': 'pattern',
