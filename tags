@@ -1,0 +1,247 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AutoUpdate	autoload/tagbar.vim	/^function! s:AutoUpdate(fname, force, ...) abort$/;"	f
+BaseTag._getPrefix	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag._getPrefix() abort dict$/;"	f
+BaseTag._init	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag._init(name) abort dict$/;"	f
+BaseTag.addChild	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.addChild(tag) abort dict$/;"	f
+BaseTag.closeFold	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.closeFold() abort dict$/;"	f
+BaseTag.getChildren	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.getChildren() dict abort$/;"	f
+BaseTag.getChildrenByName	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.getChildrenByName(tagname) dict abort$/;"	f
+BaseTag.getClosedParentTline	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.getClosedParentTline() abort dict$/;"	f
+BaseTag.getPrototype	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.getPrototype(short) abort dict$/;"	f
+BaseTag.initFoldState	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.initFoldState(known_files) abort dict$/;"	f
+BaseTag.isFoldable	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.isFoldable() abort dict$/;"	f
+BaseTag.isFolded	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.isFolded() abort dict$/;"	f
+BaseTag.isKindheader	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.isKindheader() abort dict$/;"	f
+BaseTag.isNormalTag	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.isNormalTag() abort dict$/;"	f
+BaseTag.isPseudoTag	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.isPseudoTag() abort dict$/;"	f
+BaseTag.isSplitTag	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.isSplitTag() abort dict$/;"	f
+BaseTag.openFold	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.openFold() abort dict$/;"	f
+BaseTag.openParents	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.openParents() abort dict$/;"	f
+BaseTag.removeChild	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.removeChild(tag) dict abort$/;"	f
+BaseTag.setFolded	autoload/tagbar/prototypes/basetag.vim	/^function! s:BaseTag.setFolded(folded) abort dict$/;"	f
+ChangeFoldLevel	autoload/tagbar.vim	/^function! s:ChangeFoldLevel(diff, force) abort$/;"	f
+CheckExCtagsVersion	autoload/tagbar.vim	/^function! s:CheckExCtagsVersion(output) abort$/;"	f
+CheckFTCtags	autoload/tagbar.vim	/^function! s:CheckFTCtags(bin, ftype) abort$/;"	f
+CheckForExCtags	autoload/tagbar.vim	/^function! s:CheckForExCtags(silent) abort$/;"	f
+CheckMouseClick	autoload/tagbar.vim	/^function! s:CheckMouseClick() abort$/;"	f
+CloseFold	autoload/tagbar.vim	/^function! s:CloseFold() abort$/;"	f
+CloseWindow	autoload/tagbar.vim	/^function! s:CloseWindow() abort$/;"	f
+CorrectFocusOnStartup	autoload/tagbar.vim	/^function! s:CorrectFocusOnStartup() abort$/;"	f
+CreateAutocommands	autoload/tagbar.vim	/^function! s:CreateAutocommands() abort$/;"	f
+CtagsErrMsg	autoload/tagbar.vim	/^function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort$/;"	f
+Dependencies	README.md	/^## Dependencies$/;"	i
+DetectFiletype	autoload/tagbar.vim	/^function! s:DetectFiletype(bufnr) abort$/;"	f
+EscapeCtagsCmd	autoload/tagbar.vim	/^function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort$/;"	f
+ExecuteCtags	autoload/tagbar.vim	/^function! s:ExecuteCtags(ctags_cmd) abort$/;"	f
+ExecuteCtagsOnFile	autoload/tagbar.vim	/^function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort$/;"	f
+FileInfo.addTag	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.addTag(tag) abort dict$/;"	f
+FileInfo.clearOldFolds	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.clearOldFolds() abort dict$/;"	f
+FileInfo.closeKindFold	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.closeKindFold(kind) abort dict$/;"	f
+FileInfo.getTags	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.getTags() dict abort$/;"	f
+FileInfo.getTagsByName	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.getTagsByName(tagname) dict abort$/;"	f
+FileInfo.openKindFold	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.openKindFold(kind) abort dict$/;"	f
+FileInfo.removeTag	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.removeTag(tag) dict abort$/;"	f
+FileInfo.reset	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.reset() abort dict$/;"	f
+FileInfo.sortTags	autoload/tagbar/prototypes/fileinfo.vim	/^function! s:FileInfo.sortTags(compare_typeinfo) abort dict$/;"	f
+GetFileWinnr	autoload/tagbar.vim	/^function! s:GetFileWinnr(fileinfo) abort$/;"	f
+GetNearbyTag	autoload/tagbar.vim	/^function! s:GetNearbyTag(all, forcecurrent, ...) abort$/;"	f
+GetSupportedFiletypes	autoload/tagbar.vim	/^function! s:GetSupportedFiletypes() abort$/;"	f
+GetTagInfo	autoload/tagbar.vim	/^function! s:GetTagInfo(linenr, ignorepseudo) abort$/;"	f
+GotoFileWindow	autoload/tagbar.vim	/^function! s:GotoFileWindow(fileinfo, ...) abort$/;"	f
+GotoNextFold	autoload/tagbar.vim	/^function! s:GotoNextFold() abort$/;"	f
+GotoNextToplevelTag	autoload/tagbar.vim	/^function! s:GotoNextToplevelTag(direction) abort$/;"	f
+GotoPrevFold	autoload/tagbar.vim	/^function! s:GotoPrevFold() abort$/;"	f
+HandleBufDelete	autoload/tagbar.vim	/^function! s:HandleBufDelete(bufname, bufnr) abort$/;"	f
+HandleBufWrite	autoload/tagbar.vim	/^function! s:HandleBufWrite(fname) abort$/;"	f
+HandleOnlyWindow	autoload/tagbar.vim	/^function! s:HandleOnlyWindow() abort$/;"	f
+HasOpenFileWindows	autoload/tagbar.vim	/^function! s:HasOpenFileWindows() abort$/;"	f
+HighlightTag	autoload/tagbar.vim	/^function! s:HighlightTag(openfolds, ...) abort$/;"	f
+Init	autoload/tagbar.vim	/^function! s:Init(silent) abort$/;"	f
+InitTypes	autoload/tagbar.vim	/^function! s:InitTypes() abort$/;"	f
+InitWindow	autoload/tagbar.vim	/^function! s:InitWindow(autoclose) abort$/;"	f
+Installation	README.md	/^## Installation$/;"	i
+IsValidFile	autoload/tagbar.vim	/^function! s:IsValidFile(fname, ftype) abort$/;"	f
+JumpToTag	autoload/tagbar.vim	/^function! s:JumpToTag(stay_in_tagbar) abort$/;"	f
+KindheaderTag.closeFold	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.closeFold() abort dict$/;"	f
+KindheaderTag.getPrototype	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.getPrototype(short) abort dict$/;"	f
+KindheaderTag.isFoldable	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.isFoldable() abort dict$/;"	f
+KindheaderTag.isFolded	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.isFolded() abort dict$/;"	f
+KindheaderTag.isKindheader	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.isKindheader() abort dict$/;"	f
+KindheaderTag.openFold	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.openFold() abort dict$/;"	f
+KindheaderTag.toggleFold	autoload/tagbar/prototypes/kindheadertag.vim	/^function! s:KindheaderTag.toggleFold(fileinfo) abort dict$/;"	f
+License	README.md	/^## License$/;"	i
+LoadUserTypeDefs	autoload/tagbar.vim	/^function! s:LoadUserTypeDefs(...) abort$/;"	f
+Maintainer	README.md	/^## Maintainer$/;"	i
+MapKeys	autoload/tagbar.vim	/^function! s:MapKeys() abort$/;"	f
+MinimizeMaxFoldLevel	autoload/tagbar.vim	/^function! s:MinimizeMaxFoldLevel(fileinfo, tags) abort$/;"	f
+NormalTag.getPrototype	autoload/tagbar/prototypes/normaltag.vim	/^function! s:NormalTag.getPrototype(short) abort dict$/;"	f
+NormalTag.isNormalTag	autoload/tagbar/prototypes/normaltag.vim	/^function! s:NormalTag.isNormalTag() abort dict$/;"	f
+NormalTag.str	autoload/tagbar/prototypes/normaltag.vim	/^function! s:NormalTag.str(longsig, full) abort dict$/;"	f
+NormalTag.strfmt	autoload/tagbar/prototypes/normaltag.vim	/^function! s:NormalTag.strfmt() abort dict$/;"	f
+Note: If the file structure display is wrong	README.md	/^## Note: If the file structure display is wrong$/;"	i
+OpenFold	autoload/tagbar.vim	/^function! s:OpenFold() abort$/;"	f
+OpenParents	autoload/tagbar.vim	/^function! s:OpenParents(...) abort$/;"	f
+OpenWindow	autoload/tagbar.vim	/^function! s:OpenWindow(flags) abort$/;"	f
+ParseTagline	autoload/tagbar.vim	/^function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort$/;"	f
+PrintHelp	autoload/tagbar.vim	/^function! s:PrintHelp() abort$/;"	f
+PrintKinds	autoload/tagbar.vim	/^function! s:PrintKinds(typeinfo, fileinfo) abort$/;"	f
+PrintTag	autoload/tagbar.vim	/^function! s:PrintTag(tag, depth, output, fileinfo, typeinfo) abort$/;"	f
+ProcessFile	autoload/tagbar.vim	/^function! s:ProcessFile(fname, ftype) abort$/;"	f
+ProcessTag	autoload/tagbar.vim	/^function s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, fileinfo) abort$/;"	f
+PseudoTag.isPseudoTag	autoload/tagbar/prototypes/pseudotag.vim	/^function! s:PseudoTag.isPseudoTag() abort dict$/;"	f
+PseudoTag.strfmt	autoload/tagbar/prototypes/pseudotag.vim	/^function! s:PseudoTag.strfmt() abort dict$/;"	f
+Quickstart	README.md	/^## Quickstart$/;"	i
+RenderContent	autoload/tagbar.vim	/^function! s:RenderContent(...) abort$/;"	f
+RenderKeepView	autoload/tagbar.vim	/^function! s:RenderKeepView(...) abort$/;"	f
+ReopenWindow	autoload/tagbar.vim	/^function! s:ReopenWindow(delbufname) abort$/;"	f
+RestoreSession	autoload/tagbar.vim	/^function! s:RestoreSession() abort$/;"	f
+Screenshots	README.md	/^## Screenshots$/;"	i
+SetFoldLevel	autoload/tagbar.vim	/^function! s:SetFoldLevel(level, force) abort$/;"	f
+SetFoldLevelRecursive	autoload/tagbar.vim	/^function! s:SetFoldLevelRecursive(fileinfo, tags, level) abort$/;"	f
+SetStatusLine	autoload/tagbar.vim	/^function! s:SetStatusLine()$/;"	f
+ShowInPreviewWin	autoload/tagbar.vim	/^function! s:ShowInPreviewWin() abort$/;"	f
+ShowPrototype	autoload/tagbar.vim	/^function! s:ShowPrototype(short) abort$/;"	f
+ShrinkIfExpanded	autoload/tagbar.vim	/^function! s:ShrinkIfExpanded() abort$/;"	f
+SplitTag.isSplitTag	autoload/tagbar/prototypes/splittag.vim	/^function! s:SplitTag.isSplitTag() abort dict$/;"	f
+State.New	autoload/tagbar/state.vim	/^function! s:State.New() abort dict$/;"	f
+State.getCurrent	autoload/tagbar/state.vim	/^function! s:State.getCurrent(force_current) abort dict$/;"	f
+State.setCurrentFile	autoload/tagbar/state.vim	/^function! s:State.setCurrentFile(fileinfo) abort dict$/;"	f
+State.setPaused	autoload/tagbar/state.vim	/^function! s:State.setPaused() abort dict$/;"	f
+Support for additional filetypes	README.md	/^## Support for additional filetypes$/;"	i
+Tagbar	plugin/tagbar.vim	/^command! -nargs=0 Tagbar              call tagbar#ToggleWindow()$/;"	c
+Tagbar: a class outline viewer for Vim	README.md	/^# Tagbar: a class outline viewer for Vim$/;"	h
+TagbarBalloonExpr	autoload/tagbar.vim	/^function! TagbarBalloonExpr() abort$/;"	f
+TagbarBufName	autoload/tagbar.vim	/^function! s:TagbarBufName() abort$/;"	f
+TagbarClose	plugin/tagbar.vim	/^command! -nargs=0 TagbarClose         call tagbar#CloseWindow()$/;"	c
+TagbarCurrentTag	plugin/tagbar.vim	/^command! -nargs=? TagbarCurrentTag    echo tagbar#currenttag('%s', 'No current tag', <f-args>)$/;"	c
+TagbarDebug	plugin/tagbar.vim	/^command! -nargs=? TagbarDebug         call tagbar#debug#start_debug(<f-args>)$/;"	c
+TagbarDebugEnd	plugin/tagbar.vim	/^command! -nargs=0 TagbarDebugEnd      call tagbar#debug#stop_debug()$/;"	c
+TagbarGetTypeConfig	plugin/tagbar.vim	/^command! -nargs=1 TagbarGetTypeConfig call tagbar#gettypeconfig(<f-args>)$/;"	c
+TagbarOpen	plugin/tagbar.vim	/^command! -nargs=? TagbarOpen          call tagbar#OpenWindow(<f-args>)$/;"	c
+TagbarOpenAutoClose	plugin/tagbar.vim	/^command! -nargs=0 TagbarOpenAutoClose call tagbar#OpenWindow('fcj')$/;"	c
+TagbarSession	plugin/tagbar.vim	/^augroup TagbarSession$/;"	a
+TagbarSetFoldlevel	plugin/tagbar.vim	/^command! -nargs=1 -bang TagbarSetFoldlevel  call tagbar#SetFoldLevel(<args>, <bang>0)$/;"	c
+TagbarShowTag	plugin/tagbar.vim	/^command! -nargs=0 TagbarShowTag       call tagbar#highlighttag(1, 1)$/;"	c
+TagbarToggle	plugin/tagbar.vim	/^command! -nargs=0 TagbarToggle        call tagbar#ToggleWindow()$/;"	c
+TagbarTogglePause	plugin/tagbar.vim	/^command! -nargs=0 TagbarTogglePause   call tagbar#toggle_pause()$/;"	c
+ToggleAutoclose	autoload/tagbar.vim	/^function! s:ToggleAutoclose() abort$/;"	f
+ToggleCaseInsensitive	autoload/tagbar.vim	/^function! s:ToggleCaseInsensitive() abort$/;"	f
+ToggleFold	autoload/tagbar.vim	/^function! s:ToggleFold() abort$/;"	f
+ToggleHelp	autoload/tagbar.vim	/^function! s:ToggleHelp() abort$/;"	f
+ToggleHideNonPublicTags	autoload/tagbar.vim	/^function! s:ToggleHideNonPublicTags() abort$/;"	f
+ToggleSort	autoload/tagbar.vim	/^function! s:ToggleSort() abort$/;"	f
+ToggleWindow	autoload/tagbar.vim	/^function! s:ToggleWindow(flags) abort$/;"	f
+TransformUserTypeDef	autoload/tagbar.vim	/^function! s:TransformUserTypeDef(def) abort$/;"	f
+TypeInfo.createKinddict	autoload/tagbar/prototypes/typeinfo.vim	/^function! s:TypeInfo.createKinddict() abort dict$/;"	f
+TypeInfo.getKind	autoload/tagbar/prototypes/typeinfo.vim	/^function! s:TypeInfo.getKind(kind) abort dict$/;"	f
+What Tagbar is	README.md	/^## What Tagbar is$/;"	i
+What Tagbar is not	README.md	/^## What Tagbar is not$/;"	i
+ZoomWindow	autoload/tagbar.vim	/^function! s:ZoomWindow() abort$/;"	f
+add_tag_recursive	autoload/tagbar.vim	/^function! s:add_tag_recursive(parent, taginfo, pathlist) abort$/;"	f
+b:current_syntax	syntax/tagbar.vim	/^let b:current_syntax = "tagbar"$/;"	v
+compare_by_kind	autoload/tagbar/sorting.vim	/^function! s:compare_by_kind(tag1, tag2) abort$/;"	f
+compare_by_line	autoload/tagbar/sorting.vim	/^function! s:compare_by_line(tag1, tag2) abort$/;"	f
+create_pseudotag	autoload/tagbar.vim	/^function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort$/;"	f
+do_delayed_update	autoload/tagbar.vim	/^function! s:do_delayed_update() abort$/;"	f
+g:loaded_tagbar	autoload/tagbar.vim	/^let g:loaded_tagbar = 1$/;"	v
+g:tagbar#icon_closed	autoload/tagbar.vim	/^let g:tagbar#icon_closed = g:tagbar_iconchars[0]$/;"	v
+g:tagbar#icon_open	autoload/tagbar.vim	/^let g:tagbar#icon_open   = g:tagbar_iconchars[1]$/;"	v
+g:tagbar#prototypes#basetag#BaseTag	autoload/tagbar/prototypes/basetag.vim	/^let g:tagbar#prototypes#basetag#BaseTag = s:BaseTag$/;"	v
+g:tagbar#prototypes#normaltag#NormalTag	autoload/tagbar/prototypes/normaltag.vim	/^let g:tagbar#prototypes#normaltag#NormalTag = s:NormalTag$/;"	v
+g:tagbar_iconchars	plugin/tagbar.vim	/^        let g:tagbar_iconchars = ['+', '-']$/;"	v
+g:tagbar_iconchars	plugin/tagbar.vim	/^        let g:tagbar_iconchars = ['▶', '▼']$/;"	v
+get	autoload/tagbar/state.vim	/^function! s:get() abort$/;"	f
+get_map_str	autoload/tagbar.vim	/^function! s:get_map_str(map) abort$/;"	f
+gettime	autoload/tagbar/debug.vim	/^    function! s:gettime() abort$/;"	f
+goto_markedwin	autoload/tagbar.vim	/^function! s:goto_markedwin(...) abort$/;"	f
+goto_tagbar	autoload/tagbar.vim	/^function! s:goto_tagbar(...) abort$/;"	f
+goto_win	autoload/tagbar.vim	/^function! s:goto_win(winnr, ...) abort$/;"	f
+init_var	plugin/tagbar.vim	/^function! s:init_var(var, value) abort$/;"	f
+known_files.get	autoload/tagbar.vim	/^function! s:known_files.get(fname) abort dict$/;"	f
+known_files.has	autoload/tagbar.vim	/^function! s:known_files.has(fname) abort dict$/;"	f
+known_files.put	autoload/tagbar.vim	/^function! s:known_files.put(fileinfo, ...) abort dict$/;"	f
+known_files.rm	autoload/tagbar.vim	/^function! s:known_files.rm(fname) abort dict$/;"	f
+mark_window	autoload/tagbar.vim	/^function! s:mark_window() abort$/;"	f
+s:BaseTag	autoload/tagbar/prototypes/basetag.vim	/^let s:BaseTag = {}$/;"	v
+s:FileInfo	autoload/tagbar/prototypes/fileinfo.vim	/^let s:FileInfo = {}$/;"	v
+s:KindheaderTag	autoload/tagbar/prototypes/kindheadertag.vim	/^let s:KindheaderTag = copy(g:tagbar#prototypes#basetag#BaseTag)$/;"	v
+s:NormalTag	autoload/tagbar/prototypes/normaltag.vim	/^let s:NormalTag = copy(g:tagbar#prototypes#basetag#BaseTag)$/;"	v
+s:PseudoTag	autoload/tagbar/prototypes/pseudotag.vim	/^let s:PseudoTag = copy(g:tagbar#prototypes#basetag#BaseTag)$/;"	v
+s:SplitTag	autoload/tagbar/prototypes/splittag.vim	/^let s:SplitTag = copy(g:tagbar#prototypes#normaltag#NormalTag)$/;"	v
+s:State	autoload/tagbar/state.vim	/^let s:State = {$/;"	v
+s:TypeInfo	autoload/tagbar/prototypes/typeinfo.vim	/^let s:TypeInfo = {}$/;"	v
+s:autocommands_done	autoload/tagbar.vim	/^let s:autocommands_done = 0$/;"	v
+s:buffer_seqno	autoload/tagbar.vim	/^let s:buffer_seqno = 0$/;"	v
+s:checked_ctags	autoload/tagbar.vim	/^let s:checked_ctags       = 0$/;"	v
+s:checked_ctags_types	autoload/tagbar.vim	/^let s:checked_ctags_types = 0$/;"	v
+s:compare_typeinfo	autoload/tagbar/sorting.vim	/^let s:compare_typeinfo = {}$/;"	v
+s:ctags_is_uctags	autoload/tagbar.vim	/^let s:ctags_is_uctags     = 0$/;"	v
+s:debug_enabled	autoload/tagbar/debug.vim	/^let s:debug_enabled = 0$/;"	v
+s:debug_file	autoload/tagbar/debug.vim	/^let s:debug_file = ''$/;"	v
+s:delayed_update_files	autoload/tagbar.vim	/^let s:delayed_update_files = []$/;"	v
+s:expand_bufnr	autoload/tagbar.vim	/^let s:expand_bufnr = -1$/;"	v
+s:ics	syntax/tagbar.vim	/^let s:ics = escape(join(g:tagbar_iconchars, ''), ']^\\-')$/;"	v
+s:init_done	autoload/tagbar.vim	/^let s:init_done = 0$/;"	v
+s:is_maximized	autoload/tagbar.vim	/^let s:is_maximized    = 0$/;"	v
+s:known_files	autoload/tagbar.vim	/^let s:known_files = {$/;"	v
+s:last_alt_bufnr	autoload/tagbar.vim	/^let s:last_alt_bufnr = -1$/;"	v
+s:last_highlight_tline	autoload/tagbar.vim	/^let s:last_highlight_tline = 0$/;"	v
+s:nearby_disabled	autoload/tagbar.vim	/^let s:nearby_disabled = 0$/;"	v
+s:new_window	autoload/tagbar.vim	/^let s:new_window      = 1$/;"	v
+s:pattern	syntax/tagbar.vim	/^let s:pattern = '\\(\\S\\@<![' . s:ics . ' ]\\)\\@<=#\\([^-+# ]\\)\\@='$/;"	v
+s:pattern	syntax/tagbar.vim	/^let s:pattern = '\\(\\S\\@<![' . s:ics . ' ]\\)\\@<=+\\([^-+# ]\\)\\@='$/;"	v
+s:pattern	syntax/tagbar.vim	/^let s:pattern = '\\(\\S\\@<![' . s:ics . ' ]\\)\\@<=-\\([^-+# ]\\)\\@='$/;"	v
+s:pattern	syntax/tagbar.vim	/^let s:pattern = '\\(\\S\\@<![' . s:ics . '][-+# ]\\?\\)\\@<=[^*(]\\+\\(\\*\\?\\(([^)]\\+)\\)\\? :\\)\\@='$/;"	v
+s:pattern	syntax/tagbar.vim	/^let s:pattern = '\\(^[' . s:ics . '] \\?\\)\\@<=[^-+: ]\\+[^:]\\+$'$/;"	v
+s:pattern	syntax/tagbar.vim	/^let s:pattern = '\\S\\@<![' . s:ics . ']\\([-+# ]\\?\\)\\@='$/;"	v
+s:paused	autoload/tagbar.vim	/^let s:paused = 0$/;"	v
+s:pwin_by_tagbar	autoload/tagbar.vim	/^let s:pwin_by_tagbar = 0$/;"	v
+s:short_help	autoload/tagbar.vim	/^let s:short_help      = 1$/;"	v
+s:statusline_in_use	autoload/tagbar.vim	/^let s:statusline_in_use = 0$/;"	v
+s:type_init_done	autoload/tagbar.vim	/^let s:type_init_done    = 0$/;"	v
+s:vim_quitting	autoload/tagbar.vim	/^let s:vim_quitting = 0$/;"	v
+s:visibility_symbols	autoload/tagbar/prototypes/basetag.vim	/^let s:visibility_symbols = {$/;"	v
+s:warnings	autoload/tagbar.vim	/^let s:warnings = {$/;"	v
+s:window_expanded	autoload/tagbar.vim	/^let s:window_expanded   = 0$/;"	v
+s:window_pos	autoload/tagbar.vim	/^let s:window_pos = {$/;"	v
+s:winrestcmd	autoload/tagbar.vim	/^let s:winrestcmd      = ''$/;"	v
+setup_keymaps	plugin/tagbar.vim	/^function! s:setup_keymaps() abort$/;"	f
+setup_options	plugin/tagbar.vim	/^function! s:setup_options() abort$/;"	f
+tagbar#CloseWindow	autoload/tagbar.vim	/^function! tagbar#CloseWindow() abort$/;"	f
+tagbar#OpenWindow	autoload/tagbar.vim	/^function! tagbar#OpenWindow(...) abort$/;"	f
+tagbar#RestoreSession	autoload/tagbar.vim	/^function! tagbar#RestoreSession() abort$/;"	f
+tagbar#SetFoldLevel	autoload/tagbar.vim	/^function! tagbar#SetFoldLevel(level, force) abort$/;"	f
+tagbar#ToggleWindow	autoload/tagbar.vim	/^function! tagbar#ToggleWindow(...) abort$/;"	f
+tagbar#autoopen	autoload/tagbar.vim	/^function! tagbar#autoopen(...) abort$/;"	f
+tagbar#currentfile	autoload/tagbar.vim	/^function! tagbar#currentfile() abort$/;"	f
+tagbar#currenttag	autoload/tagbar.vim	/^function! tagbar#currenttag(fmt, default, ...) abort$/;"	f
+tagbar#debug#enabled	autoload/tagbar/debug.vim	/^function! tagbar#debug#enabled() abort$/;"	f
+tagbar#debug#log	autoload/tagbar/debug.vim	/^function! tagbar#debug#log(msg) abort$/;"	f
+tagbar#debug#log_ctags_output	autoload/tagbar/debug.vim	/^function! tagbar#debug#log_ctags_output(output) abort$/;"	f
+tagbar#debug#start_debug	autoload/tagbar/debug.vim	/^function! tagbar#debug#start_debug(...) abort$/;"	f
+tagbar#debug#stop_debug	autoload/tagbar/debug.vim	/^function! tagbar#debug#stop_debug() abort$/;"	f
+tagbar#gettypeconfig	autoload/tagbar.vim	/^function! tagbar#gettypeconfig(type) abort$/;"	f
+tagbar#getusertypes	autoload/tagbar.vim	/^function! tagbar#getusertypes() abort$/;"	f
+tagbar#highlighttag	autoload/tagbar.vim	/^function! tagbar#highlighttag(openfolds, force) abort$/;"	f
+tagbar#inspect	autoload/tagbar.vim	/^function! tagbar#inspect(var) abort$/;"	f
+tagbar#is_paused	autoload/tagbar.vim	/^function! tagbar#is_paused() abort$/;"	f
+tagbar#prototypes#basetag#new	autoload/tagbar/prototypes/basetag.vim	/^function! tagbar#prototypes#basetag#new(name) abort$/;"	f
+tagbar#prototypes#fileinfo#new	autoload/tagbar/prototypes/fileinfo.vim	/^function! tagbar#prototypes#fileinfo#new(fname, ftype, typeinfo) abort$/;"	f
+tagbar#prototypes#kindheadertag#new	autoload/tagbar/prototypes/kindheadertag.vim	/^function! tagbar#prototypes#kindheadertag#new(name) abort$/;"	f
+tagbar#prototypes#normaltag#new	autoload/tagbar/prototypes/normaltag.vim	/^function! tagbar#prototypes#normaltag#new(name) abort$/;"	f
+tagbar#prototypes#pseudotag#new	autoload/tagbar/prototypes/pseudotag.vim	/^function! tagbar#prototypes#pseudotag#new(name) abort$/;"	f
+tagbar#prototypes#splittag#new	autoload/tagbar/prototypes/splittag.vim	/^function! tagbar#prototypes#splittag#new(name) abort$/;"	f
+tagbar#prototypes#typeinfo#new	autoload/tagbar/prototypes/typeinfo.vim	/^function! tagbar#prototypes#typeinfo#new(...) abort$/;"	f
+tagbar#sorting#sort	autoload/tagbar/sorting.vim	/^function! tagbar#sorting#sort(tags, compareby, compare_typeinfo) abort$/;"	f
+tagbar#state#get_current_file	autoload/tagbar/state.vim	/^function! tagbar#state#get_current_file(force_current) abort$/;"	f
+tagbar#state#set_current_file	autoload/tagbar/state.vim	/^function! tagbar#state#set_current_file(fileinfo) abort$/;"	f
+tagbar#state#set_paused	autoload/tagbar/state.vim	/^function! tagbar#state#set_paused() abort$/;"	f
+tagbar#toggle_pause	autoload/tagbar.vim	/^function! tagbar#toggle_pause() abort$/;"	f
+tagbar#types#ctags#init	autoload/tagbar/types/ctags.vim	/^function! tagbar#types#ctags#init(supported_types) abort$/;"	f
+tagbar#types#uctags#init	autoload/tagbar/types/uctags.vim	/^function! tagbar#types#uctags#init(supported_types) abort$/;"	f
+warning	autoload/tagbar.vim	/^function! s:warning(msg) abort$/;"	f

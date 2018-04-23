@@ -590,7 +590,40 @@ function! tagbar#types#ctags#init(supported_types) abort
     \ }
     let type_tex.sort = 0
     let types.tex = type_tex
-    let types.nuweb = type_tex
+    " nuweb
+    let type_nuweb = tagbar#prototypes#typeinfo#new()
+    let type_nuweb.ctagstype = 'tex'
+    let type_nuweb.kinds     = [
+        \ {'short' : 'i', 'long' : 'includes',       'fold' : 1, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'parts',          'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'chapters',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sections',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'subsections',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'subsubsections', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'P', 'long' : 'paragraphs',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 'l', 'long' : 'labels',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'files',          'fold' : 0, 'stl' : 0},
+        \ {'short' : 'S', 'long' : 'scraps',         'fold' : 0, 'stl' : 0},
+    \ ]
+    let type_nuweb.sro        = '""'
+    let type_nuweb.kind2scope = {
+        \ 'p' : 'part',
+        \ 'c' : 'chapter',
+        \ 's' : 'section',
+        \ 'u' : 'subsection',
+        \ 'b' : 'subsubsection'
+    \ }
+    let type_nuweb.scope2kind = {
+        \ 'part'          : 'p',
+        \ 'chapter'       : 'c',
+        \ 'section'       : 's',
+        \ 'subsection'    : 'u',
+        \ 'subsubsection' : 'b'
+    \ }
+    let type_nuweb.sort = 0
+    let types.nuweb = type_nuweb
+
     " Vala {{{1
     " Vala is supported by the ctags fork provided by Anjuta, so only add the
     " type if the fork is used to prevent error messages otherwise
