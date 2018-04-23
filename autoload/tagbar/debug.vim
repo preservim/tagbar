@@ -7,8 +7,9 @@ function! tagbar#debug#start_debug(...) abort
         let s:debug_file = filename
     endif
 
-    " Clear log file
+    " Clear log file and start it with version info
     exe 'redir! > ' . s:debug_file
+    silent version
     redir END
 
     " Check whether the log file could be created

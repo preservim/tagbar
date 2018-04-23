@@ -1,7 +1,5 @@
-let s:TypeInfo = {}
-
 function! tagbar#prototypes#typeinfo#new(...) abort
-    let newobj = copy(s:TypeInfo)
+    let newobj = {}
 
     let newobj.kinddict = {}
 
@@ -9,24 +7,35 @@ function! tagbar#prototypes#typeinfo#new(...) abort
         call extend(newobj, a:1)
     endif
 
+    let newobj.getKind = function(s:add_snr('s:getKind'))
+    let newobj.createKinddict = function(s:add_snr('s:createKinddict'))
+
     return newobj
 endfunction
 
-" s:TypeInfo.getKind() {{{1
-function! s:TypeInfo.getKind(kind) abort dict
+" s:getKind() {{{1
+function! s:getKind(kind) abort dict
     let idx = self.kinddict[a:kind]
     return self.kinds[idx]
 endfunction
 
-" s:TypeInfo.createKinddict() {{{1
+" s:createKinddict() {{{1
 " Create a dictionary of the kind order for fast access in sorting functions
-function! s:TypeInfo.createKinddict() abort dict
+function! s:createKinddict() abort dict
     let i = 0
     for kind in self.kinds
         let self.kinddict[kind.short] = i
         let i += 1
     endfor
     let self.kinddict['?'] = i
+endfunction
+
+" s:add_snr() {{{1
+function! s:add_snr(funcname) abort
+    if !exists("s:snr")
+        let s:snr = matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_snr$')
+    endif
+    return s:snr . a:funcname
 endfunction
 
 " Modeline {{{1
