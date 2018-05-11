@@ -122,6 +122,7 @@ let s:singular_types = {
             \ 'domains': 'domain',
             \ 'entities': 'entity',
             \ 'entry points': 'entry point',
+            \ 'embedded': 'embedded',
             \ 'enum constants': 'enum constant',
             \ 'enum types': 'enum type',
             \ 'enumerations': 'enumeration',
