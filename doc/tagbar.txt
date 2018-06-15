@@ -360,6 +360,8 @@ s             Toggle sort order between name and file order.
                 Map option: tagbar_map_togglesort
 c             Toggle the |g:tagbar_autoclose| option.
                 Map option: tagbar_map_toggleautoclose
+t             Toggle the pause (like :TagbarTogglePause)
+                Map option: tagbar_map_togglepause
 x             Toggle zooming the window.
                 Map option: tagbar_map_zoomwin
 q             Close the Tagbar window.
