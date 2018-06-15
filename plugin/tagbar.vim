@@ -108,6 +108,8 @@ function! s:setup_keymaps() abort
         \ ['togglefold',    ['o', 'za']],
         \ ['openallfolds',  ['*', '<kMultiply>', 'zR']],
         \ ['closeallfolds', ['=', 'zM']],
+        \ ['incrementfolds',  ['zr']],
+        \ ['decrementfolds',  ['zm']],
         \ ['nextfold',      'zj'],
         \ ['prevfold',      'zk'],
         \
@@ -141,8 +143,8 @@ command! -nargs=1 -bang TagbarSetFoldlevel  call tagbar#SetFoldLevel(<args>, <ba
 command! -nargs=0 TagbarShowTag       call tagbar#highlighttag(1, 1)
 command! -nargs=? TagbarCurrentTag    echo tagbar#currenttag('%s', 'No current tag', <f-args>)
 command! -nargs=1 TagbarGetTypeConfig call tagbar#gettypeconfig(<f-args>)
-command! -nargs=? TagbarDebug         call tagbar#StartDebug(<f-args>)
-command! -nargs=0 TagbarDebugEnd      call tagbar#StopDebug()
+command! -nargs=? TagbarDebug         call tagbar#debug#start_debug(<f-args>)
+command! -nargs=0 TagbarDebugEnd      call tagbar#debug#stop_debug()
 command! -nargs=0 TagbarTogglePause   call tagbar#toggle_pause()
 
 " Modeline {{{1
