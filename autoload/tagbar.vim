@@ -1091,7 +1091,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--format=2',
                           \ '--excmd=pattern',
                           \ '--fields=nksSaf',
-                          \ '--extra=',
+                          \ '--extras=',
                           \ '--file-scope=yes',
                           \ '--sort=no',
                           \ '--append=no'
