@@ -2036,6 +2036,10 @@ function! s:JumpToTag(stay_in_tagbar) abort
     endif
 endfunction
 
+fun! tagbar#jump()
+    call s:JumpToTag(1)
+endfun
+
 " s:ShowInPreviewWin() {{{2
 function! s:ShowInPreviewWin() abort
     let pos = getpos('.')
