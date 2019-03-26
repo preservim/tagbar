@@ -583,6 +583,23 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0}
     \ ]
     let types.matlab = type_matlab
+    " NRoff {{{1
+    let type_nroff = tagbar#prototypes#typeinfo#new()
+    let type_nroff.ctagstype = 'nroff'
+    let type_nroff.kinds     = [
+        \ {'short' : 't', 'long' : 'titles',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'sections',     'fold' : 0, 'stl' : 1}
+    \ ]
+    let type_nroff.sro        = '.'
+    let type_nroff.kind2scope = {
+        \ 't' : 'title',
+        \ 's' : 'section'
+    \ }
+    let type_nroff.scope2kind = {
+        \ 'section' : 't',
+        \ 'title'   : 's'
+    \ }
+    let types.nroff = type_nroff
     " ObjectiveC {{{1
     let type_objc = tagbar#prototypes#typeinfo#new()
     let type_objc.ctagstype = 'objectivec'
