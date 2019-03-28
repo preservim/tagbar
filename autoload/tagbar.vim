@@ -398,6 +398,7 @@ function! s:CheckForExCtags(silent) abort
         let ctagsbins += ['ctags']
         let ctagsbins += ['ctags.exe']
         let ctagsbins += ['tags']
+        let ctagsbins += ['universal-ctags']
         for ctags in ctagsbins
             if executable(ctags)
                 let g:tagbar_ctags_bin = ctags
