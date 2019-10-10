@@ -1,9 +1,3 @@
-let s:visibility_symbols = {
-    \ 'public'    : '+',
-    \ 'protected' : '#',
-    \ 'private'   : '-'
-\ }
-
 function! tagbar#prototypes#basetag#new(name) abort
     let newobj = {}
 
@@ -85,9 +79,9 @@ function! s:_getPrefix() abort dict
     " Visibility is called 'access' in the ctags output
     if g:tagbar_show_visibility
         if has_key(self.fields, 'access')
-            let prefix .= get(s:visibility_symbols, self.fields.access, ' ')
+            let prefix .= get(g:tagbar_visibility_symbols, self.fields.access, ' ')
         elseif has_key(self.fields, 'file')
-            let prefix .= s:visibility_symbols.private
+            let prefix .= g:tagbar_visibility_symbols.private
         else
             let prefix .= ' '
         endif

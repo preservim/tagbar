@@ -536,6 +536,22 @@ Example:
         let g:tagbar_show_visibility = 0
 <
 
+                                                   *g:tagbar_visibility_symbols*
+g:tagbar_visibility_symbols
+Default: { 'public' : '+', 'protected' : '#', 'private' : '-' }
+
+Symbols to use for visibility (public/protected/private) to the left of th tag
+name. See |g:tagbar_show_visibility|.
+
+Example:
+>
+        let g:tagbar_visibility_symbols = {
+            \ 'public'    : '+',
+            \ 'protected' : '#',
+            \ 'private'   : '-'
+            \ }
+<
+
                                                    *g:tagbar_show_linenumbers*
 g:tagbar_show_linenumbers~
 Default: 0

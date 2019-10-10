@@ -76,6 +76,12 @@ function! s:setup_options() abort
         \ ['width', 40],
         \ ['zoomwidth', 1],
         \ ['silent', 0],
+        \ ['visibility_symbols', {
+            \ 'public'    : '+',
+            \ 'protected' : '#',
+            \ 'private'   : '-'
+            \ }
+        \ ]
     \ ]
 
     for [opt, val] in options
