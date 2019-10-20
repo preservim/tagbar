@@ -1,3 +1,7 @@
+# Looking for new maintainers
+
+Please see https://github.com/majutsushi/tagbar/issues/549 for details.
+
 # Tagbar: a class outline viewer for Vim
 
 ## What Tagbar is
