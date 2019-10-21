@@ -511,6 +511,11 @@ function! s:CheckExCtagsVersion(output) abort
         return 1
     endif
 
+    if a:output =~ 'Exuberant Ctags compatiable PHP enhancement'
+        call s:debug("Found phpctags, assuming compatibility")
+        return 1
+    endif
+
     if a:output =~ 'Exuberant Ctags Development'
         call tagbar#debug#log("Found development version, assuming compatibility")
         return 1
