@@ -303,6 +303,7 @@ function! s:MapKeys() abort
         \ ['togglesort',            'ToggleSort()'],
         \ ['togglecaseinsensitive', 'ToggleCaseInsensitive()'],
         \ ['toggleautoclose',       'ToggleAutoclose()'],
+        \ ['togglepause',           'TogglePause()'],
         \ ['zoomwin',               'ZoomWindow()'],
         \ ['close',                 'CloseWindow()'],
         \ ['help',                  'ToggleHelp()'],
@@ -1845,6 +1846,7 @@ function! s:PrintHelp() abort
         silent  put ='\" ' . s:get_map_str('togglesort') . ': Toggle sort'
         silent  put ='\" ' . s:get_map_str('togglecaseinsensitive') . ': Toggle case insensitive sort option'
         silent  put ='\" ' . s:get_map_str('toggleautoclose') . ': Toggle autoclose option'
+        silent  put ='\" ' . s:get_map_str('togglepause') . ': Toggle pause'
         silent  put ='\" ' . s:get_map_str('zoomwin') . ': Zoom window in/out'
         silent  put ='\" ' . s:get_map_str('close') . ': Close window'
         silent  put ='\" ' . s:get_map_str('help') . ': Toggle help'
@@ -3199,6 +3201,21 @@ function! s:warning(msg) abort
     echohl WarningMsg
     echomsg a:msg
     echohl None
+endfunction
+
+" s:TogglePause() {{{2
+function! s:TogglePause() abort
+    let s:paused = !s:paused
+
+    if s:paused
+        call tagbar#state#set_paused()
+    else
+        let fileinfo = tagbar#state#get_current_file(0)
+        let taginfo = fileinfo.getTags()[0]
+
+        call s:GotoFileWindow(taginfo.fileinfo)
+        call s:AutoUpdate(taginfo.fileinfo.fpath, 1)
+    endif
 endfunction
 
 " TagbarBalloonExpr() {{{2

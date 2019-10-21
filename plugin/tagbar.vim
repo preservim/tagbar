@@ -116,6 +116,7 @@ function! s:setup_keymaps() abort
         \ ['togglesort',            's'],
         \ ['togglecaseinsensitive', 'i'],
         \ ['toggleautoclose',       'c'],
+        \ ['togglepause',           't'],
         \ ['zoomwin',               'x'],
         \ ['close',                 'q'],
         \ ['help',                  ['<F1>', '?']],
