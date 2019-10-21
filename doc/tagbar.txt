@@ -997,7 +997,7 @@ kind2scope: A dictionary describing the mapping of tag kinds (in their
                     int var;
                 };
 <           We then run ctags in the following way: >
-                ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt test.cpp
+                ctags -f - --format=2 --excmd=pattern --extras= --fields=nksaSmt test.cpp
 <           Then the output for the variable "var" would look like this: >
                 var	tmp.cpp /^    int var;$/;"	kind:m	line:11	class:Foo	access:private
 <           This shows that the scope name for an entry in a C++ class is
@@ -1301,7 +1301,7 @@ try running ctags manually to see whether ctags reports the wrong information
 or whether that information is correct and Tagbar does something wrong. To run
 ctags manually execute the following command in a terminal:
 >
-        ctags -f - --format=2 --excmd=pattern --extra= --fields=nksaSmt myfile
+        ctags -f - --format=2 --excmd=pattern --extras= --fields=nksaSmt myfile
 <
 If you set the |g:tagbar_ctags_bin| variable you probably have to use the same
 value here instead of simply "ctags". Also, if you use
