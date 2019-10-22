@@ -407,11 +407,11 @@ function! s:CheckForExCtags(silent) abort
             endif
         endfor
         if !exists('g:tagbar_ctags_bin')
-            let errmsg = 'Tagbar: Exuberant ctags not found!'
-            let infomsg = 'Please download Exuberant Ctags from' .
+            let l:errmsg = 'Tagbar: Exuberant ctags not found!'
+            let l:infomsg = 'Please download Exuberant Ctags from' .
                         \ ' ctags.sourceforge.net and install it in a' .
                         \ ' directory in your $PATH or set g:tagbar_ctags_bin.'
-            call s:CtagsErrMsg(errmsg, infomsg, a:silent)
+            call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent)
             let s:checked_ctags = 2
             return 0
         endif
@@ -425,10 +425,10 @@ function! s:CheckForExCtags(silent) abort
         let &wildignore = wildignore_save
 
         if !executable(g:tagbar_ctags_bin)
-            let errmsg = 'Tagbar: Exuberant ctags not found at ' .
+            let l:errmsg = 'Tagbar: Exuberant ctags not found at ' .
                        \ "'" . g:tagbar_ctags_bin . "'!"
-            let infomsg = 'Please check your g:tagbar_ctags_bin setting.'
-            call s:CtagsErrMsg(errmsg, infomsg, a:silent)
+            let l:infomsg = 'Please check your g:tagbar_ctags_bin setting.'
+            call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent)
             let s:checked_ctags = 2
             return 0
         endif
@@ -446,20 +446,20 @@ function! s:CheckForExCtags(silent) abort
     call tagbar#debug#log('Exit code: ' . v:shell_error)
 
     if v:shell_error || ctags_output !~# '\(Exuberant\|Universal\) Ctags'
-        let errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
-        let infomsg = 'BSD ctags will NOT WORK.' .
+        let l:errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
+        let l:infomsg = 'BSD ctags will NOT WORK.' .
             \ ' Please download Exuberant Ctags from ctags.sourceforge.net' .
             \ ' and install it in a directory in your $PATH' .
             \ ' or set g:tagbar_ctags_bin.'
-        call s:CtagsErrMsg(errmsg, infomsg, a:silent,
+        call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent,
                          \ ctags_cmd, ctags_output, v:shell_error)
         let s:checked_ctags = 2
         return 0
     elseif !s:CheckExCtagsVersion(ctags_output)
-        let errmsg = 'Tagbar: Exuberant Ctags is too old!'
-        let infomsg = 'You need at least version 5.5 for Tagbar to work.' .
+        let l:errmsg = 'Tagbar: Exuberant Ctags is too old!'
+        let l:infomsg = 'You need at least version 5.5 for Tagbar to work.' .
             \ ' Please download a newer version from ctags.sourceforge.net.'
-        call s:CtagsErrMsg(errmsg, infomsg, a:silent, ctags_cmd, ctags_output)
+        call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent, ctags_cmd, ctags_output)
         let s:checked_ctags = 2
         return 0
     else
@@ -514,7 +514,7 @@ function! s:CheckExCtagsVersion(output) abort
     endif
 
     if a:output =~? 'Exuberant Ctags compatiable PHP enhancement'
-        call s:debug('Found phpctags, assuming compatibility')
+        call tagbar#debug#log('Found phpctags, assuming compatibility')
         return 1
     endif
 
@@ -1298,9 +1298,9 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
 
     if !has_key(taginfo.fields, 'kind')
         call tagbar#debug#log(
-            \ "Warning: No 'kind' field found for tag " . basic_info[0] . '!')
+            \ "Warning: No 'kind' field found for tag " . a:name[0] . '!')
         if index(s:warnings.type, a:typeinfo.ftype) == -1
-            call s:warning("No 'kind' field found for tag " . basic_info[0] . '!' .
+            call s:warning("No 'kind' field found for tag " . a:name[0] . '!' .
                          \ " Please read the last section of ':help tagbar-extend'.")
             call add(s:warnings.type, a:typeinfo.ftype)
         endif
