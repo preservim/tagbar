@@ -30,7 +30,7 @@ endfunction
 
 " s:str() {{{1
 function! s:str(longsig, full) abort dict
-    if a:full && self.path != ''
+    if a:full && self.path !=# ''
         let str = self.path . self.typeinfo.sro . self.name
     else
         let str = self.name
@@ -49,7 +49,7 @@ endfunction
 
 " s:getPrototype() {{{1
 function! s:getPrototype(short) abort dict
-    if self.prototype != ''
+    if self.prototype !=# ''
         let prototype = self.prototype
     else
         let bufnr = self.fileinfo.bufnr
@@ -109,7 +109,7 @@ endfunction
 
 " s:add_snr() {{{1
 function! s:add_snr(funcname) abort
-    if !exists("s:snr")
+    if !exists('s:snr')
         let s:snr = matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_snr$')
     endif
     return s:snr . a:funcname
