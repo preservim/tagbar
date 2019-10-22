@@ -1096,7 +1096,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
         let ctags_args = []
         if exists('g:tagbar_ctags_options')
             for value in g:tagbar_ctags_options
-                " call add(ctags_args, '--options='.value)
+                call add(ctags_args, '--options='.value)
             endfor
         endif
         let ctags_args  = ctags_args + [
