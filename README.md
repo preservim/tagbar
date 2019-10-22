@@ -1,5 +1,7 @@
 # Tagbar: a class outline viewer for Vim
 
+[![Vint](https://github.com/majutsushi/tagbar/workflows/Vint/badge.svg)](https://github.com/majutsushi/tagbar/actions?workflow=Vint)
+
 ## What Tagbar is
 
 Tagbar is a Vim plugin that provides an easy way to browse the tags of the
