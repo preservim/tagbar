@@ -1106,11 +1106,17 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--format=2',
                           \ '--excmd=pattern',
                           \ '--fields=nksSaf',
-                          \ '--extras=',
                           \ '--file-scope=yes',
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
+
+        " universal-ctags deprecated this argument name
+        if s:ctags_is_uctags
+            let ctags_args += [ '--extras=' ]
+        else
+            let ctags_args += [ '--extra=' ]
+        endif
 
         " verbose if debug enabled
         if tagbar#debug#enabled()
