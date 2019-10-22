@@ -606,6 +606,18 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 't', 'long' : 'targets',   'fold' : 0, 'stl' : 1}
     \ ]
     let types.make = type_make
+    " Markdown {{{1
+    let type_markdown = tagbar#prototypes#typeinfo#new()
+    let type_markdown.ctagstype = 'markdown'
+    let type_markdown.kinds = [
+        \ {'short' : 'c', 'long' : 'h1', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'h2', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'S', 'long' : 'h3', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'h4', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'T', 'long' : 'h5', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'u', 'long' : 'h6', 'fold' : 0, 'stl' : 0},
+    \ ]
+    let types.markdown = type_markdown
     " Matlab {{{1
     let type_matlab = tagbar#prototypes#typeinfo#new()
     let type_matlab.ctagstype = 'matlab'
