@@ -1,6 +1,7 @@
 # Tagbar: a class outline viewer for Vim
 
 [![Vint](https://github.com/majutsushi/tagbar/workflows/Vint/badge.svg)](https://github.com/majutsushi/tagbar/actions?workflow=Vint)
+[![Check](https://github.com/majutsushi/tagbar/workflows/Check/badge.svg)](https://github.com/majutsushi/tagbar/actions?workflow=Check)
 
 ## What Tagbar is
 
