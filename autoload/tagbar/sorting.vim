@@ -6,7 +6,7 @@ function! tagbar#sorting#sort(tags, compareby, compare_typeinfo) abort
     let s:compare_typeinfo = a:compare_typeinfo
 
     let comparemethod =
-            \ a:compareby == 'kind' ? 's:compare_by_kind' : 's:compare_by_line'
+            \ a:compareby ==# 'kind' ? 's:compare_by_kind' : 's:compare_by_line'
 
     call sort(a:tags, comparemethod)
 

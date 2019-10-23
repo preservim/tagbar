@@ -7,7 +7,7 @@
 
 scriptencoding utf-8
 
-if exists("b:current_syntax")
+if exists('b:current_syntax')
     finish
 endif
 
@@ -59,6 +59,6 @@ highlight default link TagbarVisibilityPublic    TagbarAccessPublic
 highlight default link TagbarVisibilityProtected TagbarAccessProtected
 highlight default link TagbarVisibilityPrivate   TagbarAccessPrivate
 
-let b:current_syntax = "tagbar"
+let b:current_syntax = 'tagbar'
 
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1

@@ -124,7 +124,7 @@ function! s:InitTypes() abort
 
     " Use jsctags/doctorjs if available
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
-    if jsctags != ''
+    if jsctags !=# ''
         call tagbar#debug#log('Detected jsctags, overriding typedef')
         let type_javascript = tagbar#prototypes#typeinfo#new()
         let type_javascript.ctagstype = 'javascript'
@@ -316,7 +316,7 @@ function! s:MapKeys() abort
 
     for [map, func] in maps
         let def = get(g:, 'tagbar_map_' . map)
-        if type(def) == type("")
+        if type(def) == type('')
             let keys = [def]
         else
             let keys = def
@@ -407,11 +407,11 @@ function! s:CheckForExCtags(silent) abort
             endif
         endfor
         if !exists('g:tagbar_ctags_bin')
-            let errmsg = 'Tagbar: Exuberant ctags not found!'
-            let infomsg = 'Please download Exuberant Ctags from' .
+            let l:errmsg = 'Tagbar: Exuberant ctags not found!'
+            let l:infomsg = 'Please download Exuberant Ctags from' .
                         \ ' ctags.sourceforge.net and install it in a' .
                         \ ' directory in your $PATH or set g:tagbar_ctags_bin.'
-            call s:CtagsErrMsg(errmsg, infomsg, a:silent)
+            call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent)
             let s:checked_ctags = 2
             return 0
         endif
@@ -425,17 +425,17 @@ function! s:CheckForExCtags(silent) abort
         let &wildignore = wildignore_save
 
         if !executable(g:tagbar_ctags_bin)
-            let errmsg = "Tagbar: Exuberant ctags not found at " .
+            let l:errmsg = 'Tagbar: Exuberant ctags not found at ' .
                        \ "'" . g:tagbar_ctags_bin . "'!"
-            let infomsg = 'Please check your g:tagbar_ctags_bin setting.'
-            call s:CtagsErrMsg(errmsg, infomsg, a:silent)
+            let l:infomsg = 'Please check your g:tagbar_ctags_bin setting.'
+            call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent)
             let s:checked_ctags = 2
             return 0
         endif
     endif
 
     let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--version')
-    if ctags_cmd == ''
+    if ctags_cmd ==# ''
         let s:checked_ctags = 2
         return 0
     endif
@@ -443,23 +443,23 @@ function! s:CheckForExCtags(silent) abort
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     call tagbar#debug#log("Command output:\n" . ctags_output)
-    call tagbar#debug#log("Exit code: " . v:shell_error)
+    call tagbar#debug#log('Exit code: ' . v:shell_error)
 
     if v:shell_error || ctags_output !~# '\(Exuberant\|Universal\) Ctags'
-        let errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
-        let infomsg = 'BSD ctags will NOT WORK.' .
+        let l:errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
+        let l:infomsg = 'BSD ctags will NOT WORK.' .
             \ ' Please download Exuberant Ctags from ctags.sourceforge.net' .
             \ ' and install it in a directory in your $PATH' .
             \ ' or set g:tagbar_ctags_bin.'
-        call s:CtagsErrMsg(errmsg, infomsg, a:silent,
+        call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent,
                          \ ctags_cmd, ctags_output, v:shell_error)
         let s:checked_ctags = 2
         return 0
     elseif !s:CheckExCtagsVersion(ctags_output)
-        let errmsg = 'Tagbar: Exuberant Ctags is too old!'
-        let infomsg = 'You need at least version 5.5 for Tagbar to work.' .
+        let l:errmsg = 'Tagbar: Exuberant Ctags is too old!'
+        let l:infomsg = 'You need at least version 5.5 for Tagbar to work.' .
             \ ' Please download a newer version from ctags.sourceforge.net.'
-        call s:CtagsErrMsg(errmsg, infomsg, a:silent, ctags_cmd, ctags_output)
+        call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent, ctags_cmd, ctags_output)
         let s:checked_ctags = 2
         return 0
     else
@@ -483,12 +483,12 @@ function! s:CtagsErrMsg(errmsg, infomsg, silent, ...) abort
         call s:warning(a:errmsg)
         echomsg a:infomsg
 
-        if ctags_cmd == ''
+        if ctags_cmd ==# ''
             return
         endif
 
         echomsg 'Executed command: "' . ctags_cmd . '"'
-        if ctags_output != ''
+        if ctags_output !=# ''
             echomsg 'Command output:'
             for line in split(ctags_output, '\n')
                 echomsg line
@@ -507,19 +507,19 @@ endfunction
 function! s:CheckExCtagsVersion(output) abort
     call tagbar#debug#log('Checking Exuberant Ctags version')
 
-    if a:output =~ 'Universal Ctags'
-        call tagbar#debug#log("Found Universal Ctags, assuming compatibility")
+    if a:output =~? 'Universal Ctags'
+        call tagbar#debug#log('Found Universal Ctags, assuming compatibility')
         let s:ctags_is_uctags = 1
         return 1
     endif
 
-    if a:output =~ 'Exuberant Ctags compatiable PHP enhancement'
-        call s:debug("Found phpctags, assuming compatibility")
+    if a:output =~? 'Exuberant Ctags compatiable PHP enhancement'
+        call tagbar#debug#log('Found phpctags, assuming compatibility')
         return 1
     endif
 
-    if a:output =~ 'Exuberant Ctags Development'
-        call tagbar#debug#log("Found development version, assuming compatibility")
+    if a:output =~? 'Exuberant Ctags Development'
+        call tagbar#debug#log('Found development version, assuming compatibility')
         return 1
     endif
 
@@ -555,7 +555,7 @@ function! s:GetSupportedFiletypes() abort
     call tagbar#debug#log('Getting filetypes supported by Exuberant Ctags')
 
     let ctags_cmd = s:EscapeCtagsCmd(g:tagbar_ctags_bin, '--list-languages')
-    if ctags_cmd == ''
+    if ctags_cmd ==# ''
         return
     endif
 
@@ -648,7 +648,7 @@ function! s:OpenWindow(flags) abort
             call s:goto_win(tagbarwinnr)
             call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
         endif
-        call tagbar#debug#log("OpenWindow finished, Tagbar already open")
+        call tagbar#debug#log('OpenWindow finished, Tagbar already open')
         return
     endif
 
@@ -879,7 +879,7 @@ endfunction
 " If the Vim window has been expanded, and Tagbar is not open in any other
 " tabpages, shrink the window again
 function! s:ShrinkIfExpanded() abort
-    if !s:window_expanded || &filetype == 'tagbar' || s:expand_bufnr == -1
+    if !s:window_expanded || &filetype ==# 'tagbar' || s:expand_bufnr == -1
         return
     endif
 
@@ -987,7 +987,7 @@ function! s:ProcessFile(fname, ftype) abort
     " slow down Tagbar for files that sit on slow network drives.
     let tempfile = tempname()
     let ext = fnamemodify(fileinfo.fpath, ':e')
-    if ext != ''
+    if ext !=# ''
         let tempfile .= '.' . ext
     endif
 
@@ -1013,7 +1013,7 @@ function! s:ProcessFile(fname, ftype) abort
         " shown once
         call s:known_files.put({}, a:fname)
         return
-    elseif ctags_output == ''
+    elseif ctags_output ==# ''
         call tagbar#debug#log('Ctags output empty')
         " No need to go through the tag processing if there are no tags, and
         " preserving the old fold state isn't necessary either
@@ -1155,13 +1155,13 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
     endif
 
     let ctags_cmd = s:EscapeCtagsCmd(ctags_bin, ctags_args, a:fname)
-    if ctags_cmd == ''
+    if ctags_cmd ==# ''
         return ''
     endif
 
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
-    if v:shell_error || ctags_output =~ 'Warning: cannot open source file'
+    if v:shell_error || ctags_output =~? 'Warning: cannot open source file'
         call tagbar#debug#log('Command output:')
         call tagbar#debug#log(ctags_output)
         call tagbar#debug#log('Exit code: ' . v:shell_error)
@@ -1202,7 +1202,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     " the pattern can contain tabs and thus may have been split up, so join
     " the rest of the items together again
     let pattern = join(basic_info[2:], "\t")
-    if pattern[0] == '/'
+    if pattern[0] ==# '/'
         let start   = 2 " skip the slash and the ^
         let end     = strlen(pattern) - 1
         if pattern[end - 1] ==# '$'
@@ -1230,11 +1230,11 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         " Remove all tabs that may illegally be in the value
         let val = substitute(strpart(field, delimit + 1), '\t', '', 'g')
         " File-restricted scoping
-        if key == "file"
+        if key ==# 'file'
             let fielddict[key] = 'yes'
         endif
         if len(val) > 0
-            if key == 'line' || key == 'column'
+            if key ==# 'line' || key ==# 'column'
                 let fielddict[key] = str2nr(val)
             else
                 let fielddict[key] = val
@@ -1261,7 +1261,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
             let part = tagparts[i]
             call s:ProcessTag(part, filename, pattern, curfielddict,
                             \ i != len(tagparts) - 1, a:typeinfo, a:fileinfo)
-            if parent != ''
+            if parent !=# ''
                 let parent = parent . a:typeinfo.sro . part
             else
                 let parent = part
@@ -1298,9 +1298,9 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
 
     if !has_key(taginfo.fields, 'kind')
         call tagbar#debug#log(
-            \ "Warning: No 'kind' field found for tag " . basic_info[0] . "!")
+            \ "Warning: No 'kind' field found for tag " . a:name[0] . '!')
         if index(s:warnings.type, a:typeinfo.ftype) == -1
-            call s:warning("No 'kind' field found for tag " . basic_info[0] . "!" .
+            call s:warning("No 'kind' field found for tag " . a:name[0] . '!' .
                          \ " Please read the last section of ':help tagbar-extend'.")
             call add(s:warnings.type, a:typeinfo.ftype)
         endif
@@ -1435,7 +1435,7 @@ function! s:add_tag_recursive(parent, taginfo, pathlist) abort
         let parents = []
         for tag in name_siblings
             if tag.fields.kind ==# '?'
-             \ || get(a:taginfo.typeinfo.kind2scope, tag.fields.kind, "") == a:taginfo.scope
+             \ || get(a:taginfo.typeinfo.kind2scope, tag.fields.kind, '') ==# a:taginfo.scope
                 call add(parents, tag)
             endif
         endfor
@@ -1534,7 +1534,7 @@ function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
     let parentscope = substitute(parentscope,
                         \ '\V\^' . escape(a:typeinfo.sro, '\') . '\$', '', '')
 
-    if pscope != ''
+    if pscope !=# ''
         let pseudotag.fields[pscope] = parentscope
         let pseudotag.scope    = pscope
         let pseudotag.path     = parentscope
@@ -1607,7 +1607,7 @@ function! s:RenderContent(...) abort
 
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
 
-    if &filetype == 'tagbar'
+    if &filetype ==# 'tagbar'
         let in_tagbar = 1
     else
         let in_tagbar = 0
@@ -1658,7 +1658,7 @@ function! s:RenderContent(...) abort
 
     " Delete empty lines at the end of the buffer
     for linenr in range(line('$'), 1, -1)
-        if getline(linenr) =~ '^$'
+        if getline(linenr) =~# '^$'
             execute 'silent ' . linenr . 'delete _'
         else
             break
@@ -1721,7 +1721,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
                 call s:PrintTag(tag, 0, output, a:fileinfo, a:typeinfo)
 
                 if !g:tagbar_compact
-                    call add(output, "")
+                    call add(output, '')
                 endif
             endfor
         else
@@ -1756,7 +1756,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             endif
 
             if !g:tagbar_compact
-                call add(output, "")
+                call add(output, '')
             endif
         endif
     endfor
@@ -1862,7 +1862,7 @@ function! s:PrintHelp() abort
 endfunction
 function! s:get_map_str(map) abort
     let def = get(g:, 'tagbar_map_' . a:map)
-    if type(def) == type("")
+    if type(def) ==# type('')
         return def
     else
         return join(def, ', ')
@@ -1914,7 +1914,7 @@ function! s:HighlightTag(openfolds, ...) abort
     " Don't highlight the tag again if it's the same one as last time.
     " This prevents the Tagbar window from jumping back after scrolling with
     " the mouse.
-    if !force && tagline == s:last_highlight_tline
+    if !force && tagline ==# s:last_highlight_tline
         return
     else
         let s:last_highlight_tline = tagline
@@ -2004,7 +2004,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     " If the file has been changed but not saved, the tag may not be on the
     " saved line anymore, so search for it in the vicinity of the saved line
-    if taginfo.pattern != ''
+    if taginfo.pattern !=# ''
         call tagbar#debug#log('Searching for pattern "' . taginfo.pattern . '"')
         if match(getline('.'), taginfo.pattern) == -1
             let interval = 1
@@ -2110,7 +2110,7 @@ function! s:ShowInPreviewWin() abort
     " the searching. Unfortunately the /\%l pattern doesn't seem to work with
     " psearch.
     let pattern = taginfo.pattern
-    if pattern == ''
+    if pattern ==# ''
         let pattern = '\V\^' . escape(getline(taginfo.fields.line), '\') . '\$'
     endif
     let include_save = &include
@@ -2439,7 +2439,7 @@ function! s:AutoUpdate(fname, force, ...) abort
     let ftype = getbufvar(bufnr, '&filetype')
 
     " Don't do anything if we're in the tagbar window
-    if ftype == 'tagbar'
+    if ftype ==# 'tagbar'
         call tagbar#debug#log('In Tagbar window, stopping processing')
         return
     endif
@@ -2538,7 +2538,7 @@ function! s:DetectFiletype(bufnr) abort
         return ftype
     endif
 
-    if ftype != ''
+    if ftype !=# ''
         return ftype
     endif
 
@@ -2587,7 +2587,7 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
 
     "Set up 0th argument of ctags_cmd
     "a:ctags_bin may have special characters that require escaping.
-    if &shell =~ 'cmd\.exe$' && a:ctags_bin !~ '\s'
+    if &shell =~? 'cmd\.exe$' && a:ctags_bin !~# '\s'
         "For windows cmd.exe, escaping the 0th argument can cause
         "problems if it references a batch file and the batch file uses %~dp0.
         "So for windows cmd.exe, only escape the 0th argument iff necessary.
@@ -2647,14 +2647,14 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     if has('multi_byte')
         if g:tagbar_systemenc != &encoding
             let ctags_cmd = iconv(ctags_cmd, &encoding, g:tagbar_systemenc)
-        elseif $LANG != ''
+        elseif $LANG !=# ''
             let ctags_cmd = iconv(ctags_cmd, &encoding, $LANG)
         endif
     endif
 
     call tagbar#debug#log('Escaped ctags command: ' . ctags_cmd)
 
-    if ctags_cmd == ''
+    if ctags_cmd ==# ''
         if !s:warnings.encoding
             call s:warning('Tagbar: Ctags command encoding conversion failed!' .
                 \ ' Please read ":h g:tagbar_systemenc".')
@@ -2683,7 +2683,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         set noshellslash
     endif
 
-    if &shell =~ 'cmd\.exe'
+    if &shell =~? 'cmd\.exe'
         let shellxquote_save = &shellxquote
         set shellxquote=\"
         let shellcmdflag_save = &shellcmdflag
@@ -2699,7 +2699,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         silent let ctags_output = system(a:ctags_cmd)
     endif
 
-    if &shell =~ 'cmd\.exe'
+    if &shell =~? 'cmd\.exe'
         let &shellxquote  = shellxquote_save
         let &shellcmdflag = shellcmdflag_save
     endif
@@ -2766,7 +2766,7 @@ function! s:GetTagInfo(linenr, ignorepseudo) abort
 
     " Don't do anything in empty and comment lines
     let curline = getbufline(bufnr(s:TagbarBufName()), a:linenr)[0]
-    if curline =~ '^\s*$' || curline[0] == '"'
+    if curline =~# '^\s*$' || curline[0] ==# '"'
         return {}
     endif
 
@@ -2792,7 +2792,7 @@ endfunction
 " the correct buffer in it.
 function! s:GetFileWinnr(fileinfo) abort
     let filewinnr = 0
-    let prevwinnr = winnr("#")
+    let prevwinnr = winnr('#')
 
     if winbufnr(prevwinnr) == a:fileinfo.bufnr &&
      \ !getwinvar(prevwinnr, '&previewwindow')
@@ -2827,7 +2827,7 @@ function! s:GotoFileWindow(fileinfo, ...) abort
     if filewinnr == 0
         for i in range(1, winnr('$'))
             call s:goto_win(i, 1)
-            if &buftype == '' && !&previewwindow
+            if &buftype ==# '' && !&previewwindow
                 execute 'buffer ' . a:fileinfo.bufnr
                 break
             endif
@@ -2907,12 +2907,12 @@ endfunction
 function! s:IsValidFile(fname, ftype) abort
     call tagbar#debug#log('Checking if file is valid [' . a:fname . ']')
 
-    if a:fname == '' || a:ftype == ''
+    if a:fname ==# '' || a:ftype ==# ''
         call tagbar#debug#log('Empty filename or type')
         return 0
     endif
 
-    if !filereadable(a:fname) && getbufvar(a:fname, 'netrw_tmpfile') == ''
+    if !filereadable(a:fname) && getbufvar(a:fname, 'netrw_tmpfile') ==# ''
         call tagbar#debug#log('File not readable')
         return 0
     endif
@@ -2948,7 +2948,7 @@ function! s:IsValidFile(fname, ftype) abort
 endfunction
 
 " s:SetStatusLine() {{{2
-function! s:SetStatusLine()
+function! s:SetStatusLine() abort
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
     if tagbarwinnr == -1
         return
@@ -2987,7 +2987,7 @@ function! s:SetStatusLine()
     else
         let colour = in_tagbar ? '%#StatusLine#' : '%#StatusLineNC#'
         let flagstr = join(flags, '')
-        if flagstr != ''
+        if flagstr !=# ''
             let flagstr = '[' . flagstr . '] '
         endif
         let text = colour . '[' . sortstr . '] ' . flagstr . fname
@@ -3046,7 +3046,7 @@ function! s:HandleBufDelete(bufname, bufnr) abort
     endif
 
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
-    if tagbarwinnr == -1 || a:bufname =~ '__Tagbar__.*'
+    if tagbarwinnr == -1 || a:bufname =~# '__Tagbar__.*'
         return
     endif
 
@@ -3123,7 +3123,7 @@ function! s:ReopenWindow(delbufname) abort
     endif
 
     autocmd! TagbarAutoCmds BufWinEnter
-    call s:OpenWindow("")
+    call s:OpenWindow('')
 endfunction
 
 " s:HasOpenFileWindows() {{{2
@@ -3132,12 +3132,12 @@ function! s:HasOpenFileWindows() abort
         let buf = winbufnr(i)
 
         " skip unlisted buffers, except for netrw
-        if !buflisted(buf) && getbufvar(buf, '&filetype') != 'netrw'
+        if !buflisted(buf) && getbufvar(buf, '&filetype') !=# 'netrw'
             continue
         endif
 
         " skip temporary buffers with buftype set
-        if getbufvar(buf, '&buftype') != ''
+        if getbufvar(buf, '&buftype') !=# ''
             continue
         endif
 
@@ -3168,7 +3168,7 @@ function! s:goto_win(winnr, ...) abort
                                      \ : 'wincmd ' . a:winnr
     let noauto = a:0 > 0 ? a:1 : 0
 
-    call tagbar#debug#log("goto_win(): " . cmd . ", " . noauto)
+    call tagbar#debug#log('goto_win(): ' . cmd . ', ' . noauto)
 
     if noauto
         noautocmd execute cmd
@@ -3237,7 +3237,7 @@ function! TagbarBalloonExpr() abort
     if has('multi_byte')
         if g:tagbar_systemenc != &encoding
             let prototype = iconv(prototype, &encoding, g:tagbar_systemenc)
-        elseif $LANG != ''
+        elseif $LANG !=# ''
             let prototype = iconv(prototype, &encoding, $LANG)
         endif
     endif
@@ -3304,7 +3304,7 @@ endfunction
 
 " tagbar#getusertypes() {{{2
 function! tagbar#getusertypes() abort
-    let userdefs = filter(copy(g:), 'v:key =~ "^tagbar_type_"')
+    let userdefs = filter(copy(g:), 'v:key =~? "^tagbar_type_"')
 
     let typedict = {}
     for [key, val] in items(userdefs)
@@ -3397,20 +3397,20 @@ function! tagbar#gettypeconfig(type) abort
         return
     endif
 
-    let output = "let g:tagbar_type_" . a:type . " = {\n"
+    let output = 'let g:tagbar_type_' . a:type . " = {\n"
 
     let output .= "    \\ 'kinds' : [\n"
     for kind in typeinfo.kinds
-        let output .= "        \\ '" . kind.short . ":" . kind.long
+        let output .= "        \\ '" . kind.short . ':' . kind.long
         if kind.fold || !kind.stl
             if kind.fold
-                let output .= ":1"
+                let output .= ':1'
             else
-                let output .= ":0"
+                let output .= ':0'
             endif
         endif
         if !kind.stl
-            let output .= ":0"
+            let output .= ':0'
         endif
         let output .= "',\n"
     endfor
