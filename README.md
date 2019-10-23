@@ -19,12 +19,16 @@ creates the tags it needs on-the-fly in-memory without creating any files.
 
 ## Dependencies
 
-* [Vim](http://www.vim.org/) at least version 7.3.1058
-  or [NeoVim](https://neovim.io/).
+* [Vim](http://www.vim.org/) >= 7.3.1058
+  or any version of [NeoVim](https://neovim.io/).
 
-* [Exuberant Ctags 5.5](http://ctags.sourceforge.net/)
-  or [Universal Ctags](https://ctags.io) (recommended), a maintained fork of
-  Exuberant Ctags.
+* [Exuberant Ctags](http://ctags.sourceforge.net/) >= 5.5,
+  or (**highly recommended**) any version of [Universal
+  Ctags](https://ctags.io) which is a currently maintained fork of Exuberant
+  Ctags with many bugfixes, support for many more formats, and proper Unicode
+  support. Some additional formats can also be handled by other providers such
+  as [jsctags](https://github.com/sergioramos/jsctags),
+  [phpctags](https://github.com/vim-php/phpctags), or others.
 
 ## Installation
 
