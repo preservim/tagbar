@@ -1100,6 +1100,14 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                 call add(ctags_args, '--options='.value)
             endfor
         endif
+
+        " universal-ctags deprecated this argument name
+        if s:ctags_is_uctags
+            let ctags_args += [ '--extras=' ]
+        else
+            let ctags_args += [ '--extra=' ]
+        endif
+
         let ctags_args  = ctags_args + [
                           \ '-f',
                           \ '-',
@@ -1110,13 +1118,6 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
-
-        " universal-ctags deprecated this argument name
-        if s:ctags_is_uctags
-            let ctags_args += [ '--extras=' ]
-        else
-            let ctags_args += [ '--extra=' ]
-        endif
 
         " verbose if debug enabled
         if tagbar#debug#enabled()
