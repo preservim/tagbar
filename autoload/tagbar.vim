@@ -760,7 +760,7 @@ function! s:InitWindow(autoclose) abort
 
     if has('balloon_eval')
         setlocal balloonexpr=TagbarBalloonExpr()
-        set ballooneval
+        setlocal ballooneval
     endif
 
 
