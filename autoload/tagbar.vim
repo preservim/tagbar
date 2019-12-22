@@ -2679,6 +2679,12 @@ function! s:ExecuteCtags(ctags_cmd) abort
         set shell=sh
     endif
 
+    if &shell =~# 'elvish'
+        " Reset shell since Elvish isn't really compatible
+        let shell_save = &shell
+        set shell=sh
+    endif
+
     if exists('+shellslash')
         let shellslash_save = &shellslash
         set noshellslash
