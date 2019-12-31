@@ -1,22 +1,15 @@
 name: Vint
-
 on: [push, pull_request]
-
 jobs:
   vint:
     strategy:
       fail-fast: false
-
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: Set up Python
-      uses: actions/setup-python@v1
+    - name: Run vint with reviewdog
+      uses: reviewdog/action-vint@v1.0.1
       with:
-        python-version: 3.7
-    - name: Setup dependencies
-      run: pip install vim-vint
-    - name: Run Vimscript Linter
-      run: vint .
+        github_token: ${{ secrets.github_token }}
+        reporter: github-pr-review
