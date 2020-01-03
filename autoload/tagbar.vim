@@ -122,6 +122,39 @@ function! s:InitTypes() abort
         let s:known_types = tagbar#types#ctags#init(supported_types)
     endif
 
+    " Use dart_ctags if available
+    let dart_ctags = s:CheckFTCtags('dart_ctags', 'dart')
+    if dart_ctags !=# ''
+        let supported_types['dart'] = 1
+        call tagbar#debug#log('Detected dart_ctags, overriding typedef')
+        let type_dart = tagbar#prototypes#typeinfo#new()
+        let type_dart.ctagstype = 'dart'
+        let type_dart.kinds = [
+            \ {'short' : 'c', 'long' : 'classes',            'fold' : 0, 'stl' : 1},
+            \ {'short' : 'i', 'long' : 'fields',             'fold' : 0, 'stl' : 1},
+            \ {'short' : 'm', 'long' : 'methods',            'fold' : 0, 'stl' : 1},
+            \ {'short' : 'M', 'long' : 'static methods',     'fold' : 0, 'stl' : 1},
+            \ {'short' : 'C', 'long' : 'constructors',       'fold' : 0, 'stl' : 1},
+            \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
+            \ {'short' : 'o', 'long' : 'operators',          'fold' : 0, 'stl' : 1},
+            \ {'short' : 'g', 'long' : 'getters',            'fold' : 0, 'stl' : 1},
+            \ {'short' : 's', 'long' : 'setters',            'fold' : 0, 'stl' : 1},
+            \ {'short' : 'a', 'long' : 'abstract functions', 'fold' : 0, 'stl' : 1},
+        \ ]
+        let type_dart.sro        = ':'
+        let type_dart.kind2scope = {
+            \ 'c' : 'class'
+        \ }
+        let type_dart.scope2kind = {
+            \ 'class' : 'c'
+        \ }
+        let type_dart.ctagsbin   = 'pub'
+        let type_dart.ctagsargs  = 'global run dart_ctags:tags -l'
+        let type_dart.ftype = 'dart'
+        call type_dart.createKinddict()
+        let s:known_types.dart = type_dart
+    endif
+
     " Use jsctags/doctorjs if available
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
     if jsctags !=# ''
@@ -534,6 +567,20 @@ endfunction
 
 " s:CheckFTCtags() {{{2
 function! s:CheckFTCtags(bin, ftype) abort
+    " dart_ctags isn't installed as a bin
+    " must use pub command to run
+    if a:bin ==? 'dart_ctags'
+        if has('win32')
+            let fn = '!pub global list | findstr dart_ctags'
+        else
+            let fn = '!pub global list | grep dart_ctags'
+        endif
+        execute(fn)
+        if v:shell_error == 0
+            return a:bin
+        endif
+    endif
+
     if executable(a:bin)
         return a:bin
     endif
