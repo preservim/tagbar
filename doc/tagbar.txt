@@ -555,6 +555,22 @@ Example:
         let g:tagbar_indent = 1
 <
 
+                                                       *g:tagbar_show_balloon*
+g:tagbar_show_balloon
+Default: 1
+
+Whether balloon messages should be shown in the Tagbar window.
+
+Possible values are:
+  0: Don't show any balloon messages.
+  1: Show balloon messages. This is only available in the GUI when
+     compiled with the |+balloon_eval| feature.
+
+Example:
+>
+        let g:tagbar_show_balloon = 0
+<
+
                                                     *g:tagbar_show_visibility*
 g:tagbar_show_visibility~
 Default: 1

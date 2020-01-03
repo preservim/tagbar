@@ -67,6 +67,7 @@ function! s:setup_options() abort
         \ ['indent', 2],
         \ ['left', 0],
         \ ['previewwin_pos', previewwin_pos],
+        \ ['show_balloon', 1],
         \ ['show_visibility', 1],
         \ ['show_linenumbers', 0],
         \ ['singleclick', 0],
