@@ -180,6 +180,39 @@ function! s:InitTypes() abort
         let s:known_types.javascript = type_javascript
     endif
 
+    " Use gotags if available
+    let gotags = s:CheckFTCtags('gotags', 'go')
+    if gotags !=# ''
+        call tagbar#debug#log('Detected gotags, overriding typedef')
+        let type_go = tagbar#prototypes#typeinfo#new()
+        let type_go.ctagstype = 'go'
+        let type_go.kinds = [
+            \ {'short' : 'p', 'long' : 'package',      'fold' : 0, 'stl' : 0},
+            \ {'short' : 'i', 'long' : 'imports',      'fold' : 1, 'stl' : 0},
+            \ {'short' : 'c', 'long' : 'constants',    'fold' : 0, 'stl' : 0},
+            \ {'short' : 'v', 'long' : 'variables',    'fold' : 0, 'stl' : 0},
+            \ {'short' : 't', 'long' : 'types',        'fold' : 0, 'stl' : 0},
+            \ {'short' : 'n', 'long' : 'intefaces',    'fold' : 0, 'stl' : 0},
+            \ {'short' : 'm', 'long' : 'methods',      'fold' : 0, 'stl' : 0},
+            \ {'short' : 'r', 'long' : 'constructors', 'fold' : 0, 'stl' : 0},
+            \ {'short' : 'f', 'long' : 'functions',    'fold' : 0, 'stl' : 0},
+        \ ]
+        let type_go.sro        = '.'
+        let type_go.kind2scope = {
+            \ 't' : 'ctype',
+            \ 'n' : 'ntype'
+        \ }
+        let type_go.scope2kind = {
+            \ 'ctype' : 't',
+            \ 'ntype' : 'n'
+        \ }
+        let type_go.ctagsbin   = gotags
+        let type_go.ctagsargs  = '-sort -silent'
+        let type_go.ftype = 'go'
+        call type_go.createKinddict()
+        let s:known_types.go = type_go
+    endif
+
     call s:LoadUserTypeDefs()
 
     " Add an 'unknown' kind to the types for pseudotags that we can't
