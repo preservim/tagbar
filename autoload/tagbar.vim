@@ -602,7 +602,7 @@ endfunction
 function! s:CheckFTCtags(bin, ftype) abort
     " dart_ctags isn't installed as a bin
     " must use pub command to run
-    if a:bin ==? 'dart_ctags'
+    if a:bin ==# 'dart_ctags'
         if has('win32')
             let fn = '!pub global list | findstr dart_ctags'
         else
