@@ -130,16 +130,16 @@ function! s:InitTypes() abort
         let type_dart = tagbar#prototypes#typeinfo#new()
         let type_dart.ctagstype = 'dart'
         let type_dart.kinds = [
-            \ {'short' : 'c', 'long' : 'classes',            'fold' : 0, 'stl' : 1},
-            \ {'short' : 'i', 'long' : 'fields',             'fold' : 0, 'stl' : 1},
-            \ {'short' : 'm', 'long' : 'methods',            'fold' : 0, 'stl' : 1},
-            \ {'short' : 'M', 'long' : 'static methods',     'fold' : 0, 'stl' : 1},
-            \ {'short' : 'C', 'long' : 'constructors',       'fold' : 0, 'stl' : 1},
-            \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 1},
-            \ {'short' : 'o', 'long' : 'operators',          'fold' : 0, 'stl' : 1},
-            \ {'short' : 'g', 'long' : 'getters',            'fold' : 0, 'stl' : 1},
-            \ {'short' : 's', 'long' : 'setters',            'fold' : 0, 'stl' : 1},
-            \ {'short' : 'a', 'long' : 'abstract functions', 'fold' : 0, 'stl' : 1},
+            \ {'short' : 'c', 'long' : 'classes',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'i', 'long' : 'fields',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'm', 'long' : 'methods',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'M', 'long' : 'static methods',     'fold' : 0, 'stl' : 0},
+            \ {'short' : 'C', 'long' : 'constructors',       'fold' : 0, 'stl' : 0},
+            \ {'short' : 'f', 'long' : 'functions',          'fold' : 0, 'stl' : 0},
+            \ {'short' : 'o', 'long' : 'operators',          'fold' : 0, 'stl' : 0},
+            \ {'short' : 'g', 'long' : 'getters',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 's', 'long' : 'setters',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'a', 'long' : 'abstract functions', 'fold' : 0, 'stl' : 0},
         \ ]
         let type_dart.sro        = ':'
         let type_dart.kind2scope = {
