@@ -611,6 +611,8 @@ function! s:CheckFTCtags(bin, ftype) abort
         execute(fn)
         if v:shell_error == 0
             return a:bin
+        else 
+            return ''
         endif
     endif
 
