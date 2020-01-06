@@ -122,6 +122,42 @@ function! s:InitTypes() abort
         let s:known_types = tagbar#types#ctags#init(supported_types)
     endif
 
+    " Use dart_ctags if available
+    let dart_ctags = s:CheckFTCtags('dart_ctags', 'dart')
+    if dart_ctags !=# ''
+        let supported_types['dart'] = 1
+        call tagbar#debug#log('Detected dart_ctags, overriding typedef')
+        let type_dart = tagbar#prototypes#typeinfo#new()
+        let type_dart.ctagstype = 'dart'
+        let type_dart.kinds = [
+            \ {'short' : 'i', 'long' : 'imports',             'fold' : 1, 'stl' : 0},
+            \ {'short' : 'C', 'long' : 'consts',       'fold' : 0, 'stl' : 0},
+            \ {'short' : 'v', 'long' : 'variables',       'fold' : 0, 'stl' : 0},
+            \ {'short' : 'F', 'long' : 'functions',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'c', 'long' : 'classes',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'f', 'long' : 'fields',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'm', 'long' : 'methods',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'M', 'long' : 'static methods',     'fold' : 0, 'stl' : 0},
+            \ {'short' : 'r', 'long' : 'constructors',       'fold' : 0, 'stl' : 0},
+            \ {'short' : 'o', 'long' : 'operators',          'fold' : 0, 'stl' : 0},
+            \ {'short' : 'g', 'long' : 'getters',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 's', 'long' : 'setters',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'a', 'long' : 'abstract functions', 'fold' : 0, 'stl' : 0},
+        \ ]
+        let type_dart.sro        = ':'
+        let type_dart.kind2scope = {
+            \ 'c' : 'class'
+        \ }
+        let type_dart.scope2kind = {
+            \ 'class' : 'c'
+        \ }
+        let type_dart.ctagsbin   = dart_ctags
+        let type_dart.ctagsargs  = '-l'
+        let type_dart.ftype      = 'dart'
+        call type_dart.createKinddict()
+        let s:known_types.dart   = type_dart
+    endif
+
     " Use jsctags/doctorjs if available
     let jsctags = s:CheckFTCtags('jsctags', 'javascript')
     if jsctags !=# ''
