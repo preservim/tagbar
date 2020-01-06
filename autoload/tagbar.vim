@@ -151,11 +151,11 @@ function! s:InitTypes() abort
         let type_dart.scope2kind = {
             \ 'class' : 'c'
         \ }
-        let type_dart.ctagsbin   = 'pub'
-        let type_dart.ctagsargs  = 'global run dart_ctags:tags -l'
-        let type_dart.ftype = 'dart'
+        let type_dart.ctagsbin   = dart_ctags
+        let type_dart.ctagsargs  = '-l'
+        let type_dart.ftype      = 'dart'
         call type_dart.createKinddict()
-        let s:known_types.dart = type_dart
+        let s:known_types.dart   = type_dart
     endif
 
     " Use jsctags/doctorjs if available
@@ -603,22 +603,6 @@ endfunction
 
 " s:CheckFTCtags() {{{2
 function! s:CheckFTCtags(bin, ftype) abort
-    " dart_ctags isn't installed as a bin
-    " must use pub command to run
-    if a:bin ==# 'dart_ctags'
-        if has('win32')
-            let fn = '!pub global list | findstr dart_ctags'
-        else
-            let fn = '!pub global list | grep dart_ctags'
-        endif
-        execute(fn)
-        if v:shell_error == 0
-            return a:bin
-        else 
-            return ''
-        endif
-    endif
-
     if executable(a:bin)
         return a:bin
     endif
