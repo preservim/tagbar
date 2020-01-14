@@ -2489,7 +2489,7 @@ function! s:AutoUpdate(fname, force, ...) abort
 
     " Whether we want to skip actually displaying the tags in Tagbar and only
     " update the fileinfo
-    let no_display = a:0 > 0 ? a:1 : 0
+    let no_display = a:0 > 2 ? a:3 : 0
 
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
