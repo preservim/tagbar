@@ -663,8 +663,8 @@ endfunction
 " s:known_files.put() {{{2
 " Optional second argument is the filename
 function! s:known_files.put(fileinfo, ...) abort dict
-    if a:0 == 1
-        let self._files[a:1] = a:fileinfo
+    if a:0 == 2
+        let self._files[a:2] = a:fileinfo
     else
         let fname = a:fileinfo.fpath
         let self._files[fname] = a:fileinfo
