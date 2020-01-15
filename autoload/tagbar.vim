@@ -663,8 +663,8 @@ endfunction
 " s:known_files.put() {{{2
 " Optional second argument is the filename
 function! s:known_files.put(fileinfo, ...) abort dict
-    if a:0 == 2
-        let self._files[a:2] = a:fileinfo
+    if a:0 == 1
+        let self._files[a:1] = a:fileinfo
     else
         let fname = a:fileinfo.fpath
         let self._files[fname] = a:fileinfo
@@ -2489,7 +2489,7 @@ function! s:AutoUpdate(fname, force, ...) abort
 
     " Whether we want to skip actually displaying the tags in Tagbar and only
     " update the fileinfo
-    let no_display = a:0 > 2 ? a:3 : 0
+    let no_display = a:0 > 0 ? a:1 : 0
 
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
