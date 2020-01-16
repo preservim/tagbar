@@ -556,7 +556,7 @@ Example:
 <
 
                                                        *g:tagbar_show_balloon*
-g:tagbar_show_balloon
+g:tagbar_show_balloon~
 Default: 1
 
 Whether balloon messages should be shown in the Tagbar window.
