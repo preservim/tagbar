@@ -87,8 +87,11 @@ against Tagbar](https://github.com/majutsushi/tagbar/issues?labels=ctags-bug&pag
 
 ## License
 
-Vim license, see LICENSE
+Tagbar is distributed under the terms of the *Vim license*, see the included [LICENSE][] file.
 
-## Maintainer
+## Contributors
 
-Jan Larres <[jan@majutsushi.net](mailto:jan@majutsushi.net)>
+Tagbar was originally written by [Jan Larres](https://github.com/majutsushi).
+It is actively maintained by [Caleb Maclennan](https://github.com/alerque).
+At least [45 others have contributed](https://github.com/majutsushi/tagbar/graphs/contributors) features and bug fixes over the years.
+Please document [issues](https://github.com/majutsushi/tagbar/issues) or submit [pull requests](https://github.com/majutsushi/tagbar/issues) on Github.
