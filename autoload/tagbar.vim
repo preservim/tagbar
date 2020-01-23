@@ -1148,13 +1148,13 @@ function! s:ProcessFile(fname, ftype) abort
         return
     endif
 
-    let bufnum = bufnr(a:fname)
+    let l:bufnum = bufnr(a:fname)
 
-    if !bufloaded(bufnum)
+    if !bufloaded(l:bufnum)
         call tagbar#debug#log('[ProcessFile] Buffer is not loaded exiting...')
         return
     endif
-    if !bufexists(bufnum)
+    if !bufexists(l:bufnum)
         call tagbar#debug#log('[ProcessFile] Buffer does not exist exiting...')
         return
     endif
