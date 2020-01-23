@@ -1148,6 +1148,17 @@ function! s:ProcessFile(fname, ftype) abort
         return
     endif
 
+    let l:bufnum = bufnr(a:fname)
+
+    if !bufloaded(l:bufnum)
+        call tagbar#debug#log('[ProcessFile] Buffer is not loaded exiting...')
+        return
+    endif
+    if !bufexists(l:bufnum)
+        call tagbar#debug#log('[ProcessFile] Buffer does not exist exiting...')
+        return
+    endif
+
     let typeinfo = s:known_types[a:ftype]
 
     " If the file has only been updated preserve the fold states, otherwise
