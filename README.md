@@ -87,7 +87,7 @@ against Tagbar](https://github.com/majutsushi/tagbar/issues?labels=ctags-bug&pag
 
 ## License
 
-Tagbar is distributed under the terms of the *Vim license*, see the included [LICENSE][] file.
+Tagbar is distributed under the terms of the *Vim license*, see the included [LICENSE](LICENSE) file.
 
 ## Contributors
 
