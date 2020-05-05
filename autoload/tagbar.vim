@@ -3379,7 +3379,7 @@ function! s:goto_win(winnr, ...) abort
         if type(a:winnr) == type(0) && a:winnr == 0
             return
         endif
-        if a:winnr == 'p' && winnr('#') == 0
+        if a:winnr ==# 'p' && winnr('#') == 0
             return
         endif
     endif
