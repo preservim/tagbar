@@ -3371,6 +3371,18 @@ endfunction
 
 " s:goto_win() {{{2
 function! s:goto_win(winnr, ...) abort
+    "Do not go to a popup window to avoid errors.
+    "Hence, check first if a:winnr is an integer,
+    "if this integer is equal to 0,
+    "the window is a popup window
+    if has('popupwin')
+        if type(a:winnr) == type(0) && a:winnr == 0
+            return
+        endif
+        if a:winnr ==# 'p' && winnr('#') == 0
+            return
+        endif
+    endif
     let cmd = type(a:winnr) == type(0) ? a:winnr . 'wincmd w'
                                      \ : 'wincmd ' . a:winnr
     let noauto = a:0 > 0 ? a:1 : 0
