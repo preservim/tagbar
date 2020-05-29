@@ -2866,6 +2866,45 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     return ctags_cmd
 endfunction
 
+" python simulate system() on window to prevent temporary window creation
+function! s:system_python(cmd, version)
+    if has('nvim')
+        let hr = system(a:cmd)
+    elseif has('win32') || has('win64') || has('win95') || has('win16')
+        if a:version < 0 || (has('python3') == 0 && has('python2') == 0)
+            let hr = system(a:cmd)
+            let s:shell_error = v:shell_error
+            return hr
+        elseif a:version == 3
+            let pyx = 'py3 '
+            let python_eval = 'py3eval'
+        elseif a:version == 2
+            let pyx = 'py2 '
+            let python_eval = 'pyeval'
+        else
+            let pyx = 'pyx '
+            let python_eval = 'pyxeval'
+        endif
+        exec pyx . 'import subprocess, vim'
+        exec pyx . '__argv = {"args":vim.eval("a:cmd"), "shell":True}'
+        exec pyx . '__argv["stdout"] = subprocess.PIPE'
+        exec pyx . '__argv["stderr"] = subprocess.STDOUT'
+        exec pyx . '__pp = subprocess.Popen(**__argv)'
+        exec pyx . '__return_text = __pp.stdout.read()'
+        exec pyx . '__pp.stdout.close()'
+        exec pyx . '__return_code = __pp.wait()'
+        exec 'let l:hr = '. python_eval .'("__return_text")'
+        exec 'let l:pc = '. python_eval .'("__return_code")'
+        let s:shell_error = l:pc
+        return l:hr
+    else
+        let hr = system(a:cmd)
+    endif
+    let s:shell_error = v:shell_error
+    return hr
+endfunction
+
+
 " s:ExecuteCtags() {{{2
 " Execute ctags with necessary shell settings
 " Partially based on the discussion at
@@ -2903,7 +2942,8 @@ function! s:ExecuteCtags(ctags_cmd) abort
         call tagbar#debug#log('Exit code: ' . v:shell_error)
         redraw!
     else
-        silent let ctags_output = system(a:ctags_cmd)
+        let py_version = get(g:, 'tagbar_python', 0)
+        silent let ctags_output = s:system_python(a:ctags_cmd, py_version)
     endif
 
     if &shell =~? 'cmd\.exe'
