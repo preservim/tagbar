@@ -784,6 +784,24 @@ about the tag is echoed out. Set this option to disable that behavior.
 Example:
 >
         let g:tagbar_silent = 1
+                                                           *g:tagbar_use_cache*
+g:tagbar_use_cache~
+Default: 1
+
+By default the file contents are passed to ctags by writing them to
+a temporary file and invoking ctags on that file. This greatly speeds up tag
+generation in the event of slow file systems such as network shares and
+enables tagbar to run even on netrw virtual files that ctags would otherwise
+not be able to find at all. However it does incure the cost of an extra write
+operation. Additionally not all sysems are able to let programs share access
+to temporary file space (for example Snap packages cannot read from the host
+system's temp file space). This setting can disable the cache mechanism
+entriely forcing the tags to be generated from the existing copy of the file
+on disk rather than the current buffer written to a temporary file.
+
+Example:
+>
+        let g:tagbar_use_cache = 0
 <
 
 ------------------------------------------------------------------------------
