@@ -2866,11 +2866,11 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     return ctags_cmd
 endfunction
 
-" python simulate system() on window to prevent temporary window creation
-function! s:system_python(cmd, version) abort
+" run shell command in a proper way: prevent temporary window creation
+function! s:run_system(cmd, version) abort
     if has('nvim')
         let hr = system(a:cmd)
-    elseif has('win32') || has('win64') || has('win95') || has('win16')
+    if has('win32') || has('win64') || has('win95') || has('win16')
         if a:version <= 0 || (has('python3') == 0 && has('python2') == 0)
             let hr = system(a:cmd)
             let s:shell_error = v:shell_error
@@ -2944,7 +2944,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         redraw!
     else
         let py_version = get(g:, 'tagbar_python', 1)
-        silent let ctags_output = s:system_python(a:ctags_cmd, py_version)
+        silent let ctags_output = s:run_system(a:ctags_cmd, py_version)
     endif
 
     if &shell =~? 'cmd\.exe'
