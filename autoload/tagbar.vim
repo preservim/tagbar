@@ -2868,7 +2868,7 @@ endfunction
 
 " run shell command in a proper way: prevent temporary window creation
 function! s:run_system(cmd, version) abort
-    if has('win32') && (!has('nvim')) && (has('python3') || has('python2')) && a:version > 0
+    if has('win32') && (!has('nvim')) && a:version > 0 && (has('python3') || has('python2'))
         if a:version == 3 && has('python3')
             let pyx = 'py3 '
             let python_eval = 'py3eval'
