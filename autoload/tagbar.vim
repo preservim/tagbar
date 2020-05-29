@@ -2892,9 +2892,8 @@ function! s:run_system(cmd, version) abort
         exec 'let l:pc = '. python_eval .'("__return_code")'
         let s:shell_error = l:pc
         return l:hr
-    else
-        let hr = system(a:cmd)
     endif
+    let hr = system(a:cmd)
     let s:shell_error = v:shell_error
     return hr
 endfunction
