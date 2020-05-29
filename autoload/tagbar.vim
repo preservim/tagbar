@@ -2873,10 +2873,10 @@ function! s:run_system(cmd, version) abort
             let hr = system(a:cmd)
             let s:shell_error = v:shell_error
             return hr
-        elseif a:version == 3
+        elseif a:version == 3 && has('python3')
             let pyx = 'py3 '
             let python_eval = 'py3eval'
-        elseif a:version == 2
+        elseif a:version == 2 && has('python2')
             let pyx = 'py2 '
             let python_eval = 'pyeval'
         else
