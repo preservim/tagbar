@@ -2870,7 +2870,7 @@ endfunction
 function! s:run_system(cmd, version) abort
     if has('nvim')
         let hr = system(a:cmd)
-    if has('win32') || has('win64') || has('win95') || has('win16')
+    elseif has('win32') || has('win64') || has('win95') || has('win16')
         if a:version <= 0 || (has('python3') == 0 && has('python2') == 0)
             let hr = system(a:cmd)
             let s:shell_error = v:shell_error
