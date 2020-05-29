@@ -2867,7 +2867,7 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
 endfunction
 
 " python simulate system() on window to prevent temporary window creation
-function! s:system_python(cmd, version)
+function! s:system_python(cmd, version) abort
     if has('nvim')
         let hr = system(a:cmd)
     elseif has('win32') || has('win64') || has('win95') || has('win16')
@@ -2885,6 +2885,7 @@ function! s:system_python(cmd, version)
             let pyx = 'pyx '
             let python_eval = 'pyxeval'
         endif
+        let l:pc = 0
         exec pyx . 'import subprocess, vim'
         exec pyx . '__argv = {"args":vim.eval("a:cmd"), "shell":True}'
         exec pyx . '__argv["stdout"] = subprocess.PIPE'
