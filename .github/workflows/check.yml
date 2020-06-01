@@ -31,4 +31,4 @@ jobs:
       run: ${{ matrix.vimFlavor }} --version
     - name: "Try tagbar#OpenWindow()"
       run: |
-        ${{ matrix.tagsProvider == 'nvim' && 'nvim -i NONE -u /dev/null --headless' || 'vim -i NONE' }} "+set rtp+=$(pwd)" "+call tagbar#OpenWindow() | q" "+cq" plugin/tagbar.vim
+        ${{ matrix.vimFlavor == 'nvim' && 'nvim -u /dev/null --headless' || 'vim' }} -i NONE "+set rtp+=$(pwd)" "+call tagbar#OpenWindow() | q" "+cq" plugin/tagbar.vim
