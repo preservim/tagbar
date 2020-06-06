@@ -53,7 +53,7 @@ nmap <F8> :TagbarToggle<CR>
 
 If you do this the F8 key will toggle the Tagbar window. You can of course use
 any shortcut you want. For more flexible ways to open and close the window
-(and the rest of the functionality) see the documentation.
+(and the rest of the functionality) see the [documentation](https://github.com/majutsushi/tagbar/blob/master/doc/tagbar.txt) using `:help tagbar`.
 
 ## Support for additional filetypes
 
