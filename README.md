@@ -36,7 +36,7 @@ creates the tags it needs on-the-fly in-memory without creating any files.
 Extract the archive or clone the repository into a directory in your
 `'runtimepath'`, or use a plugin manager of your choice like
 [pathogen](https://github.com/tpope/vim-pathogen). Don't forget to run
-`:helptags` if your plugin manager doesn't do it for you so you can access the
+`:Helptags` if your plugin manager doesn't do it for you so you can access the
 documentation with `:help tagbar`.
 
 If the ctags executable is not installed in one of the directories in your
