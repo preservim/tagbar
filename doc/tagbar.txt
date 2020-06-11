@@ -103,6 +103,10 @@ The following features are supported by Tagbar:
     Fortran, HTML, Java, JavaScript, Lisp, Lua, Make, MatLab, OCaml, Pascal,
     Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL, Tcl,
     Tex, Vera, Verilog, VHDL, Vim and YACC.
+  - Additional languages are supported through universal-ctags, including
+    CUDA, R, Rust, Go, and many others. See 
+    https://github.com/universal-ctags/ctags/blob/master/docs/news.rst#new-parsers
+    for the complete list.
   - Can be extended to support arbitrary new types.
 
 ------------------------------------------------------------------------------
@@ -123,12 +127,13 @@ The following requirements have to be met in order to be able to use tagbar:
 
   - Vim 7.0 or higher. Older versions will not work since Tagbar uses data
     structures that were only introduced in Vim 7.
-  - Exuberant ctags 5.5 or higher. Ctags is the program that generates the
-    tag information that Tagbar uses. It is shipped with most Linux
-    distributions, otherwise it can be downloaded from the following
-    website:
+  - At a minimum Exuberant Ctags >= 5.5, or (highly recommended) any version
+    of Universal Ctags which is a currently maintained fork of Exuberant Ctags
+    with many bugfixes, support for many more formats, and proper Unicode
+    support. Some additional formats can also be handled by other providers
+    such as jsctags, phpctags, or others.
 
-        http://ctags.sourceforge.net/
+    Universal Ctags can be downloaded from https://ctags.io/
 
     Tagbar will work on any platform that ctags runs on -- this includes
     UNIX derivatives, Mac OS X and Windows. Note that other versions like
