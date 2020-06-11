@@ -133,7 +133,7 @@ The following requirements have to be met in order to be able to use tagbar:
     support. Some additional formats can also be handled by other providers
     such as jsctags, phpctags, or others.
 
-    Universal Ctags cat be downloaded from https://ctags.io/
+    Universal Ctags can be downloaded from https://ctags.io/
 
     Tagbar will work on any platform that ctags runs on -- this includes
     UNIX derivatives, Mac OS X and Windows. Note that other versions like
