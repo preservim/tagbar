@@ -105,7 +105,7 @@ The following features are supported by Tagbar:
     Tex, Vera, Verilog, VHDL, Vim and YACC.
   - Additional languages are supported through universal-ctags, including
     CUDA, R, Rust, Go, and many others. See 
-  https://github.com/universal-ctags/ctags/blob/master/docs/news.rst#new-parsers
+    https://github.com/universal-ctags/ctags/blob/master/docs/news.rst#new-parsers
     for the complete list.
   - Can be extended to support arbitrary new types.
 
