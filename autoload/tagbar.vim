@@ -2260,6 +2260,9 @@ function! s:JumpToTag(stay_in_tagbar) abort
         if s:pwin_by_tagbar
             pclose
         endif
+        if s:is_maximized
+            call s:ZoomWindow()
+        endif
         call s:HighlightTag(0)
     endif
 endfunction
