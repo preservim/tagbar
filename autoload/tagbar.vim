@@ -879,14 +879,21 @@ function! s:OpenWindow(flags) abort
     endif
 
     let s:window_opening = 1
-    if g:tagbar_vertical == 0
+    if g:tagbar_position =~# '\v(bottom|right)'
+        let openpos = 'rightbelow '
+    else
+        let openpos = 'leftabove '
+    endif
+    if g:tagbar_position =~# '\v(left|right)'
         let mode = 'vertical '
-        let openpos = g:tagbar_left ? 'topleft ' : 'botright '
         let width = g:tagbar_width
     else
         let mode = ''
-        let openpos = g:tagbar_left ? 'leftabove ' : 'rightbelow '
-        let width = g:tagbar_vertical
+        if g:tagbar_height > 0
+            let width = g:tagbar_height
+        else
+            let width = g:tagbar_vertical
+        endif
     endif
     exe 'silent keepalt ' . openpos . mode . width . 'split ' . s:TagbarBufName()
     exe 'silent ' . mode . 'resize ' . width
@@ -2287,7 +2294,7 @@ function! s:ShowInPreviewWin() abort
     " We want the preview window to be relative to the file window in normal
     " (horizontal) mode, and relative to the Tagbar window in vertical mode,
     " to make the best use of space.
-    if g:tagbar_vertical == 0
+    if g:tagbar_position !~# '\v(top|bottom)'
         call s:GotoFileWindow(taginfo.fileinfo, 1)
         call s:mark_window()
     endif
@@ -2298,7 +2305,7 @@ function! s:ShowInPreviewWin() abort
         silent execute
             \ g:tagbar_previewwin_pos . ' pedit ' .
             \ fnameescape(taginfo.fileinfo.fpath)
-        if g:tagbar_vertical != 0
+        if g:tagbar_position =~# '\v(top|bottom)'
             silent execute 'vertical resize ' . g:tagbar_width
         endif
         " Remember that the preview window was opened by Tagbar so we can
@@ -2306,7 +2313,7 @@ function! s:ShowInPreviewWin() abort
         let s:pwin_by_tagbar = 1
     endif
 
-    if g:tagbar_vertical != 0
+    if g:tagbar_position =~# '\v(top|bottom)'
         call s:GotoFileWindow(taginfo.fileinfo, 1)
         call s:mark_window()
     endif
@@ -2946,6 +2953,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
     else
         let py_version = get(g:, 'tagbar_python', 1)
         silent let ctags_output = s:run_system(a:ctags_cmd, py_version)
+        redraw!
     endif
 
     if &shell =~? 'cmd\.exe'
@@ -3199,7 +3207,7 @@ endfunction
 " s:SetStatusLine() {{{2
 function! s:SetStatusLine() abort
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
-    if tagbarwinnr == -1
+    if tagbarwinnr == -1 || exists('g:tagbar_no_status_line')
         return
     endif
 
