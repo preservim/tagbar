@@ -49,10 +49,29 @@ function! s:init_var(var, value) abort
 endfunction
 
 function! s:setup_options() abort
-    if !exists('g:tagbar_vertical') || g:tagbar_vertical == 0
-        let previewwin_pos = 'topleft'
+    if exists('g:tagbar_position')
+        if g:tagbar_position !~# '\v(top|bottom)'
+            let previewwin_pos = 'topleft'
+        else
+            let previewwin_pos = 'rightbelow vertical'
+        endif
+        let default_pos = g:tagbar_position
     else
-        let previewwin_pos = 'rightbelow vertical'
+        if exists('g:tagbar_vertical') && g:tagbar_vertical > 0
+            let previewwin_pos = 'rightbelow vertical'
+            if exists('g:tagbar_left') && g:tagbar_left
+                let default_pos = 'top'
+            else
+                let default_pos = 'bottom'
+            endif
+            let g:tagbar_height = g:tagbar_vertical
+        elseif exists('g:tagbar_left') && g:tagbar_left
+            let previewwin_pos = 'topleft'
+            let default_pos = 'left'
+        else
+            let previewwin_pos = 'topleft'
+            let default_pos = 'right'
+        endif
     endif
     let options = [
         \ ['autoclose', 0],
@@ -64,6 +83,7 @@ function! s:setup_options() abort
         \ ['expand', 0],
         \ ['foldlevel', 99],
         \ ['hide_nonpublic', 0],
+        \ ['height', 10],
         \ ['indent', 2],
         \ ['left', 0],
         \ ['previewwin_pos', previewwin_pos],
@@ -74,6 +94,7 @@ function! s:setup_options() abort
         \ ['sort', 1],
         \ ['systemenc', &encoding],
         \ ['vertical', 0],
+        \ ['position', default_pos],
         \ ['width', 40],
         \ ['zoomwidth', 1],
         \ ['silent', 0],
