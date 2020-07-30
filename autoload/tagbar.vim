@@ -3714,7 +3714,11 @@ function! tagbar#currenttagtype(fmt, default) abort
 
     let typeinfo = tag.fileinfo.typeinfo
     let plural = typeinfo.kinds[typeinfo.kinddict[kind]].long
-    let singular = s:singular_types[plural]
+    if has_key(plural)
+        let singular = s:singular_types[plural]
+    else
+        let singular = plural
+    endif
     return printf(a:fmt, singular)
 endfunction
 
