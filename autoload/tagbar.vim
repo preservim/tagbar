@@ -3556,6 +3556,8 @@ endfunction
 
 " }}}2
 
+" tagbar#Update() {{{2
+" Trigger an AutoUpdate() of the currently opened file
 function! tagbar#Update() abort
     call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
 endfunction
