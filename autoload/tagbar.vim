@@ -3556,6 +3556,10 @@ endfunction
 
 " }}}2
 
+function! tagbar#Update() abort
+    call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
+endfunction
+
 " tagbar#toggle_pause() {{{2
 function! tagbar#toggle_pause() abort
     let s:paused = !s:paused
