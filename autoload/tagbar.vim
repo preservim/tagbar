@@ -248,10 +248,16 @@ function! s:InitTypes() abort
         let type_dart = tagbar#prototypes#typeinfo#new()
         let type_dart.ctagstype = 'dart'
         let type_dart.kinds = [
-            \ {'short' : 'i', 'long' : 'imports',             'fold' : 1, 'stl' : 0},
-            \ {'short' : 'C', 'long' : 'consts',       'fold' : 0, 'stl' : 0},
-            \ {'short' : 'v', 'long' : 'variables',       'fold' : 0, 'stl' : 0},
-            \ {'short' : 'F', 'long' : 'functions',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'l', 'long' : 'library',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'x', 'long' : 'export',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'i', 'long' : 'imports',            'fold' : 1, 'stl' : 0},
+            \ {'short' : 'P', 'long' : 'part',               'fold' : 0, 'stl' : 0},
+            \ {'short' : 'p', 'long' : 'part of',            'fold' : 0, 'stl' : 0},
+            \ {'short' : 'C', 'long' : 'consts',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 'v', 'long' : 'variables',          'fold' : 0, 'stl' : 0},
+            \ {'short' : 'F', 'long' : 'functions',          'fold' : 0, 'stl' : 0},
+            \ {'short' : 'E', 'long' : 'enums',              'fold' : 0, 'stl' : 0},
+            \ {'short' : 'e', 'long' : 'constants',          'fold' : 0, 'stl' : 0},
             \ {'short' : 'c', 'long' : 'classes',            'fold' : 0, 'stl' : 0},
             \ {'short' : 'f', 'long' : 'fields',             'fold' : 0, 'stl' : 0},
             \ {'short' : 'm', 'long' : 'methods',            'fold' : 0, 'stl' : 0},
@@ -261,13 +267,15 @@ function! s:InitTypes() abort
             \ {'short' : 'g', 'long' : 'getters',            'fold' : 0, 'stl' : 0},
             \ {'short' : 's', 'long' : 'setters',            'fold' : 0, 'stl' : 0},
             \ {'short' : 'a', 'long' : 'abstract functions', 'fold' : 0, 'stl' : 0},
-        \ ]
+       \ ]
         let type_dart.sro        = ':'
         let type_dart.kind2scope = {
-            \ 'c' : 'class'
+            \ 'c' : 'class',
+            \ 'E' : 'enum'
         \ }
         let type_dart.scope2kind = {
-            \ 'class' : 'c'
+            \ 'class' : 'c',
+            \ 'enum' : 'E'
         \ }
         let type_dart.ctagsbin   = dart_ctags
         let type_dart.ctagsargs  = '-l'
