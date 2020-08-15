@@ -1034,6 +1034,7 @@ function! s:CloseWindow() abort
             " Other windows are open, only close the tagbar one
 
             let curfile = tagbar#state#get_current_file(0)
+            let s:is_maximized = 0
 
             close
 
