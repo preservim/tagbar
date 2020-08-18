@@ -3523,7 +3523,7 @@ function! tagbar#GetTagNearLine(lnum, ...) abort
         let fullpath  = a:2 =~# 'f'
         let prototype = a:2 =~# 'p'
     else
-        let fmt = "%s"
+        let fmt = '%s'
         let longsig   = 0
         let fullpath  = 0
         let prototype = 0
