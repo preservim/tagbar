@@ -3516,6 +3516,32 @@ endfunction
 " Autoload functions {{{1
 
 " Wrappers {{{2
+function! tagbar#GetTagNearLine(lnum, ...) abort
+    if a:0 > 0
+        let fmt = a:1
+        let longsig   = a:2 =~# 's'
+        let fullpath  = a:2 =~# 'f'
+        let prototype = a:2 =~# 'p'
+    else
+        let fmt = "%s"
+        let longsig   = 0
+        let fullpath  = 0
+        let prototype = 0
+    endif
+
+    let taginfo = s:GetNearbyTag(0, 1, a:lnum)
+
+    if empty(taginfo)
+        return ''
+    endif
+
+    if prototype
+        return taginfo.getPrototype(1)
+    else
+        return printf(fmt, taginfo.str(longsig, fullpath))
+    endif
+endfunction
+
 function! tagbar#ToggleWindow(...) abort
     let flags = a:0 > 0 ? a:1 : ''
     call s:ToggleWindow(flags)
