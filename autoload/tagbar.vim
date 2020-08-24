@@ -3720,7 +3720,7 @@ function! tagbar#currenttagtype(fmt, default) abort
 
     let typeinfo = tag.fileinfo.typeinfo
     let plural = typeinfo.kinds[typeinfo.kinddict[kind]].long
-    if has_key(plural)
+    if has_key(s:singular_types, plural)
         let singular = s:singular_types[plural]
     else
         let singular = plural
