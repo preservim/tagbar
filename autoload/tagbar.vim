@@ -895,9 +895,18 @@ function! s:OpenWindow(flags) abort
             let width = g:tagbar_vertical
         endif
     endif
+
+    let l:splitright = &splitright
+    if g:tagbar_window_local == 1
+        let openpos = ''
+        let &splitright = g:tagbar_left ? 0 : 1
+    endif
+
     exe 'silent keepalt ' . openpos . mode . width . 'split ' . s:TagbarBufName()
     exe 'silent ' . mode . 'resize ' . width
     unlet s:window_opening
+
+    let &splitright = l:splitright
 
     call s:InitWindow(autoclose)
 
