@@ -320,6 +320,24 @@ FUNCTIONS                                                   *tagbar-functions*
     update tag information.  This should be called after you have used
     |tagbar#currenttag| manually.
 
+*tagbar#GetTagNearLine()*
+    Get the current tag near the specified line number (lnum). Optionally
+    takes a fmt and signature specification using the same method as the
+    |tagbar#currenttag()| function. Defaults to GetTagNearLine(lnum, '%s', '').
+
+    This could be used in a custom foldtext function to show the current tag
+    the fold current fold is located in.
+
+    Example:
+   >
+    set foldtext=MyFoldFunc()
+    function! MyFoldFunc()
+        let tag = tagbar#GetTagNearLine(v:foldend, '%s', 'p')
+        let lines = v:foldend - v:foldstart + 1
+        return tag . ' --- ' . lines . ' lines'
+    endfunction
+<
+
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*
 
