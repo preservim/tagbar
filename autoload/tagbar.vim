@@ -249,13 +249,14 @@ function! s:InitTypes() abort
         let type_dart.ctagstype = 'dart'
         let type_dart.kinds = [
             \ {'short' : 'l', 'long' : 'library',            'fold' : 0, 'stl' : 0},
-            \ {'short' : 'x', 'long' : 'export',             'fold' : 0, 'stl' : 0},
+            \ {'short' : 't', 'long' : 'export',             'fold' : 0, 'stl' : 0},
             \ {'short' : 'i', 'long' : 'imports',            'fold' : 1, 'stl' : 0},
             \ {'short' : 'P', 'long' : 'part',               'fold' : 0, 'stl' : 0},
             \ {'short' : 'p', 'long' : 'part of',            'fold' : 0, 'stl' : 0},
             \ {'short' : 'C', 'long' : 'consts',             'fold' : 0, 'stl' : 0},
             \ {'short' : 'v', 'long' : 'variables',          'fold' : 0, 'stl' : 0},
             \ {'short' : 'F', 'long' : 'functions',          'fold' : 0, 'stl' : 0},
+            \ {'short' : 'x', 'long' : 'mixins',             'fold' : 0, 'stl' : 0},
             \ {'short' : 'E', 'long' : 'enums',              'fold' : 0, 'stl' : 0},
             \ {'short' : 'e', 'long' : 'constants',          'fold' : 0, 'stl' : 0},
             \ {'short' : 'c', 'long' : 'classes',            'fold' : 0, 'stl' : 0},
@@ -271,11 +272,13 @@ function! s:InitTypes() abort
         let type_dart.sro        = ':'
         let type_dart.kind2scope = {
             \ 'c' : 'class',
-            \ 'E' : 'enum'
+            \ 'E' : 'enum',
+            \ 'x' : 'mixin'
         \ }
         let type_dart.scope2kind = {
             \ 'class' : 'c',
-            \ 'enum' : 'E'
+            \ 'enum' : 'E',
+            \ 'mixin' : 'x'
         \ }
         let type_dart.ctagsbin   = dart_ctags
         let type_dart.ctagsargs  = '-l'
