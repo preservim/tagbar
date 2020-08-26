@@ -1316,9 +1316,9 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
 
         " universal-ctags deprecated this argument name
         if s:ctags_is_uctags
-            let ctags_args += [ '--extras=' ]
+            let ctags_args += [ '--extras=+F' ]
         else
-            let ctags_args += [ '--extra=' ]
+            let ctags_args += [ '--extra=', '--file-scope=yes' ]
         endif
 
         let ctags_args  = ctags_args + [
@@ -1327,7 +1327,6 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--format=2',
                           \ '--excmd=pattern',
                           \ '--fields=nksSaf',
-                          \ '--file-scope=yes',
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
