@@ -251,6 +251,9 @@ function! s:InitTypes() abort
             \ {'short' : 'l', 'long' : 'library',            'fold' : 0, 'stl' : 0},
             \ {'short' : 't', 'long' : 'export',             'fold' : 0, 'stl' : 0},
             \ {'short' : 'i', 'long' : 'imports',            'fold' : 1, 'stl' : 0},
+            \ {'short' : 'D', 'long' : 'dart',               'fold' : 0, 'stl' : 0},
+            \ {'short' : 'U', 'long' : 'pub',                'fold' : 0, 'stl' : 0},
+            \ {'short' : 'L', 'long' : 'local',              'fold' : 0, 'stl' : 0},
             \ {'short' : 'P', 'long' : 'part',               'fold' : 0, 'stl' : 0},
             \ {'short' : 'p', 'long' : 'part of',            'fold' : 0, 'stl' : 0},
             \ {'short' : 'C', 'long' : 'consts',             'fold' : 0, 'stl' : 0},
@@ -273,12 +276,14 @@ function! s:InitTypes() abort
         let type_dart.kind2scope = {
             \ 'c' : 'class',
             \ 'E' : 'enum',
-            \ 'x' : 'mixin'
+            \ 'x' : 'mixin',
+            \ 'i' : 'directive'
         \ }
         let type_dart.scope2kind = {
-            \ 'class' : 'c',
-            \ 'enum' : 'E',
-            \ 'mixin' : 'x'
+            \ 'class'  : 'c',
+            \ 'enum'   : 'E',
+            \ 'mixin'  : 'x',
+            \ 'directive' : 'i'
         \ }
         let type_dart.ctagsbin   = dart_ctags
         let type_dart.ctagsargs  = '-l'
