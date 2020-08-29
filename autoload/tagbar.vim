@@ -2250,7 +2250,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
         call cursor(taginfo.fields.line, taginfo.fields.column)
     else
         call cursor(taginfo.fields.line, 1)
-        call search(taginfo.name, 'c', line('.'))
+        call search('\V' . taginfo.name, 'c', line('.'))
     endif
 
     normal! zv
