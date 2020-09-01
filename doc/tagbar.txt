@@ -507,7 +507,7 @@ Example:
 g:tagbar_height~
 Default: 0
 
-If |g:tagbar_position| is does not include a 'vertical' option, then this
+If |g:tagbar_position| does not include a 'vertical' option, then this
 value is used to determine the height of the Tagbar window.
 
 Example:
