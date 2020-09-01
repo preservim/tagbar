@@ -879,24 +879,15 @@ function! s:OpenWindow(flags) abort
     endif
 
     let s:window_opening = 1
-    if g:tagbar_position =~# '\v(bottom|right)'
-        let openpos = 'rightbelow '
-    else
-        let openpos = 'leftabove '
-    endif
-    if g:tagbar_position =~# '\v(left|right)'
+    if g:tagbar_position =~# 'vertical'
+        let size = g:tagbar_width
         let mode = 'vertical '
-        let width = g:tagbar_width
     else
+        let size = g:tagbar_height
         let mode = ''
-        if g:tagbar_height > 0
-            let width = g:tagbar_height
-        else
-            let width = g:tagbar_vertical
-        endif
     endif
-    exe 'silent keepalt ' . openpos . mode . width . 'split ' . s:TagbarBufName()
-    exe 'silent ' . mode . 'resize ' . width
+    exe 'silent keepalt ' . g:tagbar_position . size . 'split ' . s:TagbarBufName()
+    exe 'silent ' . mode . 'resize ' . size
     unlet s:window_opening
 
     call s:InitWindow(autoclose)
@@ -2294,7 +2285,7 @@ function! s:ShowInPreviewWin() abort
     " We want the preview window to be relative to the file window in normal
     " (horizontal) mode, and relative to the Tagbar window in vertical mode,
     " to make the best use of space.
-    if g:tagbar_position !~# '\v(top|bottom)'
+    if g:tagbar_position =~# 'vertical'
         call s:GotoFileWindow(taginfo.fileinfo, 1)
         call s:mark_window()
     endif
@@ -2305,7 +2296,7 @@ function! s:ShowInPreviewWin() abort
         silent execute
             \ g:tagbar_previewwin_pos . ' pedit ' .
             \ fnameescape(taginfo.fileinfo.fpath)
-        if g:tagbar_position =~# '\v(top|bottom)'
+        if g:tagbar_position !~# 'vertical'
             silent execute 'vertical resize ' . g:tagbar_width
         endif
         " Remember that the preview window was opened by Tagbar so we can
@@ -2313,7 +2304,7 @@ function! s:ShowInPreviewWin() abort
         let s:pwin_by_tagbar = 1
     endif
 
-    if g:tagbar_position =~# '\v(top|bottom)'
+    if g:tagbar_position !~# 'vertical'
         call s:GotoFileWindow(taginfo.fileinfo, 1)
         call s:mark_window()
     endif

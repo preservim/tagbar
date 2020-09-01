@@ -446,24 +446,26 @@ configuration files.
 
                                                            *g:tagbar_position*
 g:tagbar_position~
-Default: 'right'
+Default: 'botright vertical'
 
-By default the Tagbar window will be opened on the right-hand side of vim. Set
-this option to one of 'left', 'right', 'bottom', or 'top' to open in the
-corresponding position instead. This can be useful when activating Tagbar at
-the same time as another plugin which creates a new window. It allows for more
-granular control of the Tagbar position in relation to the current active
-window.
+By default the Tagbar window will be opened on the right-hand side of vim in a
+vertical split. Set this option to one of the standart vim split options such
+as 'topleft', 'botright', 'leftabove', or 'rightbelow' to open in the
+corresponding position instead. If desiring a vertically split window, then
+include a ' vertical' in the field value as well. This can be useful when
+activating Tagbar at the same time as another plugin which creates a new
+window. It allows for more granular control of the Tagbar position in
+relation to the current active window.
 
-If set to 'top' of 'bottom', |g:tagbar_height| will be used to determine the
-window height for the tagbar window.
+If using a vertical split, |g:tagbar_width| will be used to determine the
+window width for the tagbar window. Else |g:tagbar_height| will be used to
+determine the window height for the tagbar window.
 
-if set to 'left' or 'right', |g:tagbar_width| will be used to determine the
-window width for the tagbar window.
+See |split| for more details on window positioning.
 
 Example:
 >
-        let g:tagbar_position = 'left'
+        let g:tagbar_position = 'leftabove'
 <
                                                                *g:tagbar_left*
 g:tagbar_left~
@@ -505,20 +507,20 @@ Example:
 g:tagbar_height~
 Default: 0
 
-If |g:tagbar_position| is set to 'bottom' or 'top', then this value is used to
-determine the height of the Tagbar window.
-See |g:tagbar_left| for configuring the position of the window.
+If |g:tagbar_position| does not include a 'vertical' option, then this
+value is used to determine the height of the Tagbar window.
 
 Example:
 >
         let g:tagbar_height = 30
 <
+
                                                               *g:tagbar_width*
 g:tagbar_width~
 Default: 40
 
-If |g:tagbar_position| is set to 'left' or 'right', then this value is used to
-determine the width of the Tagbar window in characters.
+If |g:tagbar_position| does include a 'vertical' options, then this value is
+used to determine the width of the Tagbar window in characters.
 
 Example:
 >
