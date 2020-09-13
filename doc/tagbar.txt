@@ -2,7 +2,7 @@
 
 Author:         Jan Larres <jan@majutsushi.net>
 Licence:        Vim licence, see |license|
-Homepage:       http://majutsushi.github.com/tagbar/
+Homepage:       https://preservim.github.io/tagbar
 Version:        2.7
 
 ==============================================================================
@@ -1067,7 +1067,7 @@ support package for the language. Some tips on how to write such a program are
 given at the end of this section.
 
 Before writing your own extension have a look at the wiki
-(https://github.com/majutsushi/tagbar/wiki) or try googling for existing ones.
+(https://github.com/preservim/tagbar/wiki) or try googling for existing ones.
 If you do end up creating your own extension please consider adding it to the
 wiki so that others can benefit from it, too.
 

@@ -2,7 +2,7 @@
 " Description: Tagbar syntax settings
 " Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
-" Website:     http://majutsushi.github.com/tagbar/
+" Website:     https://preservim.github.io/tagbar
 " Version:     2.7
 
 scriptencoding utf-8
