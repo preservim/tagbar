@@ -91,6 +91,7 @@ function! s:setup_options() abort
         \ ['case_insensitive', 0],
         \ ['compact', 0],
         \ ['expand', 0],
+        \ ['file_size_limit', 0],
         \ ['foldlevel', 99],
         \ ['hide_nonpublic', 0],
         \ ['height', 10],

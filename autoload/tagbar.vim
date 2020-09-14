@@ -1158,6 +1158,20 @@ function! s:ProcessFile(fname, ftype) abort
         return
     endif
 
+    " If the file size limit it set, then check the linecount to see if
+    " this file should be ignored or not.
+    if g:tagbar_file_size_limit > 0
+        let linecount = line('$')
+        if linecount > g:tagbar_file_size_limit && !exists('b:tagbar_force_update')
+            call tagbar#debug#log('[ProcessFile] File size too large (' . linecount . ' lines) - limit set to ' . g:tagbar_file_size_limit)
+            if !exists('b:tagbar_file_exceeds_limit')
+                echom 'File size too large (' . linecount . ' lines) - Not processing file (see help for g:tagbar_file_size_limit).'
+                let b:tagbar_file_exceeds_limit = 1
+            endif
+            return
+        endif
+    endif
+
     let typeinfo = s:known_types[a:ftype]
 
     " If the file has only been updated preserve the fold states, otherwise
@@ -3576,6 +3590,16 @@ endfunction
 " Trigger an AutoUpdate() of the currently opened file
 function! tagbar#Update() abort
     call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
+endfunction
+
+"  tagbar#ForceUpdate() {{{2
+function! tagbar#ForceUpdate() abort
+    if !exists('b:tagbar_force_update')
+        let b:tagbar_force_update = 1
+        call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 1)
+        unlet b:tagbar_force_update
+        unlet b:tagbar_file_exceeds_limit
+    endif
 endfunction
 
 " tagbar#toggle_pause() {{{2

@@ -337,6 +337,10 @@ FUNCTIONS                                                   *tagbar-functions*
         return tag . ' --- ' . lines . ' lines'
     endfunction
 <
+*tagbar#ForceUpdate()*
+    Forcefully update a file even if it exceeds the |g:tagbar_file_size_limit|
+    value. This also clears the internal flags to the file will be re-examined
+    again.
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*
@@ -881,6 +885,21 @@ on disk rather than the current buffer written to a temporary file.
 Example:
 >
         let g:tagbar_use_cache = 0
+<
+                                                     *g:tagbar_file_size_limit*
+g:tagbar_file_size_limit~
+Default: 0
+
+By default, all files are processed by tagbar. Setting this value to non-zero
+will disable processing for any file with a line count greater than
+|g:tagbar_file_size_limit|. A message will be displayed once for a given buffer
+if the limit is exceeded. The file can be forcefully updated with the
+|tagbar#ForceUpdate()| function. If the value is set to 0, then the file will
+always be processed.
+
+Example:
+>
+    let g:tagbar_file_size_limit = 10000
 <
 
 ------------------------------------------------------------------------------
