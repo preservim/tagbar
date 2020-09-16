@@ -891,7 +891,7 @@ g:tagbar_file_size_limit~
 Default: 0
 
 By default, all files are processed by tagbar. Setting this value to non-zero
-will disable processing for any file with a line count greater than
+will disable processing for any file with a byte count greater than
 |g:tagbar_file_size_limit|. A message will be displayed once for a given buffer
 if the limit is exceeded. The file can be forcefully updated with the
 |tagbar#ForceUpdate()| function. If the value is set to 0, then the file will
