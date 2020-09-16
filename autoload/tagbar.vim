@@ -1161,12 +1161,12 @@ function! s:ProcessFile(fname, ftype) abort
     " If the file size limit it set, then check the file size to see if
     " this file should be ignored or not.
     if g:tagbar_file_size_limit > 0
-        let linecount = getfsize(expand('%'))
-        if linecount > g:tagbar_file_size_limit && !exists('b:tagbar_force_update')
-            call tagbar#debug#log('[ProcessFile] File size too large (' . linecount .
+        let fsize = getfsize(expand('%'))
+        if fsize > g:tagbar_file_size_limit && !exists('b:tagbar_force_update')
+            call tagbar#debug#log('[ProcessFile] File size too large (' . fsize .
                         \ ' bytes) - limit set to ' . g:tagbar_file_size_limit)
             if !exists('b:tagbar_file_exceeds_limit')
-                echom 'File size too large (' . linecount .
+                echom 'File size too large (' . fsize .
                             \ ' bytes) - Not processing file (see help for g:tagbar_file_size_limit).'
                 let b:tagbar_file_exceeds_limit = 1
             endif
