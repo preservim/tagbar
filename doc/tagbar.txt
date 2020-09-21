@@ -897,7 +897,7 @@ wrap intentation to function.
 Example:
 >
        let g:tagbar_wrap = 1
->
+<
 
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
