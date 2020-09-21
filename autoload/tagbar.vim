@@ -954,9 +954,18 @@ function! s:InitWindow(autoclose) abort
     " Window-local options
 
     setlocal nolist
-    setlocal nowrap
     setlocal winfixwidth
     setlocal nospell
+
+    if g:tagbar_wrap == 0
+        setlocal nowrap
+    else
+        setlocal wrap
+        if exists('+linebreak')
+            setlocal breakindent
+            setlocal breakindentopt=shift:4
+        endif
+    endif
 
     if g:tagbar_show_linenumbers == 0
         setlocal nonumber

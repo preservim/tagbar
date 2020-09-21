@@ -109,6 +109,7 @@ function! s:setup_options() abort
         \ ['zoomwidth', 1],
         \ ['silent', 0],
         \ ['use_cache', 1],
+        \ ['wrap', 0],
     \ ]
 
     for [opt, val] in options

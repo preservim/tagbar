@@ -882,6 +882,22 @@ Example:
 >
         let g:tagbar_use_cache = 0
 <
+                                                            *g:tagbar_wrap*
+g:tagbar_wrap~
+Default: 0
+
+If set to non-zero, this will enable line wrapping on the tagbar window. This
+option will use the built-in |wrap| vim option on the tagbar window to
+enable line wrapping. This also will use the |breakindent| and
+|breakindentopt| options in vim to set the indentation of the wrapped lines.
+
+Note: This requires VIM to be compiled with the |+linebreak| option for the
+wrap intentation to function.
+
+Example:
+>
+       let g:tagbar_wrap = 1
+<
 
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
