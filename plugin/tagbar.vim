@@ -109,6 +109,11 @@ function! s:setup_options() abort
         \ ['zoomwidth', 1],
         \ ['silent', 0],
         \ ['use_cache', 1],
+        \ ['visibility_symbols', {
+        \       'public'    : '+',
+        \       'protected' : '#',
+        \       'private'   : '-'
+        \ }],
         \ ['wrap', 0],
     \ ]
 
