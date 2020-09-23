@@ -3,7 +3,7 @@ let s:visibility_symbols = {
     \ 'protected' : '#',
     \ 'private'   : '-'
 \ }
-if !empty(g:tagbar_visibility_symbols)
+if exists('g:tagbar_visibility_symbols') && !empty(g:tagbar_visibility_symbols)
     let s:visibility_symbols = g:tagbar_visibility_symbols
 endif
 
