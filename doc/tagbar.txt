@@ -656,7 +656,21 @@ name.
 Example:
 >
         let g:tagbar_show_visibility = 0
-<
+
+                                                  *g:tagbar_visibility_symbols*
+g:tagbar_visibility_symbols
+Default: { 'public' : '+', 'protected' : '#', 'private' : '-' }
+
+Symbols to use for visibility (public/protected/private) to the left of the tag
+name. See |g:tagbar_show_visibility|.
+
+Example:
+>
+        let g:tagbar_visibility_symbols = {
+            \ 'public'    : '+',
+            \ 'protected' : '#',
+            \ 'private'   : '-'
+            \ }
 
                                                    *g:tagbar_show_linenumbers*
 g:tagbar_show_linenumbers~
@@ -743,6 +757,38 @@ just choose other characters in that case):
         let g:tagbar_iconchars = ['▸', '▾']
         let g:tagbar_iconchars = ['▷', '◢']
         let g:tagbar_iconchars = ['+', '-']  (default on Windows)
+<
+                                                          *g:tagbar_scopestrs*
+g:tagbar_scopestrs~
+Default: {}
+
+Setting to replace a tag's scope with a user-specified string in Tagbar's
+display. If a scope is found in the keys of |g:tagbar_scopestrs|, then the
+scope will be displayed as the corresponding value.  If the scope is not
+found, then the scope will be displayed as normal.
+
+Example (don't worry if some of the characters aren't displayed correctly,
+just choose other characters or strings in that case):
+>
+        let g:tagbar_scopestrs = {
+            \    'class': "\uf0e8",
+            \    'const': "\uf8ff",
+            \    'constant': "\uf8ff",
+            \    'enum': "\uf702",
+            \    'field': "\uf30b",
+            \    'func': "\uf794",
+            \    'function': "\uf794",
+            \    'getter': "\ufab6",
+            \    'implementation': "\uf776",
+            \    'interface': "\uf7fe",
+            \    'map': "\ufb44",
+            \    'member': "\uf02b",
+            \    'method': "\uf6a6",
+            \    'setter': "\uf7a9",
+            \    'variable': "\uf71b",
+            \ }
+
+
 <
 
                                                         *g:tagbar_autoshowtag*
@@ -892,6 +938,7 @@ Example:
 >
         let g:tagbar_use_cache = 0
 <
+
                                                      *g:tagbar_file_size_limit*
 g:tagbar_file_size_limit~
 Default: 0
@@ -906,6 +953,23 @@ the value is set to 0, then the file will always be processed.
 Example:
 >
     let g:tagbar_file_size_limit = 10000
+<
+
+                                                            *g:tagbar_wrap*
+g:tagbar_wrap~
+Default: 0
+
+If set to non-zero, this will enable line wrapping on the tagbar window. This
+option will use the built-in |wrap| vim option on the tagbar window to
+enable line wrapping. This also will use the |breakindent| and
+|breakindentopt| options in vim to set the indentation of the wrapped lines.
+
+Note: This requires VIM to be compiled with the |+linebreak| option for the
+wrap intentation to function.
+
+Example:
+>
+       let g:tagbar_wrap = 1
 <
 
 ------------------------------------------------------------------------------
