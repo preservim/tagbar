@@ -1190,7 +1190,14 @@ function! s:ProcessFile(fname, ftype) abort
 
     call tagbar#debug#log('typeinfo for file to process: ' . string(typeinfo))
 
-    if g:tagbar_use_cache
+    if g:tagbar_file_size_limit > 0
+                \ && fileinfo.fsize > g:tagbar_file_size_limit
+                \ && !exists('b:tagbar_force_update')
+        call tagbar#debug#log('File size exceeds defined limit')
+        let fileinfo.fsize_exceeded = 1
+        call s:known_files.put(fileinfo)
+        return
+    elseif g:tagbar_use_cache
         " Use a temporary files for ctags processing instead of the original one.
         " This allows using Tagbar for files accessed with netrw, and also doesn't
         " slow down Tagbar for files that sit on slow network drives.
@@ -1209,6 +1216,7 @@ function! s:ProcessFile(fname, ftype) abort
             return
         endif
         let fileinfo.mtime = getftime(tempfile)
+        let fileinfo.fsize_exceeded = 0
 
         let ctags_output = s:ExecuteCtagsOnFile(tempfile, a:fname, typeinfo)
 
@@ -1217,6 +1225,7 @@ function! s:ProcessFile(fname, ftype) abort
         endif
     else
         call tagbar#debug#log('File caching disabled')
+        let fileinfo.fsize_exceeded = 0
         let ctags_output = s:ExecuteCtagsOnFile(a:fname, a:fname, typeinfo)
     endif
 
@@ -1857,7 +1866,16 @@ function! s:RenderContent(...) abort
 
     let typeinfo = fileinfo.typeinfo
 
-    if !empty(fileinfo.getTags())
+    if fileinfo.fsize_exceeded == 1
+        if g:tagbar_compact
+            silent 0put ='\" File size [' . fileinfo.fsize . 'B] exceeds limit'
+        else
+            silent put ='\" File size exceeds defined limit'
+            silent put ='\"   File Size [' . fileinfo.fsize . ' bytes]'
+            silent put ='\"   Limit     [' . g:tagbar_file_size_limit . ' bytes]'
+            silent put ='\" Use TagbarForceUpdate override'
+        endif
+    elseif !empty(fileinfo.getTags())
         " Print tags
         call s:PrintKinds(typeinfo, fileinfo)
     else
@@ -3585,6 +3603,15 @@ endfunction
 " Trigger an AutoUpdate() of the currently opened file
 function! tagbar#Update() abort
     call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
+endfunction
+
+" tagbar#ForceUpdate() {{{2
+function! tagbar#ForceUpdate() abort
+    if !exists('b:tagbar_force_update')
+        let b:tagbar_force_update = 1
+        call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 1)
+        unlet b:tagbar_force_update
+    endif
 endfunction
 
 " tagbar#toggle_pause() {{{2

@@ -91,6 +91,7 @@ function! s:setup_options() abort
         \ ['case_insensitive', 0],
         \ ['compact', 0],
         \ ['expand', 0],
+        \ ['file_size_limit', 0],
         \ ['foldlevel', 99],
         \ ['hide_nonpublic', 0],
         \ ['height', 10],
@@ -182,6 +183,7 @@ command! -nargs=1 TagbarGetTypeConfig call tagbar#gettypeconfig(<f-args>)
 command! -nargs=? TagbarDebug         call tagbar#debug#start_debug(<f-args>)
 command! -nargs=0 TagbarDebugEnd      call tagbar#debug#stop_debug()
 command! -nargs=0 TagbarTogglePause   call tagbar#toggle_pause()
+command! -nargs=0 TagbarForceUpdate   call tagbar#ForceUpdate()
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1

@@ -311,6 +311,12 @@ COMMANDS                                                     *tagbar-commands*
 :TagbarDebugEnd                                              *:TagbarDebugEnd*
     End debug mode, debug messages will no longer be written to the logfile.
 
+:TagbarForceUpdate                                        *:TagbarForceUpdate*
+    Forcefully update a file even if it exceeds the |g:tagbar_file_size_limit|
+    value. This will only work for one invocation of the file processing.
+    After the file is processed and tags are generated, then it will re-enable
+    the file size limit. So if the file is written and needs to be processed
+    again, this command will need to be re-executed.
 
 ------------------------------------------------------------------------------
 FUNCTIONS                                                   *tagbar-functions*
@@ -337,6 +343,10 @@ FUNCTIONS                                                   *tagbar-functions*
         return tag . ' --- ' . lines . ' lines'
     endfunction
 <
+*tagbar#ForceUpdate()*
+    Forcefully update a file even if it exceeds the |g:tagbar_file_size_limit|
+    value. This also clears the internal flags to the file will be re-examined
+    again.
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*
@@ -928,6 +938,23 @@ Example:
 >
         let g:tagbar_use_cache = 0
 <
+
+                                                     *g:tagbar_file_size_limit*
+g:tagbar_file_size_limit~
+Default: 0
+
+By default, all files are processed by tagbar. Setting this value to non-zero
+will disable processing for any file with a byte count greater than
+|g:tagbar_file_size_limit|. A message will be displayed once for a given buffer
+if the limit is exceeded. The file can be forcefully updated with the
+|tagbar#ForceUpdate()| function or with the |:TagbarForceUpdate| command. If
+the value is set to 0, then the file will always be processed.
+
+Example:
+>
+    let g:tagbar_file_size_limit = 10000
+<
+
                                                             *g:tagbar_wrap*
 g:tagbar_wrap~
 Default: 0
