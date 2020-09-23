@@ -9,6 +9,9 @@ function! tagbar#prototypes#fileinfo#new(fname, ftype, typeinfo) abort
     " File modification time
     let newobj.mtime = getftime(a:fname)
 
+    " Get file size
+    let newobj.fsize = getfsize(a:fname)
+
     " The vim file type
     let newobj.ftype = a:ftype
 
@@ -51,6 +54,10 @@ function! tagbar#prototypes#fileinfo#new(fname, ftype, typeinfo) abort
     let newobj.sortTags = function(s:add_snr('s:sortTags'))
     let newobj.openKindFold = function(s:add_snr('s:openKindFold'))
     let newobj.closeKindFold = function(s:add_snr('s:closeKindFold'))
+
+    " This is used during file processing. If the limit is exceeded at that
+    " point, then mark this flag for displaying to the tagbar window
+    let newobj.fsize_exceeded = 0
 
     return newobj
 endfunction
