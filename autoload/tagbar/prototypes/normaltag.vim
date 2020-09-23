@@ -1,10 +1,10 @@
-function! s:maybe_map_scope(kindstr)
-    if !empty(g:tagbar_scope_strs)
-        if has_key(g:tagbar_scope_strs, a:kindstr)
-            return g:tagbar_scope_strs[a:kindstr]
+function! s:maybe_map_scope(scopestr) abort
+    if !empty(g:tagbar_scopestrs)
+        if has_key(g:tagbar_scopestrs, a:scopestr)
+            return g:tagbar_scopestrs[a:scopestr]
         endif
     endif
-    return a:kindstr
+    return a:scopestr
 endfunction
 
 function! tagbar#prototypes#normaltag#new(name) abort
