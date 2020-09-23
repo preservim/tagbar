@@ -1,3 +1,12 @@
+function! s:maybe_map_scope(scopestr) abort
+    if !empty(g:tagbar_scopestrs)
+        if has_key(g:tagbar_scopestrs, a:scopestr)
+            return g:tagbar_scopestrs[a:scopestr]
+        endif
+    endif
+    return a:scopestr
+endfunction
+
 function! tagbar#prototypes#normaltag#new(name) abort
     let newobj = tagbar#prototypes#basetag#new(a:name)
 
@@ -22,7 +31,8 @@ function! s:strfmt() abort dict
     if has_key(self.fields, 'type')
         let suffix .= ' : ' . self.fields.type
     elseif has_key(get(typeinfo, 'kind2scope', {}), self.fields.kind)
-        let suffix .= ' : ' . typeinfo.kind2scope[self.fields.kind]
+        let scope = s:maybe_map_scope(typeinfo.kind2scope[self.fields.kind])
+        let suffix .= ' : ' . scope
     endif
 
     return self._getPrefix() . self.name . suffix
