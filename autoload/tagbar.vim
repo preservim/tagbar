@@ -2649,21 +2649,18 @@ endfunction
 " use timer_start to let tagbar async, this can increase vim open file performance and
 " fix windows blink when open some file.
 function! s:AutoUpdate(fname, force, ...) abort
-    let g:tagbar_update_fname = a:fname
-    let g:tagbar_update_force = a:force
-    let g:tagbar_no_display = a:0 > 0 ? a:1 : 0
-    if has('win32') " windows use timer_start will call bug
-        call AutoUpdate_CB(0)
+    if !has('win32') && has('lambda')
+        call timer_start(0, { -> AutoUpdate_CB(a:fname, a:force, a:0 < 0 ? a:1 : '0')})
     else
-        call timer_start(0, 'AutoUpdate_CB')
+        call AutoUpdate_CB(a:fname, a:force, a:0 < 0 ? a:1 : '0')
     endif
 endfunc
 
-function! AutoUpdate_CB(channel, ...) abort
-    " call tagbar#debug#log('AutoUpdate called [' . fname . ']')
-    let l:fname = g:tagbar_update_fname
-    let l:force = g:tagbar_update_force
-    let no_display = g:tagbar_no_display
+function! AutoUpdate_CB(fname, force, ...) abort
+    let l:fname = a:fname
+    let l:force = a:force
+    let no_display = a:0 < 0 ? a:1 : 0
+    call tagbar#debug#log('AutoUpdate_CB(' . a:fname . ', ' . a:force . ', ' . a:0 . ')')
 
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
