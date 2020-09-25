@@ -2655,10 +2655,12 @@ function! s:AutoUpdate(fname, force, ...) abort
     " update the fileinfo
     let no_display = a:0 > 0 ? a:1 : 0
 
-    if !has('win32') && has('lambda')
+    if !has('win32') && has('lambda') && has('timers')
+        call tagbar#debug#log('Performing async call to AutoUpdate_CB')
         call timer_start(0, { -> AutoUpdate_CB(a:fname, a:force, no_display)})
     else
-        call AutoUpdate_CB(a:fname, a:force, a:0 < 0 ? a:1 : '0')
+        call tagbar#debug#log('Performing sync call to AutoUpdate_CB')
+        call AutoUpdate_CB(a:fname, a:force, no_display)
     endif
 endfunc
 
