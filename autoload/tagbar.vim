@@ -2646,12 +2646,24 @@ endfunction
 
 " Helper functions {{{1
 " s:AutoUpdate() {{{2
+" use timer_start to let tagbar async, this can increase vim open file performance and
+" fix windows blink when open some file.
 function! s:AutoUpdate(fname, force, ...) abort
-    call tagbar#debug#log('AutoUpdate called [' . a:fname . ']')
+    let g:tagbar_update_fname = a:fname
+    let g:tagbar_update_force = a:force
+    let g:tagbar_no_display = a:0 > 0 ? a:1 : 0
+    if has('win32') " windows use timer_start will call bug
+        call AutoUpdate_CB(0)
+    else
+        call timer_start(0, 'AutoUpdate_CB')
+    endif
+endfunc
 
-    " Whether we want to skip actually displaying the tags in Tagbar and only
-    " update the fileinfo
-    let no_display = a:0 > 0 ? a:1 : 0
+function! AutoUpdate_CB(channel, ...) abort
+    " call tagbar#debug#log('AutoUpdate called [' . fname . ']')
+    let l:fname = g:tagbar_update_fname
+    let l:force = g:tagbar_update_force
+    let no_display = g:tagbar_no_display
 
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
@@ -2669,7 +2681,7 @@ function! s:AutoUpdate(fname, force, ...) abort
     endif
 
     " Get the filetype of the file we're about to process
-    let bufnr = bufnr(a:fname)
+    let bufnr = bufnr(l:fname)
     let ftype = getbufvar(bufnr, '&filetype')
 
     " Don't do anything if we're in the tagbar window
@@ -2684,7 +2696,7 @@ function! s:AutoUpdate(fname, force, ...) abort
                \ "sanitized filetype: '" . sftype . "'")
 
     " Don't do anything if the file isn't supported
-    if !s:IsValidFile(a:fname, sftype)
+    if !s:IsValidFile(l:fname, sftype)
         call tagbar#debug#log('Not a valid file, stopping processing')
         let s:nearby_disabled = 1
         return
@@ -2696,20 +2708,20 @@ function! s:AutoUpdate(fname, force, ...) abort
     " Testing the mtime of the file is necessary in case it got changed
     " outside of Vim, for example by checking out a different version from a
     " VCS.
-    if s:known_files.has(a:fname)
-        let curfile = s:known_files.get(a:fname)
-        " if a:force || getbufvar(curfile.bufnr, '&modified') ||
-        if a:force || empty(curfile) || curfile.ftype != sftype ||
-         \ (filereadable(a:fname) && getftime(a:fname) > curfile.mtime)
-            call tagbar#debug#log('File data outdated, updating [' . a:fname . ']')
-            call s:ProcessFile(a:fname, sftype)
+    if s:known_files.has(l:fname)
+        let curfile = s:known_files.get(l:fname)
+        " if l:force || getbufvar(curfile.bufnr, '&modified') ||
+        if l:force || empty(curfile) || curfile.ftype != sftype ||
+         \ (filereadable(l:fname) && getftime(l:fname) > curfile.mtime)
+            call tagbar#debug#log('File data outdated, updating [' . l:fname . ']')
+            call s:ProcessFile(l:fname, sftype)
             let updated = 1
         else
-            call tagbar#debug#log('File data seems up to date [' . a:fname . ']')
+            call tagbar#debug#log('File data seems up to date [' . l:fname . ']')
         endif
-    elseif !s:known_files.has(a:fname)
-        call tagbar#debug#log('New file, processing [' . a:fname . ']')
-        call s:ProcessFile(a:fname, sftype)
+    elseif !s:known_files.has(l:fname)
+        call tagbar#debug#log('New file, processing [' . l:fname . ']')
+        call s:ProcessFile(l:fname, sftype)
         let updated = 1
     endif
 
@@ -2717,12 +2729,12 @@ function! s:AutoUpdate(fname, force, ...) abort
         return
     endif
 
-    let fileinfo = s:known_files.get(a:fname)
+    let fileinfo = s:known_files.get(l:fname)
 
     " If we don't have an entry for the file by now something must have gone
     " wrong, so don't change the tagbar content
     if empty(fileinfo)
-        call tagbar#debug#log('fileinfo empty after processing [' . a:fname . ']')
+        call tagbar#debug#log('fileinfo empty after processing [' . l:fname . ']')
         return
     endif
 
@@ -2731,14 +2743,14 @@ function! s:AutoUpdate(fname, force, ...) abort
     if bufwinnr(s:TagbarBufName()) != -1 && !s:paused &&
      \ (s:new_window || updated ||
       \ (!empty(tagbar#state#get_current_file(0)) &&
-       \ a:fname != tagbar#state#get_current_file(0).fpath))
+       \ l:fname != tagbar#state#get_current_file(0).fpath))
         call s:RenderContent(fileinfo)
     endif
 
     " Call setCurrent after rendering so RenderContent can check whether the
     " same file is being redisplayed
     if !empty(fileinfo)
-        call tagbar#debug#log('Setting current file [' . a:fname . ']')
+        call tagbar#debug#log('Setting current file [' . l:fname . ']')
         call tagbar#state#set_current_file(fileinfo)
         let s:nearby_disabled = 0
     endif
