@@ -2649,6 +2649,10 @@ endfunction
 " use timer_start to let tagbar async, this can increase vim open file performance and
 " fix windows blink when open some file.
 function! s:AutoUpdate(fname, force, ...) abort
+    call tagbar#debug#log('AutoUpdate called [' . a:fname . ']')
+
+    " Whether we want to skip actually displaying the tags in Tagbar and only
+    " update the fileinfo
     let no_display = a:0 > 0 ? a:1 : 0
 
     if !has('win32') && has('lambda')
