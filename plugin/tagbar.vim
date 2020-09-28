@@ -116,6 +116,7 @@ function! s:setup_options() abort
 
     for [opt, val] in options
         call s:init_var(opt, val)
+        unlet val
     endfor
 endfunction
 call s:setup_options()
