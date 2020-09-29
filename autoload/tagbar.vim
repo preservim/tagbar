@@ -991,6 +991,7 @@ function! s:InitWindow(autoclose) abort
     setlocal foldmethod&
     setlocal foldexpr&
 
+    silent! setlocal signcolumn=no
 
     let w:autoclose = a:autoclose
 
