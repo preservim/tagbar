@@ -957,6 +957,35 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0, 'stl' : 1}
     \ ]
     let types.tcl = type_tcl
+    " TypeScript {{{1
+    let type_ts = tagbar#prototypes#typeinfo#new()
+    let type_ts.ctagstype = 'typescript'
+    let type_ts.kinds = [
+        \ {'short' : 'n', 'long' : 'namespaces',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'interfaces',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'g', 'long' : 'enums',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerations',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'C', 'long' : 'constants',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'properties',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'v', 'long' : 'variables',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'methods',       'fold' : 0, 'stl' : 1},
+    \ ]
+    let type_ts.sro        = '.'
+    let type_ts.kind2scope = {
+        \ 'c' : 'class',
+        \ 'i' : 'interface',
+        \ 'g' : 'enum',
+        \ 'n' : 'namespace',
+    \ }
+    let type_ts.scope2kind = {
+        \ 'class'       : 'c',
+        \ 'interface'   : 'i',
+        \ 'enum'        : 'g',
+        \ 'namespace'   : 'n'
+    \ }
+    let types.typescript = type_ts
     " LaTeX {{{1
     let type_tex = tagbar#prototypes#typeinfo#new()
     let type_tex.ctagstype = 'tex'
