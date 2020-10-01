@@ -964,7 +964,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'n', 'long' : 'namespaces',    'fold' : 0, 'stl' : 1},
         \ {'short' : 'i', 'long' : 'interfaces',    'fold' : 0, 'stl' : 1},
         \ {'short' : 'g', 'long' : 'enums',         'fold' : 0, 'stl' : 1},
-        \ {'short' : 'e', 'long' : 'enumerators',   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enumerations',  'fold' : 0, 'stl' : 1},
         \ {'short' : 'c', 'long' : 'classes',       'fold' : 0, 'stl' : 1},
         \ {'short' : 'C', 'long' : 'constants',     'fold' : 0, 'stl' : 1},
         \ {'short' : 'f', 'long' : 'functions',     'fold' : 0, 'stl' : 1},
