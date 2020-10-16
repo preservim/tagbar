@@ -1952,7 +1952,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             for tag in curtags
                 call s:PrintTag(tag, 0, output, a:fileinfo, a:typeinfo)
 
-                if !g:tagbar_compact
+                if g:tagbar_compact != 1
                     call add(output, '')
                 endif
             endfor
@@ -1987,7 +1987,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
                 endfor
             endif
 
-            if !g:tagbar_compact
+            if g:tagbar_compact != 1
                 call add(output, '')
             endif
         endif

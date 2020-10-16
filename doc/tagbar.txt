@@ -613,6 +613,11 @@ Setting this option will result in Tagbar omitting the short help at the
 top of the window and the blank lines in between top-level scopes in order to
 save screen real estate.
 
+Possible values are:
+  0: Show short help and blank lines between top-level scopes
+  1: Don't show the short help or the blank lines.
+  2: Don't show the short help but show the blank lines.
+
 Example:
 >
         let g:tagbar_compact = 1
