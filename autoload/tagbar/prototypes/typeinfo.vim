@@ -15,7 +15,8 @@ endfunction
 
 " s:getKind() {{{1
 function! s:getKind(kind) abort dict
-    let idx = self.kinddict[a:kind]
+    "let idx = self.kinddict[a:kind]
+    let idx = has_key(self.kinddict, a:kind) ? self.kinddict[a:kind] : -1
     return self.kinds[idx]
 endfunction
 
