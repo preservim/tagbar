@@ -416,7 +416,7 @@ For example, if you want to remap the sort toggling functionality to "r":
 >
         let g:tagbar_map_togglesort = "r"
 <
-For example, or if you want to disable this mapping, then set to '':
+Alternatively, if you want to disable this mapping, then set to '':
 >
         let g:tagbar_map_togglesort = ''
 <
