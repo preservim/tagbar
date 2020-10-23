@@ -12,6 +12,9 @@ function! tagbar#prototypes#fileinfo#new(fname, ftype, typeinfo) abort
     " Get file size
     let newobj.fsize = getfsize(a:fname)
 
+    " Get the number of lines in the file
+    let newobj.lnum = line('$')
+
     " The vim file type
     let newobj.ftype = a:ftype
 

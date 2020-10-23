@@ -1556,6 +1556,7 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
     endfor
     let pathlist = split(taginfo.path, '\V' . escape(a:typeinfo.sro, '\'))
     let taginfo.depth = len(pathlist)
+    call tagbar#debug#log('taginfo [' . taginfo.strfmt() . '] depth set to ' . taginfo.depth)
 
     " Needed for folding
     try
@@ -1765,6 +1766,7 @@ function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
                     \ pseudotag.path . a:typeinfo.sro . pseudotag.name
     endif
     let pseudotag.depth = len(split(pseudotag.path, '\V' . escape(a:typeinfo.sro, '\')))
+    call tagbar#debug#log('pseudotag [' . pseudotag.strfmt() . '] depth set to ' . pseudotag.depth)
 
     let pseudotag.parent = a:parent
 
@@ -1983,7 +1985,8 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
                     let curline                   = len(output) + offset
                     let tag.tline                 = curline
                     let a:fileinfo.tline[curline] = tag
-                    let tag.depth                 = 1
+                    "let tag.depth                 = 1
+                    "call tagbar#debug#log('tag [' . tag.strfmt() . '] depth set to ' . tag.depth)
                 endfor
             endif
 
@@ -2135,9 +2138,9 @@ function! s:HighlightTag(openfolds, ...) abort
     let force = a:0 > 0 ? a:1 : 0
 
     if a:0 > 1
-        let tag = s:GetNearbyTag(1, 0, a:2)
+        let tag = s:GetNearbyTag('highlight', 0, a:2)
     else
-        let tag = s:GetNearbyTag(1, 0)
+        let tag = s:GetNearbyTag('highlight', 0)
     endif
     if !empty(tag)
         let tagline = tag.tline
@@ -2575,7 +2578,7 @@ function! s:OpenParents(...) abort
     if a:0 == 1
         let tag = a:1
     else
-        let tag = s:GetNearbyTag(1, 0)
+        let tag = s:GetNearbyTag('parent', 0)
     endif
 
     if !empty(tag)
@@ -2992,7 +2995,7 @@ endfunction
 
 " s:GetNearbyTag() {{{2
 " Get the tag info for a file near the cursor in the current file
-function! s:GetNearbyTag(all, forcecurrent, ...) abort
+function! s:GetNearbyTag(request, forcecurrent, ...) abort
     if s:nearby_disabled
         return {}
     endif
@@ -3018,7 +3021,19 @@ function! s:GetNearbyTag(all, forcecurrent, ...) abort
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let curtag = fileinfo.fline[line]
-            if a:all || typeinfo.getKind(curtag.fields.kind).stl
+            if a:request ==# 'highlight' && typeinfo.getKind(curtag.fields.kind).stl
+                let tag = curtag
+                break
+            endif
+            if a:request ==# 'highlight' && line == curline && curtag.depth <= 0
+                let tag = curtag
+                break
+            endif
+            if a:request ==# 'statusline' && typeinfo.getKind(curtag.fields.kind).stl
+                let tag = curtag
+                break
+            endif
+            if a:request ==# 'parent'
                 let tag = curtag
                 break
             endif
@@ -3547,7 +3562,7 @@ function! tagbar#GetTagNearLine(lnum, ...) abort
         let prototype = 0
     endif
 
-    let taginfo = s:GetNearbyTag(0, 1, a:lnum)
+    let taginfo = s:GetNearbyTag('statusline', 1, a:lnum)
 
     if empty(taginfo)
         return ''
@@ -3688,7 +3703,7 @@ function! tagbar#currenttag(fmt, default, ...) abort
         return a:default
     endif
 
-    let tag = s:GetNearbyTag(0, 1)
+    let tag = s:GetNearbyTag('statusline', 1)
 
     if !empty(tag)
         if prototype
@@ -3760,7 +3775,7 @@ function! tagbar#currenttagtype(fmt, default) abort
     " the CloseWindow() function from removing the autocommands.
     let s:statusline_in_use = 1
     let kind = ''
-    let tag = s:GetNearbyTag(0, 1)
+    let tag = s:GetNearbyTag('statusline', 1)
 
     if empty(tag)
         return a:default
@@ -3779,6 +3794,37 @@ function! tagbar#currenttagtype(fmt, default) abort
         let singular = plural
     endif
     return printf(a:fmt, singular)
+endfunction
+
+" tagbar#printfileinfo() {{{2
+function! tagbar#printfileinfo() abort
+    if !tagbar#debug#enabled()
+        echo 'Tagbar debug is disabled - unable to print fileinfo to tagbar log'
+        return
+    endif
+
+    let fileinfo = tagbar#state#get_current_file(0)
+    if empty(fileinfo)
+        call tagbar#debug#log('File contains no tag entries')
+        return
+    endif
+    let typeinfo = fileinfo.typeinfo
+
+    call tagbar#debug#log('Printing fileinfo [' . fileinfo.fpath . ' lines:' . fileinfo.lnum)
+    for line in range(1, fileinfo.lnum)
+        if has_key(fileinfo.fline, line)
+            let tag = fileinfo.fline[line]
+            call tagbar#debug#log(' '
+                        \   . ' line:' . line
+                        \   . ' kind:' . tag.fields.kind
+                        \   . ' depth:' . tag.depth
+                        \   . ' [' . tag.strfmt() . ']'
+                        \ )
+        endif
+    endfor
+    call tagbar#debug#log('All tags printed')
+
+    echo 'Tagbar fileinfo printed to debug logfile'
 endfunction
 
 " Modeline {{{1
