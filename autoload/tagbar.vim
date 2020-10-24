@@ -511,8 +511,10 @@ function! s:MapKeys() abort
             let keys = def
         endif
         for key in keys
-            execute 'nnoremap' . map_options . key .
-                        \ ' :call <SID>' . func . '<CR>'
+            if !empty(key)
+                execute 'nnoremap' . map_options . key .
+                            \ ' :call <SID>' . func . '<CR>'
+            endif
         endfor
         unlet def
     endfor
@@ -2061,34 +2063,33 @@ function! s:PrintHelp() abort
         silent 0put ='\" Tagbar keybindings'
         silent  put ='\"'
         silent  put ='\" --------- General ---------'
-        silent  put ='\" ' . s:get_map_str('jump') . ': Jump to tag definition'
-        silent  put ='\" ' . s:get_map_str('preview') . ': As above, but stay in'
-        silent  put ='\"    Tagbar window'
-        silent  put ='\" ' . s:get_map_str('previewwin') . ': Show tag in preview window'
-        silent  put ='\" ' . s:get_map_str('nexttag') . ': Go to next top-level tag'
-        silent  put ='\" ' . s:get_map_str('prevtag') . ': Go to previous top-level tag'
-        silent  put ='\" ' . s:get_map_str('showproto') . ': Display tag prototype'
-        silent  put ='\" ' . s:get_map_str('hidenonpublic') . ': Hide non-public tags'
+        if !empty(s:get_map_str('jump')) | silent  put ='\" ' . s:get_map_str('jump') . ': Jump to tag definition' | endif
+        if !empty(s:get_map_str('preview')) | silent  put ='\" ' . s:get_map_str('preview') . ': As above, but stay in tagbar window' | endif
+        if !empty(s:get_map_str('previewwin')) | silent  put ='\" ' . s:get_map_str('previewwin') . ': Show tag in preview window' | endif
+        if !empty(s:get_map_str('nexttag')) | silent  put ='\" ' . s:get_map_str('nexttag') . ': Go to next top-level tag' | endif
+        if !empty(s:get_map_str('prevtag')) | silent  put ='\" ' . s:get_map_str('prevtag') . ': Go to previous top-level tag' | endif
+        if !empty(s:get_map_str('showproto')) | silent  put ='\" ' . s:get_map_str('showproto') . ': Display tag prototype' | endif
+        if !empty(s:get_map_str('hidenonpublic')) | silent  put ='\" ' . s:get_map_str('hidenonpublic') . ': Hide non-public tags' | endif
         silent  put ='\"'
         silent  put ='\" ---------- Folds ----------'
-        silent  put ='\" ' . s:get_map_str('openfold') . ': Open fold'
-        silent  put ='\" ' . s:get_map_str('closefold') . ': Close fold'
-        silent  put ='\" ' . s:get_map_str('togglefold') . ': Toggle fold'
-        silent  put ='\" ' . s:get_map_str('openallfolds') . ': Open all folds'
-        silent  put ='\" ' . s:get_map_str('closeallfolds') . ': Close all folds'
-        silent  put ='\" ' . s:get_map_str('incrementfolds') . ': Increment fold level by 1'
-        silent  put ='\" ' . s:get_map_str('decrementfolds') . ': Decrement fold level by 1'
-        silent  put ='\" ' . s:get_map_str('nextfold') . ': Go to next fold'
-        silent  put ='\" ' . s:get_map_str('prevfold') . ': Go to previous fold'
+        if !empty(s:get_map_str('openfold')) | silent  put ='\" ' . s:get_map_str('openfold') . ': Open fold' | endif
+        if !empty(s:get_map_str('closefold')) | silent  put ='\" ' . s:get_map_str('closefold') . ': Close fold' | endif
+        if !empty(s:get_map_str('togglefold')) | silent  put ='\" ' . s:get_map_str('togglefold') . ': Toggle fold' | endif
+        if !empty(s:get_map_str('openallfolds')) | silent  put ='\" ' . s:get_map_str('openallfolds') . ': Open all folds' | endif
+        if !empty(s:get_map_str('closeallfolds')) | silent  put ='\" ' . s:get_map_str('closeallfolds') . ': Close all folds' | endif
+        if !empty(s:get_map_str('incrementfolds')) | silent  put ='\" ' . s:get_map_str('incrementfolds') . ': Increment fold level by 1' | endif
+        if !empty(s:get_map_str('decrementfolds')) | silent  put ='\" ' . s:get_map_str('decrementfolds') . ': Decrement fold level by 1' | endif
+        if !empty(s:get_map_str('nextfold')) | silent  put ='\" ' . s:get_map_str('nextfold') . ': Go to next fold' | endif
+        if !empty(s:get_map_str('prevfold')) | silent  put ='\" ' . s:get_map_str('prevfold') . ': Go to previous fold' | endif
         silent  put ='\"'
         silent  put ='\" ---------- Misc -----------'
-        silent  put ='\" ' . s:get_map_str('togglesort') . ': Toggle sort'
-        silent  put ='\" ' . s:get_map_str('togglecaseinsensitive') . ': Toggle case insensitive sort option'
-        silent  put ='\" ' . s:get_map_str('toggleautoclose') . ': Toggle autoclose option'
-        silent  put ='\" ' . s:get_map_str('togglepause') . ': Toggle pause'
-        silent  put ='\" ' . s:get_map_str('zoomwin') . ': Zoom window in/out'
-        silent  put ='\" ' . s:get_map_str('close') . ': Close window'
-        silent  put ='\" ' . s:get_map_str('help') . ': Toggle help'
+        if !empty(s:get_map_str('togglesort')) | silent  put ='\" ' . s:get_map_str('togglesort') . ': Toggle sort' | endif
+        if !empty(s:get_map_str('togglecaseinsensitive')) | silent  put ='\" ' . s:get_map_str('togglecaseinsensitive') . ': Toggle case insensitive sort option' | endif
+        if !empty(s:get_map_str('toggleautoclose')) | silent  put ='\" ' . s:get_map_str('toggleautoclose') . ': Toggle autoclose option' | endif
+        if !empty(s:get_map_str('togglepause')) | silent  put ='\" ' . s:get_map_str('togglepause') . ': Toggle pause' | endif
+        if !empty(s:get_map_str('zoomwin')) | silent  put ='\" ' . s:get_map_str('zoomwin') . ': Zoom window in/out' | endif
+        if !empty(s:get_map_str('close')) | silent  put ='\" ' . s:get_map_str('close') . ': Close window' | endif
+        if !empty(s:get_map_str('help')) | silent  put ='\" ' . s:get_map_str('help') . ': Toggle help' | endif
         silent  put _
     endif
 endfunction

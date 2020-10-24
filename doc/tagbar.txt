@@ -411,10 +411,14 @@ q             Close the Tagbar window.
 
 These mappings can be redefined with the given map options. The argument can
 be either a string or a |List| of strings. In the latter case the
-functionality will be assigned to all of the keys in the list. For example, if
-you want to remap the sort toggling functionality to "r":
+functionality will be assigned to all of the keys in the list.
+For example, if you want to remap the sort toggling functionality to "r":
 >
         let g:tagbar_map_togglesort = "r"
+<
+Alternatively, if you want to disable this mapping, then set to '':
+>
+        let g:tagbar_map_togglesort = ''
 <
 See |key-notation| for how to write special keys like <Space> or the keypad
 keys.
