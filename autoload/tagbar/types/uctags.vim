@@ -207,13 +207,11 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_c.kind2scope = {
         \ 'g' : 'enum',
         \ 's' : 'struct',
-        \ 'f' : 'functions',
         \ 'u' : 'union'
     \ }
     let type_c.scope2kind = {
         \ 'enum'   : 'g',
         \ 'struct' : 's',
-        \ 'functions' : 'f',
         \ 'union'  : 'u'
     \ }
     let types.c = type_c
