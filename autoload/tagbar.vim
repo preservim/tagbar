@@ -1556,7 +1556,6 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
     endfor
     let pathlist = split(taginfo.path, '\V' . escape(a:typeinfo.sro, '\'))
     let taginfo.depth = len(pathlist)
-    call tagbar#debug#log('taginfo [' . taginfo.strfmt() . '] depth set to ' . taginfo.depth)
 
     " Needed for folding
     try
