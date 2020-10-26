@@ -1766,10 +1766,7 @@ function! s:create_pseudotag(name, parent, kind, typeinfo, fileinfo) abort
                     \ pseudotag.path . a:typeinfo.sro . pseudotag.name
     endif
     let pseudotag.depth = len(split(pseudotag.path, '\V' . escape(a:typeinfo.sro, '\')))
-    call tagbar#debug#log('pseudotag [' . pseudotag.strfmt() . '] depth set to ' . pseudotag.depth)
-
     let pseudotag.parent = a:parent
-
     let pseudotag.fileinfo = a:fileinfo
     let pseudotag.typeinfo = a:typeinfo
 
@@ -3025,7 +3022,7 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
                 let tag = curtag
                 break
             endif
-            if a:request ==# 'highlight' && line == curline && curtag.depth <= 0
+            if a:request ==# 'highlight' && line == curline
                 let tag = curtag
                 break
             endif
