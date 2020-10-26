@@ -1195,7 +1195,26 @@ kinds:      A list of the "language kinds" that should be listed in Tagbar,
                 "f:functions:1"
 <           would list all the function definitions in a file under the header
             "functions", fold them, and implicitly show them in the statusline
-            if tagbar#currenttag() is used.
+            if tagbar#currenttag() is used. The {stl} field is also used to
+            determine tag that are considered for scoped highlighting in the
+            tagbar window. By default, whenever the cursor is on a line
+            containing a known tag, then that tag will be highlighted in the
+            tagbar window. However if the cursor is not on a line containing a
+            tag, then only tags of a type that has {stl} set to 1 will be
+            highlighted. For example, in C the "macro" type has an {stl} value
+            of 0. So if there is a macro defined within the scope of a
+            function such as this:
+>
+                int function1(int arg) {
+                #define BUF_LENGTH    10
+                    char buffer[BUF_LENGTH + 1];
+                    snprintf(buffer, BUF_LENGTH, "some string");
+                }
+<
+            Then when the cursor is on the #define line, then that macro will
+            be highlighted in the tagbar window. However if the cursor was on
+            the snprintf() line, then the tag for function1() would be
+            highlighted.
 sro:        The scope resolution operator. For example, in C++ it is "::" and
             in Java it is ".". If in doubt run ctags as shown below and check
             the output.
