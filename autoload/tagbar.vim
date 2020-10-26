@@ -1981,8 +1981,6 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
                     let curline                   = len(output) + offset
                     let tag.tline                 = curline
                     let a:fileinfo.tline[curline] = tag
-                    "let tag.depth                 = 1
-                    "call tagbar#debug#log('tag [' . tag.strfmt() . '] depth set to ' . tag.depth)
                 endfor
             endif
 
