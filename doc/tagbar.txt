@@ -986,6 +986,24 @@ Example:
        let g:tagbar_wrap = 1
 <
 
+                                                            *tagbar_print_lnum*
+g:tagbar_print_lnum~
+Default: 0
+
+This option allows printing the tag line number next to the tag in the tagbar
+window. It can be set to the following values:
+    0 - The line number will not be printed
+    1 - The line number will be printed to the right of the tag >
+        Example:    function1(int i) [line 42]
+<
+    2 - The line number will be printed to the left of the tag >
+        Example:    [line 42] function1(int i)
+
+Example:
+>
+    let g:tagbar_print_lnum = 1
+<
+
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
 
