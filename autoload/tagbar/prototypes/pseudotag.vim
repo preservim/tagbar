@@ -22,9 +22,9 @@ function! s:strfmt() abort dict
     endif
     let prefix = self._getPrefix()
 
-    if g:tagbar_print_lnum == 1
+    if g:tagbar_show_tag_linenumbers == 1
         let suffix .= ' [line ' . self.fields.line . ']'
-    elseif g:tagbar_print_lnum == 2
+    elseif g:tagbar_show_tag_linenumbers == 2
         let prefix .= '[line ' . self.fields.line . '] '
     endif
 
