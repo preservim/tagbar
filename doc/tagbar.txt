@@ -998,7 +998,7 @@ window. It can be set to the following values:
 <
     2 - The line number will be printed to the left of the tag >
         Example:    [line 42] function1(int i)
-
+<
 Example:
 >
     let g:tagbar_print_lnum = 1
