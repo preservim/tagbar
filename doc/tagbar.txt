@@ -719,6 +719,18 @@ Example:
 >
     let g:tagbar_show_tag_linenumbers = 1
 <
+                                                     *g:tagbar_show_tag_count*
+g:tagbar_show_tag_count~
+Default: 0
+
+This option allows showing the tag count next to the tag kind in the tagbar
+window. This will show up like this >
+   > functions (<tag-count>)
+<
+Example:
+>
+    let g:tagbar_show_tag_count = 1
+<
                                                      *g:tagbar_hide_nonpublic*
 g:tagbar_hide_nonpublic~
 Default: 0
