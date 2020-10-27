@@ -1967,7 +1967,12 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             endif
 
             let padding = g:tagbar_show_visibility ? ' ' : ''
-            call add(output, foldmarker . padding . kind.long)
+            let tag_count = ' (' . len(curtags) . ')'
+            if g:tagbar_show_tag_count
+                call add(output, foldmarker . padding . kind.long . tag_count)
+            else
+                call add(output, foldmarker . padding . kind.long)
+            endif
 
             let curline                   = len(output) + offset
             let kindtag.tline             = curline
