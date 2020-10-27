@@ -1967,8 +1967,8 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
             endif
 
             let padding = g:tagbar_show_visibility ? ' ' : ''
-            let tag_count = ' (' . len(curtags) . ')'
             if g:tagbar_show_tag_count
+                let tag_count = ' (' . len(curtags) . ')'
                 call add(output, foldmarker . padding . kind.long . tag_count)
             else
                 call add(output, foldmarker . padding . kind.long)
