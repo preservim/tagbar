@@ -1998,7 +1998,7 @@ function! s:PrintKinds(typeinfo, fileinfo) abort
     endfor
 
     let outstr = join(output, "\n")
-    if g:tagbar_compact && s:short_help
+    if g:tagbar_compact && !g:tagbar_help_visibility && s:short_help
         silent 0put =outstr
     else
         silent  put =outstr
@@ -2058,10 +2058,10 @@ endfunction
 
 " s:PrintHelp() {{{2
 function! s:PrintHelp() abort
-    if !g:tagbar_compact && s:short_help
+    if !g:tagbar_compact && !g:tagbar_help_visibility && s:short_help
         silent 0put ='\" Press ' . s:get_map_str('help') . ' for help'
         silent  put _
-    elseif !s:short_help
+    elseif g:tagbar_help_visibility || !s:short_help
         silent 0put ='\" Tagbar keybindings'
         silent  put ='\"'
         silent  put ='\" --------- General ---------'

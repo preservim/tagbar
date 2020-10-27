@@ -631,7 +631,15 @@ Example:
 >
         let g:tagbar_compact = 1
 <
+                                                    *g:tagbar_help_visibility*
+g:tagbar_help_visibility~
+Default: 0
 
+Setting this option will cause the full help information to be displayed all
+the time in the tagbar window.
+>
+        let g:tagbar_help_visibility = 1
+<
                                                              *g:tagbar_indent*
 g:tagbar_indent~
 Default: 2
