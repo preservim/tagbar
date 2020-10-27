@@ -702,7 +702,7 @@ Example:
 >
         let g:tagbar_show_linenumbers = 2
 <
-                                                 *tagbar_show_tag_linenumbers*
+                                                 *g:tagbar_show_tag_linenumbers*
 g:tagbar_show_tag_linenumbers~
 Default: 0
 
