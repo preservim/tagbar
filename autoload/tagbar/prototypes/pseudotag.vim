@@ -20,8 +20,15 @@ function! s:strfmt() abort dict
     if has_key(typeinfo.kind2scope, self.fields.kind)
         let suffix .= ' : ' . typeinfo.kind2scope[self.fields.kind]
     endif
+    let prefix = self._getPrefix()
 
-    return self._getPrefix() . self.name . '*' . suffix
+    if g:tagbar_show_tag_linenumbers == 1
+        let suffix .= ' [line ' . self.fields.line . ']'
+    elseif g:tagbar_show_tag_linenumbers == 2
+        let prefix .= '[line ' . self.fields.line . '] '
+    endif
+
+    return prefix . self.name . '*' . suffix
 endfunction
 
 " s:add_snr() {{{1

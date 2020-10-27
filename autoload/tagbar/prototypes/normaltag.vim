@@ -34,8 +34,15 @@ function! s:strfmt() abort dict
         let scope = s:maybe_map_scope(typeinfo.kind2scope[self.fields.kind])
         let suffix .= ' : ' . scope
     endif
+    let prefix = self._getPrefix()
 
-    return self._getPrefix() . self.name . suffix
+    if g:tagbar_show_tag_linenumbers == 1
+        let suffix .= ' [line ' . self.fields.line . ']'
+    elseif g:tagbar_show_tag_linenumbers == 2
+        let prefix .= '[line ' . self.fields.line . '] '
+    endif
+
+    return prefix . self.name . suffix
 endfunction
 
 " s:str() {{{1
