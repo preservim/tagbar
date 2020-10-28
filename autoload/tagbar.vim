@@ -526,6 +526,18 @@ endfunction
 function! s:CreateAutocommands() abort
     call tagbar#debug#log('Creating autocommands')
 
+    if g:tagbar_no_autocmds
+        let s:autocommands_done = 1
+        augroup TagbarAutoCmds
+            autocmd!
+            if exists('##QuitPre')
+                autocmd QuitPre * let s:vim_quitting = 1
+            endif
+            autocmd WinEnter * nested call s:HandleOnlyWindow()
+        augroup END
+        return
+    endif
+
     augroup TagbarAutoCmds
         autocmd!
 
@@ -2133,6 +2145,14 @@ endfunction
 " User actions {{{1
 " s:HighlightTag() {{{2
 function! s:HighlightTag(openfolds, ...) abort
+
+    if g:tagbar_no_autocmds
+        " If no autocmds are enabled, then it doesn't make sense to highlight
+        " anything as the cursor can move around and any highlighting would be
+        " inaccurate
+        return
+    endif
+
     let tagline = 0
 
     let force = a:0 > 0 ? a:1 : 0

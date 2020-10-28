@@ -98,6 +98,7 @@ function! s:setup_options() abort
         \ ['indent', 2],
         \ ['left', 0],
         \ ['help_visibility', 0],
+        \ ['no_autocmds', 0],
         \ ['position', default_pos],
         \ ['previewwin_pos', previewwin_pos],
         \ ['scopestrs', {}],
