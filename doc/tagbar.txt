@@ -539,11 +539,15 @@ g:tagbar_width~
 Default: 40
 
 If |g:tagbar_position| does include a 'vertical' options, then this value is
-used to determine the width of the Tagbar window in characters.
+used to determine the width of the Tagbar window in characters. This value can
+also set using the |winwidth(0)| function call to calculate a dynamic value
+to make the tagbar width relative to a percentage of the vim window size as
+seen in the example below that will open the tagbar window to 20 percent of
+the window width with a limit of no less than 25 characters.
 
 Example:
 >
-        let g:tagbar_width = 30
+        let g:tagbar_width = max([25, winwidth(0) / 5])
 <
 
                                                           *g:tagbar_zoomwidth*
