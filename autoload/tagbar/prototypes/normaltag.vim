@@ -37,9 +37,9 @@ function! s:strfmt() abort dict
     let prefix = self._getPrefix()
 
     if g:tagbar_show_tag_linenumbers == 1
-        let suffix .= ' [line ' . self.fields.line . ']'
+        let suffix .= ' [' . self.fields.line . ']'
     elseif g:tagbar_show_tag_linenumbers == 2
-        let prefix .= '[line ' . self.fields.line . '] '
+        let prefix .= '[' . self.fields.line . '] '
     endif
 
     return prefix . self.name . suffix
