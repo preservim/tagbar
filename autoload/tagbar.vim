@@ -526,30 +526,8 @@ endfunction
 function! s:CreateAutocommands() abort
     call tagbar#debug#log('Creating autocommands')
 
-    if g:tagbar_no_autocmds
-        let s:autocommands_done = 1
-        augroup TagbarAutoCmds
-            autocmd!
-            if exists('##QuitPre')
-                autocmd QuitPre * let s:vim_quitting = 1
-            endif
-            autocmd WinEnter * nested call s:HandleOnlyWindow()
-        augroup END
-        return
-    endif
-
     augroup TagbarAutoCmds
         autocmd!
-
-        if !g:tagbar_silent
-            autocmd CursorHold __Tagbar__.* call s:ShowPrototype(1)
-        endif
-        autocmd WinEnter   __Tagbar__.* call s:SetStatusLine()
-        autocmd WinLeave   __Tagbar__.* call s:SetStatusLine()
-
-        if g:tagbar_autopreview
-            autocmd CursorMoved __Tagbar__.* nested call s:ShowInPreviewWin()
-        endif
 
         autocmd BufEnter * if expand('<amatch>') !~ '__Tagbar__.*' |
                          \     let s:last_alt_bufnr = bufnr('#') |
@@ -558,28 +536,41 @@ function! s:CreateAutocommands() abort
             autocmd QuitPre * let s:vim_quitting = 1
         endif
         autocmd WinEnter * nested call s:HandleOnlyWindow()
-        autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
-                         \     call s:ShrinkIfExpanded() |
-                         \ endif
 
-        autocmd BufWritePost *
-                    \ call s:HandleBufWrite(fnamemodify(expand('<afile>'), ':p'))
-        autocmd CursorHold,CursorHoldI * call s:do_delayed_update()
-        " BufReadPost is needed for reloading the current buffer if the file
-        " was changed by an external command; see commit 17d199f
-        autocmd BufReadPost,BufEnter,CursorHold,FileType * call
-                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
-        autocmd BufDelete,BufWipeout *
-                    \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
+        if !g:tagbar_no_autocmds
+            if !g:tagbar_silent
+                autocmd CursorHold __Tagbar__.* call s:ShowPrototype(1)
+            endif
+            autocmd WinEnter   __Tagbar__.* call s:SetStatusLine()
+            autocmd WinLeave   __Tagbar__.* call s:SetStatusLine()
 
-        " Suspend Tagbar while grep commands are running, since we don't want
-        " to process files that only get loaded temporarily to search them
-        autocmd QuickFixCmdPre  *grep* let s:tagbar_qf_active = 1
-        autocmd QuickFixCmdPost *grep* if exists('s:tagbar_qf_active') |
-                                     \     unlet s:tagbar_qf_active |
-                                     \ endif
+            if g:tagbar_autopreview
+                autocmd CursorMoved __Tagbar__.* nested call s:ShowInPreviewWin()
+            endif
 
-        autocmd VimEnter * call s:CorrectFocusOnStartup()
+            autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
+                        \     call s:ShrinkIfExpanded() |
+                        \ endif
+
+            autocmd BufWritePost *
+                        \ call s:HandleBufWrite(fnamemodify(expand('<afile>'), ':p'))
+            autocmd CursorHold,CursorHoldI * call s:do_delayed_update()
+            " BufReadPost is needed for reloading the current buffer if the file
+            " was changed by an external command; see commit 17d199f
+            autocmd BufReadPost,BufEnter,CursorHold,FileType * call
+                        \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
+            autocmd BufDelete,BufWipeout *
+                        \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
+
+            " Suspend Tagbar while grep commands are running, since we don't want
+            " to process files that only get loaded temporarily to search them
+            autocmd QuickFixCmdPre  *grep* let s:tagbar_qf_active = 1
+            autocmd QuickFixCmdPost *grep* if exists('s:tagbar_qf_active') |
+                        \     unlet s:tagbar_qf_active |
+                        \ endif
+
+            autocmd VimEnter * call s:CorrectFocusOnStartup()
+        endif
     augroup END
 
     let s:autocommands_done = 1
