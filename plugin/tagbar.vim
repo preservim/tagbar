@@ -83,6 +83,7 @@ function! s:setup_options() abort
             let default_pos = 'botright vertical'
         endif
     endif
+    let default_scrolloff = &scrolloff
     let options = [
         \ ['autoclose', 0],
         \ ['autofocus', 0],
@@ -101,7 +102,7 @@ function! s:setup_options() abort
         \ ['position', default_pos],
         \ ['previewwin_pos', previewwin_pos],
         \ ['scopestrs', {}],
-        \ ['scrolloff', 0],
+        \ ['scrolloff', default_scrolloff],
         \ ['show_balloon', 1],
         \ ['show_visibility', 1],
         \ ['show_linenumbers', 0],

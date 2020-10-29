@@ -1023,14 +1023,14 @@ Example:
 <
                                                       *g:tagbar_scrolloff*
 g:tagbar_scrolloff~
-Default: 0
+Default: |scrolloff|
 
-If set to non-zero, the tagbar window initialization will set the |scrolloff|
+If set, the tagbar window initialization will set the |scrolloff|
 value local to the tagbar window to the specified value. This is used to
 position the current tag in the tagbar window. See the help for |scrolloff|
 for more details. If set to a very high value (greater than the height of the
 tagbar window), then the current tag should always stay in the center of the
-tagbar window.
+tagbar window. This defaults to the global |scrolloff| value.
 
 Example:
 >
