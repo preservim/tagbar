@@ -2279,6 +2279,21 @@ function! s:JumpToTag(stay_in_tagbar) abort
     " Center the tag in the window and jump to the correct column if
     " available, otherwise try to find it in the line
     normal! z.
+
+    " If configured, adjust the jump_offset and center the window on that
+    " line. Then fall-through adjust the cursor() position below that
+    if g:tagbar_jump_offset != 0 && g:tagbar_jump_offset < curline
+        if g:tagbar_jump_offset > winheight(0) / 2
+            let jump_offset = winheight(0) / 2
+        elseif g:tagbar_jump_offset < -winheight(0) / 2
+            let jump_offset = -winheight(0) / 2
+        else
+            let jump_offset = g:tagbar_jump_offset
+        endif
+        execute curline+jump_offset
+        normal! z.
+    endif
+
     if taginfo.fields.column > 0
         call cursor(taginfo.fields.line, taginfo.fields.column)
     else
