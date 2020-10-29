@@ -101,7 +101,7 @@ function! s:setup_options() abort
         \ ['position', default_pos],
         \ ['previewwin_pos', previewwin_pos],
         \ ['scopestrs', {}],
-        \ ['scroll_offset', 0],
+        \ ['scrolloff', 0],
         \ ['show_balloon', 1],
         \ ['show_visibility', 1],
         \ ['show_linenumbers', 0],

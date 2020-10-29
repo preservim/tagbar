@@ -1021,8 +1021,8 @@ Example:
 >
        let g:tagbar_wrap = 1
 <
-                                                      *g:tagbar_scroll_offset*
-g:tagbar_scroll_offset~
+                                                      *g:tagbar_scrolloff*
+g:tagbar_scrolloff~
 Default: 0
 
 If set to non-zero, the tagbar window initialization will set the |scrolloff|
@@ -1034,7 +1034,7 @@ tagbar window.
 
 Example:
 >
-        let g:tagbar_scroll_offset = 10
+        let g:tagbar_scrolloff = 10
 <
 
 ------------------------------------------------------------------------------
