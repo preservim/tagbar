@@ -947,6 +947,10 @@ function! s:InitWindow(autoclose) abort
     setlocal nomodifiable
     setlocal textwidth=0
 
+    if g:tagbar_scroll_offset > 0
+        execute 'setlocal scrolloff=' . g:tagbar_scroll_offset
+    endif
+
     if g:tagbar_show_balloon == 1 && has('balloon_eval')
         setlocal balloonexpr=TagbarBalloonExpr()
         set ballooneval

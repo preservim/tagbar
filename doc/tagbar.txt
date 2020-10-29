@@ -1021,6 +1021,21 @@ Example:
 >
        let g:tagbar_wrap = 1
 <
+                                                      *g:tagbar_scroll_offset*
+g:tagbar_scroll_offset~
+Default: 0
+
+If set to non-zero, the tagbar window initialization will set the |scrolloff|
+value local to the tagbar window to the specified value. This is used to
+position the current tag in the tagbar window. See the help for |scrolloff|
+for more details. If set to a very high value (greater than the height of the
+tagbar window), then the current tag should always stay in the center of the
+tagbar window.
+
+Example:
+>
+        let g:tagbar_scroll_offset = 10
+<
 
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
