@@ -1040,6 +1040,32 @@ Example:
 >
         let g:tagbar_scrolloff = 10
 <
+                                                        *g:tagbar_jump_offset*
+g:tagbar_jump_offset~
+Default: 0
+
+This value can be used to control the jump offset positioning. When jumping to
+a tag from the tagbar window, the tag will appear |g:tagbar_jump_offset| lines
+above or below the center of the window. For example, if set to 10 and you
+jump to a tag, the tag will appear 10 lines above the center of the window.
+This can also be set to a negative value if you want the tag jump location to
+be below the center of the window.
+
+If set to greater than |winheight|() then the tag will always appear at the
+top of the screen. If set to less than -|winheight|(), then the tag will
+always appear at the bottom of the screen.
+
+Examples:
+>
+        " Set the tag jump location to appear at the top
+        let g:tagbar_jump_offset = 999
+
+        " Set the tag jump locaiton to appear at the bottom
+        let g:tagbar_jump_offset = -999
+
+        " Set the tag jump location to appear 25% from the top
+        let g:tagbar_jump_offset = winheight(0) / 4
+<
 
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
