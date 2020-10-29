@@ -1912,7 +1912,7 @@ function! s:RenderContent(...) abort
         normal! zt
         call cursor(saveline, savecol)
 
-        execute 'setlocal scrolloff=' . scrolloff_save
+        let &l:scrolloff = scrolloff_save
     else
         " Make sure as much of the Tagbar content as possible is shown in the
         " window by jumping to the top after drawing
