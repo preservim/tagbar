@@ -14,6 +14,7 @@ function! tagbar#prototypes#normaltag#new(name) abort
     let newobj.strfmt = function(s:add_snr('s:strfmt'))
     let newobj.str = function(s:add_snr('s:str'))
     let newobj.getPrototype = function(s:add_snr('s:getPrototype'))
+    let newobj.getDataType = function(s:add_snr('s:getDataType'))
 
     return newobj
 endfunction
@@ -32,9 +33,15 @@ function! s:strfmt() abort dict
         let suffix .= ' : ' . self.fields.type
     elseif has_key(get(typeinfo, 'kind2scope', {}), self.fields.kind)
         let scope = s:maybe_map_scope(typeinfo.kind2scope[self.fields.kind])
-        let suffix .= ' : ' . scope
+        if !g:tagbar_show_data_type
+            let suffix .= ' : ' . scope
+        endif
     endif
     let prefix = self._getPrefix()
+
+    if g:tagbar_show_data_type && self.getDataType() !=# ''
+        let suffix .= ' : ' . self.getDataType()
+    endif
 
     if g:tagbar_show_tag_linenumbers == 1
         let suffix .= ' [' . self.fields.line . ']'
@@ -78,6 +85,8 @@ function! s:getPrototype(short) abort dict
         endif
 
         let line = getbufline(bufnr, self.fields.line)[0]
+        " If prototype includes declaration, remove the '=' and anything after
+        let line = substitute(line, '\s*=.*', '', '')
         let list = split(line, '\zs')
 
         let start = index(list, '(')
@@ -122,6 +131,39 @@ function! s:getPrototype(short) abort dict
     endif
 
     return prototype
+endfunction
+
+" s:getDataType() {{{1
+function! s:getDataType() abort dict
+    if self.data_type !=# ''
+        let data_type = self.data_type
+    else
+        " This is a fallthrough attempt to derive the data_type from the line
+        " in the event ctags doesn't return the typeref field
+        let bufnr = self.fileinfo.bufnr
+
+        if self.fields.line == 0 || !bufloaded(bufnr)
+            " No linenumber available or buffer not loaded (probably due to
+            " 'nohidden'), try the pattern instead
+            return substitute(self.pattern, '^\\M\\^\\C\s*\(.*\)\\$$', '\1', '')
+        endif
+
+        let line = getbufline(bufnr, self.fields.line)[0]
+        let data_type = substitute(line, '\s*' . self.name . '.*', '', '')
+
+        " Strip off the path if we have one along with any spaces prior to the
+        " path
+        if self.path !=# ''
+            let data_type = substitute(data_type, '\s*' . self.path . self.typeinfo.sro, '', '')
+        endif
+
+        " Strip off leading spaces
+        let data_type = substitute(data_type, '^\s\+', '', '')
+
+        let self.data_type = data_type
+    endif
+
+    return data_type
 endfunction
 
 " s:add_snr() {{{1
