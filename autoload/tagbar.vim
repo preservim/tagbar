@@ -1529,10 +1529,12 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
     if taginfo.fields.end < taginfo.fields.line
         if a:typeinfo.getKind(taginfo.fields.kind).stl
             " the config indicates this is a scoped kind due to 'stl', but we
-            " don't have scope vars, assume scope goes to end of file... when
-            " we call the GetNearbyTag(), it will look up for the nearest one,
-            " so if we have multiples that have scope to the end of the file
-            " it will still only grab the first one above the current line
+            " don't have scope vars, assume scope goes to end of file. This
+            " can also be the case for exhuberant ctags which doesn't support
+            " the --fields=e option.
+            " When we call the GetNearbyTag(), it will look up for the nearest
+            " tag, so if we have multiples that have scope to the end of the
+            " file it will still only grab the first one above the current line
             let taginfo.fields.end = line('$')
         else
             let taginfo.fields.end = taginfo.fields.line
