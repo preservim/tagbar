@@ -2123,13 +2123,13 @@ function! s:RenderKeepView(...) abort
     call s:RenderContent()
 
     let scrolloff_save = &scrolloff
-    set scrolloff=0
+    setlocal scrolloff=0
 
     call cursor(topline, 1)
     normal! zt
     call cursor(line, curcol)
 
-    let &scrolloff = scrolloff_save
+    let &l:scrolloff = scrolloff_save
 
     redraw
 endfunction
