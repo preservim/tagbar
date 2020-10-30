@@ -1342,7 +1342,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '-',
                           \ '--format=2',
                           \ '--excmd=pattern',
-                          \ '--fields=nksSaf',
+                          \ '--fields=nksSafe',
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
@@ -1463,7 +1463,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
             let fielddict[key] = 'yes'
         endif
         if len(val) > 0
-            if key ==# 'line' || key ==# 'column'
+            if key ==# 'line' || key ==# 'column' || key ==# 'end'
                 let fielddict[key] = str2nr(val)
             else
                 let fielddict[key] = val
@@ -1523,6 +1523,20 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
     " Do some sanity checking in case ctags reports invalid line numbers
     if taginfo.fields.line < 0
         let taginfo.fields.line = 0
+    endif
+
+    " Make sure out 'end' is valid
+    if taginfo.fields.end < taginfo.fields.line
+        if a:typeinfo.getKind(taginfo.fields.kind).stl
+            " the config indicates this is a scoped kind due to 'stl', but we
+            " don't have scope vars, assume scope goes to end of file... when
+            " we call the GetNearbyTag(), it will look up for the nearest one,
+            " so if we have multiples that have scope to the end of the file
+            " it will still only grab the first one above the current line
+            let taginfo.fields.end = line('$')
+        else
+            let taginfo.fields.end = taginfo.fields.line
+        endif
     endif
 
     if !has_key(taginfo.fields, 'kind')
@@ -3056,6 +3070,7 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
                 break
             endif
             if a:request ==# 'statusline' && typeinfo.getKind(curtag.fields.kind).stl
+                        \ && curtag.fields.line <= curline && curline <= curtag.fields.end
                 let tag = curtag
                 break
             endif
