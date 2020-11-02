@@ -334,14 +334,17 @@ FUNCTIONS                                                   *tagbar-functions*
     This could be used in a custom foldtext function to show the current tag
     the fold current fold is located in.
 
-    Example:
-   >
-    set foldtext=MyFoldFunc()
-    function! MyFoldFunc()
-        let tag = tagbar#GetTagNearLine(v:foldend, '%s', 'p')
-        let lines = v:foldend - v:foldstart + 1
-        return tag . ' --- ' . lines . ' lines'
-    endfunction
+    This function can also take in a search method similar to the
+    |tagbar#currenttag()| function. Full syntax is as follows:
+        tagbar#GetTagNearLine(lnum [, {fmt}, {flags} [, {search-method}]])
+
+    Example: >
+        set foldtext=MyFoldFunc()
+        function! MyFoldFunc()
+            let tag = tagbar#GetTagNearLine(v:foldend, '%s', 'p')
+            let lines = v:foldend - v:foldstart + 1
+            return tag . ' --- ' . lines . ' lines'
+        endfunction
 <
 *tagbar#ForceUpdate()*
     Forcefully update a file even if it exceeds the |g:tagbar_file_size_limit|
@@ -1182,7 +1185,7 @@ read |tagbar-extend| (especially the "kinds" entry) on how to do that.
 
 The function has the following signature:
 
-tagbar#currenttag({format}, {default} [, {flags}])
+tagbar#currenttag({format}, {default} [, {flags} [, {search-method}]])
     {format} is a |printf()|-compatible format string where "%s" will be
     replaced by the name of the tag. {default} will be displayed instead of
     the format string if no tag can be found.
@@ -1197,10 +1200,33 @@ tagbar#currenttag({format}, {default} [, {flags}])
           useful in cases where ctags doesn't report some information, like
           the signature. Note that this can get quite long.
 
+    The optional {search-method} argument specified how to search for the
+    nearest tag. Valid options are:
+    'nearest'       This will look for the closest tag above the current line
+                    regardless of type. This will match even one line tags or
+                    other tags not defined with the {stl} flag in their kind
+                    definition. This is the quickest option, but least
+                    accurate.
+    'nearest-stl'   This will look for the closest tag above the current line
+                    which is defined with the {stl} flag in its kind
+                    definition. This is a little slower, but provides a little
+                    more context and accuracy.
+    'scoped-stl'    This will look for the closest tag above the current line
+                    taking scope into account as well as the {stl} flag. The
+                    scope is determined by the ctags 'end' field. This is the
+                    slowest of the options as when outside of a function
+                    scope, it could end up searching all the way to the top of
+                    the file for the nearest scoped tag (or possibly none if
+                    not in any scope at all).
     For example, if you put the following into your statusline: >
         %{tagbar#currenttag('[%s] ','')}
-<   then the function "myfunc" will be shown as "[myfunc()] ".
-
+<    then the function "myfunc" will be shown as "[myfunc()] ".
+    As another example, we can use the following in our status line to find
+    the current scoped tag and also print the full path when found: >
+        %{tagbar#currenttag('%s', '', 'f', 'scoped-stl')}
+<    then the function "myfunc" within class "myclass" will be shown as
+    "myclass::myfunc()". But when outside of the function, it will be shown as
+    "myclass"
 Additionally you can show the kind (type) of the current tag, using following
 function:
 
