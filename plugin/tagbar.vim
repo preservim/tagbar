@@ -104,6 +104,7 @@ function! s:setup_options() abort
         \ ['scopestrs', {}],
         \ ['scrolloff', 0],
         \ ['show_balloon', 1],
+        \ ['show_data_type', 0],
         \ ['show_visibility', 1],
         \ ['show_linenumbers', 0],
         \ ['show_tag_count', 0],

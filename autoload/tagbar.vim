@@ -1342,7 +1342,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '-',
                           \ '--format=2',
                           \ '--excmd=pattern',
-                          \ '--fields=nksSafe',
+                          \ '--fields=nksSafet',
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
@@ -1556,6 +1556,17 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
     let taginfo.typeinfo = a:typeinfo
 
     let a:fileinfo.fline[taginfo.fields.line] = taginfo
+
+    if has_key(taginfo.fields, 'typeref')
+        let typeref = taginfo.fields.typeref
+        let delimit = stridx(typeref, ':')
+        let key = strpart(typeref, 0, delimit)
+        if key ==# 'typename'
+            let taginfo.data_type = substitute(strpart(typeref, delimit + 1), '\t', '', 'g')
+        else
+            let taginfo.data_type = key
+        endif
+    endif
 
     " If this filetype doesn't have any scope information then we can stop
     " here after adding the tag to the list
@@ -2139,13 +2150,13 @@ function! s:RenderKeepView(...) abort
     call s:RenderContent()
 
     let scrolloff_save = &scrolloff
-    set scrolloff=0
+    setlocal scrolloff=0
 
     call cursor(topline, 1)
     normal! zt
     call cursor(line, curcol)
 
-    let &scrolloff = scrolloff_save
+    let &l:scrolloff = scrolloff_save
 
     redraw
 endfunction

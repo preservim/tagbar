@@ -674,7 +674,17 @@ Example:
 >
         let g:tagbar_show_balloon = 0
 <
+                                                    *g:tagbar_show_data_type*
+g:tagbar_show_data_type~
+Default: 0
 
+When set to non-zero, the tag data-type will be displayed to the right of the
+tag in the tagbar window.
+
+Example:
+>
+        let g:tagbar_show_data_type = 1
+<
                                                     *g:tagbar_show_visibility*
 g:tagbar_show_visibility~
 Default: 1
