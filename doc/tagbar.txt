@@ -1101,6 +1101,9 @@ TagbarScope
 TagbarType
     The type of a tag or scope if available.
 
+TagbarTagLineN
+    The source line number displayed to the right of each tag entry.
+
 TagbarSignature
     Function signatures.
 
