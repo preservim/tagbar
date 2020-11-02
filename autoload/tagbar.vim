@@ -2158,9 +2158,9 @@ function! s:HighlightTag(openfolds, ...) abort
     let force = a:0 > 0 ? a:1 : 0
 
     if a:0 > 1
-        let tag = s:GetNearbyTag('highlight', 0, a:2)
+        let tag = s:GetNearbyTag('nearest-stl', 0, a:2)
     else
-        let tag = s:GetNearbyTag('highlight', 0)
+        let tag = s:GetNearbyTag('nearest-stl', 0)
     endif
     if !empty(tag)
         let tagline = tag.tline
@@ -2620,7 +2620,7 @@ function! s:OpenParents(...) abort
     if a:0 == 1
         let tag = a:1
     else
-        let tag = s:GetNearbyTag('parent', 0)
+        let tag = s:GetNearbyTag('nearest', 0)
     endif
 
     if !empty(tag)
@@ -3063,20 +3063,17 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let curtag = fileinfo.fline[line]
-            if a:request ==# 'highlight' && typeinfo.getKind(curtag.fields.kind).stl
+            if a:request ==# 'nearest-stl'
+                        \ && typeinfo.getKind(curtag.fields.kind).stl || line == curline
                 let tag = curtag
                 break
-            endif
-            if a:request ==# 'highlight' && line == curline
+            elseif a:request ==# 'scoped-stl'
+                        \ && typeinfo.getKind(curtag.fields.kind).stl
+                        \ && curtag.fields.line <= curline
+                        \ && curline <= curtag.fields.end
                 let tag = curtag
                 break
-            endif
-            if a:request ==# 'statusline' && typeinfo.getKind(curtag.fields.kind).stl
-                        \ && curtag.fields.line <= curline && curline <= curtag.fields.end
-                let tag = curtag
-                break
-            endif
-            if a:request ==# 'parent'
+            elseif a:request ==# 'nearest'
                 let tag = curtag
                 break
             endif
@@ -3592,31 +3589,6 @@ endfunction
 " Autoload functions {{{1
 
 " Wrappers {{{2
-function! tagbar#GetTagNearLine(lnum, ...) abort
-    if a:0 > 0
-        let fmt = a:1
-        let longsig   = a:2 =~# 's'
-        let fullpath  = a:2 =~# 'f'
-        let prototype = a:2 =~# 'p'
-    else
-        let fmt = '%s'
-        let longsig   = 0
-        let fullpath  = 0
-        let prototype = 0
-    endif
-
-    let taginfo = s:GetNearbyTag('statusline', 1, a:lnum)
-
-    if empty(taginfo)
-        return ''
-    endif
-
-    if prototype
-        return taginfo.getPrototype(1)
-    else
-        return printf(fmt, taginfo.str(longsig, fullpath))
-    endif
-endfunction
 
 function! tagbar#ToggleWindow(...) abort
     let flags = a:0 > 0 ? a:1 : ''
@@ -3725,28 +3697,67 @@ function! tagbar#autoopen(...) abort
     call tagbar#debug#log('tagbar#autoopen finished without finding valid file')
 endfunction
 
+" tagbar#GetTagNearLine() {{{2
+function! tagbar#GetTagNearLine(lnum, ...) abort
+    if a:0 >= 2
+        let fmt = a:1
+        let longsig   = a:2 =~# 's'
+        let fullpath  = a:2 =~# 'f'
+        let prototype = a:2 =~# 'p'
+        if a:0 >= 3
+            let search_method = a:3
+        else
+            let search_method = 'nearest-stl'
+        endif
+    else
+        let fmt = '%s'
+        let longsig   = 0
+        let fullpath  = 0
+        let prototype = 0
+        let search_method = 'nearest-stl'
+    endif
+
+    let taginfo = s:GetNearbyTag(search_method, 1, a:lnum)
+
+    if empty(taginfo)
+        return ''
+    endif
+
+    if prototype
+        return taginfo.getPrototype(1)
+    else
+        return printf(fmt, taginfo.str(longsig, fullpath))
+    endif
+endfunction
+
 " tagbar#currenttag() {{{2
 function! tagbar#currenttag(fmt, default, ...) abort
     " Indicate that the statusline functionality is being used. This prevents
     " the CloseWindow() function from removing the autocommands.
     let s:statusline_in_use = 1
 
-    if a:0 > 0
+    if a:0 >= 1
         " also test for non-zero value for backwards compatibility
         let longsig   = a:1 =~# 's' || (type(a:1) == type(0) && a:1 != 0)
         let fullpath  = a:1 =~# 'f'
         let prototype = a:1 =~# 'p'
+        if a:0 >= 2
+            let search_method = a:2
+        else
+            let search_method = 'nearest-stl'
+        endif
     else
         let longsig   = 0
         let fullpath  = 0
         let prototype = 0
+        let search_method = 'nearest-stl'
     endif
 
     if !s:Init(1)
         return a:default
     endif
 
-    let tag = s:GetNearbyTag('statusline', 1)
+    let tag = s:GetNearbyTag(search_method, 1)
 
     if !empty(tag)
         if prototype
@@ -3818,7 +3829,7 @@ function! tagbar#currenttagtype(fmt, default) abort
     " the CloseWindow() function from removing the autocommands.
     let s:statusline_in_use = 1
     let kind = ''
-    let tag = s:GetNearbyTag('statusline', 1)
+    let tag = s:GetNearbyTag('scoped-stl', 1)
 
     if empty(tag)
         return a:default
