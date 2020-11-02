@@ -1525,7 +1525,7 @@ function! s:ProcessTag(name, filename, pattern, fields, is_split, typeinfo, file
         let taginfo.fields.line = 0
     endif
 
-    " Make sure out 'end' is valid
+    " Make sure our 'end' is valid
     if taginfo.fields.end < taginfo.fields.line
         if a:typeinfo.getKind(taginfo.fields.kind).stl
             " the config indicates this is a scoped kind due to 'stl', but we
