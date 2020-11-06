@@ -1079,6 +1079,15 @@ Examples:
         " Set the tag jump location to appear 25% from the top
         let g:tagbar_jump_offset = winheight(0) / 4
 <
+g:tagbar_jump_lazy_scroll~
+Default: 0
+
+If set to non-zero, a jump to a tag will only scroll the window if the
+tag is not already visible in the window.  In other words, when jumping to
+a tag that is already visible, the cursor will simply be placed on the line
+containing the tag without scrolling the window.  If the tag is not visible
+in the window then the window will be scrolled and the tag (and cursor)
+placed in the location dictated by |g:tagbar_jump_offset|.
 
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*

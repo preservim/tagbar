@@ -2286,6 +2286,12 @@ function! s:JumpToTag(stay_in_tagbar) abort
     " Mark current position so it can be jumped back to
     mark '
 
+    " Check if the tag is already visible in the window.  We must do this
+    " before jumping to the line.
+    let topline = line('w0')
+    let bottomline = line('w$')
+    let alreadyvisible = (taginfo.fields.line >= topline) && (taginfo.fields.line <= bottomline)
+
     " Jump to the line where the tag is defined. Don't use the search pattern
     " since it doesn't take the scope into account and thus can fail if tags
     " with the same name are defined in different scopes (e.g. classes)
@@ -2320,22 +2326,26 @@ function! s:JumpToTag(stay_in_tagbar) abort
         let taginfo.fileinfo.fline[curline] = taginfo
     endif
 
-    " Center the tag in the window and jump to the correct column if
-    " available, otherwise try to find it in the line
-    normal! z.
-
-    " If configured, adjust the jump_offset and center the window on that
-    " line. Then fall-through adjust the cursor() position below that
-    if g:tagbar_jump_offset != 0 && g:tagbar_jump_offset < curline
-        if g:tagbar_jump_offset > winheight(0) / 2
-            let jump_offset = winheight(0) / 2
-        elseif g:tagbar_jump_offset < -winheight(0) / 2
-            let jump_offset = -winheight(0) / 2
-        else
-            let jump_offset = g:tagbar_jump_offset
-        endif
-        execute curline+jump_offset
+    if g:tagbar_jump_lazy_scroll != 0 && alreadyvisible
+        " Do not scroll.
+    else
+        " Center the tag in the window and jump to the correct column if
+        " available, otherwise try to find it in the line
         normal! z.
+
+        " If configured, adjust the jump_offset and center the window on that
+        " line. Then fall-through adjust the cursor() position below that
+        if g:tagbar_jump_offset != 0 && g:tagbar_jump_offset < curline
+            if g:tagbar_jump_offset > winheight(0) / 2
+                let jump_offset = winheight(0) / 2
+            elseif g:tagbar_jump_offset < -winheight(0) / 2
+                let jump_offset = -winheight(0) / 2
+            else
+                let jump_offset = g:tagbar_jump_offset
+            endif
+            execute curline+jump_offset
+            normal! z.
+        endif
     endif
 
     if taginfo.fields.column > 0
