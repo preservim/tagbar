@@ -104,7 +104,7 @@ function! s:getPrototype(short) abort dict
 
         let prototype = line
         let curlinenr = self.fields.line + 1
-        while balance > 0
+        while balance > 0 && curlinenr < line('$')
             let curline = getbufline(bufnr, curlinenr)[0]
             let curlist = split(curline, '\zs')
             let balance += count(curlist, '(')
