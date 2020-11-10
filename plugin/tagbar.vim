@@ -97,6 +97,7 @@ function! s:setup_options() abort
         \ ['height', 10],
         \ ['indent', 2],
         \ ['jump_offset', 0],
+        \ ['jump_lazy_scroll', 0],
         \ ['left', 0],
         \ ['help_visibility', 0],
         \ ['position', default_pos],
