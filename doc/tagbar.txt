@@ -1079,6 +1079,7 @@ Examples:
         " Set the tag jump location to appear 25% from the top
         let g:tagbar_jump_offset = winheight(0) / 4
 <
+                                                  *g:tagbar_jump_lazy_scroll*
 g:tagbar_jump_lazy_scroll~
 Default: 0
 
