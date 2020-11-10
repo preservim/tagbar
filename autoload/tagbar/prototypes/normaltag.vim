@@ -86,7 +86,10 @@ function! s:getPrototype(short) abort dict
 
         let line = getbufline(bufnr, self.fields.line)[0]
         " If prototype includes declaration, remove the '=' and anything after
-        let line = substitute(line, '\s*=.*', '', '')
+        " FIXME: Need to remove this code. This breaks python prototypes that
+        " can include a '=' in the function paramter list.
+        "   ex: function(arg1, optional_arg2=False)
+        " let line = substitute(line, '\s*=.*', '', '')
         let list = split(line, '\zs')
 
         let start = index(list, '(')
@@ -104,7 +107,7 @@ function! s:getPrototype(short) abort dict
 
         let prototype = line
         let curlinenr = self.fields.line + 1
-        while balance > 0
+        while balance > 0 && curlinenr < line('$')
             let curline = getbufline(bufnr, curlinenr)[0]
             let curlist = split(curline, '\zs')
             let balance += count(curlist, '(')
