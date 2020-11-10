@@ -2269,6 +2269,15 @@ function! s:HighlightTag(openfolds, ...) abort
     endtry
 endfunction
 
+" Is the given line number already visible in the window without
+" any scrolling?
+function! s:IsLineVisible(line) abort
+    let topline = line('w0')
+    let bottomline = line('w$')
+    let alreadyvisible = (a:line >= topline) && (a:line <= bottomline)
+    return alreadyvisible
+endfunction
+
 " s:JumpToTag() {{{2
 function! s:JumpToTag(stay_in_tagbar) abort
     let taginfo = s:GetTagInfo(line('.'), 1)
@@ -2288,9 +2297,10 @@ function! s:JumpToTag(stay_in_tagbar) abort
 
     " Check if the tag is already visible in the window.  We must do this
     " before jumping to the line.
-    let topline = line('w0')
-    let bottomline = line('w$')
-    let alreadyvisible = (taginfo.fields.line >= topline) && (taginfo.fields.line <= bottomline)
+    let noscroll = 0
+    if g:tagbar_jump_lazy_scroll != 0
+        let noscroll = s:IsLineVisible(taginfo.fields.line)
+    endif
 
     " Jump to the line where the tag is defined. Don't use the search pattern
     " since it doesn't take the scope into account and thus can fail if tags
@@ -2326,7 +2336,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
         let taginfo.fileinfo.fline[curline] = taginfo
     endif
 
-    if g:tagbar_jump_lazy_scroll != 0 && alreadyvisible
+    if noscroll
         " Do not scroll.
     else
         " Center the tag in the window and jump to the correct column if
