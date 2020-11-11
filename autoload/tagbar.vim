@@ -3111,8 +3111,8 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let curtag = fileinfo.fline[line]
-            if a:request ==# 'nearest-stl'
-                        \ && typeinfo.getKind(curtag.fields.kind).stl || line == curline
+            if a:request ==# 'nearest-stl' && typeinfo.getKind(curtag.fields.kind).stl ||
+                        \ g:tagbar_highlight_current_tag && line == curline
                 let tag = curtag
                 break
             elseif a:request ==# 'scoped-stl'

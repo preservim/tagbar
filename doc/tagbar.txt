@@ -1090,6 +1090,33 @@ containing the tag without scrolling the window.  If the tag is not visible
 in the window then the window will be scrolled and the tag (and cursor)
 placed in the location dictated by |g:tagbar_jump_offset|.
 
+                                              *g:tagbar_highlight_current_tag*
+g:tagbar_highlight_current_tag~
+Default: 0
+
+If set to non-zero, then tag highlighting will also highlight any tags located
+on the same line as the cursor. By default only the nearest tag with the {stl}
+attribute enabled will be highlighted.
+
+For example in the following C example, if the cursor is on the
+'#define SOME_MACRO' line, without this option set, which is the default
+behavior, then the tag 'some_function()' will be highlighted.  With this option
+set to non-zero, then that macro tag for 'SOME_MACRO' will be highlighted while
+the cursor is on that line. But then will revert to highlighting the
+'some_function()' tag when the cursor is not on that line.
+>
+        int some_function(int arg) {
+            int var1;
+            int var2;
+        #define SOME_MACRO 1
+            ...
+            printf("...");
+        }
+<
+Example: >
+        let g:tagbar_highlight_current_tag = 1
+<
+
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
 
