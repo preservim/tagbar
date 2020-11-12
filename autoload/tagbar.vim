@@ -2186,9 +2186,9 @@ function! s:HighlightTag(openfolds, ...) abort
     let force = a:0 > 0 ? a:1 : 0
 
     if a:0 > 1
-        let tag = s:GetNearbyTag('nearest-stl', 0, a:2)
+        let tag = s:GetNearbyTag(g:tagbar_highlight_method, 0, a:2)
     else
-        let tag = s:GetNearbyTag('nearest-stl', 0)
+        let tag = s:GetNearbyTag(g:tagbar_highlight_method, 0)
     endif
     if !empty(tag)
         let tagline = tag.tline
@@ -3111,8 +3111,7 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
     for line in range(curline, 1, -1)
         if has_key(fileinfo.fline, line)
             let curtag = fileinfo.fline[line]
-            if a:request ==# 'nearest-stl' && typeinfo.getKind(curtag.fields.kind).stl ||
-                        \ g:tagbar_highlight_current_tag && line == curline
+            if a:request ==# 'nearest-stl' && typeinfo.getKind(curtag.fields.kind).stl
                 let tag = curtag
                 break
             elseif a:request ==# 'scoped-stl'
@@ -3121,7 +3120,7 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
                         \ && curline <= curtag.fields.end
                 let tag = curtag
                 break
-            elseif a:request ==# 'nearest'
+            elseif a:request ==# 'nearest' || line == curline
                 let tag = curtag
                 break
             endif

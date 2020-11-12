@@ -518,9 +518,11 @@ function! tagbar#types#uctags#init(supported_types) abort
     \ ]
     let type_go.sro = '.'
     let type_go.kind2scope = {
+        \ 'p' : 'packages',
         \ 's' : 'struct'
     \ }
     let type_go.scope2kind = {
+        \ 'packages' : 'p',
         \ 'struct' : 's'
     \ }
     let types.go = type_go
