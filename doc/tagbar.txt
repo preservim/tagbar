@@ -1134,7 +1134,7 @@ highlight the 'SOME_MACRO' tag.
         15 }
 <
 Example: >
-        let g:tagbar_highlight_current_tag = 'nearest'
+        let g:tagbar_highlight_method = 'nearest'
 <
 
 ------------------------------------------------------------------------------
