@@ -1090,6 +1090,53 @@ containing the tag without scrolling the window.  If the tag is not visible
 in the window then the window will be scrolled and the tag (and cursor)
 placed in the location dictated by |g:tagbar_jump_offset|.
 
+                                                  *g:tagbar_highlight_method*
+g:tagbar_highlight_method~
+Default: 'nearest-stl'
+
+This configuration controls how the tag highlighting works in the tagbar
+window. The possible values are:
+    'nearest-stl'    - Highlight the nearest tag that is defined with the
+                       {stl} option
+    'scoped-stl'     - Highlight the nearest tag defined with the {stl} flag
+                       in the kind definition, also taking into account the
+                       scope.
+    'nearest'        - Highlight the nearest tag regardless of the type or
+                       flags. This was the behavior prior to the introduction
+                       of the 'scoped-stl' idea. If you want to revert to the
+                       old method, set |g:tagbar_highlight_method| to
+                       'nearest'.
+
+Use case example: Consider the following example. If the cursor is at line
+#10, then the highlight method will behave differently in each case. If set to
+'nearest-stl', the tag for some_function() will be highlighted. If set to
+'scoped-stl', the tag for 'class A' will be highlighted. If set to 'nearest',
+then the tag for 'SOME_MACRO' will be highlighted.
+
+If the cursor is moded to line #8, then both 'nearest-stl' and 'scoped-stl'
+will highlight the tag for 'some_function()'. The 'nearest' method will
+highlight the 'SOME_MACRO' tag.
+>
+        1  class A {
+        2
+        3      int some_function(int arg) {
+        4          int var1;
+        5          int var2;
+        6  #define SOME_MACRO 1
+        7          ...
+        8          printf("...");
+        9      }
+        10
+        11     int another_function(int arg) {
+        12         int varA;
+        13         printf("###");
+        14     }
+        15 }
+<
+Example: >
+        let g:tagbar_highlight_method = 'nearest'
+<
+
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
 
