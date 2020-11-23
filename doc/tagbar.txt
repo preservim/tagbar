@@ -104,7 +104,7 @@ The following features are supported by Tagbar:
     Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL, Tcl,
     Tex, Vera, Verilog, VHDL, Vim and YACC.
   - Additional languages are supported through universal-ctags, including
-    CUDA, R, Rust, Go, and many others. See 
+    CUDA, R, Rust, Go, and many others. See
     https://github.com/universal-ctags/ctags/blob/master/docs/news.rst#new-parsers
     for the complete list.
   - Can be extended to support arbitrary new types.
@@ -191,9 +191,9 @@ closed. By default the window is opened on the right side, set the option
 It is probably a good idea to assign a key to these commands. For example, put
 this into your |vimrc|:
 >
-        nnoremap <silent> <F9> :TagbarToggle<CR>
+        nnoremap <silent> <F8> :TagbarToggle<CR>
 <
-You can then open and close Tagbar by simply pressing the <F9> key.
+You can then open and close Tagbar by simply pressing the <F8> key.
 
 You can also use |:TagbarOpenAutoClose| to open the Tagbar window, jump to it
 and have it close automatically on tag selection regardless of the
