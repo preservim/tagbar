@@ -250,6 +250,7 @@ function! tagbar#types#uctags#init(supported_types) abort
     \ }
     let types.cpp = type_cpp
     let types.cuda = type_cpp
+    let types.arduino = type_cpp
     " C# {{{1
     let type_cs = tagbar#prototypes#typeinfo#new()
     let type_cs.ctagstype = 'c#'
