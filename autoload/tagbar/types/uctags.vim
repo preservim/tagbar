@@ -1001,7 +1001,8 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'b', 'long' : 'subsubsections', 'fold' : 0, 'stl' : 1},
         \ {'short' : 'P', 'long' : 'paragraphs',     'fold' : 0, 'stl' : 0},
         \ {'short' : 'G', 'long' : 'subparagraphs',  'fold' : 0, 'stl' : 0},
-        \ {'short' : 'l', 'long' : 'labels',         'fold' : 0, 'stl' : 0}
+        \ {'short' : 'l', 'long' : 'labels',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'frames',         'fold' : 0, 'stl' : 1}
     \ ]
     let type_tex.sro        = '""'
     let type_tex.kind2scope = {
