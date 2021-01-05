@@ -101,6 +101,7 @@ function! s:setup_options() abort
         \ ['left', 0],
         \ ['help_visibility', 0],
         \ ['highlight_method', 'nearest-stl'],
+        \ ['ignore_anonymous', 0],
         \ ['position', default_pos],
         \ ['previewwin_pos', previewwin_pos],
         \ ['scopestrs', {}],
