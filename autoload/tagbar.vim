@@ -3035,7 +3035,7 @@ function! s:run_system(cmd, version) abort
         exec pyx . '__argv = {"args":vim.eval("a:cmd"), "shell":True}'
         exec pyx . '__argv["stdout"] = subprocess.PIPE'
         exec pyx . '__argv["stderr"] = subprocess.STDOUT'
-        exec pyx . '__pp = subprocess.Popen(**__argv)'
+        exec pyx . '__pp = subprocess.Popen(**__argv, universal_newlines=True)'
         exec pyx . '__return_text = __pp.stdout.read()'
         exec pyx . '__pp.stdout.close()'
         exec pyx . '__return_code = __pp.wait()'
