@@ -584,6 +584,31 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'function' : 'f',
     \ }
     let types.javascript = type_javascript
+
+    " Kotlin {{{1
+    let type_kotlin = tagbar#prototypes#typeinfo#new()
+    let type_kotlin.ctagstype = 'kotlin'
+    let type_kotlin.kinds = [
+        \ {'short': 'p', 'long': 'packages',    'fold':0, 'stl':0},
+        \ {'short': 'c', 'long': 'classes',     'fold':0, 'stl':1},
+        \ {'short': 'o', 'long': 'objects',     'fold':0, 'stl':0},
+        \ {'short': 'i', 'long': 'interfaces',  'fold':0, 'stl':0},
+        \ {'short': 'T', 'long': 'typealiases', 'fold':0, 'stl':0},
+        \ {'short': 'm', 'long': 'methods',     'fold':0, 'stl':1},
+        \ {'short': 'C', 'long': 'constants',   'fold':0, 'stl':0},
+        \ {'short': 'v', 'long': 'variables',   'fold':0, 'stl':0},
+    \ ]
+    let type_kotlin.sro         = '.'
+    " Note: the current universal ctags version does not have proper
+    " definition for the scope of the tags. So for now we can't add the
+    " kind2scope / scope2kind for anything until ctags supports the correct
+    " scope info
+    let type_kotlin.kind2scope  = {
+    \ }
+    let type_kotlin.scope2kind  = {
+    \ }
+    let types.kotlin = type_kotlin
+
     " Lisp {{{1
     let type_lisp = tagbar#prototypes#typeinfo#new()
     let type_lisp.ctagstype = 'lisp'
