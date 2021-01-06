@@ -1281,6 +1281,11 @@ function! s:ProcessFile(fname, ftype) abort
         if line =~# '^!_TAG_' || has_key(seen, line)
             continue
         endif
+        if g:tagbar_ignore_anonymous && line =~# '__anon'
+            call tagbar#debug#log('anonymous tag found - ignoring per tagbar configuration')
+            continue
+        endif
+
         let seen[line] = 1
 
         let parts = split(line, ';"')
