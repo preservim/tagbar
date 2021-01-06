@@ -351,10 +351,14 @@ FUNCTIONS                                                   *tagbar-functions*
     value. This also clears the internal flags to the file will be re-examined
     again.
 
-tagbar#printfileinfo()
+*tagbar#printfileinfo()*
     This function is used in conjunction with |TagbarDebug| and will print all
     the known tags into the tagbar debug logfile. This is useful for looking
     at the internal tag information that tagbar tracks.
+
+*tagbar#IsOpen()*
+    This function will return 1 if the tagbar window is open, else it will
+    return 0.
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*

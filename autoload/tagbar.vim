@@ -3947,5 +3947,17 @@ function! tagbar#printfileinfo() abort
     echo 'Tagbar fileinfo printed to debug logfile'
 endfunction
 
+" tagbar#IsOpen() {{{2
+function! tagbar#IsOpen() abort
+    let tagbarwinnr = bufwinnr('__Tagbar__')
+    if tagbarwinnr != -1
+        " Window open
+        return 1
+    else
+        " Window not open
+        return 0
+    endif
+endfunction
+
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
