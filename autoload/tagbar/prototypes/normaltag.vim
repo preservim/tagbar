@@ -152,7 +152,7 @@ function! s:getDataType() abort dict
         endif
 
         let line = getbufline(bufnr, self.fields.line)[0]
-        if (self.name =~ '^\s*\~')
+        if (self.name =~# '^\s*\~')
             let data_type = ''
         else
             let data_type = substitute(line, '\s*' . self.name . '.*', '', '')
