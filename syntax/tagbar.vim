@@ -38,7 +38,7 @@ syntax match TagbarHelpTitle '" \zs-\+ \w\+ -\+' contained
 syntax match TagbarNestedKind '^\s\+\[[^]]\+\]$'
 syntax match TagbarType       ' : \zs.*' contains=TagbarTagLineN
 syntax match TagbarTagLineN   '\s\+\[[0-9]\+\]\(\s\+\|$\)'
-syntax match TagbarSignature  '(.*)'
+syntax match TagbarSignature  '\(\<operator *( *) *\)\?\zs(.*)\ze'
 syntax match TagbarPseudoID   '\*\ze :'
 
 highlight default link TagbarHelp       Comment
