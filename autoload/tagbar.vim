@@ -576,6 +576,10 @@ function! s:CreateAutocommands() abort
         " was changed by an external command; see commit 17d199f
         autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                     \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
+        if g:tagbar_highlight_follow_insert
+            autocmd CursorHoldI * call
+                        \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
+        endif
         autocmd BufDelete,BufWipeout *
                     \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
 

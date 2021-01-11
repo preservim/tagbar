@@ -100,6 +100,7 @@ function! s:setup_options() abort
         \ ['jump_lazy_scroll', 0],
         \ ['left', 0],
         \ ['help_visibility', 0],
+        \ ['highlight_follow_insert', 0],
         \ ['highlight_method', 'nearest-stl'],
         \ ['ignore_anonymous', 0],
         \ ['position', default_pos],

@@ -1094,6 +1094,19 @@ containing the tag without scrolling the window.  If the tag is not visible
 in the window then the window will be scrolled and the tag (and cursor)
 placed in the location dictated by |g:tagbar_jump_offset|.
 
+                                           *g:tagbar_highlight_follow_insert*
+g:tagbar_highlight_follow_insert~
+Default: 0
+
+If set to non-zero, the highlight of the current tag in the Tagbar will follow
+the cursor in insert mode as well, after a short pause once the cursor stops
+moving. Enabling this option may introduce some lag during the input, so it is
+disabled by default.
+
+Example:
+>
+        let g:tagbar_highlight_follow_insert = 1
+<
                                                   *g:tagbar_highlight_method*
 g:tagbar_highlight_method~
 Default: 'nearest-stl'
