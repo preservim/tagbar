@@ -318,6 +318,13 @@ COMMANDS                                                     *tagbar-commands*
     the file size limit. So if the file is written and needs to be processed
     again, this command will need to be re-executed.
 
+:TagbarJump                                                       *:TagbarJump*
+    Jump to the tag under the cursor. This only works while the cursor is in
+    the tagbar window. This will leave the cursor in the tagbar window. It is
+    the same behavior as the |p| key mapping.
+
+    This command will call the |tagbar#jump()| function.
+
 ------------------------------------------------------------------------------
 FUNCTIONS                                                   *tagbar-functions*
 
@@ -359,6 +366,13 @@ FUNCTIONS                                                   *tagbar-functions*
 *tagbar#IsOpen()*
     This function will return 1 if the tagbar window is open, else it will
     return 0.
+
+*tagbar#jump()*
+    Jump to the tag under the cursor. This only works while the cursor is in
+    the tagbar window. This will leave the cursor in the tagbar window. It is
+    the same behavior as the |p| key mapping.
+
+    This is the function called when using the |:TagbarJump| command.
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*

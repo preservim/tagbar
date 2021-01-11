@@ -2415,10 +2415,6 @@ function! s:JumpToTag(stay_in_tagbar) abort
     endif
 endfunction
 
-fun! tagbar#jump()
-    call s:JumpToTag(1)
-endfun
-
 " s:ShowInPreviewWin() {{{2
 function! s:ShowInPreviewWin() abort
     let pos = getpos('.')
@@ -3972,6 +3968,15 @@ function! tagbar#IsOpen() abort
         return 0
     endif
 endfunction
+
+" tagbar#jump() {{{2
+function! tagbar#jump()
+    if &filetype !=# 'tagbar'
+        " Not in tagbar window - ignore this function call
+        return
+    endif
+    call s:JumpToTag(1)
+endfun
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
