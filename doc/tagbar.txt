@@ -104,7 +104,7 @@ The following features are supported by Tagbar:
     Perl, PHP, Python, REXX, Ruby, Scheme, Shell script, SLang, SML, SQL, Tcl,
     Tex, Vera, Verilog, VHDL, Vim and YACC.
   - Additional languages are supported through universal-ctags, including
-    CUDA, R, Rust, Go, and many others. See 
+    CUDA, R, Rust, Go, and many others. See
     https://github.com/universal-ctags/ctags/blob/master/docs/news.rst#new-parsers
     for the complete list.
   - Can be extended to support arbitrary new types.
@@ -191,9 +191,9 @@ closed. By default the window is opened on the right side, set the option
 It is probably a good idea to assign a key to these commands. For example, put
 this into your |vimrc|:
 >
-        nnoremap <silent> <F9> :TagbarToggle<CR>
+        nnoremap <silent> <F8> :TagbarToggle<CR>
 <
-You can then open and close Tagbar by simply pressing the <F9> key.
+You can then open and close Tagbar by simply pressing the <F8> key.
 
 You can also use |:TagbarOpenAutoClose| to open the Tagbar window, jump to it
 and have it close automatically on tag selection regardless of the
@@ -334,24 +334,31 @@ FUNCTIONS                                                   *tagbar-functions*
     This could be used in a custom foldtext function to show the current tag
     the fold current fold is located in.
 
-    Example:
-   >
-    set foldtext=MyFoldFunc()
-    function! MyFoldFunc()
-        let tag = tagbar#GetTagNearLine(v:foldend, '%s', 'p')
-        let lines = v:foldend - v:foldstart + 1
-        return tag . ' --- ' . lines . ' lines'
-    endfunction
+    This function can also take in a search method similar to the
+    |tagbar#currenttag()| function. Full syntax is as follows:
+        tagbar#GetTagNearLine(lnum [, {fmt}, {flags} [, {search-method}]])
+
+    Example: >
+        set foldtext=MyFoldFunc()
+        function! MyFoldFunc()
+            let tag = tagbar#GetTagNearLine(v:foldend, '%s', 'p')
+            let lines = v:foldend - v:foldstart + 1
+            return tag . ' --- ' . lines . ' lines'
+        endfunction
 <
 *tagbar#ForceUpdate()*
     Forcefully update a file even if it exceeds the |g:tagbar_file_size_limit|
     value. This also clears the internal flags to the file will be re-examined
     again.
 
-tagbar#printfileinfo()
+*tagbar#printfileinfo()*
     This function is used in conjunction with |TagbarDebug| and will print all
     the known tags into the tagbar debug logfile. This is useful for looking
     at the internal tag information that tagbar tracks.
+
+*tagbar#IsOpen()*
+    This function will return 1 if the tagbar window is open, else it will
+    return 0.
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*
@@ -539,11 +546,15 @@ g:tagbar_width~
 Default: 40
 
 If |g:tagbar_position| does include a 'vertical' options, then this value is
-used to determine the width of the Tagbar window in characters.
+used to determine the width of the Tagbar window in characters. This value can
+also be set using the |winwidth(0)| function call to calculate a dynamic value
+to make the tagbar width relative to a percentage of the vim window size as
+seen in the example below that will open the tagbar window to 20 percent of
+the window width with a limit of no less than 25 characters.
 
 Example:
 >
-        let g:tagbar_width = 30
+        let g:tagbar_width = max([25, winwidth(0) / 5])
 <
 
                                                           *g:tagbar_zoomwidth*
@@ -667,7 +678,17 @@ Example:
 >
         let g:tagbar_show_balloon = 0
 <
+                                                    *g:tagbar_show_data_type*
+g:tagbar_show_data_type~
+Default: 0
 
+When set to non-zero, the tag data-type will be displayed to the right of the
+tag in the tagbar window.
+
+Example:
+>
+        let g:tagbar_show_data_type = 1
+<
                                                     *g:tagbar_show_visibility*
 g:tagbar_show_visibility~
 Default: 1
@@ -718,10 +739,10 @@ This option allows printing the tag line number next to the tag in the tagbar
 window. It can be set to the following values:
     0 - The line number will not be printed
     1 - The line number will be printed to the right of the tag >
-        Example:    function1(int i) [line 42]
+        Example:    function1(int i) [123]
 <
     2 - The line number will be printed to the left of the tag >
-        Example:    [line 42] function1(int i)
+        Example:    [123] function1(int i)
 <
 Example:
 >
@@ -1036,6 +1057,128 @@ Example:
 >
         let g:tagbar_no_autocmds = 1
 <
+                                                      *g:tagbar_scrolloff*
+g:tagbar_scrolloff~
+Default: 0
+
+If set to non-zero, the tagbar window initialization will set the |scrolloff|
+value local to the tagbar window to the specified value. This is used to
+position the current tag in the tagbar window. See the help for |scrolloff|
+for more details. If set to a very high value (greater than the height of the
+tagbar window), then the current tag should always stay in the center of the
+tagbar window.
+
+Example:
+>
+        let g:tagbar_scrolloff = 10
+<
+                                                        *g:tagbar_jump_offset*
+g:tagbar_jump_offset~
+Default: 0
+
+This value can be used to control the jump offset positioning. When jumping to
+a tag from the tagbar window, the tag will appear |g:tagbar_jump_offset| lines
+above or below the center of the window. For example, if set to 10 and you
+jump to a tag, the tag will appear 10 lines above the center of the window.
+This can also be set to a negative value if you want the tag jump location to
+be below the center of the window.
+
+If set to greater than |winheight|() then the tag will always appear at the
+top of the screen. If set to less than -|winheight|(), then the tag will
+always appear at the bottom of the screen.
+
+Examples:
+>
+        " Set the tag jump location to appear at the top
+        let g:tagbar_jump_offset = 999
+
+        " Set the tag jump locaiton to appear at the bottom
+        let g:tagbar_jump_offset = -999
+
+        " Set the tag jump location to appear 25% from the top
+        let g:tagbar_jump_offset = winheight(0) / 4
+<
+                                                  *g:tagbar_jump_lazy_scroll*
+g:tagbar_jump_lazy_scroll~
+Default: 0
+
+If set to non-zero, a jump to a tag will only scroll the window if the
+tag is not already visible in the window.  In other words, when jumping to
+a tag that is already visible, the cursor will simply be placed on the line
+containing the tag without scrolling the window.  If the tag is not visible
+in the window then the window will be scrolled and the tag (and cursor)
+placed in the location dictated by |g:tagbar_jump_offset|.
+
+                                           *g:tagbar_highlight_follow_insert*
+g:tagbar_highlight_follow_insert~
+Default: 0
+
+If set to non-zero, the highlight of the current tag in the Tagbar will follow
+the cursor in insert mode as well, after a short pause once the cursor stops
+moving. Enabling this option may introduce some lag during the input, so it is
+disabled by default.
+
+Example:
+>
+        let g:tagbar_highlight_follow_insert = 1
+<
+                                                  *g:tagbar_highlight_method*
+g:tagbar_highlight_method~
+Default: 'nearest-stl'
+
+This configuration controls how the tag highlighting works in the tagbar
+window. The possible values are:
+    'nearest-stl'    - Highlight the nearest tag that is defined with the
+                       {stl} option
+    'scoped-stl'     - Highlight the nearest tag defined with the {stl} flag
+                       in the kind definition, also taking into account the
+                       scope.
+    'nearest'        - Highlight the nearest tag regardless of the type or
+                       flags. This was the behavior prior to the introduction
+                       of the 'scoped-stl' idea. If you want to revert to the
+                       old method, set |g:tagbar_highlight_method| to
+                       'nearest'.
+
+Use case example: Consider the following example. If the cursor is at line
+#10, then the highlight method will behave differently in each case. If set to
+'nearest-stl', the tag for some_function() will be highlighted. If set to
+'scoped-stl', the tag for 'class A' will be highlighted. If set to 'nearest',
+then the tag for 'SOME_MACRO' will be highlighted.
+
+If the cursor is moded to line #8, then both 'nearest-stl' and 'scoped-stl'
+will highlight the tag for 'some_function()'. The 'nearest' method will
+highlight the 'SOME_MACRO' tag.
+>
+        1  class A {
+        2
+        3      int some_function(int arg) {
+        4          int var1;
+        5          int var2;
+        6  #define SOME_MACRO 1
+        7          ...
+        8          printf("...");
+        9      }
+        10
+        11     int another_function(int arg) {
+        12         int varA;
+        13         printf("###");
+        14     }
+        15 }
+<
+Example: >
+        let g:tagbar_highlight_method = 'nearest'
+<
+                                                    *g:tagbar_ignore_anonymous*
+g:tagbar_ignore_anonymous~
+Default: 0
+
+If set, any '__anon' tags generated by ctags will be ignored and will not be
+displayed in the tagbar window. Note: this will also mean any child tags of
+that anonymous tag will also not be visible.
+
+Example: >
+    let g:tagbar_ignore_anonymous = 1
+<
 
 ------------------------------------------------------------------------------
 HIGHLIGHT COLOURS                                           *tagbar-highlight*
@@ -1057,6 +1200,9 @@ TagbarScope
 
 TagbarType
     The type of a tag or scope if available.
+
+TagbarTagLineN
+    The source line number displayed to the right of each tag entry.
 
 TagbarSignature
     Function signatures.
@@ -1142,7 +1288,7 @@ read |tagbar-extend| (especially the "kinds" entry) on how to do that.
 
 The function has the following signature:
 
-tagbar#currenttag({format}, {default} [, {flags}])
+tagbar#currenttag({format}, {default} [, {flags} [, {search-method}]])
     {format} is a |printf()|-compatible format string where "%s" will be
     replaced by the name of the tag. {default} will be displayed instead of
     the format string if no tag can be found.
@@ -1157,10 +1303,33 @@ tagbar#currenttag({format}, {default} [, {flags}])
           useful in cases where ctags doesn't report some information, like
           the signature. Note that this can get quite long.
 
+    The optional {search-method} argument specified how to search for the
+    nearest tag. Valid options are:
+    'nearest'       This will look for the closest tag above the current line
+                    regardless of type. This will match even one line tags or
+                    other tags not defined with the {stl} flag in their kind
+                    definition. This is the quickest option, but least
+                    accurate.
+    'nearest-stl'   This will look for the closest tag above the current line
+                    which is defined with the {stl} flag in its kind
+                    definition. This is a little slower, but provides a little
+                    more context and accuracy.
+    'scoped-stl'    This will look for the closest tag above the current line
+                    taking scope into account as well as the {stl} flag. The
+                    scope is determined by the ctags 'end' field. This is the
+                    slowest of the options as when outside of a function
+                    scope, it could end up searching all the way to the top of
+                    the file for the nearest scoped tag (or possibly none if
+                    not in any scope at all).
     For example, if you put the following into your statusline: >
         %{tagbar#currenttag('[%s] ','')}
-<   then the function "myfunc" will be shown as "[myfunc()] ".
-
+<    then the function "myfunc" will be shown as "[myfunc()] ".
+    As another example, we can use the following in our status line to find
+    the current scoped tag and also print the full path when found: >
+        %{tagbar#currenttag('%s', '', 'f', 'scoped-stl')}
+<    then the function "myfunc" within class "myclass" will be shown as
+    "myclass::myfunc()". But when outside of the function, it will be shown as
+    "myclass"
 Additionally you can show the kind (type) of the current tag, using following
 function:
 
