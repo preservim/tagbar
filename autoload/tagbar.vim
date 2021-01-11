@@ -3970,7 +3970,7 @@ function! tagbar#IsOpen() abort
 endfunction
 
 " tagbar#jump() {{{2
-function! tagbar#jump()
+function! tagbar#jump() abort
     if &filetype !=# 'tagbar'
         " Not in tagbar window - ignore this function call
         return
