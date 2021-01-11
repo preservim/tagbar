@@ -1,0 +1,34 @@
+name: Check
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        vimFlavor: ["vim", "nvim"]
+        tagsProvider: ["exuberant-ctags", "universal-tags"]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Install ${{ matrix.tagsProvider }}
+      run: |
+        case ${{ matrix.tagsProvider }} in
+          exuberant-*) sudo apt-get install ctags ;;
+          universal-*) sudo snap install universal-ctags ;;
+        esac
+    - name: Install ${{ matrix.vimFlavor }}
+      if: matrix.vimFlavor == 'nvim'
+      run: |
+        sudo add-apt-repository universe
+        sudo apt-get update
+        sudo apt-get install neovim
+    - name: Review ctags version
+      run: ctags --version
+    - name: Review ${{ matrix.vimFlavor }} version
+      run: ${{ matrix.vimFlavor }} --version
+    - name: "Try tagbar#OpenWindow()"
+      run: |
+        ${{ matrix.tagsProvider == 'nvim' && 'nvim -i NONE -u /dev/null --headless' || 'vim -i NONE' }} "+set rtp+=$(pwd)" "+call tagbar#OpenWindow() | q" "+cq" plugin/tagbar.vim
