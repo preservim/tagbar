@@ -548,16 +548,6 @@ function! s:CreateAutocommands() abort
     augroup TagbarAutoCmds
         autocmd!
 
-        if !g:tagbar_silent
-            autocmd CursorHold __Tagbar__.* call s:ShowPrototype(1)
-        endif
-        autocmd WinEnter   __Tagbar__.* call s:SetStatusLine()
-        autocmd WinLeave   __Tagbar__.* call s:SetStatusLine()
-
-        if g:tagbar_autopreview
-            autocmd CursorMoved __Tagbar__.* nested call s:ShowInPreviewWin()
-        endif
-
         autocmd BufEnter * if expand('<amatch>') !~ '__Tagbar__.*' |
                          \     let s:last_alt_bufnr = bufnr('#') |
                          \ endif
@@ -565,32 +555,45 @@ function! s:CreateAutocommands() abort
             autocmd QuitPre * let s:vim_quitting = 1
         endif
         autocmd WinEnter * nested call s:HandleOnlyWindow()
-        autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
-                         \     call s:ShrinkIfExpanded() |
-                         \ endif
 
-        autocmd BufWritePost *
-                    \ call s:HandleBufWrite(fnamemodify(expand('<afile>'), ':p'))
-        autocmd CursorHold,CursorHoldI * call s:do_delayed_update()
-        " BufReadPost is needed for reloading the current buffer if the file
-        " was changed by an external command; see commit 17d199f
-        autocmd BufReadPost,BufEnter,CursorHold,FileType * call
-                    \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
-        if g:tagbar_highlight_follow_insert
-            autocmd CursorHoldI * call
+        if !g:tagbar_no_autocmds
+            if !g:tagbar_silent
+                autocmd CursorHold __Tagbar__.* call s:ShowPrototype(1)
+            endif
+            autocmd WinEnter   __Tagbar__.* call s:SetStatusLine()
+            autocmd WinLeave   __Tagbar__.* call s:SetStatusLine()
+
+            if g:tagbar_autopreview
+                autocmd CursorMoved __Tagbar__.* nested call s:ShowInPreviewWin()
+            endif
+
+            autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
+                        \     call s:ShrinkIfExpanded() |
+                        \ endif
+
+            autocmd BufWritePost *
+                        \ call s:HandleBufWrite(fnamemodify(expand('<afile>'), ':p'))
+            autocmd CursorHold,CursorHoldI * call s:do_delayed_update()
+            " BufReadPost is needed for reloading the current buffer if the file
+            " was changed by an external command; see commit 17d199f
+            autocmd BufReadPost,BufEnter,CursorHold,FileType * call
                         \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
+            if g:tagbar_highlight_follow_insert
+                autocmd CursorHoldI * call
+                        \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
+            endif
+            autocmd BufDelete,BufWipeout *
+                        \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
+
+            " Suspend Tagbar while grep commands are running, since we don't want
+            " to process files that only get loaded temporarily to search them
+            autocmd QuickFixCmdPre  *grep* let s:tagbar_qf_active = 1
+            autocmd QuickFixCmdPost *grep* if exists('s:tagbar_qf_active') |
+                        \     unlet s:tagbar_qf_active |
+                        \ endif
+
+            autocmd VimEnter * call s:CorrectFocusOnStartup()
         endif
-        autocmd BufDelete,BufWipeout *
-                    \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
-
-        " Suspend Tagbar while grep commands are running, since we don't want
-        " to process files that only get loaded temporarily to search them
-        autocmd QuickFixCmdPre  *grep* let s:tagbar_qf_active = 1
-        autocmd QuickFixCmdPost *grep* if exists('s:tagbar_qf_active') |
-                                     \     unlet s:tagbar_qf_active |
-                                     \ endif
-
-        autocmd VimEnter * call s:CorrectFocusOnStartup()
     augroup END
 
     let s:autocommands_done = 1
@@ -2209,6 +2212,14 @@ endfunction
 " User actions {{{1
 " s:HighlightTag() {{{2
 function! s:HighlightTag(openfolds, ...) abort
+
+    if g:tagbar_no_autocmds
+        " If no autocmds are enabled, then it doesn't make sense to highlight
+        " anything as the cursor can move around and any highlighting would be
+        " inaccurate
+        return
+    endif
+
     let tagline = 0
 
     let force = a:0 > 0 ? a:1 : 0

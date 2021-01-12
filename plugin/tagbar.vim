@@ -103,6 +103,7 @@ function! s:setup_options() abort
         \ ['highlight_follow_insert', 0],
         \ ['highlight_method', 'nearest-stl'],
         \ ['ignore_anonymous', 0],
+        \ ['no_autocmds', 0],
         \ ['position', default_pos],
         \ ['previewwin_pos', previewwin_pos],
         \ ['scopestrs', {}],

@@ -1056,6 +1056,21 @@ Example:
 >
        let g:tagbar_wrap = 1
 <
+                                                        *g:tagbar_no_autocmds*
+g:tagbar_no_autocmds~
+Default: 0
+
+If set to non-zero, tagbar will not enable any autocmds. Note: This greatly
+limits what tagbar can do. When activated, it will generate the tags once and
+display the contents once. You can use |:TagbarForceUpdate| to manually update
+the tagbar window if this is activated. There will only be two autocmds
+created in the tagbar autocmd group to handle closing the tagbar window
+automatically on the QuitPre event.
+
+Example:
+>
+        let g:tagbar_no_autocmds = 1
+<
                                                       *g:tagbar_scrolloff*
 g:tagbar_scrolloff~
 Default: 0
