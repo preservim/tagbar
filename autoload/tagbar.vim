@@ -2288,7 +2288,7 @@ function! s:HighlightTag(openfolds, ...) abort
 
         " If printing the line number of the tag to the left, and the tag is
         " visible (I.E. parent isn't folded)
-        let identifier = '\zs\V' . tag.name . '\m\ze'
+        let identifier = '\zs\V' . escape(tag.name, '/\') . '\m\ze'
         if g:tagbar_show_tag_linenumbers == 2 && tagline == tag.tline
             let pattern = '/^\%' . tagline . 'l\s*' . foldpat . '[-+# ]\[[0-9]\+\] \?' . identifier . '/'
         else
