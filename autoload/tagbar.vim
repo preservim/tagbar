@@ -3969,5 +3969,14 @@ function! tagbar#IsOpen() abort
     endif
 endfunction
 
+" tagbar#jump() {{{2
+function! tagbar#jump() abort
+    if &filetype !=# 'tagbar'
+        " Not in tagbar window - ignore this function call
+        return
+    endif
+    call s:JumpToTag(1)
+endfun
+
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
