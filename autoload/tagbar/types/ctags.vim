@@ -115,6 +115,7 @@ function! tagbar#types#ctags#init(supported_types) abort
         \ 'union'  : 'u'
     \ }
     let types.c = type_c
+    let types.lpc = type_c
     " C++ {{{1
     let type_cpp = tagbar#prototypes#typeinfo#new()
     let type_cpp.ctagstype = 'c++'
