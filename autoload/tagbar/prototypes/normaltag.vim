@@ -152,11 +152,7 @@ function! s:getDataType() abort dict
         endif
 
         let line = getbufline(bufnr, self.fields.line)[0]
-        if (self.name =~# '^\s*\~')
-            let data_type = ''
-        else
-            let data_type = substitute(line, '\s*' . self.name . '.*', '', '')
-        endif
+        let data_type = substitute(line, '\s*' . escape(self.name, '~') . '.*', '', '')
 
         " Strip off the path if we have one along with any spaces prior to the
         " path
