@@ -3,7 +3,7 @@
 Author:         Jan Larres <jan@majutsushi.net>
 Licence:        Vim licence, see |license|
 Homepage:       https://preservim.github.io/tagbar
-Version:        2.7
+Version:        3.0.0
 
 ==============================================================================
 Contents                                            *tagbar* *tagbar-contents*
@@ -1873,6 +1873,14 @@ Known issues~
 
 ==============================================================================
 8. History                                                    *tagbar-history*
+
+3.0.0 (2021-01-21)
+    - Massive rollup with years of small changes, see `git log v2.7..v3.0.0`
+    - New upstream project namespace (Preservim) and maintainers
+    - Deprecate Exuberant Ctags, primarily support Universal Ctags
+    - Add lots of configuration options (see `:help tagbar`)
+    - Add utility functions to ease integration with other plugins
+    - Support many new filetypes out of the box
 
 2.7 (2017-01-09)
     - Added support for Universal Ctags, courtesy of Dmytro Konstantinov

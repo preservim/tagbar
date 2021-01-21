@@ -3,7 +3,7 @@
 " Author:      Jan Larres <jan@majutsushi.net>
 " Licence:     Vim licence
 " Website:     https://preservim.github.io/tagbar
-" Version:     2.7
+" Version:     3.0.0
 
 scriptencoding utf-8
 
