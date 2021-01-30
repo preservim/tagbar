@@ -300,6 +300,25 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'namespace'  : 'n'
     \ }
     let types.clojure = type_clojure
+    " CMake {{{1
+    let type_cmake = tagbar#prototypes#typeinfo#new()
+    let type_cmake.ctagstype = 'cmake'
+    let type_cmake.kinds     = [
+        \ {'short': 'p', 'long': 'projects' , 'fold': 0, 'stl': 1},
+        \ {'short': 'm', 'long': 'macros'   , 'fold': 0, 'stl': 1},
+        \ {'short': 'f', 'long': 'functions', 'fold': 0, 'stl': 1},
+        \ {'short': 'D', 'long': 'options'  , 'fold': 0, 'stl': 1},
+        \ {'short': 'v', 'long': 'variables', 'fold': 0, 'stl': 1},
+        \ {'short': 't', 'long': 'targets'  , 'fold': 0, 'stl': 1},
+    \ ]
+    let type_cmake.sro = '.'
+    let type_cmake.kind2scope = {
+        \ 'f' : 'function',
+    \ }
+    let type_cmake.scope2kind = {
+        \ 'function'  : 'f',
+    \ }
+    let types.cmake = type_cmake
     " Ctags config {{{1
     let type_ctags = tagbar#prototypes#typeinfo#new()
     let type_ctags.ctagstype = 'ctags'
