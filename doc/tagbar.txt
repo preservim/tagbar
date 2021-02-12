@@ -971,11 +971,11 @@ default statusline:
 >
         function! TagbarStatusFunc(current, sort, fname, flags, ...) abort
             let colour = a:current ? '%#StatusLine#' : '%#StatusLineNC#'
-            let flagstr = join(flags, '')
+            let flagstr = join(a:flags, '')
             if flagstr != ''
                 let flagstr = '[' . flagstr . '] '
             endif
-            return colour . '[' . sort . '] ' . flagstr . fname
+            return colour . '[' . a:sort . '] ' . flagstr . a:fname
         endfunction
         let g:tagbar_status_func = 'TagbarStatusFunc'
 <
