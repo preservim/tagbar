@@ -1,15 +1,15 @@
 name: Vint
-on: [push, pull_request]
+on: [push]
 jobs:
   vint:
-    strategy:
-      fail-fast: false
+    name: vint
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
-    - name: Run vint with reviewdog
-      uses: reviewdog/action-vint@v1.0.1
-      with:
-        github_token: ${{ secrets.github_token }}
-        reporter: github-pr-review
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+      - name: Setup dependencies
+        run: pip install vim-vint
+      - name: Lint Vimscript
+        run: vint .
