@@ -1,34 +1,30 @@
 name: Check
-
 on: [push, pull_request]
-
 jobs:
   check:
     strategy:
       fail-fast: false
       matrix:
         vimFlavor: ["vim", "nvim"]
-        tagsProvider: ["exuberant-ctags", "universal-tags"]
-    runs-on: ubuntu-latest
+        tagsProvider: ["exuberant-ctags", "universal-ctags"]
+    runs-on: ubuntu-20.04
     steps:
     - name: Checkout
-      uses: actions/checkout@master
-    - name: Install ${{ matrix.tagsProvider }}
-      run: |
-        case ${{ matrix.tagsProvider }} in
-          exuberant-*) sudo apt-get install ctags ;;
-          universal-*) sudo snap install universal-ctags ;;
-        esac
-    - name: Install ${{ matrix.vimFlavor }}
-      if: matrix.vimFlavor == 'nvim'
+      uses: actions/checkout@v2
+    - name: Enable Universe package repository
       run: |
         sudo add-apt-repository universe
         sudo apt-get update
-        sudo apt-get install neovim
-    - name: Review ctags version
-      run: ctags --version
-    - name: Review ${{ matrix.vimFlavor }} version
-      run: ${{ matrix.vimFlavor }} --version
+    - name: Install ${{ matrix.tagsProvider }}
+      run: |
+        sudo apt-get install ${{ matrix.tagsProvider }}
+    - name: Install ${{ matrix.vimFlavor }}
+      run: |
+        sudo apt-get install ${{ matrix.vimFlavor == 'nvim' && 'neovim' || 'vim' }}
+    - name: Review versions
+      run: |
+        ctags --version
+        ${{ matrix.vimFlavor }} --version
     - name: "Try tagbar#OpenWindow()"
       run: |
-        ${{ matrix.tagsProvider == 'nvim' && 'nvim -i NONE -u /dev/null --headless' || 'vim -i NONE' }} "+set rtp+=$(pwd)" "+call tagbar#OpenWindow() | q" "+cq" plugin/tagbar.vim
+        ${{ matrix.vimFlavor == 'nvim' && 'nvim -u /dev/null --headless' || 'vim' }} -i NONE "+set rtp+=$(pwd)" "+call tagbar#OpenWindow() | q" "+cq" plugin/tagbar.vim
