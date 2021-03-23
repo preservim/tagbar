@@ -656,13 +656,31 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_markdown = tagbar#prototypes#typeinfo#new()
     let type_markdown.ctagstype = 'markdown'
     let type_markdown.kinds = [
-        \ {'short' : 'c', 'long' : 'h1', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 's', 'long' : 'h2', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 'S', 'long' : 'h3', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 't', 'long' : 'h4', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 'T', 'long' : 'h5', 'fold' : 0, 'stl' : 0},
-        \ {'short' : 'u', 'long' : 'h6', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'chapter',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'section',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'S', 'long' : 'subsection',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'subsubsection', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'l3subsection',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'l4subsection',  'fold' : 0, 'stl' : 1},
     \ ]
+    let type_markdown.kind2scope = {
+        \ 'c' : 'chapter',
+        \ 's' : 'section',
+        \ 'S' : 'subsection',
+        \ 't' : 'subsubsection',
+        \ 'T' : 'l3subsection',
+        \ 'u' : 'l4subsection',
+    \ }
+    let type_markdown.scope2kind = {
+        \ 'chapter'       : 'c',
+        \ 'section'       : 's',
+        \ 'subsection'    : 'S',
+        \ 'subsubsection' : 't',
+        \ 'l3subsection'  : 'T',
+        \ 'l4subsection'  : 'u',
+    \ }
+    let type_markdown.sro = '""'
+    let type_markdown.sort = 0
     let types.markdown = type_markdown
     " Matlab {{{1
     let type_matlab = tagbar#prototypes#typeinfo#new()
@@ -861,6 +879,36 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'v', 'long' : 'function variables', 'fold' : 0, 'stl' : 0},
     \ ]
     let types.r = type_r
+    " ReStructuredText {{{1
+    let type_restructuredtext = tagbar#prototypes#typeinfo#new()
+    let type_restructuredtext.ctagstype = 'restructuredtext'
+    let type_restructuredtext.kinds = [
+        \ {'short' : 'c', 'long' : 'chapter',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'section',       'fold' : 0, 'stl' : 1},
+        \ {'short' : 'S', 'long' : 'subsection',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'subsubsection', 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'l3subsection',  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'l4subsection',  'fold' : 0, 'stl' : 1},
+    \ ]
+    let type_restructuredtext.kind2scope = {
+        \ 'c' : 'chapter',
+        \ 's' : 'section',
+        \ 'S' : 'subsection',
+        \ 't' : 'subsubsection',
+        \ 'T' : 'l3subsection',
+        \ 'u' : 'l4subsection',
+    \ }
+    let type_restructuredtext.scope2kind = {
+        \ 'chapter'       : 'c',
+        \ 'section'       : 's',
+        \ 'subsection'    : 'S',
+        \ 'subsubsection' : 't',
+        \ 'l3subsection'  : 'T',
+        \ 'l4subsection'  : 'u',
+    \ }
+    let type_restructuredtext.sro = '""'
+    let type_restructuredtext.sort = 0
+    let types.rst = type_restructuredtext
     " REXX {{{1
     let type_rexx = tagbar#prototypes#typeinfo#new()
     let type_rexx.ctagstype = 'rexx'
