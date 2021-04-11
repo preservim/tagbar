@@ -1053,6 +1053,25 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'p', 'long' : 'procedures', 'fold' : 0, 'stl' : 1}
     \ ]
     let types.tcl = type_tcl
+    " Terraform (HCL) {{{1
+    let type_tf = tagbar#prototypes#typeinfo#new()
+    let type_tf.ctagstype = 'tf'
+    let type_tf.kinds = [
+      \ 'r:Resource',
+      \ 'R:Resource',
+      \ 'd:Data',
+      \ 'D:Data',
+      \ 'v:Variable',
+      \ 'V:Variable',
+      \ 'p:Provider',
+      \ 'P:Provider',
+      \ 'm:Module',
+      \ 'M:Module',
+      \ 'o:Output',
+      \ 'O:Output',
+      \ 'f:TFVar',
+      \ 'F:TFVar'
+    \ ]         
     " TypeScript {{{1
     let type_ts = tagbar#prototypes#typeinfo#new()
     let type_ts.ctagstype = 'typescript'
