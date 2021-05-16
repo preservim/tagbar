@@ -561,10 +561,14 @@ function! tagbar#types#uctags#init(supported_types) abort
                 \ '--append=no',
                 \ ]
     let type_html.kinds = [
-                \ {'short' : 'a', 'long' : 'Named Anchors', 'fold' : 0, 'stl' : 1},
-                \ {'short' : 'c', 'long' : 'Classes',       'fold' : 0, 'stl' : 1},
-                \ {'short' : 'J', 'long' : 'Scripts',       'fold' : 0, 'stl' : 1},
-                \ {'short' : 'C', 'long' : 'Stylesheets',   'fold' : 0, 'stl' : 1},
+                \ {'short' : 'a', 'long' : 'named anchors', 'fold' : 0, 'stl' : 1},
+                \ {'short' : 'c', 'long' : 'classes',       'fold' : 0, 'stl' : 1},
+                \ {'short' : 'C', 'long' : 'stylesheets',   'fold' : 0, 'stl' : 1},
+                \ {'short' : 'I', 'long' : 'identifiers',   'fold' : 0, 'stl' : 1},
+                \ {'short' : 'J', 'long' : 'scripts',       'fold' : 0, 'stl' : 1},
+                \ {'short' : 'h', 'long' : 'H1 headings',   'fold' : 1, 'stl' : 1},
+                \ {'short' : 'i', 'long' : 'H2 headings',   'fold' : 1, 'stl' : 1},
+                \ {'short' : 'j', 'long' : 'H3 headings',   'fold' : 1, 'stl' : 1},
                 \ ]
     let types.html = type_html
     " Java {{{1
