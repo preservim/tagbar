@@ -548,12 +548,28 @@ function! tagbar#types#uctags#init(supported_types) abort
     " HTML {{{1
     let type_html = tagbar#prototypes#typeinfo#new()
     let type_html.ctagstype = 'html'
+    let type_html.ctagsargs = [
+                \ '--fields=+{roles}',
+                \ '--extras=+{reference}',
+                \ '--extras=+F',
+                \ '-f',
+                \ '-',
+                \ '--format=2',
+                \ '--excmd=pattern',
+                \ '--fields=nksSafet',
+                \ '--sort=no',
+                \ '--append=no',
+                \ ]
     let type_html.kinds = [
-        \ {'short' : 'a', 'long' : 'named anchors', 'fold' : 0, 'stl' : 1},
-        \ {'short' : 'h', 'long' : 'H1 headings',   'fold' : 0, 'stl' : 1},
-        \ {'short' : 'i', 'long' : 'H2 headings',   'fold' : 0, 'stl' : 1},
-        \ {'short' : 'j', 'long' : 'H3 headings',   'fold' : 0, 'stl' : 1},
-    \ ]
+                \ {'short' : 'a', 'long' : 'named anchors', 'fold' : 0, 'stl' : 1},
+                \ {'short' : 'c', 'long' : 'classes',       'fold' : 0, 'stl' : 1},
+                \ {'short' : 'C', 'long' : 'stylesheets',   'fold' : 0, 'stl' : 1},
+                \ {'short' : 'I', 'long' : 'identifiers',   'fold' : 0, 'stl' : 1},
+                \ {'short' : 'J', 'long' : 'scripts',       'fold' : 0, 'stl' : 1},
+                \ {'short' : 'h', 'long' : 'H1 headings',   'fold' : 1, 'stl' : 1},
+                \ {'short' : 'i', 'long' : 'H2 headings',   'fold' : 1, 'stl' : 1},
+                \ {'short' : 'j', 'long' : 'H3 headings',   'fold' : 1, 'stl' : 1},
+                \ ]
     let types.html = type_html
     " Java {{{1
     let type_java = tagbar#prototypes#typeinfo#new()
