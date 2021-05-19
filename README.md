@@ -87,6 +87,7 @@ against Tagbar](https://github.com/preservim/tagbar/issues?labels=ctags-bug&page
 
 ![screenshot1](https://i.imgur.com/Sf9Ls2r.png)
 ![screenshot2](https://i.imgur.com/n4bpPv3.png)
+![screenshot3](/screenshot.png)
 
 ## License
 
