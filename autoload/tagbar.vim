@@ -3463,12 +3463,12 @@ function! s:HandleBufDelete(bufname, bufnr) abort
         return
     endif
 
+    call s:known_files.rm(fnamemodify(a:bufname, ':p'))
+
     let tagbarwinnr = bufwinnr(s:TagbarBufName())
     if tagbarwinnr == -1 || a:bufname =~# '__Tagbar__.*'
         return
     endif
-
-    call s:known_files.rm(fnamemodify(a:bufname, ':p'))
 
     if !s:HasOpenFileWindows()
         if tabpagenr('$') == 1 && exists('t:tagbar_buf_name')
