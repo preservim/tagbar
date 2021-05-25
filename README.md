@@ -95,6 +95,6 @@ Tagbar is distributed under the terms of the *Vim license*, see the included [LI
 ## Contributors
 
 Tagbar was originally written by [Jan Larres](https://github.com/majutsushi).
-It is actively maintained by [Caleb Maclennan](https://github.com/alerque).
-At least [45 others have contributed](https://github.com/preservim/tagbar/graphs/contributors) features and bug fixes over the years.
+It is actively maintained by [Caleb Maclennan](https://github.com/alerque) and [David Hegland](https://github.com/raven42).
+At least [75 others have contributed](https://github.com/preservim/tagbar/graphs/contributors) features and bug fixes over the years.
 Please document [issues](https://github.com/preservim/tagbar/issues) or submit [pull requests](https://github.com/preservim/tagbar/issues) on Github.
