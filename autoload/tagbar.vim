@@ -582,8 +582,6 @@ function! s:CreateAutocommands() abort
                 autocmd CursorHoldI * call
                         \ s:AutoUpdate(fnamemodify(expand('<afile>'), ':p'), 0)
             endif
-            autocmd BufDelete,BufWipeout *
-                        \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
 
             " Suspend Tagbar while grep commands are running, since we don't want
             " to process files that only get loaded temporarily to search them
@@ -593,6 +591,15 @@ function! s:CreateAutocommands() abort
                         \ endif
 
             autocmd VimEnter * call s:CorrectFocusOnStartup()
+        endif
+    augroup END
+
+    " Separate these autocmds out from the others as we want to always perform
+    " these actions even if the tagbar window closes.
+    augroup TagbarCleanupAutoCmds
+        if !g:tagbar_no_autocmds
+            autocmd BufDelete,BufWipeout *
+                        \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
         endif
     augroup END
 
