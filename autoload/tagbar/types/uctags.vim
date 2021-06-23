@@ -797,11 +797,11 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_perl.kinds     = [
         \ {'short' : 'p', 'long' : 'packages',    'fold' : 1, 'stl' : 0},
         \ {'short' : 'c', 'long' : 'constants',   'fold' : 0, 'stl' : 0},
-        \ {'short' : 'a', 'long' : 'attributes',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 'M', 'long' : 'modules',     'fold' : 0, 'stl' : 0},
         \ {'short' : 'f', 'long' : 'formats',     'fold' : 0, 'stl' : 0},
         \ {'short' : 'l', 'long' : 'labels',      'fold' : 0, 'stl' : 1},
         \ {'short' : 's', 'long' : 'subroutines', 'fold' : 0, 'stl' : 1},
-        \ {'short' : 'm', 'long' : 'methods',     'fold' : 0, 'stl' : 1}
+        \ {'short' : 'd', 'long' : 'subroutineDeclarations',     'fold' : 0, 'stl' : 0}
     \ ]
     let types.perl = type_perl
     " Perl 6 {{{1
