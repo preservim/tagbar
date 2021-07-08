@@ -569,6 +569,8 @@ function! s:CreateAutocommands() abort
 
             autocmd WinEnter * if bufwinnr(s:TagbarBufName()) == -1 |
                         \     call s:ShrinkIfExpanded() |
+                        \ else |
+                        \     call s:InitWindow(g:tagbar_autoclose) |
                         \ endif
 
             autocmd BufWritePost *
@@ -968,6 +970,10 @@ endfunction
 function! s:InitWindow(autoclose) abort
     call tagbar#debug#log('InitWindow called with autoclose: ' . a:autoclose)
 
+    if exists('w:tagbar_win_init')
+        call tagbar#debug#log('InitWindow - already initialized this window')
+        return
+    endif
     " Buffer-local options
 
     setlocal filetype=tagbar
@@ -1051,6 +1057,7 @@ function! s:InitWindow(autoclose) abort
         let s:expand_bufnr = bufnr('%')
     endif
 
+    let w:tagbar_win_init = 1
     call tagbar#debug#log('InitWindow finished')
 endfunction
 
@@ -1109,6 +1116,7 @@ function! s:CloseWindow() abort
         call tagbar#StopAutoUpdate()
     endif
 
+    unlet w:tagbar_win_init
     call tagbar#debug#log('CloseWindow finished')
 endfunction
 
