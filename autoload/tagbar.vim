@@ -2330,10 +2330,14 @@ endfunction
 function! s:JumpToTag(stay_in_tagbar, ...) abort
     if a:0 > 0
         let taginfo = a:1
-        let autoclose = 0
     else
         let taginfo = s:GetTagInfo(line('.'), 1)
-        let autoclose = w:autoclose
+    endif
+
+    if a:0 > 1
+        let force_lazy_scroll = a:2
+    else
+        let force_lazy_scroll = 0
     endif
 
     if empty(taginfo) || !taginfo.isNormalTag()
@@ -2341,6 +2345,11 @@ function! s:JumpToTag(stay_in_tagbar, ...) abort
     endif
 
     let tagbarwinnr = winnr()
+    if exists('w:autoclose')
+        let autoclose = w:autoclose
+    else
+        let autoclose = 0
+    endif
 
     call s:GotoFileWindow(taginfo.fileinfo)
 
@@ -2350,7 +2359,7 @@ function! s:JumpToTag(stay_in_tagbar, ...) abort
     " Check if the tag is already visible in the window.  We must do this
     " before jumping to the line.
     let noscroll = 0
-    if g:tagbar_jump_lazy_scroll != 0
+    if g:tagbar_jump_lazy_scroll != 0 || force_lazy_scroll
         let noscroll = s:IsLineVisible(taginfo.fields.line)
     endif
 
@@ -3215,7 +3224,7 @@ function! s:JumpToNearbyTag(lnum, direction, request) abort
         return
     endif
 
-    call s:JumpToTag(0, tag)
+    call s:JumpToTag(1, tag, 1)
 endfunction
 
 " s:GetTagInfo() {{{2

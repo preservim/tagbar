@@ -325,6 +325,20 @@ COMMANDS                                                     *tagbar-commands*
 
     This command will call the |tagbar#jump()| function.
 
+:TagbarJumpPrev                                             *:TagbarJumpPrev*
+    Jump to the previous tag under the cursor. This works in the file window.
+    This will search for the previous {'nearest-stl'} type tag starting at the
+    line just before the current line and do a backwards search.
+
+    This command will call the |tagbar#jumpToNextTag(-1)| function.
+
+:TagbarJumpNext                                             *:TagbarJumpNext*
+    Jump to the next tag under the cursor. This works in the file window.
+    This will search for the next {'nearest-stl'} type tag starting at the
+    line just after the current line and do a forward search.
+
+    This command will call the |tagbar#jumpToNextTag(1)| function.
+
 ------------------------------------------------------------------------------
 FUNCTIONS                                                   *tagbar-functions*
 
@@ -373,6 +387,30 @@ FUNCTIONS                                                   *tagbar-functions*
     the same behavior as the |p| key mapping.
 
     This is the function called when using the |:TagbarJump| command.
+
+*tagbar#jumpToNextTag()*
+    This function will jump to the next tag or previous tag starting a search
+    from the line under the cursor. This works when in the file window instead
+    of inside the tagbar window like the |tagbar#jump()| function.
+
+    The direction of search must be provided. If the [direction] is greater
+    than 0, then it will do a forward search. If the [direction] is less
+    than 0, then it will do a backward search.
+
+    Can optionally provide a line number [lnum] to start searching from. It will
+    default to the current line if not provided.
+
+    Can also optionally provide a [search_method] which is used in the
+    |tagbar#GetTagNearLine()| function call and behaves the same way.
+
+    Full syntax:
+        tagbar#jumpToNextTag(direction [, {lnum} [, {search-method}]])
+
+    Example:
+>
+    nnoremap t] :call tagbar#jumpToNextTag(1)
+    nnoremap t[ :call tagbar#jumpToNextTag(-1)
+<
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*
