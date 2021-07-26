@@ -2328,17 +2328,8 @@ endfunction
 
 " s:JumpToTag() {{{2
 function! s:JumpToTag(stay_in_tagbar, ...) abort
-    if a:0 > 0
-        let taginfo = a:1
-    else
-        let taginfo = s:GetTagInfo(line('.'), 1)
-    endif
-
-    if a:0 > 1
-        let force_lazy_scroll = a:2
-    else
-        let force_lazy_scroll = 0
-    endif
+    let taginfo = a:0 > 0 ? a:1 : s:GetTagInfo(line('.'), 1)
+    let force_lazy_scroll = a:0 > 1 ? a:2 : 0
 
     if empty(taginfo) || !taginfo.isNormalTag()
         return
