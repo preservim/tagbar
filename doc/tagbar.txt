@@ -212,6 +212,10 @@ by moving the cursor to a tag and pressing <Enter> or double-clicking on it
 with the mouse. The source file will then move to the definition and put the
 cursor in the corresponding line. This won't work for pseudo-tags.
 
+If the current line of the tagbar window is not on a tag, for example on the
+'functions' tag-kind and <Enter> is hit, then that tag-kind will be folded or
+unfolded if possible.
+
 Sorting~
 You can sort the tags in the Tagbar window in two ways: by name or by file
 order. Sorting them by name simply displays the tags in their alphabetical
@@ -381,8 +385,8 @@ The following mappings are valid in the Tagbar window:
 
 <F1>/?        Display key mapping help.
                 Map option: tagbar_map_help
-<CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags
-              or generic headers.
+<CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags.
+              If on generic header, it will fold/unfold that header.
                 Map option: tagbar_map_jump
 p             Jump to the tag under the cursor, but stay in the Tagbar window.
                 Map option: tagbar_map_preview

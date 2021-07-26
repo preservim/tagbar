@@ -2333,6 +2333,23 @@ function! s:JumpToTag(stay_in_tagbar) abort
     let autoclose = w:autoclose
 
     if empty(taginfo) || !taginfo.isNormalTag()
+        " Cursor line not on a tag. Check if this is the start of a foldable
+        " line and if so, initiate the CloseFold() / OpenFold(). First trim
+        " any whitespace from the start of the line so we don't have to worry
+        " about multiple nested folds that are indented
+        "
+        " NOTE: This will only work with folds that are not also tags. For
+        " example in a class definition that acts as the start of a fold when
+        " there are member functions in the class, that line is also a valid
+        " tag, so hitting <CR> on that line will cause it to jump to the tag,
+        " not fold/unfold that particular fold
+        let line   = substitute(getline('.'), '^\s*\(.\{-}\)\s*$', '\1', '')
+
+        if (match(line, g:tagbar#icon_open . '[-+ ]')) == 0
+            call s:CloseFold()
+        elseif (match(line, g:tagbar#icon_closed . '[-+ ]')) == 0
+            call s:OpenFold()
+        endif
         return
     endif
 
