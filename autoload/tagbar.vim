@@ -4067,7 +4067,6 @@ function! tagbar#jumpToNearbyTag(direction, ...) abort
         endif
     endif
 
-    echom 'direction:' . a:direction . ' search-method:' . search_method
     call s:JumpToNearbyTag(lnum, a:direction, search_method)
 endfunction
 
