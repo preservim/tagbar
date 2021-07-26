@@ -4046,12 +4046,17 @@ function! tagbar#jump() abort
     call s:JumpToTag(1)
 endfun
 
-" tagbar#jumpToNextTag() {{{2
+" tagbar#jumpToNearbyTag() {{{2
 " params:
 "   direction = -1:backwards search   1:forward search
-"   [lnum] = Line number to start searching from (default current line)
 "   [search_method] = Search method to use for GetTagNearLine()
-function! tagbar#jumpToNextTag(direction, ...) abort
+"   [lnum] = Line number to start searching from (default current line)
+function! tagbar#jumpToNearbyTag(direction, ...) abort
+    if a:0 >= 1
+        let search_method = a:1
+    else
+        let search_method = 'nearest-stl'
+    endif
     if a:0 >= 2
         let lnum = a:2
     else
@@ -4061,12 +4066,8 @@ function! tagbar#jumpToNextTag(direction, ...) abort
             let lnum = line('.') - 1
         endif
     endif
-    if a:0 >= 3
-        let search_method = a:3
-    else
-        let search_method = 'nearest-stl'
-    endif
 
+    echom 'direction:' . a:direction . ' search-method:' . search_method
     call s:JumpToNearbyTag(lnum, a:direction, search_method)
 endfunction
 
