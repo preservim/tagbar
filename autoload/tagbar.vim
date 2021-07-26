@@ -3157,17 +3157,11 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
         return {}
     endif
 
+    let curline = a:0 > 0 ? a:1 : line('.')
+    let direction = a:0 > 1 ? a:2 : -1
+    let ignore_curline = a:0 > 2 ? a:3 : 0
+
     let typeinfo = fileinfo.typeinfo
-    if a:0 > 0
-        let curline = a:1
-    else
-        let curline = line('.')
-    endif
-    if a:0 > 1
-        let direction = a:2
-    else
-        let direction = -1
-    endif
     let tag = {}
 
     if direction < 0
@@ -3195,7 +3189,7 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
                         \ && curline <= curtag.fields.end
                 let tag = curtag
                 break
-            elseif a:request ==# 'nearest' || line == curline
+            elseif a:request ==# 'nearest' || (line == curline && ignore_curline == 0)
                 let tag = curtag
                 break
             endif
@@ -3212,7 +3206,7 @@ function! s:JumpToNearbyTag(lnum, direction, request) abort
         return {}
     endif
 
-    let tag = s:GetNearbyTag(a:request, 1, a:lnum, a:direction)
+    let tag = s:GetNearbyTag(a:request, 1, a:lnum, a:direction, 1)
 
     if empty(tag)
         " No next tag found
@@ -4052,20 +4046,8 @@ endfun
 "   [search_method] = Search method to use for GetTagNearLine()
 "   [lnum] = Line number to start searching from (default current line)
 function! tagbar#jumpToNearbyTag(direction, ...) abort
-    if a:0 >= 1
-        let search_method = a:1
-    else
-        let search_method = 'nearest-stl'
-    endif
-    if a:0 >= 2
-        let lnum = a:2
-    else
-        if a:direction > 0
-            let lnum = line('.') + 1
-        else
-            let lnum = line('.') - 1
-        endif
-    endif
+    let search_method = a:0 >= 1 ? a:1 : 'nearest-stl'
+    let lnum = a:0 >= 2 ? a:2 : a:direction > 0 ? line('.') + 1 : line('.') - 1
 
     call s:JumpToNearbyTag(lnum, a:direction, search_method)
 endfunction
