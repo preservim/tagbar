@@ -2327,10 +2327,14 @@ function! s:IsLineVisible(line) abort
 endfunction
 
 " s:JumpToTag() {{{2
-function! s:JumpToTag(stay_in_tagbar) abort
-    let taginfo = s:GetTagInfo(line('.'), 1)
-
-    let autoclose = w:autoclose
+function! s:JumpToTag(stay_in_tagbar, ...) abort
+    if a:0 > 0
+        let taginfo = a:1
+        let autoclose = 0
+    else
+        let taginfo = s:GetTagInfo(line('.'), 1)
+        let autoclose = w:autoclose
+    endif
 
     if empty(taginfo) || !taginfo.isNormalTag()
         return
@@ -3150,14 +3154,27 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
     else
         let curline = line('.')
     endif
+    if a:0 > 1
+        let direction = a:2
+    else
+        let direction = -1
+    endif
     let tag = {}
+
+    if direction < 0
+        let endline = 1
+        let increment = -1
+    else
+        let endline = line('$')
+        let increment = 1
+    endif
 
     " If a tag appears in a file more than once (for example namespaces in
     " C++) only one of them has a 'tline' entry and can thus be highlighted.
     " The only way to solve this would be to go over the whole tag list again,
     " making everything slower. Since this should be a rare occurence and
     " highlighting isn't /that/ important ignore it for now.
-    for line in range(curline, 1, -1)
+    for line in range(curline, endline, increment)
         if has_key(fileinfo.fline, line)
             let curtag = fileinfo.fline[line]
             if a:request ==# 'nearest-stl' && typeinfo.getKind(curtag.fields.kind).stl
@@ -3177,6 +3194,28 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
     endfor
 
     return tag
+endfunction
+
+" s:JumpToNearbyTag() {{{2
+function! s:JumpToNearbyTag(lnum, direction, request) abort
+    let fileinfo = tagbar#state#get_current_file(0)
+    if empty(fileinfo)
+        return {}
+    endif
+
+    let tag = s:GetNearbyTag(a:request, 1, a:lnum, a:direction)
+
+    if empty(tag)
+        " No next tag found
+        if a:direction > 0
+            echo '...no next tag found'
+        else
+            echo '...no previous tag found'
+        endif
+        return
+    endif
+
+    call s:JumpToTag(0, tag)
 endfunction
 
 " s:GetTagInfo() {{{2
@@ -3997,6 +4036,30 @@ function! tagbar#jump() abort
     endif
     call s:JumpToTag(1)
 endfun
+
+" tagbar#jumpToNextTag() {{{2
+" params:
+"   direction = -1:backwards search   1:forward search
+"   [lnum] = Line number to start searching from (default current line)
+"   [search_method] = Search method to use for GetTagNearLine()
+function! tagbar#jumpToNextTag(direction, ...) abort
+    if a:0 >= 2
+        let lnum = a:2
+    else
+        if a:direction > 0
+            let lnum = line('.') + 1
+        else
+            let lnum = line('.') - 1
+        endif
+    endif
+    if a:0 >= 3
+        let search_method = a:3
+    else
+        let search_method = 'nearest-stl'
+    endif
+
+    call s:JumpToNearbyTag(lnum, a:direction, search_method)
+endfunction
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1
