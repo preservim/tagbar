@@ -3191,13 +3191,16 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
 endfunction
 
 " s:JumpToNearbyTag() {{{2
-function! s:JumpToNearbyTag(lnum, direction, request) abort
+function! s:JumpToNearbyTag(direction, request, flags) abort
     let fileinfo = tagbar#state#get_current_file(0)
     if empty(fileinfo)
         return {}
     endif
 
-    let tag = s:GetNearbyTag(a:request, 1, a:lnum, a:direction, 1)
+    let lnum = a:direction > 0 ? line('.') + 1 : line('.') - 1
+    let lazy_scroll = a:flags =~# 's' ? 0 : 1
+
+    let tag = s:GetNearbyTag(a:request, 1, lnum, a:direction, 1)
 
     if empty(tag)
         " No next tag found
@@ -3209,7 +3212,7 @@ function! s:JumpToNearbyTag(lnum, direction, request) abort
         return
     endif
 
-    call s:JumpToTag(1, tag, 1)
+    call s:JumpToTag(1, tag, lazy_scroll)
 endfunction
 
 " s:GetTagInfo() {{{2
@@ -4035,12 +4038,13 @@ endfun
 " params:
 "   direction = -1:backwards search   1:forward search
 "   [search_method] = Search method to use for GetTagNearLine()
-"   [lnum] = Line number to start searching from (default current line)
+"   [flags] = list of flags (as a string) to control behavior
+"       's' - use the g:tagbar_scroll_offset setting when jumping
 function! tagbar#jumpToNearbyTag(direction, ...) abort
     let search_method = a:0 >= 1 ? a:1 : 'nearest-stl'
-    let lnum = a:0 >= 2 ? a:2 : a:direction > 0 ? line('.') + 1 : line('.') - 1
+    let flags = a:0 >= 2 ? a:2 : ''
 
-    call s:JumpToNearbyTag(lnum, a:direction, search_method)
+    call s:JumpToNearbyTag(a:direction, search_method, flags)
 endfunction
 
 " Modeline {{{1

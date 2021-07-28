@@ -401,11 +401,13 @@ FUNCTIONS                                                   *tagbar-functions*
     |tagbar#GetTagNearLine()| function call and behaves the same way. This
     will default to *'nearest-stl'* if not specified.
 
-    Can optionally provide a line number [lnum] to start searching from. It will
-    default to the current line if not provided.
+    Can optionally provide a flags field [flags] to control the nearby tag
+    jumping. The flags should be a string of characters with the following
+    meanings:
+        's' - use the |g:tagbar_scroll_off| setting when jumping
 
     Full syntax:
-        tagbar#jumpToNearbyTag(direction [, {search-method} [, {lnum}]])
+        tagbar#jumpToNearbyTag(direction [, {search-method} [, {flags}]])
 
     Examples:
 >
@@ -418,6 +420,11 @@ FUNCTIONS                                                   *tagbar-functions*
     " function calls, class definitions, variable definitions, typedefs, etc.
     nnoremap t] :call tagbar#jumpToNearbyTag(1, 'nearest')
     nnoremap t[ :call tagbar#jumpToNearbyTag(-1, 'nearest')
+
+    " These keymaps will jump to the next/prev tag regardless of type, and
+    " will also use the jump_offset configuration to position the cursor
+    nnoremap t] :call tagbar#jumpToNearbyTag(1, 'nearest', 's')
+    nnoremap t[ :call tagbar#jumpToNearbyTag(-1, 'nearest', 's')
 <
 
 ------------------------------------------------------------------------------
