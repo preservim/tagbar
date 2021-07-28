@@ -1003,6 +1003,11 @@ function! s:InitWindow(autoclose) abort
         if exists('+linebreak')
             setlocal breakindent
             setlocal breakindentopt=shift:4
+            if g:tagbar_wrap == 1
+                setlocal linebreak
+            elseif g:tagbar_wrap == 2
+                setlocal nolinebreak
+            endif
         endif
     endif
 
