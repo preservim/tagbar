@@ -329,6 +329,20 @@ COMMANDS                                                     *tagbar-commands*
 
     This command will call the |tagbar#jump()| function.
 
+:TagbarJumpPrev                                             *:TagbarJumpPrev*
+    Jump to the previous tag under the cursor. This works in the file window.
+    This will search for the previous {'nearest-stl'} type tag starting at the
+    line just before the current line and do a backwards search.
+
+    This command will call the |tagbar#jumpToNearbyTag(-1)| function.
+
+:TagbarJumpNext                                             *:TagbarJumpNext*
+    Jump to the next tag under the cursor. This works in the file window.
+    This will search for the next {'nearest-stl'} type tag starting at the
+    line just after the current line and do a forward search.
+
+    This command will call the |tagbar#jumpToNearbyTag(1)| function.
+
 ------------------------------------------------------------------------------
 FUNCTIONS                                                   *tagbar-functions*
 
@@ -377,6 +391,45 @@ FUNCTIONS                                                   *tagbar-functions*
     the same behavior as the |p| key mapping.
 
     This is the function called when using the |:TagbarJump| command.
+
+*tagbar#jumpToNearbyTag()*
+    This function will jump to the next tag or previous tag starting a search
+    from the line under the cursor. This works when in the file window instead
+    of inside the tagbar window like the |tagbar#jump()| function.
+
+    The direction of search must be provided. If the [direction] is greater
+    than 0, then it will do a forward search. If the [direction] is less
+    than 0, then it will do a backward search.
+
+    Can also optionally provide a [search_method] which is used in the
+    |tagbar#GetTagNearLine()| function call and behaves the same way. This
+    will default to *'nearest-stl'* if not specified.
+
+    Can optionally provide a flags field [flags] to control the nearby tag
+    jumping. The flags should be a string of characters with the following
+    meanings:
+        's' - use the |g:tagbar_scroll_off| setting when jumping
+
+    Full syntax:
+        tagbar#jumpToNearbyTag(direction [, {search-method} [, {flags}]])
+
+    Examples:
+>
+    " These keymaps will jump to the next/prev tag that can be scoped. Ex:
+    " function calls, class definitions, etc.
+    nnoremap t] :call tagbar#jumpToNearbyTag(1)
+    nnoremap t[ :call tagbar#jumpToNearbyTag(-1)
+
+    " These keymaps will jump to the next/prev tag regardless of type. Ex:
+    " function calls, class definitions, variable definitions, typedefs, etc.
+    nnoremap t] :call tagbar#jumpToNearbyTag(1, 'nearest')
+    nnoremap t[ :call tagbar#jumpToNearbyTag(-1, 'nearest')
+
+    " These keymaps will jump to the next/prev tag regardless of type, and
+    " will also use the jump_offset configuration to position the cursor
+    nnoremap t] :call tagbar#jumpToNearbyTag(1, 'nearest', 's')
+    nnoremap t[ :call tagbar#jumpToNearbyTag(-1, 'nearest', 's')
+<
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS                                                     *tagbar-keys*

@@ -2332,10 +2332,9 @@ function! s:IsLineVisible(line) abort
 endfunction
 
 " s:JumpToTag() {{{2
-function! s:JumpToTag(stay_in_tagbar) abort
-    let taginfo = s:GetTagInfo(line('.'), 1)
-
-    let autoclose = w:autoclose
+function! s:JumpToTag(stay_in_tagbar, ...) abort
+    let taginfo = a:0 > 0 ? a:1 : s:GetTagInfo(line('.'), 1)
+    let force_lazy_scroll = a:0 > 1 ? a:2 : 0
 
     if empty(taginfo) || !taginfo.isNormalTag()
         " Cursor line not on a tag. Check if this is the start of a foldable
@@ -2359,6 +2358,11 @@ function! s:JumpToTag(stay_in_tagbar) abort
     endif
 
     let tagbarwinnr = winnr()
+    if exists('w:autoclose')
+        let autoclose = w:autoclose
+    else
+        let autoclose = 0
+    endif
 
     call s:GotoFileWindow(taginfo.fileinfo)
 
@@ -2368,7 +2372,7 @@ function! s:JumpToTag(stay_in_tagbar) abort
     " Check if the tag is already visible in the window.  We must do this
     " before jumping to the line.
     let noscroll = 0
-    if g:tagbar_jump_lazy_scroll != 0
+    if g:tagbar_jump_lazy_scroll != 0 || force_lazy_scroll
         let noscroll = s:IsLineVisible(taginfo.fields.line)
     endif
 
@@ -3166,20 +3170,27 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
         return {}
     endif
 
+    let curline = a:0 > 0 ? a:1 : line('.')
+    let direction = a:0 > 1 ? a:2 : -1
+    let ignore_curline = a:0 > 2 ? a:3 : 0
+
     let typeinfo = fileinfo.typeinfo
-    if a:0 > 0
-        let curline = a:1
-    else
-        let curline = line('.')
-    endif
     let tag = {}
+
+    if direction < 0
+        let endline = 1
+        let increment = -1
+    else
+        let endline = line('$')
+        let increment = 1
+    endif
 
     " If a tag appears in a file more than once (for example namespaces in
     " C++) only one of them has a 'tline' entry and can thus be highlighted.
     " The only way to solve this would be to go over the whole tag list again,
     " making everything slower. Since this should be a rare occurence and
     " highlighting isn't /that/ important ignore it for now.
-    for line in range(curline, 1, -1)
+    for line in range(curline, endline, increment)
         if has_key(fileinfo.fline, line)
             let curtag = fileinfo.fline[line]
             if a:request ==# 'nearest-stl' && typeinfo.getKind(curtag.fields.kind).stl
@@ -3191,7 +3202,7 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
                         \ && curline <= curtag.fields.end
                 let tag = curtag
                 break
-            elseif a:request ==# 'nearest' || line == curline
+            elseif a:request ==# 'nearest' || (line == curline && ignore_curline == 0)
                 let tag = curtag
                 break
             endif
@@ -3199,6 +3210,31 @@ function! s:GetNearbyTag(request, forcecurrent, ...) abort
     endfor
 
     return tag
+endfunction
+
+" s:JumpToNearbyTag() {{{2
+function! s:JumpToNearbyTag(direction, request, flags) abort
+    let fileinfo = tagbar#state#get_current_file(0)
+    if empty(fileinfo)
+        return {}
+    endif
+
+    let lnum = a:direction > 0 ? line('.') + 1 : line('.') - 1
+    let lazy_scroll = a:flags =~# 's' ? 0 : 1
+
+    let tag = s:GetNearbyTag(a:request, 1, lnum, a:direction, 1)
+
+    if empty(tag)
+        " No next tag found
+        if a:direction > 0
+            echo '...no next tag found'
+        else
+            echo '...no previous tag found'
+        endif
+        return
+    endif
+
+    call s:JumpToTag(1, tag, lazy_scroll)
 endfunction
 
 " s:GetTagInfo() {{{2
@@ -4019,6 +4055,19 @@ function! tagbar#jump() abort
     endif
     call s:JumpToTag(1)
 endfun
+
+" tagbar#jumpToNearbyTag() {{{2
+" params:
+"   direction = -1:backwards search   1:forward search
+"   [search_method] = Search method to use for GetTagNearLine()
+"   [flags] = list of flags (as a string) to control behavior
+"       's' - use the g:tagbar_scroll_offset setting when jumping
+function! tagbar#jumpToNearbyTag(direction, ...) abort
+    let search_method = a:0 >= 1 ? a:1 : 'nearest-stl'
+    let flags = a:0 >= 2 ? a:2 : ''
+
+    call s:JumpToNearbyTag(a:direction, search_method, flags)
+endfunction
 
 " Modeline {{{1
 " vim: ts=8 sw=4 sts=4 et foldenable foldmethod=marker foldcolumn=1

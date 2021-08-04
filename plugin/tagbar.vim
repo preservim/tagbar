@@ -197,6 +197,8 @@ command! -nargs=0 TagbarDebugEnd      call tagbar#debug#stop_debug()
 command! -nargs=0 TagbarTogglePause   call tagbar#toggle_pause()
 command! -nargs=0 TagbarForceUpdate   call tagbar#ForceUpdate()
 command! -nargs=0 TagbarJump   call tagbar#jump()
+command! -nargs=0 TagbarJumpPrev      call tagbar#jumpToNearbyTag(-1)
+command! -nargs=0 TagbarJumpNext      call tagbar#jumpToNearbyTag(1)
 
 
 " Modeline {{{1
