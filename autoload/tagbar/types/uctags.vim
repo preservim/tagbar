@@ -319,6 +319,21 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'function'  : 'f',
     \ }
     let types.cmake = type_cmake
+    " Crystal {{{1
+    let type_crystal = tagbar#prototypes#typeinfo#new()
+    let type_crystal.ctagstype = 'crystal'
+    let type_crystal.kinds     = [
+        \ {'short' : 'm', 'long' : 'modules',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'classes',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'd', 'long' : 'defs',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'M', 'long' : 'macros',            'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'libs',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 's', 'long' : 'structs',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'a', 'long' : 'aliases',           'fold' : 0, 'stl' : 1}
+    \ ]
+    let type_crystal.sro        = '::'
+    let types.crystal = type_crystal
     " Ctags config {{{1
     let type_ctags = tagbar#prototypes#typeinfo#new()
     let type_ctags.ctagstype = 'ctags'
