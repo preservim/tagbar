@@ -437,60 +437,60 @@ KEY MAPPINGS                                                     *tagbar-keys*
 The following mappings are valid in the Tagbar window:
 
 <F1>/?        Display key mapping help.
-                Map option: tagbar_map_help
+                Map option: |tagbar_map_help|
 <CR>/<Enter>  Jump to the tag under the cursor. Doesn't work for pseudo-tags.
               If on generic header, it will fold/unfold that header.
-                Map option: tagbar_map_jump
+                Map option: |tagbar_map_jump|
 p             Jump to the tag under the cursor, but stay in the Tagbar window.
-                Map option: tagbar_map_preview
+                Map option: |tagbar_map_preview|
 P             Open the tag in a |preview-window|.
-                Map option: tagbar_map_previewwin
+                Map option: |tagbar_map_previewwin|
 <LeftMouse>   When on a fold icon, open or close the fold depending on the
               current state.
 <2-LeftMouse> Same as <CR>. See |g:tagbar_singleclick| if you want to use a
               single- instead of a double-click.
 <C-N>         Go to the next top-level tag.
-                Map option: tagbar_map_nexttag
+                Map option: |tagbar_map_nexttag|
 <C-P>         Go to the previous top-level tag.
-                Map option: tagbar_map_prevtag
+                Map option: |tagbar_map_prevtag|
 <Space>       Display the prototype of the current tag (i.e. the line defining
               it) in the command line.
-                Map option: tagbar_map_showproto
+                Map option: |tagbar_map_showproto|
 v             Hide tags that are declared non-public. Tags without any
               visibility information will still be shown.
-                Map option: tagbar_map_hidenonpublic
+                Map option: |tagbar_map_hidenonpublic|
 +/zo          Open the fold under the cursor.
-                Map option: tagbar_map_openfold
+                Map option: |tagbar_map_openfold|
 -/zc          Close the fold under the cursor or the current one if there is
               no fold under the cursor.
-                Map option: tagbar_map_closefold
+                Map option: |tagbar_map_closefold|
 o/za          Toggle the fold under the cursor or the current one if there is
               no fold under the cursor.
-                Map option: tagbar_map_togglefold
+                Map option: |tagbar_map_togglefold|
 */zR          Open all folds by setting foldlevel to 99.
-                Map option: tagbar_map_openallfolds
+                Map option: |tagbar_map_openallfolds|
 =/zM          Close all folds by setting foldlevel to 0.
-                Map option: tagbar_map_closeallfolds
+                Map option: |tagbar_map_closeallfolds|
 zr            Increase the fold level of the buffer by 1. Opens all folds one
               level.
-                Map option: tagbar_map_incrementfolds
+                Map option: |tagbar_map_incrementfolds|
 zm            Decrease the fold level of the buffer by 1. Closes all folds one
               level.
-                Map option: tagbar_map_decrementfolds
+                Map option: |tagbar_map_decrementfolds|
 zj            Go to the start of the next fold, like the standard Vim |zj|.
-                Map option: tagbar_map_nextfold
+                Map option: |tagbar_map_nextfold|
 zk            Go to the end of the previous fold, like the standard Vim |zk|.
-                Map option: tagbar_map_prevfold
+                Map option: |tagbar_map_prevfold|
 s             Toggle sort order between name and file order.
-                Map option: tagbar_map_togglesort
+                Map option: |tagbar_map_togglesort|
 c             Toggle the |g:tagbar_autoclose| option.
-                Map option: tagbar_map_toggleautoclose
+                Map option: |tagbar_map_toggleautoclose|
 t             Toggle the pause (like :TagbarTogglePause)
-                Map option: tagbar_map_togglepause
+                Map option: |tagbar_map_togglepause|
 x             Toggle zooming the window.
-                Map option: tagbar_map_zoomwin
+                Map option: |tagbar_map_zoomwin|
 q             Close the Tagbar window.
-                Map option: tagbar_map_close
+                Map option: |tagbar_map_close|
 
 These mappings can be redefined with the given map options. The argument can
 be either a string or a |List| of strings. In the latter case the
