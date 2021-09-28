@@ -597,6 +597,8 @@ function! s:CreateAutocommands() abort
     " Separate these autocmds out from the others as we want to always perform
     " these actions even if the tagbar window closes.
     augroup TagbarCleanupAutoCmds
+        autocmd!
+
         if !g:tagbar_no_autocmds
             autocmd BufDelete,BufWipeout *
                         \ nested call s:HandleBufDelete(expand('<afile>'), expand('<abuf>'))
