@@ -981,6 +981,7 @@ function! s:InitWindow(autoclose) abort
     setlocal nobuflisted
     setlocal nomodifiable
     setlocal textwidth=0
+    setlocal colorcolumn=""
 
     if g:tagbar_scrolloff > 0
         execute 'setlocal scrolloff=' . g:tagbar_scrolloff
