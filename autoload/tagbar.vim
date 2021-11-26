@@ -2992,7 +2992,7 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
 
     "Set up 0th argument of ctags_cmd
     "a:ctags_bin may have special characters that require escaping.
-    if &shell =~? 'cmd\.exe$' && a:ctags_bin !~# '\s'
+    if (&shell =~? 'cmd\.exe$' || &shell =~? 'powershell\.exe$' || &shell =~? 'powershell$' || &shell =~? 'pwsh\.exe$' || &shell =~? 'pwsh$') && a:ctags_bin !~# '\s'
         "For windows cmd.exe, escaping the 0th argument can cause
         "problems if it references a batch file and the batch file uses %~dp0.
         "So for windows cmd.exe, only escape the 0th argument iff necessary.
