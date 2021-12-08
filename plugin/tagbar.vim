@@ -183,8 +183,8 @@ augroup TagbarSession
 augroup END
 
 " Commands {{{1
-command! -nargs=0 Tagbar              call tagbar#ToggleWindow()
-command! -nargs=0 TagbarToggle        call tagbar#ToggleWindow()
+command! -nargs=? Tagbar              call tagbar#ToggleWindow(<f-args>)
+command! -nargs=? TagbarToggle        call tagbar#ToggleWindow(<f-args>)
 command! -nargs=? TagbarOpen          call tagbar#OpenWindow(<f-args>)
 command! -nargs=0 TagbarOpenAutoClose call tagbar#OpenWindow('fcj')
 command! -nargs=0 TagbarClose         call tagbar#CloseWindow()
