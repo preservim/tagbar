@@ -295,9 +295,9 @@ COMMANDS                                                     *tagbar-commands*
     Open the parent folds of the current tag in the file window as much as
     needed for the tag to be visible in the Tagbar window.
 
-:TagbarCurrentTag [{flags}]                                *:TagbarCurrentTag*
-    Echo the current tag in the command line. For {flags} see
-    |tagbar-statusline|.
+:TagbarCurrentTag [{flags} [{search-method}]]              *:TagbarCurrentTag*
+    Echo the current tag in the command line. For {flags} and {search-method}
+    see |tagbar-statusline|.
 
 :TagbarGetTypeConfig {filetype}                         *:TagbarGetTypeConfig*
     Paste the Tagbar configuration of the vim filetype {filetype} at the
