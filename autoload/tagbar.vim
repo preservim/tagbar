@@ -3901,13 +3901,13 @@ function! tagbar#currenttag(fmt, default, ...) abort
         if a:0 >= 2
             let search_method = a:2
         else
-            let search_method = 'nearest-stl'
+            let search_method = g:tagbar_highlight_method
         endif
     else
         let longsig   = 0
         let fullpath  = 0
         let prototype = 0
-        let search_method = 'nearest-stl'
+        let search_method = g:tagbar_highlight_method
     endif
 
     if !s:Init(1)
