@@ -563,6 +563,16 @@ function! s:CreateAutocommands() abort
             autocmd WinEnter   __Tagbar__.* call s:SetStatusLine()
             autocmd WinLeave   __Tagbar__.* call s:SetStatusLine()
 
+            if g:tagbar_show_balloon == 1 && has('balloon_eval')
+                autocmd WinEnter __Tagbar__.*
+                        \ let s:beval = &beval |
+                        \ set ballooneval
+                autocmd WinLeave __Tagbar__.*
+                        \ if exists("s:beval") |
+                        \   let &beval = s:beval |
+                        \ endif
+            endif
+
             if g:tagbar_autopreview
                 autocmd CursorMoved __Tagbar__.* nested call s:ShowInPreviewWin()
             endif
@@ -989,7 +999,6 @@ function! s:InitWindow(autoclose) abort
 
     if g:tagbar_show_balloon == 1 && has('balloon_eval')
         setlocal balloonexpr=TagbarBalloonExpr()
-        set ballooneval
     endif
 
 
