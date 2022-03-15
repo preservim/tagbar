@@ -2500,9 +2500,12 @@ function! s:ShowInPreviewWin() abort
     " Open the preview window if it is not already open. This has to be done
     " explicitly before the :psearch below to better control its positioning.
     if !pwin_open
-        silent execute
+        let l:confirm = &confirm
+        let &confirm = 0
+        silent! execute
             \ g:tagbar_previewwin_pos . ' pedit ' .
             \ fnameescape(taginfo.fileinfo.fpath)
+        let &confirm = l:confirm
         if g:tagbar_position !~# 'vertical'
             silent execute 'vertical resize ' . g:tagbar_width
         endif
