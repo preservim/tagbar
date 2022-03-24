@@ -1427,6 +1427,12 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
         if has_key(a:typeinfo, 'deffile') && filereadable(expand(a:typeinfo.deffile))
             let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
         endif
+
+        if has_key(a:typeinfo, 'regex')
+            for regex in a:typeinfo.regex
+                let ctags_args += ['--regex-' . ctags_type . '=' . regex]
+            endfor
+        endif
     endif
 
     if has_key(a:typeinfo, 'ctagsbin')
