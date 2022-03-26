@@ -1664,7 +1664,7 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
                        \ 's:structs:0:1',
                        \ 'm:members:1:0',
                        \ 'v:variables:0:0',
-                       \ 'f:functions:0:1:
+                       \ 'f:functions:0:1',
                        \ 'T:todo:0:0',
                    \ ],
                    \ 'sro'          : '::',
