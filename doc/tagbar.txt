@@ -1637,6 +1637,47 @@ ctagsargs: The arguments to be passed to the filetype-specific ctags program
 
            If special escaping is required for different OS shell types or if
            in doubt, then it is recommended to define ctagsargs with a List.
+ regex:    A list of regular expression arguments that will be provided to
+           ctags via a '--regex-<lang>=<regex>' option. Multiple regular
+           expressions can be provded to allow adding support for multiple new
+           tag regular expressions. The regex statement should be formatted as
+           documented in the ctags documentation.
+            https://docs.ctags.io/en/latest/optlib.html#regex-option-argument-flags
+           When adding a regex statement, the corresponding tag kind label
+           will need to be defined in the |kinds| definition in the structure
+           as well. An example for a 'TODO' label for the c language would be
+           as follows (note: use of the '{_anonymous=..}' option is not
+           strictly necessary, but does give a unique tag name for each match):
+>
+               let g:tagbar_type_c = {
+                   \ 'ctagstype'    : 'c',
+                   \ 'regex'        : [
+                       \ '/(TODO).*//T,ToDo,ToDo Messages/{_anonymous=todo_}',
+                   \ ],
+                   \ 'kinds'        : [
+                       \ 'h:header files:1:0',
+                       \ 'd:macros:1:0',
+                       \ 'p:prototypes:1:0',
+                       \ 'g:enums:0:1',
+                       \ 'e:enumerators:0:0',
+                       \ 't:typedefs:0:0',
+                       \ 's:structs:0:1',
+                       \ 'm:members:1:0',
+                       \ 'v:variables:0:0',
+                       \ 'f:functions:0:1',
+                       \ 'T:todo:0:0',
+                   \ ],
+                   \ 'sro'          : '::',
+                   \ 'kind2scope'	: {
+                        \ 'g' : 'enum',
+                        \ 's' : 'struct',
+                   \ },
+                   \ 'scope2kind'	: {
+                        \ 'enum'   : 'g',
+                        \ 'struct' : 's',
+                   \ }
+                \ }
+<
 
 
 You then have to assign this dictionary to a variable in your vimrc with the
