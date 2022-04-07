@@ -1039,7 +1039,7 @@ default statusline:
         let g:tagbar_status_func = 'TagbarStatusFunc'
 <
                                                      *g:tagbar_no_status_line*
-g:no_status_line~
+g:tagbar_no_status_line~
 Default: undefined
 
 This option will prevent any status line updates being done by Tagbar. Use
@@ -1049,7 +1049,7 @@ called.
 
 Example:
 >
-       let g:no_status_line = 1
+       let g:tagbar_no_status_line = 1
 <
 
                                                            *g:tagbar_silent*
