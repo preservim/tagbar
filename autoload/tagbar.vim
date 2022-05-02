@@ -266,6 +266,7 @@ function! s:InitTypes() abort
             \ {'short' : 'd', 'long' : 'extends',            'fold' : 0, 'stl' : 0},
             \ {'short' : 'w', 'long' : 'with',               'fold' : 0, 'stl' : 0},
             \ {'short' : 'z', 'long' : 'implements',         'fold' : 0, 'stl' : 0},
+            \ {'short' : 'n', 'long' : 'on',                 'fold' : 0, 'stl' : 0},
             \ {'short' : 'r', 'long' : 'constructors',       'fold' : 0, 'stl' : 0},
             \ {'short' : 'a', 'long' : 'abstract functions', 'fold' : 0, 'stl' : 0},
             \ {'short' : 'f', 'long' : 'fields',             'fold' : 0, 'stl' : 0},
