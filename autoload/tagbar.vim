@@ -883,7 +883,7 @@ function! s:OpenWindow(flags) abort
     if tagbarwinnr != -1
         if winnr() != tagbarwinnr && jump
             call s:goto_win(tagbarwinnr)
-            call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
+            call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, 1, curline)
         endif
         call tagbar#debug#log('OpenWindow finished, Tagbar already open')
         return
@@ -949,7 +949,7 @@ function! s:OpenWindow(flags) abort
     endif
 
     call s:AutoUpdate(curfile, 0)
-    call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, curline)
+    call s:HighlightTag(g:tagbar_autoshowtag != 2, 1, 1, curline)
 
     if !(g:tagbar_autoclose || autofocus || g:tagbar_autofocus)
         if exists('*win_getid')
@@ -2252,12 +2252,14 @@ function! s:HighlightTag(openfolds, ...) abort
         return
     endif
 
+    let noauto = a:0 > 0 ? a:1 : 0
+
     let tagline = 0
 
-    let force = a:0 > 0 ? a:1 : 0
+    let force = a:0 > 1 ? a:2 : 0
 
-    if a:0 > 1
-        let tag = s:GetNearbyTag(g:tagbar_highlight_method, 0, a:2)
+    if a:0 > 2
+        let tag = s:GetNearbyTag(g:tagbar_highlight_method, 0, a:3)
     else
         let tag = s:GetNearbyTag(g:tagbar_highlight_method, 0)
     endif
@@ -2335,7 +2337,7 @@ function! s:HighlightTag(openfolds, ...) abort
     finally
         if !in_tagbar
             call s:goto_win(pprevwinnr, 1)
-            call s:goto_win(prevwinnr, 1)
+            call s:goto_win(prevwinnr, noauto)
         endif
         redraw
     endtry
@@ -2461,7 +2463,7 @@ function! s:JumpToTag(stay_in_tagbar, ...) abort
     normal! zv
 
     if a:stay_in_tagbar
-        call s:HighlightTag(0)
+        call s:HighlightTag(0, 1)
         call s:goto_win(tagbarwinnr)
         redraw
     elseif g:tagbar_autoclose || autoclose
@@ -2933,7 +2935,7 @@ function! s:AutoUpdate(fname, force, ...) abort
         let s:nearby_disabled = 0
     endif
 
-    call s:HighlightTag(0)
+    call s:HighlightTag(0, 1)
     call s:SetStatusLine()
     call tagbar#debug#log('AutoUpdate finished successfully')
 endfunction
@@ -3792,7 +3794,7 @@ function! tagbar#highlighttag(openfolds, force) abort
         echohl None
         return
     endif
-    call s:HighlightTag(a:openfolds, a:force)
+    call s:HighlightTag(a:openfolds, 1, a:force)
 endfunction
 
 function! tagbar#RestoreSession() abort
