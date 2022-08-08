@@ -660,6 +660,23 @@ Example:
         let g:tagbar_autoclose = 1
 <
 
+                                                    *g:tagbar_autoclose_netrw*
+g:tagbar_autoclose_netrw~
+Default: 1
+
+This option is used to control the behavior when tagbar is the last window
+open, but the netrw (or nerdtree) window is also open. If this value is set to
+1, that will indicate that vim should be closed if tagbar and netrw are the
+last windows open. If you set this to 0 and tagbar and the netrw (or nerdtree)
+windows are the only remaining windows, then it will still close the tagbar
+window, however it will leave vim open with the netrw (or nerdtree) window
+open.
+
+Example:
+>
+        let g:tagbar_autoclose_netrw = 0
+<
+
                                                           *g:tagbar_autofocus*
 g:tagbar_autofocus~
 Default: 0

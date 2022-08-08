@@ -3518,7 +3518,15 @@ function! s:HandleOnlyWindow() abort
     let vim_quitting = s:vim_quitting
     let s:vim_quitting = 0
 
-    if vim_quitting && !s:HasOpenFileWindows()
+    let file_open = s:HasOpenFileWindows()
+
+    if vim_quitting && file_open == 2 && !g:tagbar_autoclose_netrw
+        call tagbar#debug#log('Closing Tagbar due to QuitPre - netrw only remaining window')
+        call s:CloseWindow()
+        return
+    endif
+
+    if vim_quitting && file_open != 1
         call tagbar#debug#log('Closing Tagbar window due to QuitPre event')
         if winnr('$') >= 1
             call s:goto_win(tagbarwinnr, 1)
@@ -3636,11 +3644,22 @@ endfunction
 
 " s:HasOpenFileWindows() {{{2
 function! s:HasOpenFileWindows() abort
+    let netrw = 0
+
     for i in range(1, winnr('$'))
         let buf = winbufnr(i)
 
-        " skip unlisted buffers, except for netrw
-        if !buflisted(buf) && getbufvar(buf, '&filetype') !=# 'netrw'
+        " If the buffer filetype is netrw (or nerdtree) then mark netrw
+        " for final return. If we don't find any other window, we want
+        " to leave the netrw window open and not close vim entirely when
+        " called from the HandleOnlyWindow() code path.
+        let buf_ft = getbufvar(buf, '&filetype')
+        if buf_ft ==# 'netrw' || buf_ft == 'nerdtree'
+            let netrw = 1
+        endif
+
+        " skip unlisted buffers
+        if !buflisted(buf)
             continue
         endif
 
@@ -3657,6 +3676,10 @@ function! s:HasOpenFileWindows() abort
         return 1
     endfor
 
+    if netrw
+        call tagbar#debug#log('netrw only window remaining')
+        return 2
+    endif
     return 0
 endfunction
 

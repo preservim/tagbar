@@ -85,6 +85,7 @@ function! s:setup_options() abort
     endif
     let options = [
         \ ['autoclose', 0],
+        \ ['autoclose_netrw', 1],
         \ ['autofocus', 0],
         \ ['autopreview', 0],
         \ ['autoshowtag', 0],
