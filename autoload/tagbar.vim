@@ -3654,7 +3654,7 @@ function! s:HasOpenFileWindows() abort
         " to leave the netrw window open and not close vim entirely when
         " called from the HandleOnlyWindow() code path.
         let buf_ft = getbufvar(buf, '&filetype')
-        if buf_ft ==# 'netrw' || buf_ft == 'nerdtree'
+        if buf_ft ==# 'netrw' || buf_ft ==# 'nerdtree'
             let netrw = 1
         endif
 

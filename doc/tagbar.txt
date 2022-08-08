@@ -1481,7 +1481,7 @@ IGNORING SPECIFIC FILES                                        *tagbar-ignore*
 You can ignore specific files by setting the |buffer-variable|
 "b:tagbar_ignore" to 1. This is best done with an |autocommand|:
 >
-    autocmd BufNewFile,BufReadPost foo.cpp let b:tagbar_ignore = 1
+    autocmd BufNewFile,BufReadPre foo.cpp let b:tagbar_ignore = 1
 <
 Note that autocommands are order-sensitive, so make sure that this autocommand
 gets defined before the ones that Tagbar defines so the variable will get
