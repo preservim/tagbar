@@ -3651,7 +3651,7 @@ function! s:HasOpenFileWindows() abort
 
         " If the buffer filetype is netrw (or nerdtree) then mark netrw
         " for final return. If we don't find any other window, we want
-        " to leave the netrw window open and not close vim entirely when
+        if buf_ft ==# 'netrw' || buf_ft ==# 'nerdtree'
         " called from the HandleOnlyWindow() code path.
         let buf_ft = getbufvar(buf, '&filetype')
         if buf_ft ==# 'netrw' || buf_ft == 'nerdtree'
