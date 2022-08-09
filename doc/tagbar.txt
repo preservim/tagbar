@@ -662,7 +662,7 @@ Example:
 
                                                     *g:tagbar_autoclose_netrw*
 g:tagbar_autoclose_netrw~
-Default: 1
+Default: 0
 
 This option is used to control the behavior when tagbar is the last window
 open, but the netrw (or nerdtree) window is also open. If this value is set to
@@ -674,7 +674,7 @@ open.
 
 Example:
 >
-        let g:tagbar_autoclose_netrw = 0
+        let g:tagbar_autoclose_netrw = 1
 <
 
                                                           *g:tagbar_autofocus*
