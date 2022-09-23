@@ -713,6 +713,7 @@ function! tagbar#types#uctags#init(supported_types) abort
     let type_markdown.sro = '""'
     let type_markdown.sort = 0
     let types.markdown = type_markdown
+    let types.pandoc = type_markdown
     " Matlab {{{1
     let type_matlab = tagbar#prototypes#typeinfo#new()
     let type_matlab.ctagstype = 'matlab'
