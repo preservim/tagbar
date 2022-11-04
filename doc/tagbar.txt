@@ -3,7 +3,7 @@
 Author:         Jan Larres <jan@majutsushi.net>
 Licence:        Vim licence, see |license|
 Homepage:       https://preservim.github.io/tagbar
-Version:        3.0.0
+Version:        3.1.0
 
 ==============================================================================
 Contents                                            *tagbar* *tagbar-contents*
@@ -2009,6 +2009,13 @@ Known issues~
 
 ==============================================================================
 8. History                                                    *tagbar-history*
+
+Note: All tagged releases are an accomodation to distribution packagers. The
+upstream developers of this plugin recommend using a plugin manager and
+tracking HEAD in the default branch rather than tagged releases.
+
+3.1.0 (2022-11-04)
+    - Periodic rollup, see `git log v3.0.0..v3.1.0`
 
 3.0.0 (2021-01-21)
     - Massive rollup with years of small changes, see `git log v2.7..v3.0.0`
