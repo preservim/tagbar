@@ -560,6 +560,16 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'struct' : 's'
     \ }
     let types.go = type_go
+    " Haskell {{{1
+    let type_haskell = tagbar#prototypes#typeinfo#new()
+    let type_haskell.ctagstype = 'haskell'
+    let type_haskell.kinds = [
+        \ {'short' : 'm', 'long' : 'module',         'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'types',          'fold' : 0, 'stl' : 0},
+        \ {'short' : 'c', 'long' : 'constructors',   'fold' : 0, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'functions',      'fold' : 0, 'stl' : 0}
+    \ ]
+    let types.haskell = type_haskell
     " HTML {{{1
     let type_html = tagbar#prototypes#typeinfo#new()
     let type_html.ctagstype = 'html'
