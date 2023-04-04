@@ -1451,6 +1451,12 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
         return ''
     endif
 
+    if &shell =~? 'cmd\.exe'
+        let ctags_cmd .= ' 2>NUL'
+    else
+        let ctags_cmd .= ' 2>/dev/null'
+    endif
+
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if v:shell_error || ctags_output =~? 'Warning: cannot open \(source\|input\) file'
