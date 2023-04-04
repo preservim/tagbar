@@ -567,7 +567,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'm', 'long' : 'module',         'fold' : 0, 'stl' : 0},
         \ {'short' : 't', 'long' : 'types',          'fold' : 0, 'stl' : 0},
         \ {'short' : 'c', 'long' : 'constructors',   'fold' : 0, 'stl' : 0},
-        \ {'short' : 'f', 'long' : 'functions',      'fold' : 0, 'stl' : 0}
+        \ {'short' : 'f', 'long' : 'functions',      'fold' : 0, 'stl' : 1}
     \ ]
     let types.haskell = type_haskell
     " HTML {{{1
