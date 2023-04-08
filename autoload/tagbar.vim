@@ -2945,9 +2945,9 @@ function! s:CheckMouseClick() abort
     let line   = getline('.')
     let curcol = col('.')
 
-    if (match(line, g:tagbar#icon_open . '[-+ ]') + 1) == curcol
+    if match(line, g:tagbar#icon_open) == 0
         call s:CloseFold()
-    elseif (match(line, g:tagbar#icon_closed . '[-+ ]') + 1) == curcol
+    elseif match(line, g:tagbar#icon_closed) == 0
         call s:OpenFold()
     elseif g:tagbar_singleclick
         call s:JumpToTag(0)
