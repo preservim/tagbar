@@ -3107,6 +3107,7 @@ function! s:run_system(cmd, version) abort
         let l:pc = 0
         exec pyx . 'import subprocess, vim'
         exec pyx . '__argv = {"args":vim.eval("a:cmd"), "shell":True}'
+        exec pyx . '__argv["stdin"] = subprocess.DEVNULL'
         exec pyx . '__argv["stdout"] = subprocess.PIPE'
         exec pyx . '__argv["stderr"] = subprocess.STDOUT'
         exec pyx . '__argv["errors"] = "ignore"'
@@ -3162,7 +3163,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         call tagbar#debug#log('Exit code: ' . v:shell_error)
         redraw!
     else
-        let py_version = get(g:, 'tagbar_python', 1)
+        let py_version = get(g:, 'tagbar_python', 0)
         silent let ctags_output = s:run_system(a:ctags_cmd, py_version)
     endif
 
