@@ -46,6 +46,8 @@ If the ctags executable is not installed in one of the directories in your
 `$PATH` environment variable you have to set the `g:tagbar_ctags_bin`
 variable, see the documentation for more info.
 
+Windows users should add `let g:tagbar_python = 0` to their vimrc.
+
 ## Quickstart
 
 Put something like the following into your ~/.vimrc:
