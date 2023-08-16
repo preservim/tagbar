@@ -3163,7 +3163,11 @@ function! s:ExecuteCtags(ctags_cmd) abort
         call tagbar#debug#log('Exit code: ' . v:shell_error)
         redraw!
     else
-        let py_version = get(g:, 'tagbar_python', 1)
+        if has('win32')
+          let py_version = get(g:, 'tagbar_python', 0)
+        else
+          let py_version = get(g:, 'tagbar_python', 1)
+        endif
         silent let ctags_output = s:run_system(a:ctags_cmd, py_version)
     endif
 
