@@ -1509,6 +1509,7 @@ former allows simple regular expression-based parsing that is easy to get
 started with, but doesn't support scopes unless you instead want to write a
 C-based parser module for Exuberant Ctags. The regex approach is described in
 more detail below.
+
 Writing your own program is the approach used by for example jsctags and can
 be useful if your language can best be parsed by a program written in the
 language itself, or if you want to provide the program as part of a complete
@@ -1519,6 +1520,28 @@ Before writing your own extension have a look at the wiki
 (https://github.com/preservim/tagbar/wiki) or try googling for existing ones.
 If you do end up creating your own extension please consider adding it to the
 wiki so that others can benefit from it, too.
+
+In some cases there may be a definition for the filetype defined, but vim may
+not recognize the extension. For example, the BibLaTeX file format is defined
+separately from the BibTeX support for universal-ctags. So there are two defined
+language types in tagbar. However VIM does not have a specific extension that
+is recognized for the BibLaTeX filetype. In these cases it is necessary to add
+a custom filetype extension definition in your .vim configuration.
+
+For example:
+>
+        $ cat ~/.vim/filetype.vim
+        " custom filetypes
+
+        augroup filetypedetect
+            au! BufRead,BufNewFile *.biblatex setfiletype biblatex
+        augroup END
+        $
+<
+
+This will automatically detect the file extension of *.biblatex and define the
+filetype in VIM as a biblatex filetype so tagbar will correctly identify the
+filetype and use the correct definition.
 
 Every type definition in Tagbar is a dictionary with the following keys:
 
