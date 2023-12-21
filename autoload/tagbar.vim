@@ -680,16 +680,16 @@ function! s:CheckForExCtags(silent) abort
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     call tagbar#debug#log("Command output:\n" . ctags_output)
-    call tagbar#debug#log('Exit code: ' . v:shell_error)
+    call tagbar#debug#log('Exit code: ' . s:shell_error)
 
-    if v:shell_error || ctags_output !~# '\(Exuberant\|Universal\) Ctags'
+    if s:shell_error || ctags_output !~# '\(Exuberant\|Universal\) Ctags'
         let l:errmsg = 'Tagbar: Ctags doesn''t seem to be Exuberant Ctags!'
         let l:infomsg = 'BSD ctags will NOT WORK.' .
             \ ' Please download Exuberant Ctags from ctags.sourceforge.net' .
             \ ' and install it in a directory in your $PATH' .
             \ ' or set g:tagbar_ctags_bin.'
         call s:CtagsErrMsg(l:errmsg, l:infomsg, a:silent,
-                         \ ctags_cmd, ctags_output, v:shell_error)
+                         \ ctags_cmd, ctags_output, s:shell_error)
         let s:checked_ctags = 2
         return 0
     elseif !s:CheckExCtagsVersion(ctags_output)
@@ -798,7 +798,7 @@ function! s:GetSupportedFiletypes() abort
 
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
-    if v:shell_error
+    if s:shell_error
         " this shouldn't happen as potential problems would have already been
         " caught by the previous ctags checking
         return
@@ -1453,10 +1453,10 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
 
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
-    if v:shell_error || ctags_output =~? 'Warning: cannot open \(source\|input\) file'
+    if s:shell_error || ctags_output =~? 'Warning: cannot open \(source\|input\) file'
         call tagbar#debug#log('Command output:')
         call tagbar#debug#log(ctags_output)
-        call tagbar#debug#log('Exit code: ' . v:shell_error)
+        call tagbar#debug#log('Exit code: ' . s:shell_error)
         " Only display an error message if the Tagbar window is open and we
         " haven't seen the error before.
         if bufwinnr(s:TagbarBufName()) != -1 &&
@@ -1470,7 +1470,7 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                     echomsg line
                 endfor
             endif
-            echomsg 'Exit code: ' . v:shell_error
+            echomsg 'Exit code: ' . s:shell_error
         endif
         return -1
     endif
@@ -3158,8 +3158,9 @@ function! s:ExecuteCtags(ctags_cmd) abort
 
     if tagbar#debug#enabled()
         silent 5verbose let ctags_output = system(a:ctags_cmd)
+        let s:shell_error = v:shell_error
         call tagbar#debug#log(v:statusmsg)
-        call tagbar#debug#log('Exit code: ' . v:shell_error)
+        call tagbar#debug#log('Exit code: ' . s:shell_error)
         redraw!
     else
         let py_version = get(g:, 'tagbar_python', 1)
