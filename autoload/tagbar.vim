@@ -3521,13 +3521,15 @@ function! s:HandleOnlyWindow() abort
 
     let file_open = s:HasOpenFileWindows()
 
-    if vim_quitting && file_open == 2 && !g:tagbar_autoclose_netrw
-        call tagbar#debug#log('Closing Tagbar due to QuitPre - netrw only remaining window')
-        call s:CloseWindow()
+    if vim_quitting && file_open == 2
+        if g:tagbar_autoclose_netrw
+            call tagbar#debug#log('Closing Tagbar due to QuitPre - netrw only remaining window')
+            call s:CloseWindow()
+        endif
         return
     endif
 
-    if vim_quitting && file_open != 1
+    if vim_quitting && file_open == 0
         call tagbar#debug#log('Closing Tagbar window due to QuitPre event')
         if winnr('$') >= 1
             call s:goto_win(tagbarwinnr, 1)
