@@ -3541,7 +3541,7 @@ function! s:HandleOnlyWindow() abort
 
         try
             try
-                quit
+                call timer_start(0, {-> execute('q', 'silent!') })
             catch /.*/ " This can be E173 and maybe others
                 call s:OpenWindow('')
                 echoerr v:exception
