@@ -1408,12 +1408,6 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
             let ctags_args += [ '-V' ]
         endif
 
-        " Include extra type definitions - include here to allow for custom
-        " language definitions
-        if has_key(a:typeinfo, 'deffile') && filereadable(expand(a:typeinfo.deffile))
-            let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
-        endif
-
         " Third-party programs may not necessarily make use of this
         if has_key(a:typeinfo, 'ctagstype')
             let ctags_type = a:typeinfo.ctagstype
@@ -1424,6 +1418,15 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                     let ctags_kinds .= kind.short
                 endif
             endfor
+
+            " Must define custom languages before --language-force
+            if has_key(a:typeinfo, 'deffile') && filereadable(expand(a:typeinfo.deffile))
+                " check if ftype is a custom language (unknown to ctags)
+                let supported_types = s:GetSupportedFiletypes()
+                if has_key(a:typeinfo, 'ftype') && !has_key(supported_types, a:typeinfo.ftype)
+                    let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
+                endif
+            endif
 
             let ctags_args += ['--language-force=' . ctags_type]
             let ctags_args += ['--' . ctags_type . '-kinds=' . ctags_kinds]
