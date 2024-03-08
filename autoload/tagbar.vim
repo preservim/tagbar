@@ -1408,6 +1408,12 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
             let ctags_args += [ '-V' ]
         endif
 
+        " Include extra type definitions - include here to allow for custom
+        " language definitions
+        if has_key(a:typeinfo, 'deffile') && filereadable(expand(a:typeinfo.deffile))
+            let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
+        endif
+
         " Third-party programs may not necessarily make use of this
         if has_key(a:typeinfo, 'ctagstype')
             let ctags_type = a:typeinfo.ctagstype
