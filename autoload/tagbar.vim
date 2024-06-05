@@ -771,19 +771,18 @@ endfunction
 
 " s:CheckFTCtags() {{{2
 function! s:CheckFTCtags(bin, ftype) abort
-    if executable(a:bin)
-        return a:bin
-    endif
-
     if exists('g:tagbar_type_' . a:ftype)
         let userdef = g:tagbar_type_{a:ftype}
-        if has_key(userdef, 'ctagsbin')
-            return userdef.ctagsbin
-        else
+        if has_key(userdef, 'kinds')
             return ''
+        elseif has_key(userdef, 'ctagsbin')
+            return userdef.ctagsbin
         endif
     endif
 
+    if executable(a:bin)
+        return a:bin
+    endif
     return ''
 endfunction
 
