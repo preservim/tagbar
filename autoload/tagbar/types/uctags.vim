@@ -1353,7 +1353,7 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'T', 'long' : 'typedefs',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'L', 'long' : 'clocking',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'V', 'long' : 'covergroup',          'fold' : 0, 'stl' : 1},
-        \ {'short' : 'b', 'long' : 'blocks',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'A', 'long' : 'assertions',          'fold' : 0, 'stl' : 1},
         \ {'short' : 'd', 'long' : 'defines',             'fold' : 0, 'stl' : 1},
         \ {'short' : 'P', 'long' : 'programs',            'fold' : 0, 'stl' : 1},
         \ {'short' : 'p', 'long' : 'ports',               'fold' : 0, 'stl' : 1},
