@@ -1332,6 +1332,42 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 't', 'long' : 'tasks',               'fold' : 0, 'stl' : 1}
     \ ]
     let types.verilog = type_verilog
+    " SystemVerilog {{{1
+    let type_systemverilog = tagbar#prototypes#typeinfo#new()
+    let type_systemverilog.ctagstype = 'systemverilog'
+    let type_systemverilog.kinds     = [
+        \ {'short' : 'A', 'long' : 'assertions',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'C', 'long' : 'classess',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'E', 'long' : 'enumrators',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'H', 'long' : 'checkers',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'I', 'long' : 'interfaces',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'K', 'long' : 'packages',                'fold' : 1, 'stl' : 0},
+        \ {'short' : 'L', 'long' : 'clokcing',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'M', 'long' : 'modport',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'N', 'long' : 'nettypes',                'fold' : 0, 'stl' : 0},
+        \ {'short' : 'O', 'long' : 'constraints',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'P', 'long' : 'programs',                'fold' : 0, 'stl' : 1},
+        \ {'short' : 'Q', 'long' : 'prototypes',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'R', 'long' : 'properties',              'fold' : 0, 'stl' : 1},
+        \ {'short' : 'S', 'long' : 'structs and unions',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'T', 'long' : 'type declarations,        'fold' : 0, 'stl' : 1},
+        \ {'short' : 'V', 'long' : 'covergroups',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'b', 'long' : 'blocks',                  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'constants',               'fold' : 0, 'stl' : 0},
+        \ {'short' : 'd', 'long' : 'text macros',             'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'events',                  'fold' : 0, 'stl' : 1},
+        \ {'short' : 'f', 'long' : 'functions',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'i', 'long' : 'instances',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'l', 'long' : 'interface class',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'm', 'long' : 'modules',                 'fold' : 0, 'stl' : 1},
+        \ {'short' : 'n', 'long' : 'net data types',          'fold' : 0, 'stl' : 0},
+        \ {'short' : 'p', 'long' : 'ports',                   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'q', 'long' : 'sequences',               'fold' : 0, 'stl' : 1},
+        \ {'short' : 'r', 'long' : 'variable data types',     'fold' : 0, 'stl' : 1},
+        \ {'short' : 't', 'long' : 'tasks',                   'fold' : 0, 'stl' : 1},
+        \ {'short' : 'w', 'long' : 'struct and union ',       'fold' : 0, 'stl' : 1}
+    \ ]
+    let types.systemverilog = type_systemverilog
     " VHDL {{{1
     " The VHDL ctags parser unfortunately doesn't generate proper scopes
     let type_vhdl = tagbar#prototypes#typeinfo#new()
