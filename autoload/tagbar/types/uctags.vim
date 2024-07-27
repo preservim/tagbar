@@ -1372,11 +1372,17 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'E' : 'enum',
         \ 'C' : 'class',
         \ 'm' : 'module',
+        \ 'P' : 'program',
+        \ 'K' : 'package',
+        \ 'I' : 'interface',
     \ }
     let type_systemverilog.scope2kind = {
         \ 'enum'     : 'E',
         \ 'class'    : 'C',
         \ 'module'   : 'm',
+        \ 'program'  : 'P',
+        \ 'package'  : 'K',
+        \ 'interface': 'I',
     \ }
     let types.systemverilog = type_systemverilog
     " VHDL {{{1
