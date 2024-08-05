@@ -1407,6 +1407,12 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
             let ctags_args += [ '-V' ]
         endif
 
+        " Define a new language before adding --language-force to the list of
+        " arguments
+        if has_key(a:typeinfo, 'deflang')
+            let ctags_args += ['--langdef=' . expand(a:typeinfo.deflang)]
+        endif
+
         " Third-party programs may not necessarily make use of this
         if has_key(a:typeinfo, 'ctagstype')
             let ctags_type = a:typeinfo.ctagstype
