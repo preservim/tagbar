@@ -26,6 +26,7 @@ creates the tags it needs on-the-fly in-memory without creating any files.
 * A ctags implementation: We _highly recommend_ any version of [Universal
   Ctags](https://ctags.io). It is a maintained fork of Exuberant Ctags with
   many bugfixes, support for many more formats, and proper Unicode support.
+  On Gentoo this package called [dev-util/ctags](https://packages.gentoo.org/packages/dev-util/ctags).
 
   [Exuberant Ctags](http://ctags.sourceforge.net/) 5.5 or higher works to some
   degree but will be deprecated eventually.
