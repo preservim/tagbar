@@ -508,6 +508,14 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 1}
     \ ]
     let types.dosbatch = type_dosbatch
+    " DTS {{{1
+    let type_dts = tagbar#prototypes#typeinfo#new()
+    let type_dts.ctagstype = 'dts'
+    let type_dts.kinds     = [
+        \ {'short' : 'l', 'long' : 'labels',    'fold' : 0, 'stl' : 1},
+        \ {'short' : 'p', 'long' : 'phandlers', 'fold' : 0, 'stl' : 1}
+    \ ]
+    let types.dts = type_dts
     " Eiffel {{{1
     let type_eiffel = tagbar#prototypes#typeinfo#new()
     let type_eiffel.ctagstype = 'eiffel'
