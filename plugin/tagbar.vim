@@ -113,6 +113,8 @@ function! s:setup_options() abort
         \ ['show_data_type', 0],
         \ ['show_visibility', 1],
         \ ['show_linenumbers', 0],
+        \ ['show_prefix', 1],
+        \ ['show_suffix', 1],
         \ ['show_tag_count', 0],
         \ ['show_tag_linenumbers', 0],
         \ ['singleclick', 0],
