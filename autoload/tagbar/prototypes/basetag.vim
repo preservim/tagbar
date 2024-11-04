@@ -84,7 +84,7 @@ endfunction
 function! s:_getPrefix() abort dict
     let fileinfo = self.fileinfo
 
-    if !empty(self._childlist)
+    if !empty(self._childlist) && g:tagbar_show_prefix == 1
         if fileinfo.tagfolds[self.fields.kind][self.fullpath]
             let prefix = g:tagbar#icon_closed
         else
@@ -95,9 +95,9 @@ function! s:_getPrefix() abort dict
     endif
     " Visibility is called 'access' in the ctags output
     if g:tagbar_show_visibility
-        if has_key(self.fields, 'access')
+        if has_key(self.fields, 'access') && g:tagbar_show_prefix == 1
             let prefix .= get(s:visibility_symbols, self.fields.access, ' ')
-        elseif has_key(self.fields, 'file')
+        elseif has_key(self.fields, 'file') && g:tagbar_show_prefix == 1
             let prefix .= s:visibility_symbols.private
         else
             let prefix .= ' '

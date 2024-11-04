@@ -46,11 +46,7 @@ function! s:strfmt() abort dict
         let suffix = ''
     endif
 
-    if g:tagbar_show_prefix == 1
-        let prefix = self._getPrefix()
-    else
-        let prefix = ''
-    endif
+    let prefix = self._getPrefix()
 
     if g:tagbar_show_tag_linenumbers == 1
         let suffix .= ' [' . self.fields.line . ']'
