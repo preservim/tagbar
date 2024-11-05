@@ -28,20 +28,25 @@ endfunction
 function! s:strfmt() abort dict
     let typeinfo = self.typeinfo
 
-    let suffix = get(self.fields, 'signature', '')
-    if has_key(self.fields, 'type')
-        let suffix .= ' : ' . self.fields.type
-    elseif has_key(get(typeinfo, 'kind2scope', {}), self.fields.kind)
-        let scope = s:maybe_map_scope(typeinfo.kind2scope[self.fields.kind])
-        if !g:tagbar_show_data_type
-            let suffix .= ' : ' . scope
+    if g:tagbar_show_suffix == 1
+        let suffix = get(self.fields, 'signature', '')
+        if has_key(self.fields, 'type')
+            let suffix .= ' : ' . self.fields.type
+        elseif has_key(get(typeinfo, 'kind2scope', {}), self.fields.kind)
+            let scope = s:maybe_map_scope(typeinfo.kind2scope[self.fields.kind])
+            if !g:tagbar_show_data_type
+                let suffix .= ' : ' . scope
+            endif
         endif
-    endif
-    let prefix = self._getPrefix()
 
-    if g:tagbar_show_data_type && self.getDataType() !=# ''
-        let suffix .= ' : ' . self.getDataType()
+        if g:tagbar_show_data_type && self.getDataType() !=# ''
+            let suffix .= ' : ' . self.getDataType()
+        endif
+    else
+        let suffix = ''
     endif
+
+    let prefix = self._getPrefix()
 
     if g:tagbar_show_tag_linenumbers == 1
         let suffix .= ' [' . self.fields.line . ']'

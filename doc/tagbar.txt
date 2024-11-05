@@ -821,6 +821,37 @@ Example:
 >
         let g:tagbar_show_linenumbers = 2
 <
+                                                          *g:tagbar_show_prefix*
+g:tagbar_show_prefix~
+Default: 1
+
+Controls if the prefix information is shown before the tag. The prefix info is
+usually defined as the variable scope. For example, if a variable is private
+scope only, then a '-' symbol will be used by default.
+
+Possible values are:
+  0: Don't show the prefix.
+  1: Show the prefix.
+
+Example:
+>
+        let g:tagbar_show_prefix = 0
+<
+                                                          *g:tagbar_show_suffix*
+g:tagbar_show_suffix~
+Default: 1
+
+Controls if the suffix information is shown after the tag. The suffix info is
+usually data type.
+
+Possible values are:
+  0: Don't show the suffix.
+  1: Show the suffix.
+
+Example:
+>
+        let g:tagbar_show_suffix = 0
+<
                                                  *g:tagbar_show_tag_linenumbers*
 g:tagbar_show_tag_linenumbers~
 Default: 0
