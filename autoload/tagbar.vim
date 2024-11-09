@@ -1319,7 +1319,7 @@ function! s:ProcessFile(fname, ftype) abort
 
         let seen[line] = 1
 
-        let parts = split(line, ';"')
+        let parts = split(line, ';"\t')
         if len(parts) == 2 " Is a valid tag line
             call s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
         endif
@@ -1509,7 +1509,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
 
     " When splitting fields make sure not to create empty keys or values in
     " case a value illegally contains tabs
-    let fields = split(a:part2, '^\t\|\t\ze\w\+:')
+    let fields = split(a:part2, '\t\ze\w\+:')
     let fielddict = {}
     if fields[0] !~# ':'
         let fielddict.kind = remove(fields, 0)
