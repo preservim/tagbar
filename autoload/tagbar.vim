@@ -336,7 +336,7 @@ function! s:InitTypes() abort
             \ {'short' : 'n', 'long' : 'intefaces',    'fold' : 0, 'stl' : 0},
             \ {'short' : 'w', 'long' : 'fields',       'fold' : 0, 'stl' : 1},
             \ {'short' : 'e', 'long' : 'embedded',     'fold' : 0, 'stl' : 0},
-            \ {'short' : 'm', 'long' : 'methods',      'fold' : 0, 'stl' : 0},
+            \ {'short' : 'm', 'long' : 'methods',      'fold' : 0, 'stl' : 1},
             \ {'short' : 'r', 'long' : 'constructors', 'fold' : 0, 'stl' : 0},
             \ {'short' : 'f', 'long' : 'functions',    'fold' : 0, 'stl' : 1},
         \ ]
