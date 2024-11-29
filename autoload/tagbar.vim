@@ -1450,6 +1450,12 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
         return ''
     endif
 
+    if &shell =~? 'cmd\.exe'
+        let ctags_cmd .= ' 2>NUL'
+    else
+        let ctags_cmd .= ' 2>/dev/null'
+    endif
+
     let ctags_output = s:ExecuteCtags(ctags_cmd)
 
     if s:shell_error || ctags_output =~? 'Warning: cannot open \(source\|input\) file'
@@ -3534,13 +3540,17 @@ function! s:HandleOnlyWindow() abort
 
         " Before quitting Vim, delete the tagbar buffer so that the '0 mark is
         " correctly set to the previous buffer.
-        if tabpagenr('$') == 1
+        if !has('patch-9.0.907') && tabpagenr('$') == 1
             noautocmd keepalt bdelete
         endif
 
         try
             try
-                quit
+                if has('patch-9.0.907')
+                    call feedkeys(file_open == 2 ? ":quit\<CR>:quit\<CR>" : ":quit\<CR>")
+                else
+                    quit
+                endif
             catch /.*/ " This can be E173 and maybe others
                 call s:OpenWindow('')
                 echoerr v:exception
