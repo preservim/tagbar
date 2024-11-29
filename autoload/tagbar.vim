@@ -232,18 +232,18 @@ endfunction
 function! s:InitTypes() abort
     call tagbar#debug#log('Initializing types')
 
-    let supported_types = s:GetSupportedFiletypes()
+    let s:supported_types = s:GetSupportedFiletypes()
 
     if s:ctags_is_uctags
-        let s:known_types = tagbar#types#uctags#init(supported_types)
+        let s:known_types = tagbar#types#uctags#init(s:supported_types)
     else
-        let s:known_types = tagbar#types#ctags#init(supported_types)
+        let s:known_types = tagbar#types#ctags#init(s:supported_types)
     endif
 
     " Use dart_ctags if available
     let dart_ctags = s:CheckFTCtags('dart_ctags', 'dart')
     if dart_ctags !=# ''
-        let supported_types['dart'] = 1
+        let s:supported_types['dart'] = 1
         call tagbar#debug#log('Detected dart_ctags, overriding typedef')
         let type_dart = tagbar#prototypes#typeinfo#new()
         let type_dart.ctagstype = 'dart'
@@ -805,14 +805,14 @@ function! s:GetSupportedFiletypes() abort
 
     let types = split(ctags_output, '\n\+')
 
-    let supported_types = {}
+    let ctags_supported_types = {}
     for type in types
         if match(type, '\[disabled\]') == -1
-            let supported_types[tolower(type)] = 1
+            let ctags_supported_types[tolower(type)] = 1
         endif
     endfor
 
-    return supported_types
+    return ctags_supported_types
 endfunction
 
 " Known files {{{1
@@ -1417,6 +1417,14 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                     let ctags_kinds .= kind.short
                 endif
             endfor
+
+            " Must define custom languages before --language-force
+            if has_key(a:typeinfo, 'deffile') && filereadable(expand(a:typeinfo.deffile))
+                " check if ftype is a custom language (unknown to ctags)
+                if has_key(a:typeinfo, 'ftype') && !has_key(s:supported_types, a:typeinfo.ftype)
+                    let ctags_args += ['--options=' . expand(a:typeinfo.deffile)]
+                endif
+            endif
 
             let ctags_args += ['--language-force=' . ctags_type]
             let ctags_args += ['--' . ctags_type . '-kinds=' . ctags_kinds]
