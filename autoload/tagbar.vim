@@ -2837,12 +2837,25 @@ endfunction
 
 " Helper functions {{{1
 " s:AutoUpdate() {{{2
+" use timer_start to let tagbar async, this can increase vim open file performance and
+" fix windows blink when open some file.
 function! s:AutoUpdate(fname, force, ...) abort
     call tagbar#debug#log('AutoUpdate called [' . a:fname . ']')
 
     " Whether we want to skip actually displaying the tags in Tagbar and only
     " update the fileinfo
     let no_display = a:0 > 0 ? a:1 : 0
+
+    if !has('win32') && has('lambda') && has('timers')
+        call tagbar#debug#log('Performing async call to AutoUpdate_CB')
+        call timer_start(0, { -> AutoUpdate_CB(a:fname, a:force, no_display)})
+    else
+        call tagbar#debug#log('Performing sync call to AutoUpdate_CB')
+        call AutoUpdate_CB(a:fname, a:force, no_display)
+    endif
+endfunc
+
+function! AutoUpdate_CB(fname, force, no_display) abort
 
     " This file is being loaded due to a quickfix command like vimgrep, so
     " don't process it
@@ -2904,7 +2917,7 @@ function! s:AutoUpdate(fname, force, ...) abort
         let updated = 1
     endif
 
-    if no_display
+    if a:no_display
         return
     endif
 
