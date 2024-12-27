@@ -3834,6 +3834,9 @@ endfunction
 " tagbar#Update() {{{2
 " Trigger an AutoUpdate() of the currently opened file
 function! tagbar#Update() abort
+    if s:init_done == 0
+        call s:Init(0)
+    endif
     call s:AutoUpdate(fnamemodify(expand('%'), ':p'), 0)
 endfunction
 
@@ -4096,6 +4099,9 @@ endfunction
 
 " tagbar#jump() {{{2
 function! tagbar#jump() abort
+    if s:init_done == 0
+        call tagbar#Update()
+    endif
     if &filetype !=# 'tagbar'
         " Not in tagbar window - ignore this function call
         return
@@ -4110,6 +4116,9 @@ endfun
 "   [flags] = list of flags (as a string) to control behavior
 "       's' - use the g:tagbar_scroll_offset setting when jumping
 function! tagbar#jumpToNearbyTag(direction, ...) abort
+    if s:init_done == 0
+        call tagbar#Update()
+    endif
     let search_method = a:0 >= 1 ? a:1 : 'nearest-stl'
     let flags = a:0 >= 2 ? a:2 : ''
 
