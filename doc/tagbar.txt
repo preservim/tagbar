@@ -548,7 +548,7 @@ g:tagbar_position~
 Default: 'botright vertical'
 
 By default the Tagbar window will be opened on the right-hand side of vim in a
-vertical split. Set this option to one of the standart vim split options such
+vertical split. Set this option to one of the standard vim split options such
 as 'topleft', 'botright', 'leftabove', or 'rightbelow' to open in the
 corresponding position instead. If desiring a vertically split window, then
 include a ' vertical' in the field value as well. This can be useful when
