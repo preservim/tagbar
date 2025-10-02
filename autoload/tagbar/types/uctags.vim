@@ -1055,22 +1055,15 @@ function! tagbar#types#uctags#init(supported_types) abort
     let types.tcl = type_tcl
     " Terraform (HCL) {{{1
     let type_tf = tagbar#prototypes#typeinfo#new()
-    let type_tf.ctagstype = 'tf'
+    let type_tf.ctagstype = 'terraform'
     let type_tf.kinds = [
-      \ 'r:Resource',
-      \ 'R:Resource',
-      \ 'd:Data',
-      \ 'D:Data',
-      \ 'v:Variable',
-      \ 'V:Variable',
-      \ 'p:Provider',
-      \ 'P:Provider',
-      \ 'm:Module',
-      \ 'M:Module',
-      \ 'o:Output',
-      \ 'O:Output',
-      \ 'f:TFVar',
-      \ 'F:TFVar'
+      \ {'short' : 'r', 'long' : 'resources', 'fold' : 0, 'stl' : 0},
+      \ {'short' : 'd', 'long' : 'data', 'fold' : 0, 'stl' : 0},
+      \ {'short' : 'v', 'long' : 'variables', 'fold' : 0, 'stl' : 0},
+      \ {'short' : 'p', 'long' : 'providers', 'fold' : 0, 'stl' : 0},
+      \ {'short' : 'm', 'long' : 'modules', 'fold' : 0, 'stl' : 0},
+      \ {'short' : 'o', 'long' : 'output', 'fold' : 0, 'stl' : 0},
+      \ {'short' : 'l', 'long' : 'locals', 'fold' : 0, 'stl' : 0},
     \ ]         
     " TypeScript {{{1
     let type_ts = tagbar#prototypes#typeinfo#new()
