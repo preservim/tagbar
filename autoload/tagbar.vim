@@ -1320,8 +1320,12 @@ function! s:ProcessFile(fname, ftype) abort
         let seen[line] = 1
 
         let parts = split(line, ';"\t')
-        if len(parts) == 2 " Is a valid tag line
-            call s:ParseTagline(parts[0], parts[1], typeinfo, fileinfo)
+        if len(parts) >= 2 " Is a valid tag line
+            " If the excmd pattern itself contained ;"<TAB>, rejoin the
+            " leading parts. The last part is always the fields section.
+            let fieldpart = parts[-1]
+            let tagpart = join(parts[0:-2], ';"' . "\t")
+            call s:ParseTagline(tagpart, fieldpart, typeinfo, fileinfo)
         endif
     endfor
 
@@ -1501,6 +1505,7 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
     " the pattern can contain tabs and thus may have been split up, so join
     " the rest of the items together again
     let pattern = join(basic_info[2:], "\t")
+    let excmd_line = 0
     if pattern[0] ==# '/'
         let start   = 2 " skip the slash and the ^
         let end     = strlen(pattern) - 1
@@ -1512,6 +1517,11 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
         endif
         let pattern = '\V\^\C' . strpart(pattern, start, end - start) . dollar
     else
+        " The excmd is a line number, not a pattern. Save it so we can use
+        " it as a fallback if no explicit line: field is present.
+        if pattern =~# '^\d\+$'
+            let excmd_line = str2nr(pattern)
+        endif
         let pattern = ''
     endif
 
@@ -1540,6 +1550,12 @@ function! s:ParseTagline(part1, part2, typeinfo, fileinfo) abort
             endif
         endif
     endfor
+
+    " If the excmd was a line number and no explicit line: field was found,
+    " use the excmd line number as a fallback
+    if excmd_line > 0 && !has_key(fielddict, 'line')
+        let fielddict.line = excmd_line
+    endif
 
     " If the tag covers multiple scopes, split it up and create individual tags
     " for each scope so that the hierarchy can be displayed correctly.
@@ -3098,34 +3114,8 @@ function! s:EscapeCtagsCmd(ctags_bin, args, ...) abort
     return ctags_cmd
 endfunction
 
-" run shell command in a proper way: prevent temporary window creation
-function! s:run_system(cmd, version) abort
-    if has('win32') && !has('nvim') && a:version > 0 && (has('python3') || has('python2'))
-        if a:version == 3 && has('python3')
-            let pyx = 'py3 '
-            let python_eval = 'py3eval'
-        elseif a:version == 2 && has('python2')
-            let pyx = 'py2 '
-            let python_eval = 'pyeval'
-        else
-            let pyx = 'pyx '
-            let python_eval = 'pyxeval'
-        endif
-        let l:pc = 0
-        exec pyx . 'import subprocess, vim'
-        exec pyx . '__argv = {"args":vim.eval("a:cmd"), "shell":True}'
-        exec pyx . '__argv["stdout"] = subprocess.PIPE'
-        exec pyx . '__argv["stderr"] = subprocess.STDOUT'
-        exec pyx . '__argv["errors"] = "ignore"'
-        exec pyx . '__pp = subprocess.Popen(**__argv, universal_newlines=True, encoding="utf8")'
-        exec pyx . '__return_text = __pp.stdout.read()'
-        exec pyx . '__pp.stdout.close()'
-        exec pyx . '__return_code = __pp.wait()'
-        exec 'let l:hr = '. python_eval .'("__return_text")'
-        exec 'let l:pc = '. python_eval .'("__return_code")'
-        let s:shell_error = l:pc
-        return l:hr
-    endif
+" Run shell command using pure VimScript
+function! s:run_system(cmd) abort
     let hr = system(a:cmd)
     let s:shell_error = v:shell_error
     return hr
@@ -3170,8 +3160,7 @@ function! s:ExecuteCtags(ctags_cmd) abort
         call tagbar#debug#log('Exit code: ' . s:shell_error)
         redraw!
     else
-        let py_version = get(g:, 'tagbar_python', 1)
-        silent let ctags_output = s:run_system(a:ctags_cmd, py_version)
+        silent let ctags_output = s:run_system(a:ctags_cmd)
     endif
 
     if &shell =~? 'cmd\.exe'
