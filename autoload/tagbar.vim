@@ -78,8 +78,6 @@ let s:window_pos = {
 
 let s:delayed_update_files = []
 
-let g:loaded_tagbar = 1
-
 let s:last_highlight_tline = 0
 
 let s:warnings = {
