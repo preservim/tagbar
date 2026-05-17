@@ -42,6 +42,8 @@ if v:version == 700 && !has('patch167')
     finish
 endif
 
+let g:loaded_tagbar = 1
+
 function! s:init_var(var, value) abort
     if !exists('g:tagbar_' . a:var)
         execute 'let g:tagbar_' . a:var . ' = ' . string(a:value)
