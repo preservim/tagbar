@@ -906,6 +906,41 @@ function! tagbar#types#uctags#init(supported_types) abort
         \ 'type'   : 't'
     \ }
     let types.ocaml = type_ocaml
+    " Odin {{{1
+    let type_odin = tagbar#prototypes#typeinfo#new()
+    let type_odin.ctagstype = 'odin'
+    let type_odin.kinds = [
+        \ {'short' : 'p', 'long' : 'packages',        'fold' : 1, 'stl' : 0},
+        \ {'short' : 'f', 'long' : 'procedures',      'fold' : 0, 'stl' : 1},
+        \ {'short' : 'c', 'long' : 'constants',       'fold' : 0, 'stl' : 0},
+        \ {'short' : 'v', 'long' : 'variables',       'fold' : 0, 'stl' : 0},
+        \ {'short' : 's', 'long' : 'structs',         'fold' : 0, 'stl' : 1},
+        \ {'short' : 'e', 'long' : 'enums',           'fold' : 0, 'stl' : 1},
+        \ {'short' : 'u', 'long' : 'unions',          'fold' : 0, 'stl' : 0},
+        \ {'short' : 'm', 'long' : 'struct members',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 'n', 'long' : 'enum values',     'fold' : 0, 'stl' : 0},
+        \ {'short' : 't', 'long' : 'type aliases',    'fold' : 0, 'stl' : 0},
+        \ {'short' : 'g', 'long' : 'foreign imports', 'fold' : 0, 'stl' : 0},
+        \ {'short' : 'i', 'long' : 'import names',    'fold' : 1, 'stl' : 0},
+        \ {'short' : 'L', 'long' : 'C code',          'fold' : 0, 'stl' : 0},
+        \ {'short' : 'A', 'long' : 'assembly files',  'fold' : 0, 'stl' : 0},
+        \ {'short' : 'C', 'long' : 'collection',      'fold' : 0, 'stl' : 0},
+    \ ]
+    let type_odin.sro = '.'
+
+    let type_odin.kind2scope = {
+        \ 's' : 'struct',
+        \ 'e' : 'enum',
+        \ 'u' : 'union',
+        \ 'p' : 'package',
+    \ }
+    let type_odin.scope2kind = {
+        \ 'struct'  : 's',
+        \ 'enum'    : 'e',
+        \ 'union'   : 'u',
+        \ 'package' : 'p',
+    \ }
+    let types.odin = type_odin
     " Pascal {{{1
     let type_pascal = tagbar#prototypes#typeinfo#new()
     let type_pascal.ctagstype = 'pascal'
